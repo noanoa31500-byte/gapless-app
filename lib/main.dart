@@ -72,7 +72,7 @@
 */
 
 import 'package:flutter/material.dart';
-// これ以降は既存のコードを維持　　　　　　　　これです
+// これ以降は既存のコードを維持
 
 import 'dart:async';
 import 'dart:ui';
