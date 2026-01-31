@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="GapLess">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+
+  <title>GapLess</title>
+  <link rel="manifest" href="/manifest.json">
+
+  <style>
+    /* Safety net: Ensure system fonts are used if Flutter fonts fail to load */
+    body {
+      font-family: sans-serif, Arial !important;
+      margin: 0;
+      padding: 0;
+      background-color: #F9FAFB;
+    }
+
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #F9FAFB;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      flex-direction: column;
+      font-family: sans-serif;
+      transition: opacity 0.4s ease-out;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #E53935;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .loading-text {
+      margin-top: 20px;
+      color: #6B7280;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Native Loading Spinner -->
+  <div id="native-loading" class="loading-container">
+    <div class="spinner"></div>
+    <div class="loading-text">GapLess Loading...</div>
+  </div>
+
+  <script>
+    // Critical: Ultra-fast offline detection bridge
+    window.addEventListener('offline', function () {
+      console.warn('Network offline detected by JS layer.');
+      window.dispatchEvent(new Event('force_disaster_mode'));
+    });
+
+    // 🔥 FORCE CACHE CLEAR & SERVICE WORKER KILLER (v5.1 Fix) 🔥
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          registration.unregister().then(function () {
+            console.log('ServiceWorker unregistered successfully.');
+          });
+        }
+      });
+
+      // Force reload if controller exists
+      if (navigator.serviceWorker.controller) {
+        console.log('Active ServiceWorker found, forcing unregister...');
+      }
+    }
+
+    // Clear caches
+    if ('caches' in window) {
+      caches.keys().then(function (names) {
+        for (let name of names) {
+          caches.delete(name);
+          console.log('Cache deleted:', name);
+        }
+      });
+    }
+
+    // Remove spinner when Flutter acts
+    window.addEventListener('flutter-first-frame', function () {
+      var loading = document.getElementById('native-loading');
+      if (loading) {
+        loading.style.opacity = 0;
+        setTimeout(function () {
+          loading.remove();
+        }, 400);
+      }
+    });
+  </script>
+
+  <script src="flutter_bootstrap.js?v=51" async></script>
+</body>
+
+</html>
