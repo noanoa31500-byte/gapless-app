@@ -1,0 +1,128 @@
+[
+    {
+        "name": "7-Eleven",
+        "lat": 6.8612315,
+        "lng": 100.0168761,
+        "type": "convenience",
+        "id": "node/2657418717"
+    },
+    {
+        "name": "Big C",
+        "lat": 6.6383461,
+        "lng": 100.0700677,
+        "type": "supermarket",
+        "id": "node/3047032100"
+    },
+    {
+        "name": "7 Eleven",
+        "lat": 6.9990212,
+        "lng": 99.91224,
+        "type": "supermarket",
+        "id": "node/4544231292"
+    },
+    {
+        "name": "Convenience Store",
+        "lat": 6.7188981,
+        "lng": 100.0667413,
+        "type": "convenience",
+        "id": "node/4577560256"
+    },
+    {
+        "name": "Tesco",
+        "lat": 6.7254359,
+        "lng": 100.0662805,
+        "type": "supermarket",
+        "id": "node/4805979622"
+    },
+    {
+        "name": "Tesco",
+        "lat": 6.7530777,
+        "lng": 100.0676645,
+        "type": "supermarket",
+        "id": "node/4805979721"
+    },
+    {
+        "name": "Convenience Store",
+        "lat": 6.8188814,
+        "lng": 99.9371348,
+        "type": "convenience",
+        "id": "node/4821929924"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.6654938,
+        "lng": 100.0749425,
+        "type": "convenience",
+        "id": "node/4822297821"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.6162451,
+        "lng": 100.0663895,
+        "type": "convenience",
+        "id": "node/5300510783"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.6091446,
+        "lng": 100.0646087,
+        "type": "convenience",
+        "id": "node/5301462335"
+    },
+    {
+        "name": "SK Minimarket",
+        "lat": 6.8473983,
+        "lng": 99.9089395,
+        "type": "supermarket",
+        "id": "node/5358659722"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.7884402,
+        "lng": 100.0801178,
+        "type": "convenience",
+        "id": "node/6142100388"
+    },
+    {
+        "name": "Supermarket",
+        "lat": 6.6714624,
+        "lng": 100.0736202,
+        "type": "supermarket",
+        "id": "node/6369602786"
+    },
+    {
+        "name": "7 Eleven",
+        "lat": 6.8620172,
+        "lng": 100.0065904,
+        "type": "convenience",
+        "id": "node/7244502786"
+    },
+    {
+        "name": "Mini C",
+        "lat": 6.8404406,
+        "lng": 100.0896034,
+        "type": "convenience",
+        "id": "node/7246551185"
+    },
+    {
+        "name": "mini Big C",
+        "lat": 6.8408768,
+        "lng": 100.0897104,
+        "type": "supermarket",
+        "id": "node/7288109785"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.6979791,
+        "lng": 100.0668629,
+        "type": "convenience",
+        "id": "node/10173072017"
+    },
+    {
+        "name": "7-Eleven",
+        "lat": 6.6204801,
+        "lng": 100.0671157,
+        "type": "supermarket",
+        "id": "node/12291443602"
+    }
+]

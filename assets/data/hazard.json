@@ -1,0 +1,92 @@
+[
+    {
+        "id": "water",
+        "jp": "水が欲しいです。",
+        "en": "I need water, please.",
+        "th": "ขอรับน้ำดื่มหน่อยครับ/ค่ะ"
+    },
+    {
+        "id": "toilet",
+        "jp": "トイレはどこですか？",
+        "en": "Where is the toilet?",
+        "th": "ห้องน้ำอยู่ที่ไหนครับ/ค่ะ?"
+    },
+    {
+        "id": "food",
+        "jp": "食料（食べ物）が必要です。",
+        "en": "I need some food.",
+        "th": "ต้องการอาหารครับ/ค่ะ"
+    },
+    {
+        "id": "medicine",
+        "jp": "持病の薬を失くしました。",
+        "en": "I lost my regular medicine.",
+        "th": "ยาที่ต้องกินประจำหายไปครับ/ค่ะ"
+    },
+    {
+        "id": "pain",
+        "jp": "体が痛いところがあります。",
+        "en": "I have pain in my body.",
+        "th": "รู้สึกเจ็บตามร่างกายครับ/ค่ะ"
+    },
+    {
+        "id": "cold",
+        "jp": "寒いです。毛布などはありますか？",
+        "en": "I am cold. Are there any blankets?",
+        "th": "หนาวมากครับ/ค่ะ มีผ้าห่มไหมครับ/ค่ะ?"
+    },
+    {
+        "id": "allergy",
+        "jp": "アレルギーがあります。",
+        "en": "I have allergies.",
+        "th": "ฉันมีอาการแพ้ครับ/ค่ะ"
+    },
+    {
+        "id": "family",
+        "jp": "家族と連絡が取れません。",
+        "en": "I cannot contact my family.",
+        "th": "ติดต่อครอบครัวไม่ได้ครับ/ค่ะ"
+    },
+    {
+        "id": "charge",
+        "jp": "スマホを充電したいです。",
+        "en": "I want to charge my phone.",
+        "th": "ต้องการชาร์จโทรศัพท์มือถือครับ/ค่ะ"
+    },
+    {
+        "id": "help",
+        "jp": "助けてください。",
+        "en": "Please help me.",
+        "th": "ช่วยด้วยครับ/ค่ะ"
+    },
+    {
+        "id": "wifi",
+        "jp": "インターネット(Wi-Fi)は使えますか？",
+        "en": "Is Wi-Fi available here?",
+        "th": "ที่นี่มี Wi-Fi ให้ใช้ไหมครับ/ค่ะ?"
+    },
+    {
+        "id": "hospital",
+        "jp": "病院に行きたいです。",
+        "en": "I need to go to a hospital.",
+        "th": "อยากไปโรงพยาบาลครับ/ค่ะ"
+    },
+    {
+        "id": "religion",
+        "jp": "宗教上の理由で食べられないものがあります。",
+        "en": "I have religious dietary restrictions.",
+        "th": "มีอาหารที่ทานไม่ได้เนื่องจากหลักศาสนาครับ/ค่ะ"
+    },
+    {
+        "id": "sanitary",
+        "jp": "生理用品が必要です。",
+        "en": "I need sanitary products.",
+        "th": "ต้องการผ้าอนามัยครับ/ค่ะ"
+    },
+    {
+        "id": "where_am_i",
+        "jp": "ここはどこ（何の避難所）ですか？",
+        "en": "Where am I? (What is the name of this shelter?)",
+        "th": "ที่นี่คือที่ไหนครับ/ค่ะ? (ชื่อศูนย์อพยพนี้คืออะไร?)"
+    }
+]

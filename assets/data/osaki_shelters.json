@@ -1,0 +1,3153 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-25T14:29:49Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/18965019",
+        "addr:block_number": "97",
+        "addr:city": "大崎市",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "町西",
+        "addr:postcode": "989-6711",
+        "addr:province": "宮城県",
+        "addr:quarter": "鳴子温泉",
+        "amenity": "school",
+        "grades": "1-9",
+        "name": "大崎市立鳴子小中学校",
+        "name:ja": "大崎市立鳴子小中学校",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81-229-84-5811",
+        "religion": "none",
+        "type": "multipolygon",
+        "wikidata": "Q21652609",
+        "wikipedia": "ja:大崎市立鳴子中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7636298,
+          38.736828
+        ]
+      },
+      "id": "relation/18965019"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "relation/19221263",
+        "amenity": "school",
+        "grades": "7-12",
+        "name": "宮城県古川黎明中学校・高等学校",
+        "name:en": "Miyagi Prefecture Furukawa Reimei Junior High School and High School",
+        "name:ja": "宮城県古川黎明中学校・高等学校",
+        "operator": "宮城県",
+        "operator:en": "Miyagi Prefecture",
+        "operator:ja": "宮城県",
+        "operator:type": "government",
+        "operator:wikidata": "Q47896",
+        "religion": "none",
+        "type": "multipolygon",
+        "website": "https://freimei-j.myswan.ed.jp/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9493617,
+          38.5805749
+        ]
+      },
+      "id": "relation/19221263"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/640517417",
+        "amenity": "school",
+        "name": "大崎市立鹿島台小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0966517,
+          38.4784034
+        ]
+      },
+      "id": "way/640517417"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/640520449",
+        "amenity": "school",
+        "name": "大崎市立鹿島台中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0940738,
+          38.4760541
+        ]
+      },
+      "id": "way/640520449"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350471",
+        "addr:block_number": "2",
+        "addr:city": "大崎市",
+        "addr:housenumber": "8",
+        "addr:neighbourhood": "6",
+        "addr:postcode": "989-6143",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川中里",
+        "amenity": "school",
+        "name": "古川学園中学校・高等学校",
+        "website": "https://www.furukawa-gakuen.ac.jp/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9654245,
+          38.5698123
+        ]
+      },
+      "id": "way/658350471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350472",
+        "amenity": "school",
+        "name": "大崎市立古川東中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9731875,
+          38.5642077
+        ]
+      },
+      "id": "way/658350472"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350486",
+        "addr:block_number": "7-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "4丁目",
+        "addr:postcode": "989-6171",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川北町",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "宮城県古川工業高校",
+        "phone": "+81 229 22 3166",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9642801,
+          38.5837928
+        ]
+      },
+      "id": "way/658350486"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350488",
+        "addr:block_number": "7",
+        "addr:city": "大崎市",
+        "addr:housenumber": "67",
+        "addr:neighbourhood": "古川二ノ構",
+        "addr:postcode": "989-6152",
+        "addr:province": "宮城県",
+        "amenity": "school",
+        "fax": "+81 229 22 2082",
+        "grades": "1-6",
+        "name": "大崎市立古川第一小学校",
+        "name:en": "Furukawa Dai-ichi Elementary School",
+        "name:ja": "大崎市立古川第一小学校",
+        "name:ja-Hira": "おおさきしりつふるかわだいいちしょうがっこう",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81 229 22 2072",
+        "religion": "none",
+        "website": "http://www2.educ.osaki.miyagi.jp/furukawa1-s/",
+        "wikidata": "Q125505160",
+        "wikipedia": "ja:大崎市立古川第一小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9530979,
+          38.5777749
+        ]
+      },
+      "id": "way/658350488"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350490",
+        "amenity": "school",
+        "name": "宮城県古川高等学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9568633,
+          38.5706031
+        ]
+      },
+      "id": "way/658350490"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350492",
+        "addr:block_number": "16-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "3丁目",
+        "addr:postcode": "989-6105",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川福沼",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立古川第二小学校",
+        "phone": "+81 229 22 0540",
+        "religion": "none",
+        "wikidata": "Q84493543",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9759217,
+          38.5767069
+        ]
+      },
+      "id": "way/658350492"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350494",
+        "amenity": "school",
+        "name": "大崎市立敷玉小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9914621,
+          38.5448522
+        ]
+      },
+      "id": "way/658350494"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350497",
+        "addr:block_number": "13-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "1丁目",
+        "addr:postcode": "989-6131",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川金五輪",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立古川第三小学校",
+        "phone": "+81 229 24 0514",
+        "religion": "none",
+        "wikidata": "Q84493564",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9594907,
+          38.5601887
+        ]
+      },
+      "id": "way/658350497"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350501",
+        "addr:block_number": "2-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "8丁目",
+        "addr:postcode": "989-6221",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川大宮",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立古川第四小学校",
+        "phone": "+81 229 23 8006",
+        "religion": "none",
+        "wikidata": "Q84493571",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9557018,
+          38.5880992
+        ]
+      },
+      "id": "way/658350501"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658350503",
+        "addr:block_number": "27-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "1丁目",
+        "addr:postcode": "989-6105",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川福沼",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎中央高等学校",
+        "phone": "+81 229 22 2030",
+        "website": "https://www.osakichuo.ed.jp/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.974126,
+          38.5811232
+        ]
+      },
+      "id": "way/658350503"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658636212",
+        "amenity": "school",
+        "name": "大崎市立松山中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0425365,
+          38.5155565
+        ]
+      },
+      "id": "way/658636212"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658636213",
+        "amenity": "school",
+        "name": "大崎市立松山小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0586866,
+          38.515888
+        ]
+      },
+      "id": "way/658636213"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/660631332",
+        "amenity": "school",
+        "name": "旧大崎市立下伊場野小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0037838,
+          38.5298265
+        ]
+      },
+      "id": "way/660631332"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/660631334",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立古川第五小学校",
+        "name:en": "Furukawa Daigo Elementary School",
+        "name:ja": "大崎市立古川第五小学校",
+        "religion": "no",
+        "wikidata": "Q84493575",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9452932,
+          38.5642889
+        ]
+      },
+      "id": "way/660631334"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/660631335",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎市立古川南中学校",
+        "name:en": "Furukawa Minami Junior High School",
+        "name:ja": "大崎市立古川南中学校",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "wikidata": "Q84589868",
+        "wikipedia": "ja:大崎市立古川南中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9455529,
+          38.5625949
+        ]
+      },
+      "id": "way/660631335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/867951230",
+        "amenity": "school",
+        "name": "大崎市立岩出山中学校",
+        "wikidata": "Q11435030",
+        "wikipedia": "ja:大崎市立岩出山中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8577282,
+          38.6592266
+        ]
+      },
+      "id": "way/867951230"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/895234685",
+        "amenity": "library",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9658233,
+          38.5749071
+        ]
+      },
+      "id": "way/895234685"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1006070803",
+        "addr:block_number": "7",
+        "addr:city": "大崎市",
+        "addr:housenumber": "54",
+        "addr:neighbourhood": "古川二ノ構",
+        "addr:postcode": "989-6152",
+        "addr:province": "宮城県",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎市立古川中学校",
+        "name:en": "Furukawa Junior High School",
+        "name:ja": "大崎市立古川中学校",
+        "name:ja-Hira": "おおさきしりつふるかわちゅうがっこう",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81 229 22 0236",
+        "religion": "none",
+        "website": "http://www2.educ.osaki.miyagi.jp/furukawa-c/index.php",
+        "wikidata": "Q84589864",
+        "wikipedia": "ja:大崎市立古川中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9523461,
+          38.5782511
+        ]
+      },
+      "id": "way/1006070803"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1006071303",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9759217,
+          38.5767069
+        ]
+      },
+      "id": "way/1006071303"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1019014176",
+        "addr:block_number": "2",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "城山",
+        "addr:postcode": "989-6437",
+        "addr:province": "宮城県",
+        "addr:quarter": "岩出山",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "宮城県岩出山高等学校",
+        "name:en": "Iwadeyama High School",
+        "phone": "+81 229 72 1110",
+        "religion": "none",
+        "website": "iwadeyama-h.myswab.ed.jp",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8615549,
+          38.6548604
+        ]
+      },
+      "id": "way/1019014176"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1019014177",
+        "amenity": "school",
+        "name": "大崎市立岩出山小学校",
+        "name:en": "Iwadeyama Primary School",
+        "wikidata": "Q84493594",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8632045,
+          38.6533519
+        ]
+      },
+      "id": "way/1019014177"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1020774362",
+        "amenity": "community_centre",
+        "building": "yes",
+        "name": "上区コミュニティセンター",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8807466,
+          38.6437301
+        ]
+      },
+      "id": "way/1020774362"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1037279684",
+        "addr:block_number": "27-2",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "1丁目",
+        "addr:postcode": "989-6105",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川福沼",
+        "amenity": "university",
+        "name": "宮城誠真短期大学",
+        "phone": "+81 229 23 3220",
+        "wikidata": "Q6884194",
+        "wikipedia": "ja:宮城誠真短期大学",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.974155,
+          38.5804907
+        ]
+      },
+      "id": "way/1037279684"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1042121198",
+        "amenity": "community_centre",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9387552,
+          38.5709128
+        ]
+      },
+      "id": "way/1042121198"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1046067065",
+        "amenity": "community_centre",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.955538,
+          38.5637495
+        ]
+      },
+      "id": "way/1046067065"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1051444287",
+        "addr:block_number": "19",
+        "addr:city": "大崎市",
+        "addr:postcode": "989-6227",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川大崎伏見梅田",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立東大崎小学校",
+        "name:en": "Higashi Osaki Primary School",
+        "name:ja": "大崎市立東大崎小学校",
+        "phone": "+81 229 26 3533",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.912211,
+          38.6031103
+        ]
+      },
+      "id": "way/1051444287"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1052188882",
+        "addr:block_number": "40-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "飯川熊野",
+        "addr:postcode": "989-6203",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立志田小学校",
+        "phone": "+81 229 26 2327",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.914592,
+          38.570802
+        ]
+      },
+      "id": "way/1052188882"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1052376928",
+        "addr:block_number": "191",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "渋井全壮",
+        "addr:postcode": "989-6201",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎市立古川西中学校",
+        "name:en": "FurukawaNishi Junior High School",
+        "name:ja": "大崎市立古川西中学校",
+        "phone": "+81 229 26 2114",
+        "religion": "none",
+        "wikidata": "Q84589865",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9086607,
+          38.5861584
+        ]
+      },
+      "id": "way/1052376928"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1052595875",
+        "addr:block_number": "114",
+        "addr:city": "大崎市",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "保柳氏子",
+        "addr:postcode": "989-6213",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川",
+        "amenity": "school",
+        "name": "大崎市立おおさき日本語学校",
+        "name:ja": "大崎市立おおさき日本語学校",
+        "note": "旧大崎市立西古川小学校跡地に開校",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81-229-23-2245",
+        "religion": "none",
+        "start_date": "2025-04-01",
+        "website": "https://www.osaki-jls.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8957927,
+          38.5822751
+        ]
+      },
+      "id": "way/1052595875"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1054985907",
+        "addr:block_number": "78",
+        "addr:city": "大崎市",
+        "addr:housenumber": "2",
+        "addr:neighbourhood": "字鹿野沢",
+        "addr:postcode": "989-6321",
+        "addr:province": "宮城県",
+        "addr:quarter": "三本木",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎市立三本木中学校",
+        "name:en": "Sambongi Junior High School",
+        "name:ja": "大崎市立三本木中学校",
+        "phone": "+81 229 52 5105",
+        "religion": "none",
+        "website": "http://www2.educ.osaki.miyagi.jp/sanbongi-c/index.html",
+        "wikidata": "Q84589870",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9414899,
+          38.5230775
+        ]
+      },
+      "id": "way/1054985907"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1054985908",
+        "addr:block_number": "19",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "字天王沢",
+        "addr:postcode": "989-6321",
+        "addr:province": "宮城県",
+        "addr:quarter": "三本木",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立三本木小学校",
+        "name:en": "Sambongi Elementary School",
+        "name:ja": "大崎市立三本木小学校",
+        "phone": "+81 229 52 2019",
+        "religion": "none",
+        "website": "http://www2.educ.osaki.miyagi.jp/sanbongi-s/index.html",
+        "wikidata": "Q84493587",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9440768,
+          38.5239673
+        ]
+      },
+      "id": "way/1054985908"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1060367641",
+        "addr:block_number": "1",
+        "addr:city": "大崎市",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "松山",
+        "addr:postcode": "987-1304",
+        "addr:province": "宮城県",
+        "addr:quarter": "松山千石",
+        "amenity": "school",
+        "grades": "9-12",
+        "name": "宮城県松山高等学校",
+        "name:en": "Matsuyama High School",
+        "name:ja": "宮城県松山高等学校",
+        "phone": "+81 229 55 2313",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0496739,
+          38.5123871
+        ]
+      },
+      "id": "way/1060367641"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1062232689",
+        "amenity": "driving_school",
+        "name": "古川自動車学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9654165,
+          38.5975232
+        ]
+      },
+      "id": "way/1062232689"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1064210092",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0530625,
+          38.5975674
+        ]
+      },
+      "id": "way/1064210092"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1064708596",
+        "addr:block_number": "7",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "山崎一",
+        "addr:postcode": "989-4308",
+        "addr:province": "宮城県",
+        "addr:quarter": "田尻沼部",
+        "amenity": "school",
+        "grades": "1-6",
+        "name": "大崎市立沼部小学校",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81 229 39 0209",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0550983,
+          38.600096
+        ]
+      },
+      "id": "way/1064708596"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1064708615",
+        "addr:block_number": "15",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "早稲田",
+        "addr:postcode": "989-4308",
+        "addr:province": "宮城県",
+        "addr:quarter": "田尻沼部",
+        "amenity": "school",
+        "grades": "7-9",
+        "name": "大崎市田尻中学校",
+        "name:en": "Tajiri Junior High School",
+        "name:ja": "大崎市田尻中学校",
+        "operator": "大崎市",
+        "operator:type": "public",
+        "phone": "+81 229 39 0043",
+        "religion": "none",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0511823,
+          38.6029101
+        ]
+      },
+      "id": "way/1064708615"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1174495249",
+        "addr:block_number": "232",
+        "addr:city": "大崎市",
+        "addr:housenumber": "3",
+        "addr:neighbourhood": "蓬田",
+        "addr:postcode": "989-6711",
+        "addr:province": "宮城県",
+        "addr:quarter": "鳴子温泉",
+        "amenity": "university",
+        "name": "東北大学大学院 農学研究科附属 複合生態フィールド 教育研究センター 複合陸域生産システム部",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7569404,
+          38.7458869
+        ]
+      },
+      "id": "way/1174495249"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1184125586",
+        "amenity": "community_centre",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9622489,
+          38.5680127
+        ]
+      },
+      "id": "way/1184125586"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1204785707",
+        "addr:block_number": "1",
+        "addr:city": "大崎市",
+        "addr:full": "宮城県大崎市古川七日町1-1",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "古川七日町",
+        "addr:postcode": "989-6188",
+        "addr:province": "宮城県",
+        "amenity": "townhall",
+        "building": "public",
+        "fax": "+81 229 23 9979",
+        "name": "大崎市役所",
+        "name:en": "Osaki City Hall",
+        "name:ja": "大崎市役所",
+        "name:ja-Hira": "おおさきしやくしょ",
+        "opening_hours": "Mo-Fr 08:30-17:15; PH off; Dec 29-Jan 03 off",
+        "phone": "+81 229 23 2111",
+        "townhall:type": "city",
+        "website": "https://www.city.osaki.miyagi.jp/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9559793,
+          38.5776362
+        ]
+      },
+      "id": "way/1204785707"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1216935604",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立東大崎小学校",
+        "refugee": "yes",
+        "source": "Miyagi pref",
+        "temporary": "yes",
+        "wikidata": "Q84493556"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.911956,
+          38.6032841
+        ]
+      },
+      "id": "node/1216935604"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1226281958",
+        "addr:full": "宮城県大崎市古川福沼3町目16-1",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立古川第二小学校",
+        "source": "Miyagi pref",
+        "temporary": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9762047,
+          38.5768212
+        ]
+      },
+      "id": "node/1226281958"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1226291856",
+        "addr:full": "宮城県大崎市古川金五輪1丁目13-1",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "市立古川第三小学校",
+        "source": "Miyagi pref",
+        "temporary": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9591757,
+          38.560512
+        ]
+      },
+      "id": "node/1226291856"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1226303873",
+        "addr:full": "宮城県大崎市大宮8丁目2-1",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "市立古川第四小学校",
+        "source": "Miyagi pref",
+        "temporary": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9559062,
+          38.5881268
+        ]
+      },
+      "id": "node/1226303873"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1230789004",
+        "amenity": "school",
+        "name": "大崎市立古川北小学校",
+        "wikidata": "Q113623993",
+        "wikipedia": "ja:大崎市立古川北小学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9757113,
+          38.6159909
+        ]
+      },
+      "id": "way/1230789004"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1230973657",
+        "amenity": "school",
+        "name": "大崎市立古川北中学校",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9723682,
+          38.6189124
+        ]
+      },
+      "id": "way/1230973657"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1233805791",
+        "amenity": "school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0205041,
+          38.6048174
+        ]
+      },
+      "id": "way/1233805791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1235419737",
+        "amenity": "school",
+        "name": "大崎市立大貫小学校",
+        "website": "http://www2.educ.osaki.miyagi.jp/onuki-s/index.html",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.107805,
+          38.6089545
+        ]
+      },
+      "id": "way/1235419737"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1258561994",
+        "amenity": "driving_school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9490259,
+          38.5529325
+        ]
+      },
+      "id": "way/1258561994"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1259202217",
+        "amenity": "school",
+        "name": "古川工業高校野球場",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9679632,
+          38.5904006
+        ]
+      },
+      "id": "way/1259202217"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1395865808",
+        "amenity": "driving_school",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9533381,
+          38.5869718
+        ]
+      },
+      "id": "way/1395865808"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1447360043",
+        "amenity": "community_centre",
+        "building": "yes",
+        "name": "鳴子総合支所",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7369126,
+          38.7451374
+        ]
+      },
+      "id": "way/1447360043"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2139634338",
+        "amenity": "school",
+        "name": "大崎市立田尻中学校",
+        "name:en": "Tajiri junior high",
+        "name:ja": "大崎市立田尻中学校",
+        "wikidata": "Q84589873"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.050521,
+          38.602311
+        ]
+      },
+      "id": "node/2139634338"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2289977141",
+        "amenity": "townhall",
+        "name": "鳴子町中央公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7376091,
+          38.7451218
+        ]
+      },
+      "id": "node/2289977141"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2290006040",
+        "amenity": "townhall",
+        "name": "大崎市鳴子総合支所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.718666,
+          38.744974
+        ]
+      },
+      "id": "node/2290006040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3506217401",
+        "amenity": "townhall",
+        "name": "池月地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8336573,
+          38.7066358
+        ]
+      },
+      "id": "node/3506217401"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510440958",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立敷玉小学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9917003,
+          38.544919
+        ]
+      },
+      "id": "node/3510440958"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4508303491",
+        "amenity": "school",
+        "name": "宮城県古川高等学校",
+        "name:en": "Furukawa High School",
+        "name:es": "Escuela Preparatoria de Furukawa",
+        "name:ja": "宮城県古川高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9564548,
+          38.5706806
+        ]
+      },
+      "id": "node/4508303491"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510292995",
+        "amenity": "school",
+        "name": "古川学園中学校・高等学校",
+        "name:ja": "古川学園中学校・高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9654989,
+          38.569869
+        ]
+      },
+      "id": "node/4510292995"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544637305",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立沼部小学校",
+        "name:ja": "大崎市立沼部小学校",
+        "wikidata": "Q84493613"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0552372,
+          38.6000801
+        ]
+      },
+      "id": "node/4544637305"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544840689",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立田尻小学校",
+        "name:ja": "大崎市立田尻小学校",
+        "wikidata": "Q84493609"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0205438,
+          38.6051194
+        ]
+      },
+      "id": "node/4544840689"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613961492",
+        "amenity": "community_centre",
+        "name": "岩出山地区公民館",
+        "name:ja": "岩出山地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8636677,
+          38.6581354
+        ]
+      },
+      "id": "node/4613961492"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613994889",
+        "amenity": "school",
+        "name": "宮城県岩出山高等学校",
+        "name:ja": "宮城県岩出山高等学校",
+        "phone": "+81 229 72 1110",
+        "wikidata": "Q11453696",
+        "wikipedia": "ja:宮城県岩出山高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8619123,
+          38.6537075
+        ]
+      },
+      "id": "node/4613994889"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623217198",
+        "amenity": "community_centre",
+        "name": "三本木公民館 館山ホール",
+        "name:ja": "三本木公民館 館山ホール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9483163,
+          38.5253019
+        ]
+      },
+      "id": "node/4623217198"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623231091",
+        "amenity": "townhall",
+        "name": "大崎市役所三本木総合支所",
+        "name:ja": "大崎市役所三本木総合支所",
+        "townhall:type": "city"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9378168,
+          38.5200271
+        ]
+      },
+      "id": "node/4623231091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623376191",
+        "amenity": "school",
+        "name": "仙北自動車学校",
+        "name:ja": "仙北自動車学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9493641,
+          38.5525029
+        ]
+      },
+      "id": "node/4623376191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628471090",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立鹿島台小学校",
+        "name:ja": "大崎市立鹿島台小学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0967592,
+          38.4785791
+        ]
+      },
+      "id": "node/4628471090"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628472791",
+        "amenity": "school",
+        "name": "大崎市立鹿島台中学校",
+        "name:ja": "大崎市立鹿島台中学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0940019,
+          38.4758482
+        ]
+      },
+      "id": "node/4628472791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473304",
+        "amenity": "school",
+        "name": "宮城県鹿島台商業高等学校",
+        "name:ja": "宮城県鹿島台商業高等学校",
+        "wikidata": "Q11453982",
+        "wikipedia": "ja:宮城県鹿島台商業高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0860064,
+          38.4877255
+        ]
+      },
+      "id": "node/4628473304"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4665029390",
+        "amenity": "school",
+        "name": "宮城誠真短期大学",
+        "name:ja": "宮城誠真短期大学"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9733226,
+          38.5803391
+        ]
+      },
+      "id": "node/4665029390"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4665045090",
+        "amenity": "school",
+        "name": "大崎中央高等学校",
+        "name:ja": "大崎中央高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9735337,
+          38.5812727
+        ]
+      },
+      "id": "node/4665045090"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4679761595",
+        "amenity": "community_centre",
+        "name": "鳴子公民館",
+        "name:ja": "鳴子公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7377261,
+          38.7450877
+        ]
+      },
+      "id": "node/4679761595"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5011171935",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "旧大崎市立池月小学校",
+        "name:ja": "旧大崎市立池月小学校",
+        "note": "2018年3月閉校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8351373,
+          38.7117172
+        ]
+      },
+      "id": "node/5011171935"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5061591451",
+        "amenity": "library",
+        "name": "大崎市図書館",
+        "name:ja": "大崎市図書館",
+        "phone": "+81 229 22 0002"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9657843,
+          38.5748958
+        ]
+      },
+      "id": "node/5061591451"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487629",
+        "amenity": "community_centre",
+        "name": "大崎市中央公民館",
+        "name:ja": "大崎市中央公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9687736,
+          38.5807247
+        ]
+      },
+      "id": "node/5063487629"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063489630",
+        "amenity": "school",
+        "name": "宮城県古川工業高校",
+        "name:ja": "宮城県古川工業高校",
+        "phone": "+81 229 22 3166"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.964126,
+          38.5841714
+        ]
+      },
+      "id": "node/5063489630"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437453",
+        "amenity": "school",
+        "name": "大崎市立古川東中学校",
+        "name:en": "Furukawa Higashi Junior High School",
+        "name:es": "Escuela Secundaria de Furukawa Higashi",
+        "name:ja": "大崎市立古川東中学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9733904,
+          38.5644372
+        ]
+      },
+      "id": "node/5091437453"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5094443329",
+        "amenity": "driving_school",
+        "name": "古川自動車教習センター",
+        "name:ja": "古川自動車教習センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9887946,
+          38.5693205
+        ]
+      },
+      "id": "node/5094443329"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5270399024",
+        "amenity": "community_centre",
+        "name": "東平渡集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1008721,
+          38.4758708
+        ]
+      },
+      "id": "node/5270399024"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5596715736",
+        "amenity": "community_centre",
+        "name": "鹿島台公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1026724,
+          38.4750128
+        ]
+      },
+      "id": "node/5596715736"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437705",
+        "amenity": "townhall",
+        "name": "大崎市松山総合支所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0599122,
+          38.5142293
+        ]
+      },
+      "id": "node/5810437705"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437709",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立松山小学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0580935,
+          38.5158691
+        ]
+      },
+      "id": "node/5810437709"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437710",
+        "amenity": "school",
+        "name": "大崎市立松山中学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0424484,
+          38.515751
+        ]
+      },
+      "id": "node/5810437710"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437711",
+        "amenity": "school",
+        "name": "宮城県松山高等学校",
+        "wikidata": "Q11453710",
+        "wikipedia": "ja:宮城県松山高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0490969,
+          38.5118391
+        ]
+      },
+      "id": "node/5810437711"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6068914558",
+        "amenity": "community_centre",
+        "name": "鎌巻生活センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1013419,
+          38.4508633
+        ]
+      },
+      "id": "node/6068914558"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6085614923",
+        "amenity": "community_centre",
+        "name": "山船越ニューホール"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0963572,
+          38.5007827
+        ]
+      },
+      "id": "node/6085614923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6085619322",
+        "amenity": "community_centre",
+        "name": "里船越コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0981354,
+          38.5103755
+        ]
+      },
+      "id": "node/6085619322"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6128724455",
+        "amenity": "community_centre",
+        "name": "杉ヶ崎創作館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0939063,
+          38.4691276
+        ]
+      },
+      "id": "node/6128724455"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6279162337",
+        "amenity": "community_centre",
+        "name": "三ツ屋上地コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.109042,
+          38.4649135
+        ]
+      },
+      "id": "node/6279162337"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6279170215",
+        "amenity": "community_centre",
+        "name": "出町集落センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1079006,
+          38.4835968
+        ]
+      },
+      "id": "node/6279170215"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6279170884",
+        "amenity": "community_centre",
+        "name": "山谷集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0630842,
+          38.4907586
+        ]
+      },
+      "id": "node/6279170884"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6279176302",
+        "amenity": "community_centre",
+        "name": "内ノ浦総合生活センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0878811,
+          38.4623775
+        ]
+      },
+      "id": "node/6279176302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463734211",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立西古川小学校",
+        "name:en": "Nishi Furukawa Primary School",
+        "phone": "+81 229 26 2329",
+        "wikidata": "Q84493547"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8954006,
+          38.5826875
+        ]
+      },
+      "id": "node/6463734211"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463734214",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立志田小学校",
+        "name:en": "Shida Primary School",
+        "phone": "+81 229 26 2327",
+        "wikidata": "Q84493545"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9145297,
+          38.5712655
+        ]
+      },
+      "id": "node/6463734214"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6794392204",
+        "amenity": "school",
+        "name": "ダンススタジオ Rock Foot 古川",
+        "name:en": "DANCE STUDIO Rock Foot Furukawa",
+        "phone": "+81 229 24 1137",
+        "website": "http://rock-foot.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9640774,
+          38.5727077
+        ]
+      },
+      "id": "node/6794392204"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7040496789",
+        "amenity": "community_centre",
+        "name": "上平渡集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0930477,
+          38.4859015
+        ]
+      },
+      "id": "node/7040496789"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8178557328",
+        "amenity": "community_centre",
+        "name": "古川西部コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9507313,
+          38.5854704
+        ]
+      },
+      "id": "node/8178557328"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182283817",
+        "amenity": "community_centre",
+        "name": "古川敷玉地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9926256,
+          38.5452517
+        ]
+      },
+      "id": "node/8182283817"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182315718",
+        "amenity": "community_centre",
+        "name": "下中目ニ公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0123634,
+          38.5377782
+        ]
+      },
+      "id": "node/8182315718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8404721902",
+        "amenity": "community_centre",
+        "name": "竹の花公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0561776,
+          38.5128825
+        ]
+      },
+      "id": "node/8404721902"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8417319621",
+        "amenity": "school",
+        "name": "柳下村塾"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9416521,
+          38.5247518
+        ]
+      },
+      "id": "node/8417319621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8419651628",
+        "amenity": "school",
+        "name": "ギター教室 セレナーデ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9351412,
+          38.5180509
+        ]
+      },
+      "id": "node/8419651628"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8419651819",
+        "amenity": "school",
+        "name": "田辺ピアノ教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9339864,
+          38.5185212
+        ]
+      },
+      "id": "node/8419651819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8420013719",
+        "amenity": "community_centre",
+        "name": "大崎市三本木仲町地区 コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9495203,
+          38.5283721
+        ]
+      },
+      "id": "node/8420013719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8421791618",
+        "amenity": "community_centre",
+        "name": "南谷地集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9420868,
+          38.5286513
+        ]
+      },
+      "id": "node/8421791618"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8421791820",
+        "amenity": "community_centre",
+        "name": "学習センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9461805,
+          38.5277136
+        ]
+      },
+      "id": "node/8421791820"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8421821717",
+        "amenity": "community_centre",
+        "name": "北町地区コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9446099,
+          38.5310885
+        ]
+      },
+      "id": "node/8421821717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8423990718",
+        "amenity": "community_centre",
+        "name": "元鹿島台集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0905035,
+          38.4767244
+        ]
+      },
+      "id": "node/8423990718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8424026819",
+        "amenity": "community_centre",
+        "name": "鹿島台保健センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.09649,
+          38.480027
+        ]
+      },
+      "id": "node/8424026819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8424847619",
+        "amenity": "community_centre",
+        "name": "尾梶会館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0975223,
+          38.4777172
+        ]
+      },
+      "id": "node/8424847619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8424847921",
+        "amenity": "school",
+        "name": "SK総合進学塾"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0976815,
+          38.476275
+        ]
+      },
+      "id": "node/8424847921"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8424848418",
+        "amenity": "school",
+        "name": "子ども英会話 ペッピーキッズクラブ 鹿島台教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0978252,
+          38.4777886
+        ]
+      },
+      "id": "node/8424848418"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8425266220",
+        "amenity": "school",
+        "name": "河井きもの教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0973485,
+          38.4780399
+        ]
+      },
+      "id": "node/8425266220"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8427366418",
+        "amenity": "school",
+        "name": "はやし音楽教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1025858,
+          38.4784388
+        ]
+      },
+      "id": "node/8427366418"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8427395420",
+        "amenity": "community_centre",
+        "name": "竹谷集落センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1226519,
+          38.4732144
+        ]
+      },
+      "id": "node/8427395420"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430468419",
+        "amenity": "community_centre",
+        "name": "新町公会堂"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.030431,
+          38.5979914
+        ]
+      },
+      "id": "node/8430468419"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430860120",
+        "amenity": "school",
+        "name": "英会話Phoenix"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0224046,
+          38.6012314
+        ]
+      },
+      "id": "node/8430860120"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430860220",
+        "amenity": "school",
+        "name": "明光義塾 田尻教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0239156,
+          38.5993018
+        ]
+      },
+      "id": "node/8430860220"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8431598919",
+        "amenity": "community_centre",
+        "name": "元町構造改善センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.021384,
+          38.5990145
+        ]
+      },
+      "id": "node/8431598919"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8433529322",
+        "amenity": "community_centre",
+        "name": "大貫地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1058986,
+          38.610779
+        ]
+      },
+      "id": "node/8433529322"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8433529521",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "大崎市立大貫小学校",
+        "name:en": "Ōnuki Primary School",
+        "phone": "+81 229 39 0309",
+        "website": "http://educ.osaki.miyagi.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1073214,
+          38.6093513
+        ]
+      },
+      "id": "node/8433529521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689305918",
+        "amenity": "community_centre",
+        "name": "西館・ニノ構生活センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9516161,
+          38.5754759
+        ]
+      },
+      "id": "node/8689305918"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689325818",
+        "amenity": "school",
+        "name": "ダンスカレッジ サイトウ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9534725,
+          38.5583843
+        ]
+      },
+      "id": "node/8689325818"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689379522",
+        "amenity": "community_centre",
+        "name": "大崎地方労働福祉会館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9500029,
+          38.5706856
+        ]
+      },
+      "id": "node/8689379522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689379719",
+        "amenity": "community_centre",
+        "name": "南町南・西集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9537134,
+          38.570502
+        ]
+      },
+      "id": "node/8689379719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692142818",
+        "amenity": "school",
+        "name": "個別指導 大沼総合教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9396136,
+          38.5651756
+        ]
+      },
+      "id": "node/8692142818"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692142828",
+        "amenity": "community_centre",
+        "name": "西荒井上集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9355286,
+          38.5603302
+        ]
+      },
+      "id": "node/8692142828"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692143318",
+        "amenity": "community_centre",
+        "name": "穂波集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9406558,
+          38.5609538
+        ]
+      },
+      "id": "node/8692143318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692563318",
+        "amenity": "school",
+        "name": "宮城県立古川支援学校",
+        "wikidata": "Q11453752",
+        "wikipedia": "ja:宮城県立古川支援学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9133082,
+          38.5706967
+        ]
+      },
+      "id": "node/8692563318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8695420217",
+        "amenity": "school",
+        "name": "大崎高等技術専門校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9377388,
+          38.5701051
+        ]
+      },
+      "id": "node/8695420217"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8695433019",
+        "amenity": "school",
+        "name": "高橋珠算学院 古川教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9432648,
+          38.5680487
+        ]
+      },
+      "id": "node/8695433019"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8699810417",
+        "amenity": "school",
+        "name": "遊山社"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9369147,
+          38.5743542
+        ]
+      },
+      "id": "node/8699810417"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8699810518",
+        "amenity": "community_centre",
+        "name": "竹ノ内・大江向集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9401564,
+          38.5732606
+        ]
+      },
+      "id": "node/8699810518"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703342719",
+        "amenity": "school",
+        "name": "MIYAGIそろばんクラブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9633985,
+          38.5606999
+        ]
+      },
+      "id": "node/8703342719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703342817",
+        "amenity": "school",
+        "name": "学研教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9644296,
+          38.5596723
+        ]
+      },
+      "id": "node/8703342817"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703478522",
+        "amenity": "school",
+        "name": "音楽教室ニコタンポ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9612997,
+          38.5755011
+        ]
+      },
+      "id": "node/8703478522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703478617",
+        "amenity": "school",
+        "name": "社交ダンス教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9606503,
+          38.5745959
+        ]
+      },
+      "id": "node/8703478617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703478720",
+        "amenity": "school",
+        "name": "公文式 十日町教室",
+        "name:en": "KUMON"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9615394,
+          38.5759202
+        ]
+      },
+      "id": "node/8703478720"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8704972318",
+        "amenity": "school",
+        "name": "サクセスセミナー 古川教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9689293,
+          38.5859773
+        ]
+      },
+      "id": "node/8704972318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707899720",
+        "amenity": "school",
+        "name": "パソコンスクール JMTC古川教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9729656,
+          38.585409
+        ]
+      },
+      "id": "node/8707899720"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707980120",
+        "amenity": "school",
+        "name": "カワイ音楽教室 福沼教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9743279,
+          38.5761541
+        ]
+      },
+      "id": "node/8707980120"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707980121",
+        "amenity": "school",
+        "name": "ふるかわ学心塾"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9777832,
+          38.5775952
+        ]
+      },
+      "id": "node/8707980121"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8708234026",
+        "amenity": "school",
+        "name": "辻分珠算学院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9742155,
+          38.5760435
+        ]
+      },
+      "id": "node/8708234026"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122317",
+        "amenity": "school",
+        "name": "ピアノ エレクトーン教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9645625,
+          38.5824495
+        ]
+      },
+      "id": "node/8711122317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122520",
+        "amenity": "prep_school",
+        "brand": "KUMON",
+        "brand:wikidata": "Q142054",
+        "name": "公文式",
+        "name:en": "KUMON",
+        "name:ja": "公文",
+        "name:ja-Hira": "くもん",
+        "name:ja-Latn": "KUMON"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9559528,
+          38.5887295
+        ]
+      },
+      "id": "node/8711122520"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122528",
+        "amenity": "school",
+        "name": "グローバルマシーン 宮城営業所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.958751,
+          38.5808359
+        ]
+      },
+      "id": "node/8711122528"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122622",
+        "amenity": "school",
+        "name": "MIYAGIそろばんクラブ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9568125,
+          38.5881269
+        ]
+      },
+      "id": "node/8711122622"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122630",
+        "amenity": "school",
+        "name": "個別指導 大沼総合教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9586487,
+          38.5809071
+        ]
+      },
+      "id": "node/8711122630"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713517319",
+        "amenity": "community_centre",
+        "name": "稲場西区集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9498672,
+          38.5557928
+        ]
+      },
+      "id": "node/8713517319"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713517519",
+        "amenity": "school",
+        "name": "くどう ピアノ教室"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9464576,
+          38.5590695
+        ]
+      },
+      "id": "node/8713517519"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713597119",
+        "amenity": "community_centre",
+        "name": "西荒井南集会所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9402838,
+          38.5540457
+        ]
+      },
+      "id": "node/8713597119"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713597425",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "旧大崎市立高倉小学校",
+        "name:en": "Former Takakura Primary School",
+        "phone": "+81 229 52 2130",
+        "website": "http://educ.osaki.miyagi.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9148139,
+          38.5386788
+        ]
+      },
+      "id": "node/8713597425"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713597426",
+        "amenity": "community_centre",
+        "name": "古川高倉地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9143674,
+          38.5390306
+        ]
+      },
+      "id": "node/8713597426"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713622517",
+        "amenity": "community_centre",
+        "name": "上沖生活センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9237495,
+          38.5397432
+        ]
+      },
+      "id": "node/8713622517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713627717",
+        "amenity": "community_centre",
+        "name": "新沼地区コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9260969,
+          38.5390574
+        ]
+      },
+      "id": "node/8713627717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9773953029",
+        "addr:block_number": "137",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "中新堀",
+        "addr:postcode": "989-4308",
+        "addr:province": "宮城県",
+        "addr:quarter": "田尻沼部",
+        "amenity": "school",
+        "grades": "10-12",
+        "name": "宮城県田尻さくら高等学校",
+        "name:en": "Tajiri Sakura High School",
+        "name:ja": "宮城県田尻さくら高等学校",
+        "phone": "+81 229 39 1051",
+        "religion": "none",
+        "wikidata": "Q11453729",
+        "wikipedia": "ja:宮城県田尻さくら高等学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0531941,
+          38.5974553
+        ]
+      },
+      "id": "node/9773953029"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10839199359",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "旧真山小学校"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9323406,
+          38.6933856
+        ]
+      },
+      "id": "node/10839199359"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10939117591",
+        "amenity": "community_centre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9440482,
+          38.5583473
+        ]
+      },
+      "id": "node/10939117591"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10964534480",
+        "amenity": "community_centre",
+        "name": "大崎地域職業訓練センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.946919,
+          38.5732536
+        ]
+      },
+      "id": "node/10964534480"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10970226792",
+        "amenity": "community_centre",
+        "name": "大崎市古川東部コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9387408,
+          38.570919
+        ]
+      },
+      "id": "node/10970226792"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10970284347",
+        "amenity": "community_centre",
+        "name": "大崎市古川南部コミュニティセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9555229,
+          38.5637552
+        ]
+      },
+      "id": "node/10970284347"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10996569157",
+        "amenity": "community_centre"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9622356,
+          38.5680232
+        ]
+      },
+      "id": "node/10996569157"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11038703022",
+        "amenity": "community_centre",
+        "name": "大崎市地域交流センター「あすも」"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9564805,
+          38.5758592
+        ]
+      },
+      "id": "node/11038703022"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11414290400",
+        "amenity": "community_centre",
+        "name": "古川長岡地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9756557,
+          38.6167662
+        ]
+      },
+      "id": "node/11414290400"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11455039132",
+        "amenity": "community_centre",
+        "name": "田尻地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0259059,
+          38.6007658
+        ]
+      },
+      "id": "node/11455039132"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11505192226",
+        "amenity": "community_centre",
+        "name": "古川清滝地区公民館"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9664488,
+          38.6590334
+        ]
+      },
+      "id": "node/11505192226"
+    }
+  ]
+}

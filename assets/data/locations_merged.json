@@ -1,0 +1,33 @@
+[
+  {
+    "id": "pcshs_pathum",
+    "name": "Princess Chulabhorn Science High School Pathum Thani",
+    "name:ja": "プリンセス・チュラポーン・サイエンス・ハイスクール・パトゥムターニー",
+    "name:th": "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย ปทุมธานี",
+    "lat": 14.1109,
+    "lng": 100.3977,
+    "type": "school",
+    "region": "th_pathum",
+    "verified": true
+  },
+  {
+    "id": "osaki_city_hall",
+    "name": "Osaki City Hall",
+    "name:ja": "大崎市役所",
+    "lat": 38.5772,
+    "lng": 140.9559,
+    "type": "gov",
+    "region": "jp_osaki",
+    "verified": true
+  },
+  {
+    "id": "local_demo_school",
+    "name": "School (Here)",
+    "name:ja": "現在地の学校（デモ用）",
+    "lat": 35.6586,
+    "lng": 139.7454,
+    "type": "school",
+    "region": "jp_tokyo",
+    "verified": true
+  }
+]
