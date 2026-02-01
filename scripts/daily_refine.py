@@ -30,7 +30,7 @@ def main():
     
     # API初期化（エラーがあればここで止まるように設定）
     genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-    gemini = genai.GenerativeModel('gemini-1.5-pro-latest')
+    gemini = genai.GenerativeModel('gemini-3-flash-preview')
     claude = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     gh = Github(os.environ["GITHUB_TOKEN"])
 
