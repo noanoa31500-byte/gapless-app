@@ -5,19 +5,11 @@ from anthropic import Anthropic
 import google.generativeai as genai
 
 # ==========================================
-# ⚙️ 設定
+# ⚙️ 設定（ここを触る必要はありません）
 # ==========================================
 TARGET_PATTERNS = ["lib/**/*.dart", "assets/data/hazard.json", "pubspec.yaml"]
-IGNORE_KEYWORDS = [".env", "key.properties", "google-services.json", "GoogleService-Info.plist", ".jks", ".keystore", "test/", "assets/map_data/"]
+IGNORE_KEYWORDS = [".env", "key.properties", "google-services.json", "test/", "assets/map_data/"]
 BRANCH_NAME = "ai-refinement-auto"
-
-# ==========================================
-# 🚀 ロジック
-# ==========================================
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-gemini = genai.GenerativeModel('gemini-1.5-pro-latest')
-claude = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-gh = Github(os.getenv("GITHUB_TOKEN"))
 
 def get_all_code():
     code_context = ""
@@ -34,17 +26,30 @@ def get_all_code():
     return code_context
 
 def main():
-    full_code = get_all_code()
-    if not full_code: return
+    print("🚀 Process Start...")
+    
+    # API初期化（エラーがあればここで止まるように設定）
+    genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+    gemini = genai.GenerativeModel('gemini-1.5-pro-latest')
+    claude = Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+    gh = Github(os.environ["GITHUB_TOKEN"])
 
+    full_code = get_all_code()
+    if not full_code:
+        print("❌ No code found.")
+        return
+
+    # 【重要】AIへの強制命令を強化
     diagnosis_prompt = f"""
     You are a world-class Flutter architect. 
-    Rewrite ONE file based on these ABSOLUTE directives:
-    1. UI: Use Navy/Orange, BorderRadius 30.0, Height 56.0, Padding 24.0+.
+    Analyze the project and pick ONE file to rewrite based on these ABSOLUTE directives:
+
+    1. UI: Use Navy/Orange palette. BorderRadius 30.0, Height 56.0, Padding 24.0+.
     2. NAV: Implement Waypoint-based navigation (List of LatLng).
     3. LOGIC: Japan=Road width priority. Thailand=Avoid Electric Shock Risk.
-    Do not keep current code. Overwrite significantly.
 
+    CRITICAL RULE: Do not maintain current code. I want a 100% OVERWRITE for the target file.
+    Output ONLY the file path and reason in this format:
     FILE_NAME: [path]
     REASON: [reason]
 
@@ -52,36 +57,56 @@ def main():
     {full_code[:800000]}
     """
     
+    print("🤖 Gemini is diagnosing...")
+    diagnosis = gemini.generate_content(diagnosis_prompt).text
+    print(f"Diagnosis: {diagnosis}")
+    
+    target_file = ""
+    for line in diagnosis.split('\n'):
+        if "FILE_NAME:" in line:
+            target_file = line.split("FILE_NAME:")[1].strip()
+            break
+            
+    if not target_file or not os.path.exists(target_file):
+        print(f"⚠️ Target file not found: {target_file}")
+        return
+
+    with open(target_file, 'r', encoding='utf-8') as f:
+        current_content = f.read()
+
+    print(f"🛠 Claude is rewriting: {target_file}")
+    refine_prompt = f"REWRITE the following file COMPLETELY based on: {diagnosis}\n\nFile: {target_file}\nContent:\n{current_content}\n\nOutput ONLY the full source code in a code block. No conversation."
+    
+    msg = claude.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=8192,
+        messages=[{"role": "user", "content": refine_prompt}]
+    )
+    new_code = msg.content[0].text
+    new_code = new_code.replace("```dart", "").replace("```json", "").replace("```", "").strip()
+
+    print("📤 Uploading to GitHub...")
+    repo = gh.get_repo(os.environ["GITHUB_REPOSITORY"])
+    sb = repo.get_branch("main")
+    
     try:
-        diagnosis = gemini.generate_content(diagnosis_prompt).text
-        target_file = ""
-        for line in diagnosis.split('\n'):
-            if "FILE_NAME:" in line:
-                target_file = line.split("FILE_NAME:")[1].strip()
-                break
-        if not target_file or not os.path.exists(target_file): return
+        repo.create_git_ref(ref=f"refs/heads/{BRANCH_NAME}", sha=sb.commit.sha)
+    except:
+        print("Branch already exists, updating...")
 
-        with open(target_file, 'r', encoding='utf-8') as f:
-            current_content = f.read()
-
-        refine_prompt = f"Rewrite this file based on: {diagnosis}\n\nFile: {target_file}\nContent:\n{current_content}\n\nOutput FULL content in code block. No talk."
-        msg = claude.messages.create(
-            model="claude-3-5-sonnet-20241022",
-            max_tokens=4000,
-            messages=[{"role": "user", "content": refine_prompt}]
+    contents = repo.get_contents(target_file, ref=BRANCH_NAME)
+    repo.update_file(contents.path, f"AI Refresh: {target_file}", new_code, contents.sha, branch=BRANCH_NAME)
+    
+    try:
+        repo.create_pull(
+            title=f"🤖 AI Refresh: {os.path.basename(target_file)}",
+            body=f"Directives applied.\n\n{diagnosis}",
+            head=BRANCH_NAME,
+            base="main"
         )
-        new_code = msg.content[0].text.replace("```dart", "").replace("```json", "").replace("```", "").strip()
-
-        repo = gh.get_repo(os.getenv("GITHUB_REPOSITORY"))
-        sb = repo.get_branch("main")
-        try: repo.create_git_ref(ref=f"refs/heads/{BRANCH_NAME}", sha=sb.commit.sha)
-        except: pass 
-
-        contents = repo.get_contents(target_file, ref=BRANCH_NAME)
-        repo.update_file(contents.path, f"AI Refresh: {target_file}", new_code, contents.sha, branch=BRANCH_NAME)
-        
-        repo.create_pull(title=f"🤖 AI Refresh: {os.path.basename(target_file)}", body=diagnosis, head=BRANCH_NAME, base="main")
-    except: pass
+        print("✅ PR created successfully!")
+    except:
+        print("ℹ️ PR already exists.")
 
 if __name__ == "__main__":
     main()
