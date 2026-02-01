@@ -79,10 +79,10 @@ def main():
     refine_prompt = f"REWRITE the following file COMPLETELY based on: {diagnosis}\n\nFile: {target_file}\nContent:\n{current_content}\n\nOutput ONLY the full source code in a code block. No conversation."
     
     msg = claude.messages.create(
-        model="claude-3-5-sonnet-20241022",
-        max_tokens=8192,
-        messages=[{"role": "user", "content": refine_prompt}]
-    )
+    model="claude-3-5-sonnet-latest", # ← 「最新版」という指定に変えます
+    max_tokens=8192,
+    messages=[{"role": "user", "content": refine_prompt}]
+)
     new_code = msg.content[0].text
     new_code = new_code.replace("```dart", "").replace("```json", "").replace("```", "").strip()
 
