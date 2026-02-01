@@ -60,16 +60,19 @@ def main():
     if not full_code: return
 
     # ここに「指令1〜3」を魂として込めます
-    diagnosis_prompt = f"""
-    You are a world-class Flutter architect. 
-    Analyze the project and pick ONE file to rewrite based on these ABSOLUTE directives:
+SYSTEM_PROMPT = """
+You are a world-class Flutter developer. 
+Your MISSION is to OVERWRITE the current code to fulfill these goals:
 
-    1. UI/UX: Use Navy/Orange palette. BorderRadius 30.0, Height 56.0, Padding 24.0+.
-    2. NAV: Implement Waypoint-based navigation (List of LatLng).
-    3. LOGIC: Japan=Road width priority. Thailand=Avoid Electric Shock Risk.
+1. DESIGN: Replace standard colors with Navy and Deep Orange. 
+   Set BorderRadius to 30.0 for ALL buttons. Maximize padding to 24.0+.
+2. LOGIC: Implement dynamic Waypoint navigation using a list of LatLng. 
+   The compass must point to the next waypoint.
+3. RISK: Japan mode must prioritize road width. Thailand mode must avoid Electric Shock zones.
 
-    Do not maintain the current code. Overwrite significantly to achieve these goals.
-
+WARNING: Do not keep the existing code structure. 
+I want a COMPLETE REFRESH. If you don't change at least 50% of the file, it is a failure.
+"""
     FILE_NAME: [path]
     REASON: [reason]
 
