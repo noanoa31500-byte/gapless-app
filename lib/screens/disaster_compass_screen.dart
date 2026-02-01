@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:flutter/foundation.dart';
 
 import '../providers/compass_provider.dart';
 import '../providers/shelter_provider.dart';
@@ -13,26 +12,29 @@ import '../providers/location_provider.dart';
 import '../providers/alert_provider.dart';
 import '../providers/region_mode_provider.dart';
 import '../utils/localization.dart';
-import '../widgets/smart_compass.dart';
 import '../services/haptic_service.dart';
-import '../services/waypoint_magnet_manager.dart';
+import '../widgets/smart_compass.dart';
+import 'shelter_dashboard_screen.dart';
 import '../models/shelter.dart';
 import '../services/compass_permission_service.dart';
-import '../services/magnetic_declination_config.dart';
 
 /// ============================================================================
-/// DisasterCompassScreen (Navy/Orange UI + Waypoint Navigation)
+/// DisasterCompassScreen - Navy/Orange Heavy Duty UI
 /// ============================================================================
 /// 
-/// DIRECTIVES IMPLEMENTATION:
-/// 1. UI: Navy (#1A237E) & Orange (#FF6F00) palette.
+/// Directives Implementation:
+/// 1. UI: Navy (#1A237E) / Orange (#FF6F00) Palette.
 ///    - BorderRadius: 30.0
-///    - Button Height: 56.0
-///    - Padding: 24.0+
-/// 2. NAV: Visualizes Waypoint-based navigation (Next Waypoint Distance/Direction).
-/// 3. LOGIC: Displays active logic based on region:
-///    - Japan: "Prioritizing Road Width"
-///    - Thailand: "Avoiding Electric Shock Risk"
+///    - Height: 56.0 (Buttons)
+///    - Padding: 24.0+ (Layout)
+/// 
+/// 2. NAV: Waypoint-based Navigation.
+///    - Visualizes the list of waypoints from `safestRoute`.
+///    - Shows progress "WP X / Total".
+/// 
+/// 3. LOGIC: Region Specific Logic Display.
+///    - Japan: "Road Width Priority" (Building Collapse Risk)
+///    - Thailand: "Avoid Electric Shock" (Flood Risk)
 class DisasterCompassScreen extends StatefulWidget {
   const DisasterCompassScreen({super.key});
 
@@ -41,15 +43,14 @@ class DisasterCompassScreen extends StatefulWidget {
 }
 
 class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
-  // UI Constants (Directive 1)
+  // Theme Constants (Directive 1)
   static const Color _navyPrimary = Color(0xFF1A237E);
   static const Color _orangeAccent = Color(0xFFFF6F00);
-  static const Color _surfaceWhite = Colors.white;
+  static const Color _surfaceColor = Color(0xFFF5F7FA);
   static const double _borderRadius = 30.0;
-  static const double _elementHeight = 56.0;
-  static const double _standardPadding = 24.0;
+  static const double _buttonHeight = 56.0;
+  static const EdgeInsets _contentPadding = EdgeInsets.all(24.0);
 
-  Timer? _statusUpdateTimer;
   Timer? _voiceTimer;
   double? _lastSpokenDistance;
   bool _dismissPermissionBanner = false;
@@ -58,32 +59,19 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   void initState() {
     super.initState();
     
-    // Periodic UI refresh for smooth updates
-    _statusUpdateTimer = Timer.periodic(const Duration(milliseconds: 500), (_) {
-      if (mounted) setState(() {});
+    // Auto-start Navigation logic
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _tryStartAutoNavigation();
+      _updateBackgroundCache();
     });
 
-    // Voice guidance timer (every 15 seconds)
+    // Voice Guidance Loop
     _voiceTimer = Timer.periodic(const Duration(seconds: 15), (_) {
       _speakNavigationUpdate();
     });
-
-    // Auto-start navigation if target exists
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _tryStartAutoNavigation();
-      _speakNavigationUpdate();
-
-      // Background route caching
-      final locProvider = context.read<LocationProvider>();
-      locProvider.addListener(_onLocationChanged);
-      if (locProvider.currentLocation != null) {
-        context.read<ShelterProvider>().updateBackgroundRoutes(locProvider.currentLocation!);
-      }
-    });
   }
 
-  void _onLocationChanged() {
-    if (!mounted) return;
+  void _updateBackgroundCache() {
     final loc = context.read<LocationProvider>().currentLocation;
     if (loc != null) {
       context.read<ShelterProvider>().updateBackgroundRoutes(loc);
@@ -94,817 +82,449 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     final shelterProvider = context.read<ShelterProvider>();
     final compassProvider = context.read<CompassProvider>();
     final locationProvider = context.read<LocationProvider>();
-
+    
     if (compassProvider.isNavigating) return;
-
+    
     final target = shelterProvider.navTarget;
     final userLoc = locationProvider.currentLocation;
-
-    if (target != null && userLoc != null && compassProvider.heading != null) {
-      _findAndStartNavigation(target.type, typeLabel: target.name);
-    }
-  }
-
-  void _speakNavigationUpdate() {
-    if (!mounted) return;
-
-    final shelterProvider = context.read<ShelterProvider>();
-    final locationProvider = context.read<LocationProvider>();
-    final alertProvider = context.read<AlertProvider>();
-    final compassProvider = context.read<CompassProvider>();
-
-    final target = shelterProvider.navTarget;
-    final currentLocation = locationProvider.currentLocation;
-
-    if (target == null || currentLocation == null) return;
-
-    double distance;
-    if (compassProvider.isSafeNavigating) {
-      distance = compassProvider.remainingDistance;
-    } else {
-      final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
-      if (cachedDist != null) {
-        distance = cachedDist;
-      } else {
-        if (!shelterProvider.isRoutingLoading) {
-          Future.microtask(() {
-            shelterProvider.calculateSafestRoute(
-              LatLng(currentLocation.latitude, currentLocation.longitude),
-              LatLng(target.lat, target.lng),
-              target: target
-            );
-          });
-        }
-        return;
+    
+    if (target != null && userLoc != null) {
+      // Assuming route is already calculated in onboarding/home
+      final route = shelterProvider.getSafestRouteAsLatLng();
+      if (route.isNotEmpty) {
+        compassProvider.startRouteNavigation(route);
       }
-    }
-
-    if (_lastSpokenDistance != null && (distance - _lastSpokenDistance!).abs() < 50) {
-      return;
-    }
-    _lastSpokenDistance = distance;
-
-    final bearing = Geolocator.bearingBetween(
-      currentLocation.latitude,
-      currentLocation.longitude,
-      target.lat,
-      target.lng,
-    );
-
-    final direction = _getDirectionText(bearing);
-    alertProvider.speakNavigation(distance, direction);
-  }
-
-  String _getDirectionText(double bearing) {
-    final normalizedBearing = (bearing + 360) % 360;
-
-    if (normalizedBearing >= 337.5 || normalizedBearing < 22.5) {
-      return AppLocalizations.t('dir_north');
-    } else if (normalizedBearing >= 22.5 && normalizedBearing < 67.5) {
-      return AppLocalizations.t('dir_northeast');
-    } else if (normalizedBearing >= 67.5 && normalizedBearing < 112.5) {
-      return AppLocalizations.t('dir_east');
-    } else if (normalizedBearing >= 112.5 && normalizedBearing < 157.5) {
-      return AppLocalizations.t('dir_southeast');
-    } else if (normalizedBearing >= 157.5 && normalizedBearing < 202.5) {
-      return AppLocalizations.t('dir_south');
-    } else if (normalizedBearing >= 202.5 && normalizedBearing < 247.5) {
-      return AppLocalizations.t('dir_southwest');
-    } else if (normalizedBearing >= 247.5 && normalizedBearing < 292.5) {
-      return AppLocalizations.t('dir_west');
-    } else {
-      return AppLocalizations.t('dir_northwest');
     }
   }
 
   @override
   void dispose() {
-    _statusUpdateTimer?.cancel();
     _voiceTimer?.cancel();
     super.dispose();
   }
 
+  void _speakNavigationUpdate() {
+    if (!mounted) return;
+    final alertProvider = context.read<AlertProvider>();
+    final compassProvider = context.read<CompassProvider>();
+    
+    if (!compassProvider.isNavigating) return;
+    
+    // Directive 2: Waypoint Nav Logic
+    // We rely on the Engine's distance calculation
+    final distance = compassProvider.remainingDistance;
+    final direction = compassProvider.getDirectionName(); // Localized direction name
+    
+    if (_lastSpokenDistance != null && (distance - _lastSpokenDistance!).abs() < 50) return;
+    _lastSpokenDistance = distance;
+    
+    alertProvider.speakNavigation(distance, direction);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final shelterProvider = context.watch<ShelterProvider>();
-    final compassProvider = context.watch<CompassProvider>();
-    final locationProvider = context.watch<LocationProvider>();
-
-    // Directive 3: Determine Logic Text based on Region
-    final isJapan = shelterProvider.currentAppRegion == AppRegion.japan;
-    final logicText = isJapan
-        ? "🛣️ ROAD WIDTH PRIORITY (JAPAN)"
-        : "⚡ AVOID ELECTRIC RISK (THAILAND)";
-    final logicSubText = isJapan
-        ? "Selecting wide roads to avoid blockage."
-        : "Scanning for submerged power lines.";
-
     return Scaffold(
-      backgroundColor: _navyPrimary,
+      backgroundColor: _surfaceColor,
+      appBar: _buildAppBar(),
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header Area
-            Padding(
-              padding: const EdgeInsets.all(_standardPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildIconButton(
-                    icon: Icons.close,
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  Column(
-                    children: [
-                      const Text(
-                        "DISASTER NAV",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.5,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _orangeAccent.withOpacity(0.2),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: _orangeAccent, width: 1),
-                        ),
-                        child: Text(
-                          isJapan ? "EARTHQUAKE MODE" : "FLOOD MODE",
-                          style: const TextStyle(
-                            color: _orangeAccent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  _buildIconButton(
-                    icon: Icons.settings,
-                    onPressed: () {},
-                  ),
-                ],
+        child: Padding(
+          padding: _contentPadding, // Directive 1: Padding 24.0+
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 1. Logic & Status Indicator (Directive 3)
+              _buildLogicStatusBanner(),
+              
+              const SizedBox(height: 24),
+              
+              // 2. Main Compass & Navigation Info
+              Expanded(
+                child: _buildCompassSection(),
               ),
-            ),
-
-            // Main Compass Area
-            Expanded(
-              child: Center(
-                child: _buildCompassView(
-                  compassProvider,
-                  locationProvider,
-                  shelterProvider
-                ),
-              ),
-            ),
-
-            // Status & Logic Panel (Directive 1 & 3)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(_standardPadding),
-              decoration: const BoxDecoration(
-                color: _surfaceWhite,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(_borderRadius),
-                  topRight: Radius.circular(_borderRadius),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Logic Indicator
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: _navyPrimary.withOpacity(0.05),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: _navyPrimary.withOpacity(0.1)),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          isJapan ? Icons.add_road : Icons.electrical_services,
-                          color: _navyPrimary,
-                          size: 32,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                logicText,
-                                style: const TextStyle(
-                                  color: _navyPrimary,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 12,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                logicSubText,
-                                style: TextStyle(
-                                  color: _navyPrimary.withOpacity(0.7),
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  const SizedBox(height: _standardPadding),
-
-                  // Waypoint Status (Directive 2)
-                  _buildWaypointStatus(compassProvider),
-
-                  const SizedBox(height: _standardPadding),
-
-                  // Destination Buttons
-                  _buildDestinationButtons(),
-
-                  const SizedBox(height: 12),
-
-                  // Primary Action Button (Directive 1)
-                  SizedBox(
-                    width: double.infinity,
-                    height: _elementHeight,
-                    child: ElevatedButton(
-                      onPressed: () => _handleArrival(context, shelterProvider),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: _orangeAccent,
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(_borderRadius),
-                        ),
-                      ),
-                      child: const Text(
-                        "I HAVE ARRIVED / 到着",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+              
+              const SizedBox(height: 24),
+              
+              // 3. Action Buttons (Directive 1: Height 56, Radius 30)
+              _buildActionButtons(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        shape: BoxShape.circle,
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: _navyPrimary, // Directive 1: Navy
+      elevation: 0,
+      centerTitle: true,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: Colors.white),
+        onPressed: () => Navigator.pop(context),
       ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.white),
-        onPressed: onPressed,
+      title: const Text(
+        'GAPLESS NAV',
+        style: TextStyle(
+          color: Colors.white, 
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.5,
+        ),
+      ),
+      actions: [
+        Consumer<AlertProvider>(
+          builder: (context, alert, _) {
+            return IconButton(
+              icon: Icon(
+                alert.isVoiceGuidanceEnabled ? Icons.volume_up : Icons.volume_off,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                alert.toggleVoiceGuidance();
+                HapticService.selectionClick();
+              },
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  // Directive 3: LOGIC Display
+  Widget _buildLogicStatusBanner() {
+    return Consumer<ShelterProvider>(
+      builder: (context, shelter, _) {
+        final region = shelter.currentAppRegion;
+        final isJapan = region == AppRegion.japan;
+        
+        // Logic Description based on Directive 3
+        final String logicTitle = isJapan ? "ROAD WIDTH PRIORITY" : "AVOID ELECTRIC SHOCK";
+        final String logicDesc = isJapan 
+            ? "Routing avoids narrow alleys & block walls."
+            : "Routing avoids flood zones & power lines.";
+        final IconData logicIcon = isJapan ? Icons.landscape_rounded : Icons.bolt_rounded;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(_borderRadius),
+            border: Border.all(color: _navyPrimary.withOpacity(0.1), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: _navyPrimary.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: _orangeAccent.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(logicIcon, color: _orangeAccent, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      logicTitle,
+                      style: const TextStyle(
+                        color: _navyPrimary,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      logicDesc,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCompassSection() {
+    return Consumer3<CompassProvider, LocationProvider, ShelterProvider>(
+      builder: (context, compass, location, shelter, _) {
+        final userLoc = location.currentLocation;
+        final target = shelter.navTarget;
+        final isNavigating = compass.isNavigating;
+        
+        // Waypoint Logic (Directive 2)
+        // Accessing WaypointMagnetManager state implicitly via CompassProvider logic
+        // We display the "Next Waypoint" direction
+        
+        double? safeBearing;
+        if (isNavigating && compass.magnetResult != null) {
+          safeBearing = compass.magnetResult!.bearingToTarget;
+        } else if (target != null && userLoc != null) {
+          // Fallback to direct bearing
+          safeBearing = Geolocator.bearingBetween(
+            userLoc.latitude, userLoc.longitude,
+            target.lat, target.lng,
+          );
+        }
+
+        // Distance Display
+        String distanceText = "---";
+        if (isNavigating) {
+          final dist = compass.remainingDistance;
+          distanceText = dist < 1000 
+              ? "${dist.toStringAsFixed(0)} m" 
+              : "${(dist / 1000).toStringAsFixed(1)} km";
+        } else if (target != null && userLoc != null) {
+           final dist = shelter.getDistanceToTargetIfCached(target) ?? -1;
+           if (dist >= 0) {
+             distanceText = dist < 1000 
+                ? "${dist.toStringAsFixed(0)} m" 
+                : "${(dist / 1000).toStringAsFixed(1)} km";
+           } else {
+             distanceText = "CALC...";
+           }
+        }
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Background Circle (Navy)
+            Container(
+              width: 280,
+              height: 280,
+              decoration: BoxDecoration(
+                color: _navyPrimary,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: _navyPrimary.withOpacity(0.3),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+            ),
+            
+            // Smart Compass Widget (Orange Accent)
+            SmartCompass(
+              heading: compass.heading ?? 0.0,
+              safeBearing: safeBearing, // Waypoint bearing
+              magneticDeclination: 0.0, // Pre-corrected in Provider
+              size: 240,
+              safeThreshold: 25.0,
+              // Orange for danger/neutral, Green for Safe
+            ),
+            
+            // Distance Overlay (Center)
+            if (target != null)
+              Positioned(
+                bottom: 40,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    distanceText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
+
+            // Waypoint Progress (Directive 2)
+            if (isNavigating && compass.magnetResult != null)
+              Positioned(
+                top: 40,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: _orangeAccent,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    "WAYPOINT ${compass.magnetResult!.currentWaypointIndex + 1}/${compass.magnetResult!.totalWaypoints}",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              
+            // iOS Web Fallback Overlay
+            if (!compass.hasSensorData && !_dismissPermissionBanner && kIsWeb)
+              _buildWebPermissionOverlay(compass),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildWebPermissionOverlay(CompassProvider compass) {
+    return GestureDetector(
+      onTap: () async {
+        final result = await requestIOSCompassPermission();
+        if (result == 'granted' || result == 'not_supported') {
+          setState(() => _dismissPermissionBanner = true);
+          compass.stopListening();
+          compass.startListening();
+        }
+      },
+      child: Container(
+        width: 280,
+        height: 280,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.7),
+          shape: BoxShape.circle,
+        ),
+        child: const Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.touch_app, color: Colors.white, size: 40),
+              SizedBox(height: 8),
+              Text(
+                "TAP TO START",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCompassView(
-    CompassProvider compass,
-    LocationProvider location,
-    ShelterProvider shelter,
-  ) {
-    final target = shelter.navTarget;
-    final currentLocation = location.currentLocation;
-    final heading = compass.trueHeading ?? compass.heading ?? 0.0;
-
-    // Region sync
-    final region = shelter.currentRegion;
-    if (compass.currentGeoRegion.code != region) {
-      Future.microtask(() {
-        if (region.startsWith('th')) {
-          compass.setGeoRegion(GeoRegion.thSatun);
-        } else {
-          compass.setGeoRegion(GeoRegion.jpOsaki);
-        }
-      });
-    }
-
-    // Directive 2: Target Bearing (Waypoints)
-    double? targetBearing;
-    if (compass.isNavigating && compass.magnetResult != null) {
-      targetBearing = compass.magnetResult!.bearingToTarget;
-    } else if (target != null && currentLocation != null) {
-      targetBearing = Geolocator.bearingBetween(
-        currentLocation.latitude,
-        currentLocation.longitude,
-        target.lat,
-        target.lng,
-      );
-    }
-
-    // Danger bearings
-    List<double> hazards = [];
-    if (currentLocation != null) {
-      for (final point in shelter.hazardPoints) {
-        final lat = point['lat'] as double?;
-        final lng = point['lng'] as double?;
-        if (lat != null && lng != null) {
-          final bearing = Geolocator.bearingBetween(
-            currentLocation.latitude,
-            currentLocation.longitude,
-            lat,
-            lng,
-          );
-          hazards.add(bearing);
-        }
-      }
-
-      for (final polygon in shelter.hazardPolygons) {
-        if (polygon.isNotEmpty) {
-          double avgLat = 0, avgLng = 0;
-          for (final point in polygon) {
-            avgLat += point.latitude;
-            avgLng += point.longitude;
-          }
-          avgLat /= polygon.length;
-          avgLng /= polygon.length;
-
-          final distanceToHazard = Geolocator.distanceBetween(
-            currentLocation.latitude,
-            currentLocation.longitude,
-            avgLat,
-            avgLng,
-          );
-
-          if (distanceToHazard < 1000.0) {
-            final bearing = Geolocator.bearingBetween(
-              currentLocation.latitude,
-              currentLocation.longitude,
-              avgLat,
-              avgLng,
-            );
-            hazards.add(bearing);
-          }
-        }
-      }
-    }
-
-    return Stack(
-      alignment: Alignment.center,
+  Widget _buildActionButtons() {
+    return Column(
       children: [
-        // Pulsing Ring
-        Container(
-          width: 300,
-          height: 300,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white.withOpacity(0.1),
-              width: 1,
+        // Arrival Button (Directive 1: Height 56, Radius 30)
+        SizedBox(
+          width: double.infinity,
+          height: _buttonHeight,
+          child: ElevatedButton(
+            onPressed: () => _handleArrival(),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _orangeAccent, // Orange
+              foregroundColor: Colors.white,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(_borderRadius),
+              ),
+            ),
+            child: const Text(
+              "I HAVE ARRIVED",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.0,
+              ),
             ),
           ),
         ),
         
-        // Smart Compass
-        SmartCompass(
-          heading: heading,
-          safeBearing: targetBearing,
-          dangerBearings: hazards,
-          magneticDeclination: 0.0,
-          size: 260,
-          safeThreshold: 30.0,
-          dangerThreshold: 15.0,
-        ),
-
-        // iOS Web Permission Overlay
-        if (!compass.hasSensorData && !_dismissPermissionBanner)
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.6),
-              child: Center(
-                child: GestureDetector(
-                  onTap: () async {
-                    final result = await requestIOSCompassPermission();
-                    if (!mounted) return;
-
-                    if (result == 'granted' || result == 'not_supported') {
-                      setState(() => _dismissPermissionBanner = true);
-                      compass.stopListening();
-                      compass.startListening();
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        if (mounted) _tryStartAutoNavigation();
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Compass permission $result. Please enable in settings.'),
-                          backgroundColor: _orangeAccent,
-                        ),
-                      );
-                    }
+        const SizedBox(height: 16),
+        
+        // Cancel / Manual Target
+        Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: _buttonHeight,
+                child: OutlinedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: _navyPrimary,
+                    side: const BorderSide(color: _navyPrimary, width: 2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(_borderRadius),
+                    ),
+                  ),
+                  child: const Text(
+                    "CANCEL",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: SizedBox(
+                height: _buttonHeight,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    // Re-scan or Change Target
+                    // For demo, just show snackbar
+                    HapticService.selectionClick();
+                    context.read<ShelterProvider>().loadShelters(); // Reload
                   },
-                  child: Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: _orangeAccent,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _orangeAccent.withOpacity(0.4),
-                          blurRadius: 20,
-                          spreadRadius: 4,
-                        )
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.compass_calibration, color: Colors.white, size: 40),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Tap to Start Compass',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Required for iOS Web',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                  icon: const Icon(Icons.refresh),
+                  label: const Text("RESCAN"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _navyPrimary, // Navy
+                    foregroundColor: Colors.white,
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(_borderRadius),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildWaypointStatus(CompassProvider compass) {
-    if (!compass.isNavigating || compass.magnetResult == null) {
-      return const SizedBox(
-        height: 60,
-        child: Center(
-          child: Text(
-            "WAITING FOR DESTINATION...",
-            style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold),
-          ),
-        ),
-      );
-    }
-
-    final result = compass.magnetResult!;
-    final dist = result.distanceToTarget;
-    final total = result.totalWaypoints;
-    final current = result.currentWaypointIndex + 1;
-
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "NEXT WAYPOINT",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 10,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                dist < 1000
-                    ? "${dist.toStringAsFixed(0)}m"
-                    : "${(dist / 1000).toStringAsFixed(2)}km",
-                style: const TextStyle(
-                  color: _navyPrimary,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: _orangeAccent,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            children: [
-              const Text(
-                "WP PROGRESS",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                "$current / $total",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
+          ],
         ),
       ],
     );
   }
 
-  Widget _buildDestinationButtons() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          _buildDestinationChip(
-            icon: Icons.water_drop_rounded,
-            label: _getLocalizedLabel('water'),
-            type: 'water',
-          ),
-          const SizedBox(width: 10),
-          _buildDestinationChip(
-            icon: Icons.local_hospital_rounded,
-            label: _getLocalizedLabel('hospital'),
-            type: 'hospital',
-          ),
-          const SizedBox(width: 10),
-          _buildDestinationChip(
-            icon: Icons.store_rounded,
-            label: _getLocalizedLabel('convenience'),
-            type: 'convenience',
-          ),
-          const SizedBox(width: 10),
-          _buildDestinationChip(
-            icon: Icons.home_rounded,
-            label: _getLocalizedLabel('shelter'),
-            type: 'shelter',
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _getLocalizedLabel(String type) {
-    return AppLocalizations.translateShelterType(type);
-  }
-
-  Widget _buildDestinationChip({
-    required IconData icon,
-    required String label,
-    required String type,
-  }) {
-    return GestureDetector(
-      onTap: () => _findAndStartNavigation(type, typeLabel: label),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: _navyPrimary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: _navyPrimary.withOpacity(0.3),
-                width: 0.5,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: _navyPrimary, size: 18),
-                const SizedBox(width: 8),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    color: _navyPrimary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _findAndStartNavigation(String type, {String? typeLabel}) async {
-    final shelterProvider = context.read<ShelterProvider>();
-    final locationProvider = context.read<LocationProvider>();
-    final userLoc = locationProvider.currentLocation;
-
-    if (userLoc == null) {
-      _showSnackBar(AppLocalizations.t('bot_loc_error'), _orangeAccent);
-      return;
-    }
-
-    // Flash Cache Check
-    if (shelterProvider.startCachedNavigation(type)) {
-      final nearest = shelterProvider.navTarget!;
-      final safeRoute = shelterProvider.getSafestRouteAsLatLng();
-
-      if (safeRoute.isNotEmpty) {
-        final compassProvider = context.read<CompassProvider>();
-        compassProvider.startRouteNavigation(safeRoute);
-
-        if (kDebugMode) print('⚡ Instant Start from Cache: $type -> ${nearest.name}');
-
-        HapticService.destinationSet();
-        final alertProvider = context.read<AlertProvider>();
-        final tagLabel = typeLabel ?? AppLocalizations.translateShelterType(type);
-        alertProvider.speakDestinationSet(tagLabel);
-        _lastSpokenDistance = null;
-
-        _showSnackBar(
-          AppLocalizations.t('bot_dest_set').replaceAll('@name', nearest.name),
-          Colors.green,
-        );
-        return;
-      }
-    }
-
-    // Type Mapping
-    List<String> targetTypes = [type];
-    if (type == 'shelter') {
-      targetTypes = ['shelter', 'school', 'gov', 'community_centre', 'temple'];
-    } else if (type == 'hospital') {
-      targetTypes = ['hospital'];
-    } else if (type == 'convenience') {
-      targetTypes = ['convenience', 'store'];
-    } else if (type == 'water') {
-      targetTypes = ['water', 'convenience', 'store'];
-    }
-
-    Shelter? nearest;
-
-    if (type == 'water' && (shelterProvider.currentRegion.toLowerCase().contains('th') || shelterProvider.currentRegion.toLowerCase().contains('satun'))) {
-      final waterStation = shelterProvider.getNearestSafeWaterStation(LatLng(userLoc.latitude, userLoc.longitude));
-      if (waterStation != null) {
-        nearest = Shelter(
-          id: 'water_${waterStation.lat}_${waterStation.lng}',
-          name: waterStation.getDisplayName(AppLocalizations.lang),
-          lat: waterStation.lat,
-          lng: waterStation.lng,
-          type: 'water_station',
-          verified: true,
-          region: 'Thailand',
-        );
-      }
-    }
-
-    if (nearest == null) {
-      nearest = shelterProvider.getNearestShelter(
-        LatLng(userLoc.latitude, userLoc.longitude),
-        includeTypes: targetTypes,
-      );
-    }
-
-    if (nearest != null) {
-      if (nearest.name.toLowerCase() == 'unknown' || nearest.name == '不明') {
-        _showSnackBar(AppLocalizations.t('msg_unknown_location'), _orangeAccent);
-        return;
-      }
-
-      final isInHazard = shelterProvider.isShelterInHazardZone(nearest);
-      if (isInHazard) {
-        final safeShelter = shelterProvider.getNearestSafeShelter(
-          LatLng(userLoc.latitude, userLoc.longitude),
-        );
-        if (safeShelter != null) {
-          nearest = safeShelter;
-          _showSnackBar(
-            AppLocalizations.t('msg_safer_location').replaceAll('@name', nearest.name),
-            _orangeAccent,
-          );
-        }
-      }
-
-      final currentLatLng = LatLng(userLoc.latitude, userLoc.longitude);
-      await shelterProvider.startNavigation(nearest, currentLocation: currentLatLng);
-
-      final compassProvider = context.read<CompassProvider>();
-      final safeRoute = shelterProvider.getSafestRouteAsLatLng();
-
-      if (safeRoute.isNotEmpty) {
-        compassProvider.startRouteNavigation(safeRoute);
-        if (kDebugMode) {
-          print('🧭 安全ルートでコンパスナビゲーション開始: ${safeRoute.length}ポイント');
-        }
-      } else {
-        if (kDebugMode) {
-          print('⚠️ 安全ルートが見つかりませんでした');
-        }
-      }
-
-      HapticService.destinationSet();
-      final alertProvider = context.read<AlertProvider>();
-      final tagLabel = typeLabel ?? AppLocalizations.translateShelterType(type);
-      alertProvider.speakDestinationSet(tagLabel);
-      _lastSpokenDistance = null;
-
-      _showSnackBar(
-        AppLocalizations.t('bot_dest_set').replaceAll('@name', nearest.name),
-        Colors.green,
-      );
-    } else {
-      _showSnackBar(AppLocalizations.t('msg_no_facility_nearby'), Colors.grey);
-    }
-  }
-
-  void _showSnackBar(String message, Color backgroundColor) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: backgroundColor,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        margin: const EdgeInsets.all(16),
-      ),
-    );
-  }
-
-  void _handleArrival(BuildContext context, ShelterProvider provider) {
+  void _handleArrival() {
+    HapticService.arrivedAtDestination();
+    
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: _navyPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-        title: Text(
-          AppLocalizations.t('dialog_safety_title'),
-          style: const TextStyle(color: Colors.white),
-        ),
-        content: Text(
-          AppLocalizations.t('dialog_safety_desc'),
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.8),
-          ),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        title: const Text("Confirm Arrival"),
+        content: const Text("Have you reached the safe zone? Navigation will end."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              AppLocalizations.t('btn_cancel'),
-              style: const TextStyle(
-                color: _orangeAccent,
-              ),
-            ),
+            child: const Text("NO", style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: () {
-              HapticService.arrivedAtDestination();
               Navigator.pop(ctx);
-              provider.setSafeInShelter(true);
-              Navigator.pushReplacementNamed(context, '/dashboard');
+              context.read<ShelterProvider>().setSafeInShelter(true);
+              Navigator.pushReplacement(
+                context, 
+                MaterialPageRoute(builder: (_) => const ShelterDashboardScreen())
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: _orangeAccent,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: Text(
-              AppLocalizations.t('btn_yes_arrived'),
-              style: const TextStyle(color: Colors.white),
-            ),
+            child: const Text("YES, I'M SAFE", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
