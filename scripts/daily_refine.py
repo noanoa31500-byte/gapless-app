@@ -79,7 +79,7 @@ def main():
     refine_prompt = f"REWRITE the following file COMPLETELY based on: {diagnosis}\n\nFile: {target_file}\nContent:\n{current_content}\n\nOutput ONLY the full source code in a code block. No conversation."
     
     msg = claude.messages.create(
-    model="claude-3-5-sonnet-latest", # ← 「最新版」という指定に変えます
+    model="claude-sonnet-4-5-20250929", # ← 「最新版」という指定に変えます
     max_tokens=8192,
     messages=[{"role": "user", "content": refine_prompt}]
 )
