@@ -78,7 +78,7 @@ def main():
     refine_prompt = f"REWRITE the following file COMPLETELY based on: {diagnosis}\n\nFile: {target_file}\nContent:\n{current_content}\n\nOutput ONLY the full source code in a code block. No conversation."
     
     msg = claude.messages.create(
-        model="claude-3-5-sonnet-20241022",
+        model="claude-4-5-sonnet-20241022",
         max_tokens=8192,
         messages=[{"role": "user", "content": refine_prompt}]
     )
@@ -107,6 +107,9 @@ def main():
         print("✅ PR created successfully!")
     except:
         print("ℹ️ PR already exists.")
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()
