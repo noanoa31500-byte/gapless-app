@@ -1,12 +1,9 @@
 name: Daily AI Code Refinement
 
 on:
-  # ⏰ スケジュール実行: 2時間おき (0時, 2時, 4時...)
   schedule:
-    - cron: '0 */2 * * *'
-  
-  # 👆 手動実行ボタンも有効化 (テスト用)
-  workflow_dispatch:
+    - cron: '0 */2 * * *'  # 👈 これが「2時間おき」の呪文です
+  workflow_dispatch:       # 👈 これがあると手動ボタンが消えません
 
 jobs:
   refine-code:
