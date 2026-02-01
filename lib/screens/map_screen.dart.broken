@@ -1,0 +1,380 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import '../providers/shelter_provider.dart';
+import '../models/shelter.dart';
+import '../utils/localization.dart';
+import '../providers/location_provider.dart';
+
+class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  final MapController _mapController = MapController();
+  bool _compassMode = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // 初期データを読み込む
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<ShelterProvider>();
+      provider.loadShelters();
+      provider.loadHazardPolygons();
+      
+      // 現在位置または拠点がある場合、そこを中心に表示
+      final locationProvider = context.read<LocationProvider>();
+      if (locationProvider.currentLocation != null) {
+        _mapController.move(
+          locationProvider.currentLocation!,
+          13.0,
+        );
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('🗺️ Map'),
+        actions: [
+          // コンパスモードボタン
+          IconButton(
+            onPressed: () {
+              setState(() {
+                _compassMode = !_compassMode;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    _compassMode ? 'コンパスモード: ON' : 'コンパスモード: OFF',
+                  ),
+                  duration: const Duration(seconds: 1),
+                ),
+              );
+            },
+            icon: Icon(
+              Icons.explore,
+              color: _compassMode ? Colors.yellow : Colors.white,
+            ),
+          ),
+        ],
+      ),
+      body: Consumer<ShelterProvider>(
+        builder: (context, provider, child) {
+          // ローディング中
+          if (provider.isLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          // 地図の中心座標を取得（LocationProviderから優先）
+          final locationProvider = context.watch<LocationProvider>();
+          LatLng initialCenter;
+          
+          if (locationProvider.currentLocation != null) {
+            initialCenter = locationProvider.currentLocation!;
+          } else {
+            final center = provider.getCenter();
+            initialCenter = LatLng(center['lat']!, center['lng']!);
+          }
+            );
+          }
+
+          // 地図の中心座標を取得
+          final center = provider.getCenter();
+
+          return Stack(
+            children: [
+              // FlutterMap
+              FlutterMap(
+                mapController: _mapController,
+                options: MapOptions(
+                  initialCenter: initialCenter,
+                  initialZoom: 13.0,
+                  minZoom: 10.0,
+                  maxZoom: 18.0,
+                ),
+                children: [
+                  // 1. タイルレイヤー (OpenStreetMap)
+                  TileLayer(
+                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.example.safe_japan',
+                    maxZoom: 19,
+                  ),
+                  // 2. ポリゴンレイヤー (ハザードマップ)
+                  PolygonLayer(
+                    polygons: provider.hazardPolygons.map((polygon) {
+                      return Polygon(
+                        points: polygon,
+                        color: Colors.red.withValues(alpha: 0.3),
+                        borderColor: Colors.red,
+                        borderStrokeWidth: 2.0,
+                        isFilled: true,
+                      );
+                    }).toList(),
+                  ),
+                  // 3. マーカーレイヤー (避難所)
+                  MarkerLayer(
+                    markers: provider.shelters.map((shelter) {
+                      return Marker(
+                        point: LatLng(shelter.lat, shelter.lng),
+                        width: 60,
+                        height: 70,
+                        child: GestureDetector(
+                          onTap: () => _showShelterDetails(context, shelter),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // 緑のピンアイコン
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: shelter.verified
+                                      ? const Color(0xFF43A047)
+                                      : Colors.orange,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Text(
+                                  AppLocalizations.translateShelterType(shelter.type),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              // ピンの先端
+                              Icon(
+                                Icons.location_on,
+                                color: shelter.verified
+                                    ? const Color(0xFF43A047)
+                                    : Colors.orange,
+                                size: 30,
+                                shadows: const [
+                                  Shadow(
+                                    color: Colors.black54,
+                                    blurRadius: 4,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              
+              // 避難所数インジケーター
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        color: Color(0xFFE53935),
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${provider.shelters.length} 避難所',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  /// 避難所詳細をModalBottomSheetで表示
+  void _showShelterDetails(BuildContext context, Shelter shelter) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ハンドル
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              
+              // タイトル
+              Row(
+                children: [
+                  Icon(
+                    shelter.verified ? Icons.verified : Icons.warning,
+                    color: shelter.verified ? Colors.green : Colors.orange,
+                    size: 32,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      shelter.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // タイプ
+              _buildInfoRow(
+                Icons.category,
+                'タイプ',
+                _getTypeLabel(shelter.type),
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // 座標
+              _buildInfoRow(
+                Icons.map,
+                '座標',
+                '${shelter.lat.toStringAsFixed(5)}, ${shelter.lng.toStringAsFixed(5)}',
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // 検証済みステータス
+              _buildInfoRow(
+                Icons.check_circle,
+                'ステータス',
+                shelter.verified ? '公式データ' : '未確認データ',
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // ナビゲーションボタン
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('ナビゲーション機能は開発中です'),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.navigation),
+                  label: const Text('ここへ案内'),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// 情報行を構築
+  Widget _buildInfoRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: Colors.grey[600]),
+        const SizedBox(width: 12),
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[700],
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// タイプラベルを取得
+  String _getTypeLabel(String type) {
+    const typeLabels = {
+      'school': '学校',
+      'hospital': '病院',
+      'gov': '政府施設',
+      'shelter': '避難所',
+      'temple': '寺院',
+    };
+    return typeLabels[type] ?? type;
+  }
+}

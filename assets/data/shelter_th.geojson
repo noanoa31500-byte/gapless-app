@@ -1,0 +1,2155 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-26T14:17:55Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475560491",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านโคกประดู่",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0666552,
+          6.7420935
+        ]
+      },
+      "id": "way/475560491"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475581661",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านใหม่",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0242969,
+          6.779755
+        ]
+      },
+      "id": "way/475581661"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475581662",
+        "amenity": "school",
+        "name": "บ้านทุ่ง",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0511485,
+          6.7324332
+        ]
+      },
+      "id": "way/475581662"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475581663",
+        "amenity": "school",
+        "name": "บ้านปาเต๊ะ",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9598926,
+          6.7328026
+        ]
+      },
+      "id": "way/475581663"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475634014",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านเกตรี",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0941758,
+          6.6971242
+        ]
+      },
+      "id": "way/475634014"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475721093",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านกาลูบี",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0526953,
+          6.7055088
+        ]
+      },
+      "id": "way/475721093"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475761153",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านนาแค",
+        "name:en": "Ban Na Kae",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1153158,
+          6.6491344
+        ]
+      },
+      "id": "way/475761153"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475817402",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านเขาจีน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0893117,
+          6.6381208
+        ]
+      },
+      "id": "way/475817402"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475817404",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านท่าหิน",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0270438,
+          6.6267744
+        ]
+      },
+      "id": "way/475817404"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475817405",
+        "amenity": "school",
+        "name": "บ้านไทรงาม",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0510156,
+          6.6188709
+        ]
+      },
+      "id": "way/475817405"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475836128",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านนาลาน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0465315,
+          6.6326555
+        ]
+      },
+      "id": "way/475836128"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/475843666",
+        "amenity": "school",
+        "name": "บ้านควนขัน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0564069,
+          6.6377798
+        ]
+      },
+      "id": "way/475843666"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/476012642",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านฉลุง",
+        "name:en": "Ban Chalung School",
+        "name:th": "โรงเรียนบ้านฉลุง",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9912453,
+          6.659616
+        ]
+      },
+      "id": "way/476012642"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/476012643",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านกาลันยีตัน",
+        "name:en": "Ban Ka Lan Yi Tan School",
+        "name:th": "โรงเรียนบ้านกาลันยีตัน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9979873,
+          6.6923444
+        ]
+      },
+      "id": "way/476012643"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/476013377",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านบันนังปุเลา",
+        "name:en": "Ban Bannang Pu Lao School",
+        "name:th": "โรงเรียนบ้านบันนังปุเลา",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9345412,
+          6.6990047
+        ]
+      },
+      "id": "way/476013377"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477077077",
+        "amenity": "school",
+        "name": "บ้านทุ่งนุ้ย มิตรภาพที่ 49",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1136412,
+          6.8590958
+        ]
+      },
+      "id": "way/477077077"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477109761",
+        "amenity": "school",
+        "name": "บ้านทุ่งตำเสา",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.099263,
+          6.8328306
+        ]
+      },
+      "id": "way/477109761"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477109763",
+        "amenity": "school",
+        "name": "บ้านน้ำร้อน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1281179,
+          6.8490069
+        ]
+      },
+      "id": "way/477109763"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477109766",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านค่ายรวมมิตร",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1283962,
+          6.9051087
+        ]
+      },
+      "id": "way/477109766"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477150756",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านโตนปาหนัน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1453437,
+          6.8563065
+        ]
+      },
+      "id": "way/477150756"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477150757",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านน้ำหรา",
+        "name:en": "Ban Nam Ra",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0920239,
+          6.8989895
+        ]
+      },
+      "id": "way/477150757"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477150758",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านหัวกาหมิง",
+        "name:en": "Ban Hua Ka Ming",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1221403,
+          6.836923
+        ]
+      },
+      "id": "way/477150758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477217818",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านควนล่อน ",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0119484,
+          6.8420671
+        ]
+      },
+      "id": "way/477217818"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477226668",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านห้วยน้ำดำ",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0608448,
+          6.8488914
+        ]
+      },
+      "id": "way/477226668"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477394020",
+        "amenity": "school",
+        "name": "บ้านย่านซื่อ มิตรภาพ 147",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0675478,
+          6.7558658
+        ]
+      },
+      "id": "way/477394020"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477398323",
+        "amenity": "school",
+        "name": "บ้านปันจอร์",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.069097,
+          6.7834103
+        ]
+      },
+      "id": "way/477398323"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477398324",
+        "amenity": "school",
+        "name": "บ้านบูเกตยามู",
+        "name:en": "Ban Bu Ket Yamu",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.113429,
+          6.8046982
+        ]
+      },
+      "id": "way/477398324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477398326",
+        "amenity": "school",
+        "name": "บ้านดูสน",
+        "name:en": "Ban Du Son",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0948395,
+          6.809136
+        ]
+      },
+      "id": "way/477398326"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477407869",
+        "amenity": "school",
+        "name": "บ้านควนสตอ",
+        "name:en": "Ban Kuan Sa To School",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0893503,
+          6.7803296
+        ]
+      },
+      "id": "way/477407869"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477410360",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านทุ่งพัฒนา",
+        "name:en": "Ban Tung Pa Ta Na School",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.117843,
+          6.7895199
+        ]
+      },
+      "id": "way/477410360"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477410361",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านกุบังปะโหลด",
+        "name:en": "Ban Ku Bang Pra Lot ",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0963273,
+          6.7479299
+        ]
+      },
+      "id": "way/477410361"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477417773",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านทางงอ",
+        "name:en": "Ban Tang Ngo",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.108728,
+          6.7704803
+        ]
+      },
+      "id": "way/477417773"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477435546",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านทุ่งมะปรัง",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1341569,
+          6.7903581
+        ]
+      },
+      "id": "way/477435546"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477435548",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านสายควน",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9541895,
+          6.7741939
+        ]
+      },
+      "id": "way/477435548"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477435550",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านท่าแพ",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9489417,
+          6.7946608
+        ]
+      },
+      "id": "way/477435550"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477440358",
+        "amenity": "school",
+        "name": "บ้านท่าน้ำเค็มใต้",
+        "name:en": "Ban Tha Nam Kem Tai School",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9804502,
+          6.7815341
+        ]
+      },
+      "id": "way/477440358"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477441550",
+        "amenity": "school",
+        "name": "บ้านปลักหว้า",
+        "name:en": "Ban Plak Wa School",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9604695,
+          6.8103949
+        ]
+      },
+      "id": "way/477441550"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477482395",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านนาแก้ว",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9726998,
+          6.8053936
+        ]
+      },
+      "id": "way/477482395"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477600277",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านวังปริง",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9429,
+          6.8105347
+        ]
+      },
+      "id": "way/477600277"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/477631097",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านทุ่งริ้น",
+        "source": "https://data.go.th",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9197214,
+          6.7472377
+        ]
+      },
+      "id": "way/477631097"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/669269099",
+        "amenity": "place_of_worship",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.205849,
+          6.6379493
+        ]
+      },
+      "id": "way/669269099"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/689240363",
+        "amenity": "place_of_worship",
+        "name": "Masjid Islam Samakkhi",
+        "name:th": "มัสยิดอิสลามสามัคคี",
+        "religion": "muslim",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0281891,
+          6.8244895
+        ]
+      },
+      "id": "way/689240363"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1010918909",
+        "amenity": "place_of_worship",
+        "building": "yes",
+        "name": "ห้องละหมาด",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0659149,
+          6.6252822
+        ]
+      },
+      "id": "way/1010918909"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1013763136",
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "ศาลากลางจังหวัดสตูล",
+        "name:en": "Satun City Hall",
+        "townhall:type": "city",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0670589,
+          6.6239083
+        ]
+      },
+      "id": "way/1013763136"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1013763138",
+        "amenity": "townhall",
+        "building": "yes",
+        "name": "หอประชุมศาลากลางจังหวัดสตูล",
+        "townhall:type": "city",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0670119,
+          6.6244797
+        ]
+      },
+      "id": "way/1013763138"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1013763139",
+        "amenity": "townhall",
+        "building": "yes",
+        "townhall:type": "city",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.066793,
+          6.6239509
+        ]
+      },
+      "id": "way/1013763139"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1016504499",
+        "addr:housenumber": "318",
+        "addr:postcode": "91000",
+        "amenity": "school",
+        "name": "โรงเรียนสตูลวิทยา",
+        "name:en": "Satun Wittaya School",
+        "name:th": "โรงเรียนสตูลวิทยา",
+        "website": "https://www.stw.ac.th/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0810968,
+          6.6516618
+        ]
+      },
+      "id": "way/1016504499"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1017891409",
+        "amenity": "school",
+        "name": "พิมานพิทยาสรรค์",
+        "name:en": "Phiman Pittayasan School",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0668524,
+          6.6255076
+        ]
+      },
+      "id": "way/1017891409"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1022907146",
+        "amenity": "community_centre",
+        "building": "yes",
+        "name": "ลานวัฒนธรรม",
+        "name:en": "Cultural space",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0659219,
+          6.6172256
+        ]
+      },
+      "id": "way/1022907146"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1187780899",
+        "amenity": "place_of_worship",
+        "religion": "muslim",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1869501,
+          6.6789182
+        ]
+      },
+      "id": "way/1187780899"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1201753607",
+        "amenity": "school",
+        "grades": "7-12",
+        "name": "โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย สตูล",
+        "name:en": "Princess Chulabhorn Science High School Satun",
+        "website": "https://pccst.ac.th/",
+        "wikidata": "Q13026939",
+        "wikipedia": "th:โรงเรียนวิทยาศาสตร์จุฬาภรณราชวิทยาลัย สตูล",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0790415,
+          6.7374814
+        ]
+      },
+      "id": "way/1201753607"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1290615819",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านท่าจีน",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1008716,
+          6.673385
+        ]
+      },
+      "id": "way/1290615819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1456796066",
+        "addr:place": "Batu 15",
+        "addr:postcode": "02200",
+        "amenity": "place_of_worship",
+        "denomination": "sunni",
+        "name": "Masjid Jabal Al-A'ala",
+        "name:ms-Arab": "مسجد جبل الاعلى",
+        "religion": "muslim",
+        "source_ref": "https://www.bing.com/maps?cp=6.632329~100.209719&lvl=17&dir=254.169&style=x&v=2&sV=1",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2098387,
+          6.6327435
+        ]
+      },
+      "id": "way/1456796066"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1456796471",
+        "amenity": "place_of_worship",
+        "religion": "muslim",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2267641,
+          6.6488299
+        ]
+      },
+      "id": "way/1456796471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664677939",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9621063,
+          6.7339021
+        ]
+      },
+      "id": "node/1664677939"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664678061",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9198111,
+          6.7402434
+        ]
+      },
+      "id": "node/1664678061"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664678799",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.952815,
+          6.7744711
+        ]
+      },
+      "id": "node/1664678799"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664679833",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9499925,
+          6.7873975
+        ]
+      },
+      "id": "node/1664679833"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664681905",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.959883,
+          6.8101986
+        ]
+      },
+      "id": "node/1664681905"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1664682352",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9273952,
+          6.8190371
+        ]
+      },
+      "id": "node/1664682352"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666143442",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0920495,
+          6.7180631
+        ]
+      },
+      "id": "node/1666143442"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666144239",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0982385,
+          6.7450599
+        ]
+      },
+      "id": "node/1666144239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666144466",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0774532,
+          6.7475812
+        ]
+      },
+      "id": "node/1666144466"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666144761",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0997004,
+          6.7527775
+        ]
+      },
+      "id": "node/1666144761"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666145850",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0807241,
+          6.7784862
+        ]
+      },
+      "id": "node/1666145850"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666146662",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0794477,
+          6.7896163
+        ]
+      },
+      "id": "node/1666146662"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666147027",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0876421,
+          6.7981726
+        ]
+      },
+      "id": "node/1666147027"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666147096",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0775775,
+          6.7995793
+        ]
+      },
+      "id": "node/1666147096"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666147347",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1126216,
+          6.8034997
+        ]
+      },
+      "id": "node/1666147347"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666149399",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1560443,
+          6.8433546
+        ]
+      },
+      "id": "node/1666149399"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666149615",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1372449,
+          6.8457148
+        ]
+      },
+      "id": "node/1666149615"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666149859",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1503841,
+          6.8565824
+        ]
+      },
+      "id": "node/1666149859"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666152561",
+        "amenity": "place_of_worship",
+        "name": "มัสยิดฮิดายาตุดดีนียะฮ์",
+        "name:en": "Hidayatuddeneyah mosque",
+        "religion": "muslim",
+        "wikidata": "Q5751668"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1038006,
+          6.8334555
+        ]
+      },
+      "id": "node/1666152561"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1666152563",
+        "amenity": "school",
+        "name": "โรงเรียนอรุณศาสน์วิทยามูลนธิ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0940232,
+          6.821623
+        ]
+      },
+      "id": "node/1666152563"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1668805662",
+        "amenity": "place_of_worship",
+        "religion": "christian"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2514201,
+          6.7252039
+        ]
+      },
+      "id": "node/1668805662"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1668806159",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2502093,
+          6.7362922
+        ]
+      },
+      "id": "node/1668806159"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1668808233",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2469751,
+          6.7776245
+        ]
+      },
+      "id": "node/1668808233"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3098316345",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0639225,
+          6.610971
+        ]
+      },
+      "id": "node/3098316345"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3098322157",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0731123,
+          6.609992
+        ]
+      },
+      "id": "node/3098322157"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3098337618",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0843999,
+          6.6547567
+        ]
+      },
+      "id": "node/3098337618"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3098338384",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0760976,
+          6.6344186
+        ]
+      },
+      "id": "node/3098338384"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3098351745",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.094876,
+          6.6560129
+        ]
+      },
+      "id": "node/3098351745"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104143974",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0648309,
+          6.7217916
+        ]
+      },
+      "id": "node/3104143974"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104146864",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0521532,
+          6.7055958
+        ]
+      },
+      "id": "node/3104146864"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104148603",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0561927,
+          6.7203964
+        ]
+      },
+      "id": "node/3104148603"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104194471",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.053459,
+          6.7084248
+        ]
+      },
+      "id": "node/3104194471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104194552",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0654725,
+          6.7014284
+        ]
+      },
+      "id": "node/3104194552"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104196832",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0693762,
+          6.6861066
+        ]
+      },
+      "id": "node/3104196832"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104196834",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0830463,
+          6.696422
+        ]
+      },
+      "id": "node/3104196834"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104197856",
+        "amenity": "place_of_worship",
+        "name": "Misbahuddin Mosque",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0655392,
+          6.7050553
+        ]
+      },
+      "id": "node/3104197856"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104199941",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0681322,
+          6.70573
+        ]
+      },
+      "id": "node/3104199941"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104201644",
+        "amenity": "place_of_worship",
+        "name": "Darul Jannah Mosque",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0665433,
+          6.7182344
+        ]
+      },
+      "id": "node/3104201644"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104206968",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0737215,
+          6.7371877
+        ]
+      },
+      "id": "node/3104206968"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104207246",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.068089,
+          6.7366394
+        ]
+      },
+      "id": "node/3104207246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104211377",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.085154,
+          6.7694863
+        ]
+      },
+      "id": "node/3104211377"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104219135",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0859778,
+          6.7924368
+        ]
+      },
+      "id": "node/3104219135"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104219367",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1302707,
+          6.8001873
+        ]
+      },
+      "id": "node/3104219367"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836642",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1142802,
+          6.8404667
+        ]
+      },
+      "id": "node/3116836642"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116886987",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.128627,
+          6.9009795
+        ]
+      },
+      "id": "node/3116886987"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887137",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1289076,
+          6.8324593
+        ]
+      },
+      "id": "node/3116887137"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3284312767",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.087892,
+          6.6423116
+        ]
+      },
+      "id": "node/3284312767"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3284312773",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0735998,
+          6.6676747
+        ]
+      },
+      "id": "node/3284312773"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3284312787",
+        "amenity": "place_of_worship",
+        "name": "วัดป่าวังพลับพลาชัย",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1056242,
+          6.7228687
+        ]
+      },
+      "id": "node/3284312787"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3318045995",
+        "amenity": "school",
+        "name": "Satun Technical College"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0633739,
+          6.6010805
+        ]
+      },
+      "id": "node/3318045995"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4524976402",
+        "amenity": "school",
+        "name:en": "Tadika Misbahuddin"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0652137,
+          6.7050571
+        ]
+      },
+      "id": "node/4524976402"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544231390",
+        "amenity": "place_of_worship",
+        "name:en": "Masjid Nuril Huda"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0994517,
+          6.8353361
+        ]
+      },
+      "id": "node/4544231390"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628613590",
+        "amenity": "place_of_worship",
+        "building": "mosque",
+        "denomination": "sunni",
+        "name": "Masjid Mambang",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0662446,
+          6.6150316
+        ]
+      },
+      "id": "node/4628613590"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4693172719",
+        "amenity": "school",
+        "name": "ไทยรัฐวิทยา ๔๐ ",
+        "source": "https://data.go.th"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0197701,
+          6.7589428
+        ]
+      },
+      "id": "node/4693172719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4693629414",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านทุ่งวิมาน",
+        "source": "https://data.go.th"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0553553,
+          6.6896685
+        ]
+      },
+      "id": "node/4693629414"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4694744713",
+        "amenity": "school",
+        "name": "บ้านวังพะเนียด"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1079686,
+          6.6941813
+        ]
+      },
+      "id": "node/4694744713"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4695618827",
+        "amenity": "school",
+        "name": "โรงเรียนบ้านเจ๊ะบิลัง",
+        "name:en": "Ban Che Bi Lang School",
+        "name:th": "โรงเรียนบ้านเจ๊ะบิลัง"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9810191,
+          6.6561538
+        ]
+      },
+      "id": "node/4695618827"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4696630819",
+        "amenity": "school",
+        "name": "บ้านหาดทรายยาว",
+        "source": "https://data.go.th"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9529826,
+          6.610734
+        ]
+      },
+      "id": "node/4696630819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4708367892",
+        "amenity": "school",
+        "name": "บ้านแป-ระเหนือ",
+        "source": "https://data.go.th"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9463317,
+          6.8488552
+        ]
+      },
+      "id": "node/4708367892"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5484112268",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0640956,
+          6.6220352
+        ]
+      },
+      "id": "node/5484112268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7316121088",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0311559,
+          6.8286182
+        ]
+      },
+      "id": "node/7316121088"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7316121268",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9900591,
+          6.8256408
+        ]
+      },
+      "id": "node/7316121268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7316122892",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1100263,
+          6.8584689
+        ]
+      },
+      "id": "node/7316122892"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7320063138",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0173211,
+          6.8753441
+        ]
+      },
+      "id": "node/7320063138"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7320063981",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9845284,
+          6.7760175
+        ]
+      },
+      "id": "node/7320063981"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7320063982",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9843541,
+          6.7758044
+        ]
+      },
+      "id": "node/7320063982"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7329970481",
+        "amenity": "school"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9987012,
+          6.7686796
+        ]
+      },
+      "id": "node/7329970481"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9326653062",
+        "amenity": "school",
+        "name": "พิมานพิทยาสรรค์",
+        "name:en": "Phiman Pittayasan",
+        "website": "https://www.phiman.ac.th"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.066843,
+          6.6256913
+        ]
+      },
+      "id": "node/9326653062"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9535076150",
+        "amenity": "place_of_worship",
+        "religion": "buddhist"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0707293,
+          6.8519951
+        ]
+      },
+      "id": "node/9535076150"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9535076456",
+        "amenity": "place_of_worship",
+        "religion": "muslim"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0716358,
+          6.7924189
+        ]
+      },
+      "id": "node/9535076456"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9892447332",
+        "addr:postcode": "02200",
+        "amenity": "school",
+        "isced:level": "1",
+        "name": "Sekolah Rendah Jenis Kebangsaan (C) Kong Hwa",
+        "name:ms": "Sekolah Rendah Jenis Kebangsaan (C) Kong Hwa",
+        "name:zh": "公华国民型华文学校",
+        "operator:type": "public",
+        "short_name": "SRJK (C) Kong Hwa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2085189,
+          6.6447032
+        ]
+      },
+      "id": "node/9892447332"
+    }
+  ]
+}

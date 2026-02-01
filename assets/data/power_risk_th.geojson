@@ -1,0 +1,1319 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-26T15:07:35Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/880043565",
+        "cables": "3",
+        "circuits": "1",
+        "frequency": "50",
+        "name": "หาดใหญ่1-สตูล",
+        "operator": "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย",
+        "operator:en": "Electricity Generating Authority of Thailand",
+        "operator:short": "กฟผ.",
+        "operator:th": "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย",
+        "operator:wikidata": "Q3050569",
+        "power": "line",
+        "voltage": "115000",
+        "wires": "single",
+        "@tainted": true
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            100.1183521,
+            6.9131057
+          ],
+          [
+            100.1187757,
+            6.9098967
+          ],
+          [
+            100.1192673,
+            6.9067385
+          ],
+          [
+            100.119704,
+            6.9038828
+          ],
+          [
+            100.1208054,
+            6.8961343
+          ],
+          [
+            100.1214666,
+            6.8931508
+          ],
+          [
+            100.1220976,
+            6.8901587
+          ],
+          [
+            100.1235273,
+            6.8837761
+          ],
+          [
+            100.1241905,
+            6.8805131
+          ],
+          [
+            100.1128734,
+            6.8665448
+          ],
+          [
+            100.1072323,
+            6.8435121
+          ],
+          [
+            100.1069925,
+            6.8404
+          ],
+          [
+            100.1066828,
+            6.8371979
+          ],
+          [
+            100.1063921,
+            6.8340416
+          ],
+          [
+            100.1058485,
+            6.8321037
+          ],
+          [
+            100.1055149,
+            6.8246277
+          ],
+          [
+            100.1052837,
+            6.8214145
+          ],
+          [
+            100.105011,
+            6.8181814
+          ],
+          [
+            100.104675,
+            6.8149483
+          ],
+          [
+            100.1029777,
+            6.812259
+          ],
+          [
+            100.1014743,
+            6.8099102
+          ],
+          [
+            100.0996256,
+            6.8068238
+          ],
+          [
+            100.0968189,
+            6.8052999
+          ],
+          [
+            100.0954703,
+            6.8043522
+          ],
+          [
+            100.0930803,
+            6.8028162
+          ],
+          [
+            100.0923016,
+            6.7998635
+          ],
+          [
+            100.0907373,
+            6.79387
+          ],
+          [
+            100.0898157,
+            6.7905054
+          ],
+          [
+            100.0881834,
+            6.7844344
+          ],
+          [
+            100.0860863,
+            6.7765698
+          ],
+          [
+            100.0847107,
+            6.773681
+          ],
+          [
+            100.0837309,
+            6.7717749
+          ],
+          [
+            100.0827265,
+            6.7696729
+          ],
+          [
+            100.0814694,
+            6.7670815
+          ],
+          [
+            100.0801939,
+            6.7644227
+          ],
+          [
+            100.078755,
+            6.7615895
+          ],
+          [
+            100.0790967,
+            6.7587676
+          ],
+          [
+            100.0795268,
+            6.7559248
+          ],
+          [
+            100.0799211,
+            6.7530826
+          ],
+          [
+            100.0802911,
+            6.7502969
+          ],
+          [
+            100.0798566,
+            6.7472984
+          ],
+          [
+            100.0794135,
+            6.7442623
+          ],
+          [
+            100.0789582,
+            6.7411859
+          ],
+          [
+            100.0785028,
+            6.7380327
+          ],
+          [
+            100.0781288,
+            6.7351257
+          ],
+          [
+            100.0776247,
+            6.7322067
+          ],
+          [
+            100.0772303,
+            6.7291221
+          ],
+          [
+            100.0767994,
+            6.7261061
+          ],
+          [
+            100.0763766,
+            6.723086
+          ],
+          [
+            100.0759172,
+            6.7200417
+          ],
+          [
+            100.0755025,
+            6.7169893
+          ],
+          [
+            100.0750309,
+            6.7139854
+          ],
+          [
+            100.0746122,
+            6.7109451
+          ],
+          [
+            100.0747619,
+            6.7076597
+          ],
+          [
+            100.0748805,
+            6.7050582
+          ],
+          [
+            100.0749862,
+            6.7022278
+          ],
+          [
+            100.0751265,
+            6.699266
+          ],
+          [
+            100.0752789,
+            6.6960501
+          ],
+          [
+            100.0754375,
+            6.6931187
+          ],
+          [
+            100.0755716,
+            6.6898844
+          ],
+          [
+            100.0737828,
+            6.688019
+          ],
+          [
+            100.0717257,
+            6.6859718
+          ],
+          [
+            100.0709614,
+            6.6858264
+          ]
+        ]
+      },
+      "id": "way/880043565"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/880043565",
+        "cables": "3",
+        "circuits": "1",
+        "frequency": "50",
+        "name": "หาดใหญ่1-สตูล",
+        "operator": "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย",
+        "operator:en": "Electricity Generating Authority of Thailand",
+        "operator:short": "กฟผ.",
+        "operator:th": "การไฟฟ้าฝ่ายผลิตแห่งประเทศไทย",
+        "operator:wikidata": "Q3050569",
+        "power": "line",
+        "voltage": "115000",
+        "wires": "single",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.2461967,
+          6.8654272
+        ]
+      },
+      "id": "way/880043565"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116762064",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1214666,
+          6.8931508
+        ]
+      },
+      "id": "node/3116762064"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836338",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0881834,
+          6.7844344
+        ]
+      },
+      "id": "node/3116836338"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836339",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0898157,
+          6.7905054
+        ]
+      },
+      "id": "node/3116836339"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836340",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0907373,
+          6.79387
+        ]
+      },
+      "id": "node/3116836340"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836341",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0923016,
+          6.7998635
+        ]
+      },
+      "id": "node/3116836341"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836440",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0860863,
+          6.7765698
+        ]
+      },
+      "id": "node/3116836440"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836441",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0930803,
+          6.8028162
+        ]
+      },
+      "id": "node/3116836441"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836442",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0954703,
+          6.8043522
+        ]
+      },
+      "id": "node/3116836442"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836443",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0968189,
+          6.8052999
+        ]
+      },
+      "id": "node/3116836443"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836444",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0996256,
+          6.8068238
+        ]
+      },
+      "id": "node/3116836444"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836445",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1014743,
+          6.8099102
+        ]
+      },
+      "id": "node/3116836445"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836450",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1029777,
+          6.812259
+        ]
+      },
+      "id": "node/3116836450"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836639",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.105011,
+          6.8181814
+        ]
+      },
+      "id": "node/3116836639"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836641",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1052837,
+          6.8214145
+        ]
+      },
+      "id": "node/3116836641"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836682",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1220976,
+          6.8901587
+        ]
+      },
+      "id": "node/3116836682"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836687",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.119704,
+          6.9038828
+        ]
+      },
+      "id": "node/3116836687"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836943",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1072323,
+          6.8435121
+        ]
+      },
+      "id": "node/3116836943"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116836957",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1208054,
+          6.8961343
+        ]
+      },
+      "id": "node/3116836957"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116837352",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1128734,
+          6.8665448
+        ]
+      },
+      "id": "node/3116837352"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116837380",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1241905,
+          6.8805131
+        ]
+      },
+      "id": "node/3116837380"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887017",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1192673,
+          6.9067385
+        ]
+      },
+      "id": "node/3116887017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887036",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.104675,
+          6.8149483
+        ]
+      },
+      "id": "node/3116887036"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887105",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1187757,
+          6.9098967
+        ]
+      },
+      "id": "node/3116887105"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887138",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1063921,
+          6.8340416
+        ]
+      },
+      "id": "node/3116887138"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887139",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1066828,
+          6.8371979
+        ]
+      },
+      "id": "node/3116887139"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887140",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1069925,
+          6.8404
+        ]
+      },
+      "id": "node/3116887140"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887429",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1055149,
+          6.8246277
+        ]
+      },
+      "id": "node/3116887429"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887430",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1058485,
+          6.8321037
+        ]
+      },
+      "id": "node/3116887430"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116887521",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1183521,
+          6.9131057
+        ]
+      },
+      "id": "node/3116887521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3116889030",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1235273,
+          6.8837761
+        ]
+      },
+      "id": "node/3116889030"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186150999",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0847107,
+          6.773681
+        ]
+      },
+      "id": "node/8186150999"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151000",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0837309,
+          6.7717749
+        ]
+      },
+      "id": "node/8186151000"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151001",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0827265,
+          6.7696729
+        ]
+      },
+      "id": "node/8186151001"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151002",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0814694,
+          6.7670815
+        ]
+      },
+      "id": "node/8186151002"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151003",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0801939,
+          6.7644227
+        ]
+      },
+      "id": "node/8186151003"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151004",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.078755,
+          6.7615895
+        ]
+      },
+      "id": "node/8186151004"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151005",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0790967,
+          6.7587676
+        ]
+      },
+      "id": "node/8186151005"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151006",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0795268,
+          6.7559248
+        ]
+      },
+      "id": "node/8186151006"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151007",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0799211,
+          6.7530826
+        ]
+      },
+      "id": "node/8186151007"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151008",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0802911,
+          6.7502969
+        ]
+      },
+      "id": "node/8186151008"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151009",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0798566,
+          6.7472984
+        ]
+      },
+      "id": "node/8186151009"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151010",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0794135,
+          6.7442623
+        ]
+      },
+      "id": "node/8186151010"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151011",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0789582,
+          6.7411859
+        ]
+      },
+      "id": "node/8186151011"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151012",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0785028,
+          6.7380327
+        ]
+      },
+      "id": "node/8186151012"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151013",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0781288,
+          6.7351257
+        ]
+      },
+      "id": "node/8186151013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151014",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0776247,
+          6.7322067
+        ]
+      },
+      "id": "node/8186151014"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151015",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0772303,
+          6.7291221
+        ]
+      },
+      "id": "node/8186151015"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186151016",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0767994,
+          6.7261061
+        ]
+      },
+      "id": "node/8186151016"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168717",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0763766,
+          6.723086
+        ]
+      },
+      "id": "node/8186168717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168718",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0759172,
+          6.7200417
+        ]
+      },
+      "id": "node/8186168718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168719",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0755025,
+          6.7169893
+        ]
+      },
+      "id": "node/8186168719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168720",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0750309,
+          6.7139854
+        ]
+      },
+      "id": "node/8186168720"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168721",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0746122,
+          6.7109451
+        ]
+      },
+      "id": "node/8186168721"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168722",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0748805,
+          6.7050582
+        ]
+      },
+      "id": "node/8186168722"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168723",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0749862,
+          6.7022278
+        ]
+      },
+      "id": "node/8186168723"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168724",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0752789,
+          6.6960501
+        ]
+      },
+      "id": "node/8186168724"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168725",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0754375,
+          6.6931187
+        ]
+      },
+      "id": "node/8186168725"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168726",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0755716,
+          6.6898844
+        ]
+      },
+      "id": "node/8186168726"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168727",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0737828,
+          6.688019
+        ]
+      },
+      "id": "node/8186168727"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168728",
+        "design": "triangle",
+        "material": "steel",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0717257,
+          6.6859718
+        ]
+      },
+      "id": "node/8186168728"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186168729",
+        "power": "transformer"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0709614,
+          6.6858264
+        ]
+      },
+      "id": "node/8186168729"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186184033",
+        "design": "triangle",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0747619,
+          6.7076597
+        ]
+      },
+      "id": "node/8186184033"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8186184035",
+        "design": "triangle",
+        "power": "tower"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0751265,
+          6.699266
+        ]
+      },
+      "id": "node/8186184035"
+    }
+  ]
+}

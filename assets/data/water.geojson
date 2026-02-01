@@ -1,0 +1,7382 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-28T13:08:13Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/310950226",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "building": "retail",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9675992,
+          38.5675267
+        ]
+      },
+      "id": "way/310950226"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/544763074",
+        "building": "yes",
+        "name": "セブン-イレブン 大崎鹿島台店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "Mo-Su 06:00-23:00",
+        "phone": "+81 229 56 6080",
+        "shop": "convenience",
+        "website": "http://sej.co.jp",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1013451,
+          38.4788937
+        ]
+      },
+      "id": "way/544763074"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/544781410",
+        "building": "yes",
+        "name": "ファミリーマート 大崎鹿島台店",
+        "name:en": "FamilyMart",
+        "opening_hours": "24/7",
+        "phone": "+81 229 57 1401",
+        "shop": "convenience",
+        "website": "http://family.co.jp",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0970386,
+          38.4745784
+        ]
+      },
+      "id": "way/544781410"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/593805790",
+        "amenity": "shelter",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1138285,
+          38.4883731
+        ]
+      },
+      "id": "way/593805790"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/593805796",
+        "amenity": "shelter",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1007333,
+          38.4817816
+        ]
+      },
+      "id": "way/593805796"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/593824239",
+        "amenity": "shelter",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1246174,
+          38.4747809
+        ]
+      },
+      "id": "way/593824239"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/593824240",
+        "amenity": "shelter",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1235444,
+          38.4720901
+        ]
+      },
+      "id": "way/593824240"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/616932365",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0930129,
+          38.4832646
+        ]
+      },
+      "id": "way/616932365"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/618525470",
+        "name": "エーコープ宮城 小牛田店",
+        "name:en": "ACOOP Miyagi Kogota",
+        "name:ja": "エーコープ宮城 小牛田店",
+        "opening_hours": "Mo-Su 10:00-20:00",
+        "phone": "+81 229 31 1077",
+        "shop": "supermarket",
+        "website": "http://www.acoop-miyagi.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0635944,
+          38.539789
+        ]
+      },
+      "id": "node/618525470"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/618529051",
+        "addr:county": "遠田郡",
+        "addr:housenumber": "北浦字北田77番地1",
+        "addr:province": "宮城県",
+        "addr:quarter": "美里町",
+        "name": "ヨークベニマル 小牛田店",
+        "name:en": "YorkBenimaru",
+        "name:ja": "ヨークベニマル 小牛田店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.057971,
+          38.5429837
+        ]
+      },
+      "id": "node/618529051"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/618529053",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "en:FamilyMart",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.061874,
+          38.5365421
+        ]
+      },
+      "id": "node/618529053"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/618529054",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 32 2751",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0552118,
+          38.5359419
+        ]
+      },
+      "id": "node/618529054"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/627463055",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1145025,
+          38.4566783
+        ]
+      },
+      "id": "way/627463055"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/627463057",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1155034,
+          38.4559799
+        ]
+      },
+      "id": "way/627463057"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/627555829",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.122822,
+          38.4994401
+        ]
+      },
+      "id": "way/627555829"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/627555832",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1303056,
+          38.4891353
+        ]
+      },
+      "id": "way/627555832"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/631657730",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.119061,
+          38.5086738
+        ]
+      },
+      "id": "way/631657730"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/631657735",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1181823,
+          38.5068208
+        ]
+      },
+      "id": "way/631657735"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/635967659",
+        "addr:block_number": "15-4",
+        "addr:city": "栗原市志波姫堀口見渡",
+        "addr:postcode": "989-5625",
+        "addr:province": "宮城県",
+        "branch": "築館店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "brand:wikipedia": "ja:ヨークベニマル",
+        "building": "yes",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "opening_hours": "Mo-Su 09:30-21:30",
+        "phone": "+81 228 22 7700",
+        "shop": "supermarket",
+        "website": "https://yorkbenimaru.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.02322,
+          38.7365271
+        ]
+      },
+      "id": "way/635967659"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/635969246",
+        "addr:block_number": "10",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "２丁目9",
+        "addr:postcode": "989-6115",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川駅東",
+        "branch": "古川店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "building": "yes",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9723123,
+          38.5734743
+        ]
+      },
+      "id": "way/635969246"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/635970984",
+        "addr:block_number": "15-54",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "５丁目",
+        "addr:postcode": "989-6143",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川中里",
+        "branch": "古川中里店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "building": "yes",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9644445,
+          38.5612242
+        ]
+      },
+      "id": "way/635970984"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/636810760",
+        "addr:county": "加美郡",
+        "addr:housenumber": "大門93",
+        "addr:province": "宮城県",
+        "addr:quarter": "加美町字",
+        "building": "yes",
+        "name": "ヨークベニマル　中新田店",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8522829,
+          38.5769591
+        ]
+      },
+      "id": "way/636810760"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/636811265",
+        "addr:county": "遠田郡",
+        "addr:housenumber": "渋江200番地1",
+        "addr:province": "宮城県",
+        "addr:quarter": "涌谷町",
+        "branch": "涌谷店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "building": "yes",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1181649,
+          38.5383648
+        ]
+      },
+      "id": "way/636811265"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/637008551",
+        "addr:city": "大崎市",
+        "addr:housenumber": "古川穂波七丁目2番15号",
+        "addr:province": "宮城県",
+        "branch": "古川南店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "building": "yes",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9416028,
+          38.5677012
+        ]
+      },
+      "id": "way/637008551"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/637029455",
+        "building": "yes",
+        "name": "ヨークベニマル　小牛田店",
+        "shop": "supermarket",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.057982,
+          38.542895
+        ]
+      },
+      "id": "way/637029455"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/645628939",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "pavilion",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0014723,
+          38.530708
+        ]
+      },
+      "id": "way/645628939"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658342760",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0514137,
+          38.511135
+        ]
+      },
+      "id": "way/658342760"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658630518",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0721248,
+          38.5119247
+        ]
+      },
+      "id": "way/658630518"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/658637870",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0506241,
+          38.5206504
+        ]
+      },
+      "id": "way/658637870"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/668060124",
+        "amenity": "shelter",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.131851,
+          38.6901382
+        ]
+      },
+      "id": "way/668060124"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/668060153",
+        "amenity": "shelter",
+        "building": "yes",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1361522,
+          38.6916031
+        ]
+      },
+      "id": "way/668060153"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/769749049",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9538692,
+          38.5710039
+        ]
+      },
+      "id": "way/769749049"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/771449732",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "building": "retail",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9592062,
+          38.574937
+        ]
+      },
+      "id": "way/771449732"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/812830596",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1347522,
+          38.4909738
+        ]
+      },
+      "id": "way/812830596"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/825388643",
+        "building": "yes",
+        "name": "ローソン　大崎三本木支店",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9457853,
+          38.5340606
+        ]
+      },
+      "id": "way/825388643"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/901980406",
+        "branch": "古川駅南3丁目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "ja:セブン-イレブン",
+        "building": "retail",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "name:ja_rm": "Sebun Irebun",
+        "name:ko": "세븐일레븐",
+        "official_name:en": "Seven-Eleven",
+        "operator": "株式会社セブン&アイ・ホールディングス",
+        "operator:en": "Seven & I Holdings Co., Ltd.",
+        "operator:wikidata": "Q639447",
+        "operator:wikipedia": "ja:セブン&アイ・ホールディングス",
+        "shop": "convenience",
+        "source": "GSImaps/std",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9683334,
+          38.5666101
+        ]
+      },
+      "id": "way/901980406"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1019367981",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8628762,
+          38.6581582
+        ]
+      },
+      "id": "way/1019367981"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1041343383",
+        "branch": "大崎古川城西一丁目店",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "building": "retail",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ja_rm": "Rōson",
+        "name:ko": "로손",
+        "operator": "ローソン",
+        "shop": "convenience",
+        "source": "Esri",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9485529,
+          38.5749475
+        ]
+      },
+      "id": "way/1041343383"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1041605750",
+        "branch": "古川大江向店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "building": "retail",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 21 8362",
+        "shop": "convenience",
+        "source": "GSImaps/std",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9447756,
+          38.5738142
+        ]
+      },
+      "id": "way/1041605750"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1042530021",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.939003,
+          38.5676143
+        ]
+      },
+      "id": "way/1042530021"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1043644926",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9533641,
+          38.5679791
+        ]
+      },
+      "id": "way/1043644926"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1047367327",
+        "building": "yes",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.953942,
+          38.5588618
+        ]
+      },
+      "id": "way/1047367327"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1065983719",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "building": "yes",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9913074,
+          38.5681856
+        ]
+      },
+      "id": "way/1065983719"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1083348687",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1202833,
+          38.6540749
+        ]
+      },
+      "id": "way/1083348687"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1171506185",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9478899,
+          38.6263468
+        ]
+      },
+      "id": "way/1171506185"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173601524",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9628179,
+          38.6358892
+        ]
+      },
+      "id": "way/1173601524"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173680677",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9609954,
+          38.6356954
+        ]
+      },
+      "id": "way/1173680677"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173680684",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9634908,
+          38.6361604
+        ]
+      },
+      "id": "way/1173680684"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173680685",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.963907,
+          38.6352371
+        ]
+      },
+      "id": "way/1173680685"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173682589",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9723075,
+          38.5815082
+        ]
+      },
+      "id": "way/1173682589"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1174261550",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9583738,
+          38.6372183
+        ]
+      },
+      "id": "way/1174261550"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1177178602",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "operator": "大崎市",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8585203,
+          38.6579774
+        ]
+      },
+      "id": "way/1177178602"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1177192402",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8659521,
+          38.6531788
+        ]
+      },
+      "id": "way/1177192402"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1177197902",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "藤棚",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8760349,
+          38.648903
+        ]
+      },
+      "id": "way/1177197902"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1177197903",
+        "amenity": "shelter",
+        "building": "yes",
+        "operator": "大崎市",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8756909,
+          38.6490988
+        ]
+      },
+      "id": "way/1177197903"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1177203071",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8624215,
+          38.6575565
+        ]
+      },
+      "id": "way/1177203071"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1180587796",
+        "amenity": "shelter",
+        "building": "yes",
+        "shelter_type": "picnic_shelter",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9400781,
+          38.5650067
+        ]
+      },
+      "id": "way/1180587796"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1185217918",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.977716,
+          38.5780934
+        ]
+      },
+      "id": "way/1185217918"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1185219945",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "building": "yes",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9694575,
+          38.5881189
+        ]
+      },
+      "id": "way/1185219945"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1225480617",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "operator": "大崎市",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8671218,
+          38.6607419
+        ]
+      },
+      "id": "way/1225480617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1227661693",
+        "amenity": "shelter",
+        "building": "yes",
+        "name": "東屋",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8697773,
+          38.6515994
+        ]
+      },
+      "id": "way/1227661693"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1313454544",
+        "addr:block_number": "3",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "字山ノ辺",
+        "addr:postcode": "989-6412",
+        "addr:province": "宮城県",
+        "addr:quarter": "岩出山下野目",
+        "branch": "岩出山店",
+        "building": "retail",
+        "name": "ウジエスーパー",
+        "name:en": "Ujie Super",
+        "name:ja": "ウジエスーパー",
+        "opening_hours": "Mo-Su 09:30-21:00",
+        "phone": "+81 229 72 3939",
+        "shop": "supermarket",
+        "website": "https://ujiesuper.com/",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8817757,
+          38.6437165
+        ]
+      },
+      "id": "way/1313454544"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1363829758",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "building": "yes",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8826186,
+          38.4939942
+        ]
+      },
+      "id": "way/1363829758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220190",
+        "addr:full": "宮城県大崎市古川福浦１‐１２‐２０",
+        "branch": "古川バイパス店",
+        "branch:en": "furukawabaipasu",
+        "branch:ja_kana": "ふるかわばいぱすてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-24-7718",
+        "ref:lawson": "176041",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2009-02-21"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9596246,
+          38.5902918
+        ]
+      },
+      "id": "node/2667220190"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220191",
+        "addr:block_number": "20-2",
+        "addr:city": "大崎市",
+        "addr:full": "宮城県大崎市古川桜ノ目字新下釜２０‐２",
+        "addr:neighbourhood": "新下釜",
+        "addr:postcode": "989-6233",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川桜ノ目",
+        "branch": "古川桜ノ目店",
+        "branch:en": "Lfurukawasakuranome",
+        "branch:ja_kana": "Ｌふるかわさくらのめてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-28-2314",
+        "ref:lawson": "132003",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2006-02-25",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9475093,
+          38.5993378
+        ]
+      },
+      "id": "node/2667220191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220344",
+        "addr:full": "宮城県大崎市三本木字善並田１６０‐１",
+        "atm": "yes",
+        "branch": "大崎三本木店",
+        "branch:en": "oosakisanbongi",
+        "branch:ja_kana": "おおさきさんぼんぎてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-52-5582",
+        "ref:lawson": "175691",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2008-12-06"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.94576,
+          38.5340548
+        ]
+      },
+      "id": "node/2667220344"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220348",
+        "addr:block_number": "7-1",
+        "addr:city": "大崎市",
+        "addr:full": "宮城県大崎市岩出山東川原町７‐１",
+        "addr:neighbourhood": "東川原町",
+        "addr:postcode": "989-6413",
+        "addr:province": "宮城県",
+        "addr:quarter": "岩出山",
+        "branch": "大崎岩出山店",
+        "branch:en": "oosakiiwadeyama",
+        "branch:ja_kana": "おおさきいわでやまてん",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-72-0755",
+        "ref:lawson": "196569",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2011-06-04",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8775201,
+          38.6501398
+        ]
+      },
+      "id": "node/2667220348"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220367",
+        "addr:block_number": "2-1",
+        "addr:city": "大崎市",
+        "addr:full": "宮城県大崎市古川新堀字高田２‐１",
+        "addr:neighbourhood": "新堀高田",
+        "addr:postcode": "989-6214",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川",
+        "branch": "大崎西古川店",
+        "branch:en": "oosakinishifurukawa",
+        "branch:ja_kana": "おおさきにしふるかわてん",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-26-2766",
+        "ref:lawson": "112905",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2007-07-12",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8944042,
+          38.5735722
+        ]
+      },
+      "id": "node/2667220367"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220406",
+        "addr:block_number": "12",
+        "addr:city": "大衡村",
+        "addr:county": "黒川郡",
+        "addr:full": "宮城県黒川郡大衡村大衡字鐙沢１２‐２",
+        "addr:housenumber": "2",
+        "addr:neighbourhood": "字鐙沢",
+        "addr:province": "宮城県",
+        "addr:quarter": "大衡",
+        "branch": "大衡万葉クリエートパーク",
+        "branch:en": "oohiramanyoukurie-topa-ku",
+        "branch:ja_kana": "おおひらまんようくりえーとぱーくてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-22-347-2218",
+        "ref:lawson": "219543",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2013-07-05"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8909739,
+          38.4708298
+        ]
+      },
+      "id": "node/2667220406"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220488",
+        "addr:full": "宮城県大崎市松山金谷字向田１０‐１",
+        "branch": "松山町金谷店",
+        "branch:en": "Lmatsuyamachiyoukanaya",
+        "branch:ja_kana": "Ｌまつやまちようかなやてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-55-4660",
+        "ref:lawson": "70288",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "1998-04-12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0663458,
+          38.5122196
+        ]
+      },
+      "id": "node/2667220488"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220713",
+        "addr:block_number": "1",
+        "addr:city": "美里町",
+        "addr:county": "遠田郡",
+        "addr:full": "宮城県遠田郡美里町荻埣字東田１‐１",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "東田",
+        "addr:postcode": "987-0022",
+        "addr:province": "宮城県",
+        "addr:quarter": "荻埣",
+        "branch": "美里中埣店",
+        "branch:en": "misatonakazone",
+        "branch:ja_kana": "みさとなかぞねてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-34-2970",
+        "ref:lawson": "196279",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2010-02-27"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0328204,
+          38.5771442
+        ]
+      },
+      "id": "node/2667220713"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220733",
+        "addr:full": "宮城県遠田郡美里町牛飼字清水江４６番１",
+        "branch": "美里小牛田店",
+        "branch:en": "Misatokogota",
+        "branch:ja_kana": "みさとこごたてん",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ja-Hira": "ローソン",
+        "name:ja_rm": "Rōson",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-25-8528",
+        "ref:lawson": "219856",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2013-07-12"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.058849,
+          38.555417
+        ]
+      },
+      "id": "node/2667220733"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220734",
+        "addr:block_number": "147",
+        "addr:city": "色麻町",
+        "addr:county": "加美郡",
+        "addr:full": "宮城県加美郡色麻町大字上新町１４７‐１",
+        "addr:housenumber": "1",
+        "addr:postcode": "981-4100",
+        "addr:province": "宮城県",
+        "addr:quarter": "大上新町",
+        "branch": "色麻上新町店",
+        "branch:en": "Lshikamakamishinmachi",
+        "branch:ja_kana": "Ｌしかまかみしんまちてん",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-229-65-5065",
+        "ref:lawson": "132227",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "2005-11-02",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8619258,
+          38.5184329
+        ]
+      },
+      "id": "node/2667220734"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2667220828",
+        "addr:block_number": "14",
+        "addr:city": "栗原市",
+        "addr:full": "宮城県栗原市高清水欠屋敷１４‐１",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "欠屋敷",
+        "addr:postcode": "987-2013",
+        "addr:province": "宮城県",
+        "addr:quarter": "高清水",
+        "branch": "高清水新小山田",
+        "branch:en": "takashimizushin'oyamada",
+        "branch:ja_kana": "たかしみずしんおやまだてん",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "operator": "ローソン",
+        "operator:en": "Lawson",
+        "phone": "+81-228-58-2027",
+        "ref:lawson": "90635",
+        "shop": "convenience",
+        "source": "Lawson",
+        "start_date": "1999-09-01"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0100129,
+          38.6741636
+        ]
+      },
+      "id": "node/2667220828"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3004190134",
+        "brand": "ミニストップ",
+        "brand:en": "Ministop",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "brand:wikipedia": "ja:ミニストップ",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "name:ko": "미니스톱",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0722513,
+          38.5328297
+        ]
+      },
+      "id": "node/3004190134"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015910937",
+        "addr:block_number": "56",
+        "addr:city": "栗原市",
+        "addr:housenumber": "24",
+        "addr:neighbourhood": "松の木沢田",
+        "addr:postcode": "987-2159",
+        "addr:province": "宮城県",
+        "addr:quarter": "高清水",
+        "atm": "yes",
+        "branch": "宮城高清水店",
+        "brand": "ミニストップ",
+        "brand:en": "Ministop",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "name:ko": "미니스톱",
+        "opening_hours": "Mo-Su 04:00-03:00",
+        "phone": "+81 228 58 3768",
+        "shop": "convenience",
+        "website": "ministop.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0021355,
+          38.6422644
+        ]
+      },
+      "id": "node/3015910937"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015914335",
+        "atm": "yes",
+        "name": "セブンイレブン",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.988225,
+          38.640716
+        ]
+      },
+      "id": "node/3015914335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015948533",
+        "atm": "yes",
+        "branch": "古川新鶴巻店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.984414,
+          38.617677
+        ]
+      },
+      "id": "node/3015948533"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015952533",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.953686,
+          38.589403
+        ]
+      },
+      "id": "node/3015952533"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015962833",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.95289,
+          38.5544367
+        ]
+      },
+      "id": "node/3015962833"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3015971433",
+        "atm": "yes",
+        "name": "セブン-イレブン 宮城三本木店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.933781,
+          38.52017
+        ]
+      },
+      "id": "node/3015971433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3163896973",
+        "addr:block_number": "171",
+        "addr:city": "涌谷町",
+        "addr:county": "遠田郡",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "屋敷",
+        "addr:postcode": "987-0133",
+        "addr:province": "宮城県",
+        "addr:quarter": "赤間",
+        "branch": "涌谷赤間屋敷店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "name:ja_rm": "Sebun Irebun",
+        "name:ko": "세븐일레븐",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81-229-43-2480",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0947796,
+          38.5506792
+        ]
+      },
+      "id": "node/3163896973"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3499283806",
+        "addr:block_number": "2",
+        "addr:city": "大崎市",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "下宮道合",
+        "addr:postcode": "989-6405",
+        "addr:province": "宮城県",
+        "addr:quarter": "岩出山池月",
+        "branch": "岩出山池月店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81-229-73-2513",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8337733,
+          38.7091039
+        ]
+      },
+      "id": "node/3499283806"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3500890463",
+        "name": "ファミリーマート美里南郷店",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.120776,
+          38.5082256
+        ]
+      },
+      "id": "node/3500890463"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3500892614",
+        "branch": "涌谷店",
+        "brand": "AEON SUPERCENTER",
+        "brand:en": "AEON SUPERCENTER",
+        "brand:ja": "イオンスーパーセンター",
+        "brand:wikidata": "Q11285970",
+        "name": "イオンスーパーセンター",
+        "name:en": "Aeon Supercenter",
+        "name:ja": "イオンスーパーセンター",
+        "operator": "イオン東北",
+        "shop": "supermarket",
+        "website": "https://aeontohoku.co.jp/stores/suc_wakuya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1476947,
+          38.5369074
+        ]
+      },
+      "id": "node/3500892614"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510380497",
+        "name": "ウジエスーパー美里店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0552579,
+          38.5511702
+        ]
+      },
+      "id": "node/3510380497"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510426720",
+        "brand": "イオン",
+        "brand:en": "AEON",
+        "brand:ja": "イオン",
+        "brand:wikidata": "Q11285951",
+        "brand:wikipedia": "ja:イオン (店舗ブランド)",
+        "name": "イオン",
+        "name:en": "AEON",
+        "name:ja": "イオン",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9724099,
+          38.5672614
+        ]
+      },
+      "id": "node/3510426720"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510430282",
+        "name": "スーパーあいのや 古川東店",
+        "name:ja": "スーパーあいのや 古川東店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.97727,
+          38.566691
+        ]
+      },
+      "id": "node/3510430282"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510430283",
+        "branch": "古川駅東三丁目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9765512,
+          38.5717576
+        ]
+      },
+      "id": "node/3510430283"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3523053972",
+        "addr:block_number": "262-1",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4265",
+        "addr:province": "宮城県",
+        "addr:quarter": "矢越",
+        "branch": "宮城中新田矢越店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 63 5091",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8595696,
+          38.5763286
+        ]
+      },
+      "id": "node/3523053972"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3698173725",
+        "brand": "ミニストップ",
+        "brand:en": "Ministop",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "brand:wikipedia": "ja:ミニストップ",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "name:ko": "미니스톱",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.017674,
+          38.746514
+        ]
+      },
+      "id": "node/3698173725"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3698175325",
+        "name": "ファミリーマート 築館木戸店",
+        "name:en": "FamilyMart",
+        "opening_hours": "24/7",
+        "phone": "+8 228 21 3571",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.036863,
+          38.732994
+        ]
+      },
+      "id": "node/3698175325"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3698199325",
+        "atm": "yes",
+        "branch": "宮城田尻店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "name:ko": "세븐일레븐",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 39 1160",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.016835,
+          38.598706
+        ]
+      },
+      "id": "node/3698199325"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4509652394",
+        "addr:block_number": "27",
+        "addr:city": "栗原市",
+        "addr:neighbourhood": "上田",
+        "addr:postcode": "987-2309",
+        "addr:province": "宮城県",
+        "addr:quarter": "一迫柳目",
+        "branch": "一迫柳目店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 228 52 4645",
+        "shop": "convenience",
+        "website": "sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9606709,
+          38.7335544
+        ]
+      },
+      "id": "node/4509652394"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4509682997",
+        "addr:block_number": "20",
+        "addr:city": "栗原市",
+        "addr:neighbourhood": "上田",
+        "addr:postcode": "987-2309",
+        "addr:province": "宮城県",
+        "addr:quarter": "一迫柳目",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "phone": "+81 228 57 7557",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9589551,
+          38.7338316
+        ]
+      },
+      "id": "node/4509682997"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510246690",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "en:FamilyMart",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9652864,
+          38.576328
+        ]
+      },
+      "id": "node/4510246690"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510315597",
+        "name": "古川駅食品館ピボット",
+        "name:ja": "古川駅食品館ピボット",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.967964,
+          38.5717465
+        ]
+      },
+      "id": "node/4510315597"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544776294",
+        "name": "ほし食品",
+        "name:ja": "ほし食品",
+        "phone": "+81 229 32 2069",
+        "shop": "supermarket",
+        "website": "http://hoshi-food.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0629951,
+          38.539249
+        ]
+      },
+      "id": "node/4544776294"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544776300",
+        "name": "コメリハード&グリーン 小牛田店",
+        "name:ja": "コメリハード&グリーン 小牛田店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0603154,
+          38.5464587
+        ]
+      },
+      "id": "node/4544776300"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544777791",
+        "name": "平野商店",
+        "name:ja": "平野商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0382838,
+          38.5976189
+        ]
+      },
+      "id": "node/4544777791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544778794",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0259744,
+          38.6040312
+        ]
+      },
+      "id": "node/4544778794"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544805003",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "en:FamilyMart",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 31 2522",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.061037,
+          38.5457092
+        ]
+      },
+      "id": "node/4544805003"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544816489",
+        "brand": "FamilyMart",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 38 1179",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0254276,
+          38.5985916
+        ]
+      },
+      "id": "node/4544816489"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4558168791",
+        "name": "エーコープ宮城 涌谷店",
+        "name:en": "ACOOP Miyagi",
+        "name:ja": "エーコープ宮城 涌谷店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.124943,
+          38.5413361
+        ]
+      },
+      "id": "node/4558168791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4558280301",
+        "addr:block_number": "2",
+        "addr:city": "涌谷町",
+        "addr:county": "遠田郡",
+        "addr:housenumber": "16",
+        "addr:neighbourhood": "黄金迫前南",
+        "addr:postcode": "987-0121",
+        "addr:province": "宮城県",
+        "addr:quarter": "涌谷",
+        "branch": "涌谷黄金店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 42 2956",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1426964,
+          38.5444155
+        ]
+      },
+      "id": "node/4558280301"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4558284291",
+        "name": "桜井屋",
+        "name:en": "Sakuraiya",
+        "name:ja": "桜井屋",
+        "phone": "+81 229 43 2026",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1313045,
+          38.5386174
+        ]
+      },
+      "id": "node/4558284291"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4558284590",
+        "name": "山周商店",
+        "name:ja": "山周商店",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1354161,
+          38.5415271
+        ]
+      },
+      "id": "node/4558284590"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4558331190",
+        "name": "セブン-イレブン 涌谷バイパス店",
+        "name:en": "Seven-Eleven",
+        "name:ja": "セブンイレブン 涌谷バイパス店",
+        "opening_hours": "24/7",
+        "phone": "+81 229 43 4556",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1289315,
+          38.5314532
+        ]
+      },
+      "id": "node/4558331190"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4621916697",
+        "addr:block_number": "7",
+        "addr:city": "大衡村",
+        "addr:county": "黒川郡",
+        "addr:housenumber": "2",
+        "addr:neighbourhood": "大童",
+        "addr:postcode": "981-3602",
+        "addr:province": "宮城県",
+        "addr:quarter": "大衡",
+        "branch": "大衡大童店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 22 345 7255",
+        "shop": "convenience",
+        "website": "sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.869749,
+          38.4661489
+        ]
+      },
+      "id": "node/4621916697"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623229591",
+        "name": "マルショー",
+        "name:ja": "マルショー",
+        "phone": "+81 229 52 5414",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9330297,
+          38.5190654
+        ]
+      },
+      "id": "node/4623229591"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623326790",
+        "name": "Yショップいとう 三本木店",
+        "name:ja": "Yショップいとう 三本木店",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9458927,
+          38.5280051
+        ]
+      },
+      "id": "node/4623326790"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623328006",
+        "branch": "古川南店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9415989,
+          38.5676995
+        ]
+      },
+      "id": "node/4623328006"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623347295",
+        "branch": "古川穂波店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9433242,
+          38.5670958
+        ]
+      },
+      "id": "node/4623347295"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623376192",
+        "branch": "大崎古川稲葉店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9482723,
+          38.5602337
+        ]
+      },
+      "id": "node/4623376192"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623376198",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.938987,
+          38.5676036
+        ]
+      },
+      "id": "node/4623376198"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623397289",
+        "name": "ヤマザワ 古川バイパス店",
+        "name:en": "Yamazawa",
+        "name:ja": "ヤマザワ 古川バイパス店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.945506,
+          38.5747184
+        ]
+      },
+      "id": "node/4623397289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625214998",
+        "addr:block_number": "8-30",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "3丁目",
+        "addr:postcode": "989-6221",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川大宮",
+        "name": "ウジエスーパー 古川バイパス店",
+        "name:en": "Ujie Super",
+        "name:ja": "ウジエスーパー 古川バイパス店",
+        "phone": "+81 229 23 1678",
+        "shop": "supermarket",
+        "website": "https://ujiesuper.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9540038,
+          38.5882999
+        ]
+      },
+      "id": "node/4625214998"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625251207",
+        "name": "フレッシュマート元気屋",
+        "name:ja": "フレッシュマート元気屋",
+        "phone": "+81 228 38 4200",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0706199,
+          38.6541251
+        ]
+      },
+      "id": "node/4625251207"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625265501",
+        "name": "東条商店",
+        "name:ja": "東条商店",
+        "phone": "+81 228 58 2306",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0078545,
+          38.6615505
+        ]
+      },
+      "id": "node/4625265501"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625265890",
+        "branch": "古川店",
+        "name": "ザ・ビッグ",
+        "name:ja": "ザ・ビッグ",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.972825,
+          38.5975048
+        ]
+      },
+      "id": "node/4625265890"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628471089",
+        "name": "ファミリーマート 大崎鹿島台店",
+        "name:en": "Family Mart",
+        "name:ja": "ファミリーマート 大崎鹿島台店",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.097035,
+          38.4745715
+        ]
+      },
+      "id": "node/4628471089"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628472094",
+        "name": "ホームセンター いちのつぼ",
+        "name:ja": "ホームセンター いちのつぼ",
+        "phone": "+81 229 56 2027",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0897937,
+          38.4617593
+        ]
+      },
+      "id": "node/4628472094"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628472098",
+        "name": "ザ・ビッグ 鹿島台店",
+        "name:en": "The Big",
+        "name:ja": "ザ・ビッグ 鹿島台店",
+        "phone": "+81 229 56 7711",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1071667,
+          38.4772252
+        ]
+      },
+      "id": "node/4628472098"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473294",
+        "name": "ミニストップ 宮城鹿島台店",
+        "name:en": "Mini Stop",
+        "name:ja": "ミニストップ 宮城鹿島台店",
+        "name:ko": "미니스톱",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0939605,
+          38.4677344
+        ]
+      },
+      "id": "node/4628473294"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473302",
+        "name": "青木食品",
+        "name:en": "Aoki Shokuhin",
+        "name:ja": "青木食品",
+        "phone": "+81 229 56 3061",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0975363,
+          38.480768
+        ]
+      },
+      "id": "node/4628473302"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473790",
+        "name": "佐々商店",
+        "name:ja": "佐々商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0966006,
+          38.4762152
+        ]
+      },
+      "id": "node/4628473790"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628475094",
+        "name": "今野商店",
+        "name:ja": "今野商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1019358,
+          38.4795333
+        ]
+      },
+      "id": "node/4628475094"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628613595",
+        "name": "吉田食料品店",
+        "name:ja": "吉田食料品店",
+        "phone": "+81 229 55 4072",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0740347,
+          38.51195
+        ]
+      },
+      "id": "node/4628613595"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4634560004",
+        "branch": "加美店",
+        "brand": "AEON SUPERCENTER",
+        "brand:en": "AEON SUPERCENTER",
+        "brand:ja": "イオンスーパーセンター",
+        "brand:wikidata": "Q11285970",
+        "name": "イオンスーパーセンター",
+        "name:en": "Aeon Supercenter",
+        "name:ja": "イオンスーパーセンター",
+        "operator": "イオン東北",
+        "shop": "supermarket",
+        "website": "https://aeontohoku.co.jp/stores/suc_kami"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8658508,
+          38.5623862
+        ]
+      },
+      "id": "node/4634560004"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4634560291",
+        "name": "おてんとさん 中新田店",
+        "name:en": "Otentosun",
+        "name:ja": "おてんとさん 中新田店",
+        "opening_hours": "Mo-Su 09:00-19:00",
+        "phone": "+81 229 63 8885",
+        "shop": "supermarket",
+        "website": "http://otentosun.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8606649,
+          38.5781155
+        ]
+      },
+      "id": "node/4634560291"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4634560296",
+        "addr:block_number": "208-1",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4262",
+        "addr:province": "宮城県",
+        "addr:quarter": "一本杉",
+        "branch": "加美バッハホール前店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.86829,
+          38.5672291
+        ]
+      },
+      "id": "node/4634560296"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4634570791",
+        "branch": "中新田店",
+        "name": "ウジエスーパー",
+        "name:en": "Ujie Super",
+        "payment:cash": "yes",
+        "payment:debit_cards": "yes",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8600278,
+          38.5664033
+        ]
+      },
+      "id": "node/4634570791"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4637127108",
+        "name": "中善商店",
+        "name:ja": "中善商店",
+        "phone": "+81 229 63 3224",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8573566,
+          38.5702305
+        ]
+      },
+      "id": "node/4637127108"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4637173389",
+        "name": "みやた食品フレッシュフード",
+        "name:ja": "みやた食品フレッシュフード",
+        "phone": "+81 229 63 3234",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8573566,
+          38.5723911
+        ]
+      },
+      "id": "node/4637173389"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4639386292",
+        "name": "エーコープ宮城 色麻店",
+        "name:ja": "エーコープ宮城 色麻店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8502492,
+          38.5476338
+        ]
+      },
+      "id": "node/4639386292"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4639428589",
+        "name": "東北トップ",
+        "name:en": "Tohoku Top",
+        "name:ja": "東北トップ",
+        "phone": "+81 229 63 6363",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8577613,
+          38.5615556
+        ]
+      },
+      "id": "node/4639428589"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4641670489",
+        "addr:block_number": "15",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4200",
+        "addr:province": "宮城県",
+        "addr:quarter": "長町",
+        "name": "コメリハード&グリーン 小野田店",
+        "name:ja": "コメリハード&グリーン 小野田店",
+        "opening_hours": "Mo-Su 09:00-19:00",
+        "phone": "+81 229 68 1019",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8164256,
+          38.5776091
+        ]
+      },
+      "id": "node/4641670489"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4641670889",
+        "addr:block_number": "10",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "雷北",
+        "addr:postcode": "981-4302",
+        "addr:province": "宮城県",
+        "addr:quarter": "下野目",
+        "branch": "加美下野目店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 67 2339",
+        "shop": "convenience",
+        "website": "sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8147557,
+          38.5775776
+        ]
+      },
+      "id": "node/4641670889"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4643854389",
+        "name": "コメリハード&グリーン 中新田店",
+        "name:ja": "コメリハード&グリーン 中新田店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8511721,
+          38.5772066
+        ]
+      },
+      "id": "node/4643854389"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4643855289",
+        "name": "ミウラ商店",
+        "name:ja": "ミウラ商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8480609,
+          38.5751633
+        ]
+      },
+      "id": "node/4643855289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4664960303",
+        "addr:block_number": "55",
+        "addr:city": "涌谷町",
+        "addr:county": "遠田郡",
+        "addr:postcode": "987-0144",
+        "addr:province": "宮城県",
+        "addr:quarter": "下新田",
+        "branch": "わくやバイパス店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 44 2031",
+        "shop": "convenience",
+        "website": "family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1373347,
+          38.5293606
+        ]
+      },
+      "id": "node/4664960303"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4664972008",
+        "branch": "小牛田店",
+        "name": "ビッグハウス",
+        "name:en": "Big House",
+        "name:ja": "ビッグハウス",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0433155,
+          38.5615996
+        ]
+      },
+      "id": "node/4664972008"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4664972305",
+        "name": "フレッシュロジスティック 古川センター",
+        "name:ja": "フレッシュロジスティック 古川センター",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1093072,
+          38.5465602
+        ]
+      },
+      "id": "node/4664972305"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4664982795",
+        "branch": "小牛田バイパス店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0497008,
+          38.5531034
+        ]
+      },
+      "id": "node/4664982795"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667347699",
+        "name": "朝日屋",
+        "name:ja": "朝日屋",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0253323,
+          38.7344448
+        ]
+      },
+      "id": "node/4667347699"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667347703",
+        "name": "津田畜産",
+        "name:ja": "津田畜産",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0240457,
+          38.7339262
+        ]
+      },
+      "id": "node/4667347703"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667645496",
+        "name": "すぎもと食品ストアー",
+        "name:ja": "すぎもと食品ストアー",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0263708,
+          38.7339398
+        ]
+      },
+      "id": "node/4667645496"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667668098",
+        "branch": "宮城築館",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0226294,
+          38.7339706
+        ]
+      },
+      "id": "node/4667668098"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667723989",
+        "branch": "栗原志波姫店",
+        "brand": "AEON SUPERCENTER",
+        "brand:en": "AEON SUPERCENTER",
+        "brand:ja": "イオンスーパーセンター",
+        "brand:wikidata": "Q11285970",
+        "name": "イオンスーパーセンター",
+        "name:en": "Aeon Supercenter",
+        "name:ja": "イオンスーパーセンター",
+        "opening_hours": "Mo-Su 08:00-22:00",
+        "operator": "イオン東北",
+        "phone": "+81 228 21 3111",
+        "shop": "supermarket",
+        "website": "https://aeontohoku.co.jp/stores/suc_kuriharashiwahime",
+        "wikidata": "Q11286285",
+        "wikipedia": "ja:イオン栗原志波姫ショッピングセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0686545,
+          38.7489103
+        ]
+      },
+      "id": "node/4667723989"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4667724001",
+        "name": "マルエス",
+        "name:ja": "マルエス",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0259229,
+          38.7342722
+        ]
+      },
+      "id": "node/4667724001"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670675996",
+        "name": "はせがわファミリーマート",
+        "name:ja": "はせがわファミリーマート",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.01852,
+          38.7325096
+        ]
+      },
+      "id": "node/4670675996"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670675999",
+        "name": "むかいだ",
+        "name:en": "Mukaida",
+        "name:ja": "むかいだ",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0136627,
+          38.7330956
+        ]
+      },
+      "id": "node/4670675999"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670734397",
+        "branch": "築館久伝店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0112933,
+          38.7339617
+        ]
+      },
+      "id": "node/4670734397"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670734403",
+        "addr:block_number": "261",
+        "addr:city": "栗原市",
+        "addr:housenumber": "4",
+        "addr:neighbourhood": "砂田",
+        "addr:postcode": "987-2203",
+        "addr:province": "宮城県",
+        "addr:quarter": "築館下宮野",
+        "branch": "栗原築館店",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "phone": "+81-228-24-8663",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0141906,
+          38.7466306
+        ]
+      },
+      "id": "node/4670734403"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670775694",
+        "branch": "築館店",
+        "name": "ビッグハウス",
+        "name:en": "Big House",
+        "name:ja": "ビッグハウス",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0173683,
+          38.7475016
+        ]
+      },
+      "id": "node/4670775694"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4670802692",
+        "branch": "築館店",
+        "brand": "業務スーパー",
+        "brand:en": "Gyomu Super",
+        "brand:ja": "業務スーパー",
+        "brand:ja-Latn": "Gyōmu sūpā",
+        "brand:wikidata": "Q11590183",
+        "name": "業務スーパー",
+        "name:en": "Gyomu Super",
+        "name:ja": "業務スーパー",
+        "name:ja-Latn": "Gyōmu sūpā",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0186337,
+          38.7399447
+        ]
+      },
+      "id": "node/4670802692"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4671565291",
+        "branch": "築館宮野店",
+        "brand": "FamilyMart",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0142611,
+          38.7493571
+        ]
+      },
+      "id": "node/4671565291"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4674375091",
+        "name": "あやめの里",
+        "name:ja": "あやめの里",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9494448,
+          38.7394906
+        ]
+      },
+      "id": "node/4674375091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4676241689",
+        "name": "狩野食料品店",
+        "name:ja": "狩野食料品店",
+        "phone": "+81 228 52 3065",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.950597,
+          38.7389542
+        ]
+      },
+      "id": "node/4676241689"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4676242990",
+        "name": "コメリハード&グリーン 一迫店",
+        "name:ja": "コメリハード&グリーン 一迫店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9538795,
+          38.7352131
+        ]
+      },
+      "id": "node/4676242990"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4676277389",
+        "name": "丸江スーパー 一迫店",
+        "name:en": "Marue Super",
+        "name:ja": "丸江スーパー 一迫店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9517381,
+          38.7368621
+        ]
+      },
+      "id": "node/4676277389"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4839339458",
+        "addr:block_number": "4",
+        "addr:city": "大崎市",
+        "addr:housenumber": "40",
+        "addr:neighbourhood": "3丁目",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川駅前大通",
+        "branch": "古川駅前大通店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 91 5211",
+        "shop": "convenience",
+        "website": "http://family.co.jp",
+        "wheelchair": "yes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9674973,
+          38.5734669
+        ]
+      },
+      "id": "node/4839339458"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5034068831",
+        "name": "くんぺる直売マーケット",
+        "name:en": "Kumpel",
+        "name:ja": "くんぺる直売マーケット",
+        "phone": "+81 220 28 2986",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1241761,
+          38.7132237
+        ]
+      },
+      "id": "node/5034068831"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5034069125",
+        "name": "フレッシュマート スワン伊豆沼店",
+        "name:ja": "フレッシュマート スワン伊豆沼店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1233386,
+          38.7128773
+        ]
+      },
+      "id": "node/5034069125"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5034070725",
+        "name": "三浦商店",
+        "name:ja": "三浦商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1252872,
+          38.7369012
+        ]
+      },
+      "id": "node/5034070725"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5045777521",
+        "branch": "岩出山中央店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8733919,
+          38.6480078
+        ]
+      },
+      "id": "node/5045777521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059926726",
+        "addr:block_number": "1-3",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "2丁目",
+        "addr:postcode": "989-6174",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川千寿寺町",
+        "branch": "大崎市役所前店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 22 2071",
+        "shop": "convenience",
+        "website": "sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9565631,
+          38.5779861
+        ]
+      },
+      "id": "node/5059926726"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5061499431",
+        "alt_name": "ニューデイズ",
+        "brand": "NewDays",
+        "brand:wikidata": "Q11234763",
+        "name": "NewDays",
+        "name:en": "New Days",
+        "name:ja": "ニューデイズ ミニ古川4号",
+        "phone": "+81 229 22 1931",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9678123,
+          38.5705191
+        ]
+      },
+      "id": "node/5061499431"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487524",
+        "name": "志波姫屋",
+        "name:en": "Shiwahimeya",
+        "name:ja": "志波姫屋",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9648036,
+          38.5821963
+        ]
+      },
+      "id": "node/5063487524"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487527",
+        "name": "エーコープ宮城 古川店",
+        "name:ja": "エーコープ宮城 古川店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9654997,
+          38.5801384
+        ]
+      },
+      "id": "node/5063487527"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487630",
+        "name": "フジワラ",
+        "name:en": "Fujiwara",
+        "name:ja": "フジワラ",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9647188,
+          38.5817463
+        ]
+      },
+      "id": "node/5063487630"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063489621",
+        "branch": "古川駅前大通店",
+        "brand": "MINISTOP",
+        "brand:en": "MINISTOP",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "brand:wikipedia": "ja:ミニストップ",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "name:ko": "미니스톱",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9665062,
+          38.5782539
+        ]
+      },
+      "id": "node/5063489621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063489629",
+        "addr:block_number": "7-13",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "4丁目",
+        "addr:postcode": "989-6171",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川北町",
+        "branch": "古川工業高校前店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 91 5070",
+        "shop": "convenience",
+        "website": "family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9658977,
+          38.5834321
+        ]
+      },
+      "id": "node/5063489629"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063562522",
+        "name": "ヤマザワ 古川北店",
+        "name:en": "Yamazawa",
+        "name:ja": "ヤマザワ 古川北店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9686309,
+          38.5872397
+        ]
+      },
+      "id": "node/5063562522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063645726",
+        "addr:block_number": "3-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "2丁目",
+        "addr:postcode": "989-6175",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川諏訪",
+        "branch": "大崎古川諏訪二丁目店",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "opening_hours": "24/7",
+        "phone": "+81 229 22 1200",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.951079,
+          38.5831025
+        ]
+      },
+      "id": "node/5063645726"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5068567522",
+        "branch": "古川福浦一丁目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9623494,
+          38.5900714
+        ]
+      },
+      "id": "node/5068567522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5068570021",
+        "addr:block_number": "93-1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "南田",
+        "addr:postcode": "989-6255",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川休塚",
+        "branch": "宮城古川休塚店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 27 1055",
+        "shop": "convenience",
+        "website": "family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9770011,
+          38.5947918
+        ]
+      },
+      "id": "node/5068570021"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088023827",
+        "name": "ウジエスーパー 中里店",
+        "name:en": "Ujie Super Nakazato",
+        "name:ja": "ウジエスーパー 中里店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.959898,
+          38.5694824
+        ]
+      },
+      "id": "node/5088023827"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437439",
+        "branch": "古川中里五丁目店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9618855,
+          38.5626999
+        ]
+      },
+      "id": "node/5091437439"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091442423",
+        "name": "木村商店",
+        "name:ja": "木村商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9618689,
+          38.5651951
+        ]
+      },
+      "id": "node/5091442423"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5094431025",
+        "name": "アニュー 古川",
+        "name:ja": "アニュー 古川",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9759843,
+          38.5714184
+        ]
+      },
+      "id": "node/5094431025"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5094431036",
+        "branch": "小牛田バイパス店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0349121,
+          38.5596074
+        ]
+      },
+      "id": "node/5094431036"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5094431046",
+        "name": "ローソン 小牛田水越浦店",
+        "name:en": "Lawson",
+        "name:ja": "ローソン 小牛田水越浦店",
+        "name:ko": "로손",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0542697,
+          38.53417
+        ]
+      },
+      "id": "node/5094431046"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5094443325",
+        "branch": "古川店",
+        "brand": "業務スーパー",
+        "brand:en": "Gyomu Super",
+        "brand:ja": "業務スーパー",
+        "brand:ja-Latn": "Gyōmu sūpā",
+        "brand:wikidata": "Q11590183",
+        "name": "業務スーパー",
+        "name:en": "Gyomu Super",
+        "name:ja": "業務スーパー",
+        "name:ja-Latn": "Gyōmu sūpā",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.974798,
+          38.5715464
+        ]
+      },
+      "id": "node/5094443325"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107023636",
+        "branch": "大崎古川稲葉店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9539457,
+          38.5588306
+        ]
+      },
+      "id": "node/5107023636"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107031026",
+        "name": "角切商店",
+        "phone": "+81 229 22 1730",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9533956,
+          38.5752875
+        ]
+      },
+      "id": "node/5107031026"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107031029",
+        "name": "コノエ",
+        "name:en": "Konoe",
+        "phone": "+81 229 22 1040",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9563099,
+          38.5730269
+        ]
+      },
+      "id": "node/5107031029"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107031033",
+        "name": "パプサン",
+        "phone": "+81 229 23 8208",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9545693,
+          38.5633944
+        ]
+      },
+      "id": "node/5107031033"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107031034",
+        "name": "みやぎ生協 古川南店",
+        "name:en": "COOP Miyagi",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9553262,
+          38.5626498
+        ]
+      },
+      "id": "node/5107031034"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107033025",
+        "branch": "古川小稲葉町店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9533373,
+          38.5679832
+        ]
+      },
+      "id": "node/5107033025"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134873623",
+        "name": "横山商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1312647,
+          38.470708
+        ]
+      },
+      "id": "node/5134873623"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134873631",
+        "name": "郡山商店",
+        "phone": "+81 229 58 0322",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1321322,
+          38.4797152
+        ]
+      },
+      "id": "node/5134873631"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134883641",
+        "name": "Aコープ 南郷店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1322341,
+          38.4882166
+        ]
+      },
+      "id": "node/5134883641"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134884122",
+        "name": "奥山商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1025921,
+          38.45348
+        ]
+      },
+      "id": "node/5134884122"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134884124",
+        "name": "鈴隆",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1285829,
+          38.4685155
+        ]
+      },
+      "id": "node/5134884124"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5134884126",
+        "name": "セブンイレブン 美里町二郷店",
+        "name:en": "Seven Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1298973,
+          38.471444
+        ]
+      },
+      "id": "node/5134884126"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5265741018",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.101351,
+          38.4788717
+        ]
+      },
+      "id": "node/5265741018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5304633648",
+        "name": "竹荒商店",
+        "phone": "+81 229 65 4517",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8546186,
+          38.5366447
+        ]
+      },
+      "id": "node/5304633648"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5304633660",
+        "branch": "加美色麻町店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "internet_access": "wlan",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 65 3007",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8521804,
+          38.5508161
+        ]
+      },
+      "id": "node/5304633660"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5304674822",
+        "name": "吉田屋",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8816,
+          38.4501336
+        ]
+      },
+      "id": "node/5304674822"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5352490433",
+        "name": "中鉢商店",
+        "phone": "+81 229 22 1777",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9379159,
+          38.5743401
+        ]
+      },
+      "id": "node/5352490433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5374656629",
+        "addr:block_number": "144",
+        "addr:city": "大郷町",
+        "addr:county": "黒川郡",
+        "addr:neighbourhood": "築道東",
+        "addr:postcode": "981-3501",
+        "addr:province": "宮城県",
+        "addr:quarter": "大松沢",
+        "branch": "大郷大松沢店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 22 342 1147",
+        "shop": "convenience",
+        "website": "sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0111523,
+          38.4626669
+        ]
+      },
+      "id": "node/5374656629"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5374661223",
+        "addr:block_number": "10",
+        "addr:city": "大郷町",
+        "addr:county": "黒川郡",
+        "addr:housenumber": "1",
+        "addr:neighbourhood": "日向",
+        "addr:postcode": "981-3502",
+        "addr:province": "宮城県",
+        "addr:quarter": "粕川",
+        "branch": "大郷粕川店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 22 359 8031",
+        "shop": "convenience",
+        "website": "family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0042392,
+          38.4540989
+        ]
+      },
+      "id": "node/5374661223"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5580641558",
+        "name": "セブン-イレブン 鹿島台バイパス店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 56 5779",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1087296,
+          38.4831005
+        ]
+      },
+      "id": "node/5580641558"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5956682789",
+        "addr:block_number": "367-1",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4264",
+        "addr:province": "宮城県",
+        "addr:quarter": "赤塚",
+        "branch": "中新田赤塚店",
+        "brand": "MINISTOP",
+        "brand:en": "MINISTOP",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "brand:wikipedia": "ja:ミニストップ",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "name:ko": "미니스톱",
+        "opening_hours": "24/7",
+        "phone": "+81 229 63 2562",
+        "shop": "convenience",
+        "website": "http://ministop.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8603719,
+          38.5603286
+        ]
+      },
+      "id": "node/5956682789"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5956682794",
+        "addr:block_number": "47-1",
+        "addr:city": "加美町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4255",
+        "addr:province": "宮城県",
+        "addr:quarter": "岡町",
+        "branch": "中新田岡町店",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "name:ko": "로손",
+        "opening_hours": "24/7",
+        "phone": "+81 229 63 6362",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8600581,
+          38.5721701
+        ]
+      },
+      "id": "node/5956682794"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5988240209",
+        "branch": "大崎市松山店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 55 4117",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0662966,
+          38.5109302
+        ]
+      },
+      "id": "node/5988240209"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6085611954",
+        "amenity": "shelter",
+        "shelter_type": "pavilion"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.095484,
+          38.4962971
+        ]
+      },
+      "id": "node/6085611954"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6126692579",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1142617,
+          38.4972608
+        ]
+      },
+      "id": "node/6126692579"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6126698555",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0554984,
+          38.4831091
+        ]
+      },
+      "id": "node/6126698555"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6126698560",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0564631,
+          38.4844094
+        ]
+      },
+      "id": "node/6126698560"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6126698624",
+        "amenity": "shelter",
+        "name": "藤棚",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0570641,
+          38.4812398
+        ]
+      },
+      "id": "node/6126698624"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6198258661",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "en:FamilyMart",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1216864,
+          38.5345366
+        ]
+      },
+      "id": "node/6198258661"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463733991",
+        "name": "ファミリーマート 志田小学校前店",
+        "name:en": "Family Mart",
+        "opening_hours": "24/7",
+        "phone": "+81 229 36 1103",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9156051,
+          38.5716285
+        ]
+      },
+      "id": "node/6463733991"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463734212",
+        "name": "はつみ食品",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.898529,
+          38.582618
+        ]
+      },
+      "id": "node/6463734212"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463734419",
+        "branch": "大崎岩出山",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "operator": "セブン‐イレブン・ジャパン",
+        "phone": "+81 229 72 4119",
+        "shop": "convenience",
+        "website": "https://www.sej.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8919249,
+          38.6333501
+        ]
+      },
+      "id": "node/6463734419"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463734433",
+        "name": "いもや榊商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8657353,
+          38.6539947
+        ]
+      },
+      "id": "node/6463734433"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6463735101",
+        "name": "永根商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8661168,
+          38.6537827
+        ]
+      },
+      "id": "node/6463735101"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6612381844",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン 大崎鹿島台平渡店",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 56 7077",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0971685,
+          38.4761846
+        ]
+      },
+      "id": "node/6612381844"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6901772385",
+        "addr:block_number": "48",
+        "addr:city": "大衡村",
+        "addr:county": "黒川郡",
+        "addr:housenumber": "6",
+        "addr:neighbourhood": "尾西",
+        "addr:postcode": "981-3602",
+        "addr:province": "宮城県",
+        "addr:quarter": "大衡",
+        "branch": "宮城大衡店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 22 344 1023",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8634284,
+          38.4991544
+        ]
+      },
+      "id": "node/6901772385"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7121400885",
+        "branch": "大崎三本木店",
+        "brand": "FamilyMart",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 53 2171",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9318697,
+          38.5211411
+        ]
+      },
+      "id": "node/7121400885"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7121510485",
+        "name": "東京屋",
+        "name:en": "Tokyo ya",
+        "phone": "+81 229 52 6749",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9656049,
+          38.5299473
+        ]
+      },
+      "id": "node/7121510485"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7663830085",
+        "name": "荒関商店",
+        "phone": "+81 229 43 2181",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1360566,
+          38.5400684
+        ]
+      },
+      "id": "node/7663830085"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7698934193",
+        "branch": "涌谷東店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 44 2228",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1467172,
+          38.535299
+        ]
+      },
+      "id": "node/7698934193"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7698942088",
+        "name": "きただ酒店",
+        "name:en": "Kitada Liquor Shop",
+        "phone": "+81 229 43 2208",
+        "shop": "supermarket",
+        "website": "https://wakuya-kitada.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1118533,
+          38.549147
+        ]
+      },
+      "id": "node/7698942088"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7746162592",
+        "branch": "築館店",
+        "name": "ウジエスーパー",
+        "name:en": "UjieSuper",
+        "opening_hours": "Mo-Su 10:00-21:00",
+        "phone": "+81 228 22 6211",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0353872,
+          38.7346725
+        ]
+      },
+      "id": "node/7746162592"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7746162602",
+        "branch": "築館源光店",
+        "brand": "FamilyMart",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 228 21 3637",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0294155,
+          38.7350948
+        ]
+      },
+      "id": "node/7746162602"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7874799585",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0576726,
+          38.5526831
+        ]
+      },
+      "id": "node/7874799585"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7875354685",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9552006,
+          38.5625238
+        ]
+      },
+      "id": "node/7875354685"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8178557334",
+        "name": "よろずや齋藤商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9553789,
+          38.5805203
+        ]
+      },
+      "id": "node/8178557334"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182282424",
+        "name": "堀江商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.995275,
+          38.5430105
+        ]
+      },
+      "id": "node/8182282424"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182282427",
+        "name": "田中商店",
+        "name:en": "Tanaka Shōten",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0031522,
+          38.538262
+        ]
+      },
+      "id": "node/8182282427"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182282428",
+        "branch": "古川下中目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 24 1070",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0047332,
+          38.5370975
+        ]
+      },
+      "id": "node/8182282428"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8182282717",
+        "name": "ファミリーマート 古川中里店",
+        "name:en": "FamilyMart",
+        "opening_hours": "24/7",
+        "phone": "+81 229 21 7081",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9602699,
+          38.5684761
+        ]
+      },
+      "id": "node/8182282717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8323435324",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8497844,
+          38.5700508
+        ]
+      },
+      "id": "node/8323435324"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8323436218",
+        "name": "ほし栄",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8570952,
+          38.573707
+        ]
+      },
+      "id": "node/8323436218"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8323436417",
+        "name": "中村豆腐店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8569623,
+          38.5725299
+        ]
+      },
+      "id": "node/8323436417"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8323460218",
+        "name": "千葉米穀店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8577176,
+          38.5607809
+        ]
+      },
+      "id": "node/8323460218"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8323488120",
+        "name": "宮川とうふ店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8580257,
+          38.5619681
+        ]
+      },
+      "id": "node/8323488120"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8326549119",
+        "name": "斎林商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8573231,
+          38.5677366
+        ]
+      },
+      "id": "node/8326549119"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8329307318",
+        "name": "セブン-イレブン 加美赤塚店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 63 6771",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8589039,
+          38.5636871
+        ]
+      },
+      "id": "node/8329307318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8329556629",
+        "name": "蘇武ストアー",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8502966,
+          38.5746573
+        ]
+      },
+      "id": "node/8329556629"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8329557423",
+        "name": "佐々木商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8719715,
+          38.5813978
+        ]
+      },
+      "id": "node/8329557423"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8359699922",
+        "name": "和賀商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1208352,
+          38.7430419
+        ]
+      },
+      "id": "node/8359699922"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8365910225",
+        "branch": "築館インター",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 228 23 6063",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0195742,
+          38.711506
+        ]
+      },
+      "id": "node/8365910225"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8366386718",
+        "name": "成田屋百貨店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0260578,
+          38.7335219
+        ]
+      },
+      "id": "node/8366386718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8369999618",
+        "name": "宮東商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0280731,
+          38.7349529
+        ]
+      },
+      "id": "node/8369999618"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8374296819",
+        "name": "赤間商店",
+        "name:en": "Akama Shōten",
+        "phone": "+81 228 38 3213",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.068532,
+          38.6603948
+        ]
+      },
+      "id": "node/8374296819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8375020920",
+        "name": "菜っちゃんハウス",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0761926,
+          38.6509163
+        ]
+      },
+      "id": "node/8375020920"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8375021018",
+        "branch": "瀬峰藤沢下田店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 228 38 2776",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0770365,
+          38.6508415
+        ]
+      },
+      "id": "node/8375021018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8375022118",
+        "branch": "栗原瀬峰店",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "opening_hours": "24/7",
+        "phone": "+81 228 24 7090",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0785228,
+          38.6500804
+        ]
+      },
+      "id": "node/8375022118"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8389483017",
+        "name": "近藤商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1207868,
+          38.6463566
+        ]
+      },
+      "id": "node/8389483017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8395975622",
+        "name": "舘萬商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1319186,
+          38.5406731
+        ]
+      },
+      "id": "node/8395975622"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8401358717",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0634878,
+          38.5414707
+        ]
+      },
+      "id": "node/8401358717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8401359521",
+        "name": "金子米店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0613494,
+          38.540211
+        ]
+      },
+      "id": "node/8401359521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8403521118",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0566616,
+          38.5450586
+        ]
+      },
+      "id": "node/8403521118"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8404721881",
+        "name": "藤本米穀店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.052917,
+          38.5130983
+        ]
+      },
+      "id": "node/8404721881"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8404721883",
+        "name": "マルフジ",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0526683,
+          38.5139896
+        ]
+      },
+      "id": "node/8404721883"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8410826617",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0668804,
+          38.5372732
+        ]
+      },
+      "id": "node/8410826617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8413540621",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0683283,
+          38.53181
+        ]
+      },
+      "id": "node/8413540621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8417319419",
+        "name": "ヤマザキショップ",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9450877,
+          38.5257424
+        ]
+      },
+      "id": "node/8417319419"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8419651633",
+        "branch": "宮城三本木店",
+        "brand": "FamilyMart",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "24/7",
+        "phone": "+81 229 53 2520",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.907781,
+          38.5185787
+        ]
+      },
+      "id": "node/8419651633"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8419827517",
+        "name": "渡辺商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9250572,
+          38.5278486
+        ]
+      },
+      "id": "node/8419827517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8421791917",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9435115,
+          38.5295356
+        ]
+      },
+      "id": "node/8421791917"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8421821619",
+        "name": "佐々広商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9459578,
+          38.5283013
+        ]
+      },
+      "id": "node/8421821619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8424847917",
+        "name": "吉村米治商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0965943,
+          38.4732006
+        ]
+      },
+      "id": "node/8424847917"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8427830920",
+        "addr:block_number": "121",
+        "addr:city": "大崎市",
+        "addr:housenumber": "2",
+        "addr:neighbourhood": "富岡浦",
+        "addr:postcode": "989-4308",
+        "addr:province": "宮城県",
+        "addr:quarter": "田尻沼部",
+        "branch": "大崎田尻店",
+        "brand": "ローソン",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "opening_hours": "24/7",
+        "phone": "+81 229 39 2001",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0566706,
+          38.5959446
+        ]
+      },
+      "id": "node/8427830920"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430468317",
+        "name": "ウジエスーパー 田尻店",
+        "name:en": "Ujie Super",
+        "opening_hours": "Mo-Su 09:30-21:00",
+        "phone": "+81 229 39 7898",
+        "shop": "supermarket",
+        "website": "https://ujiesuper.com/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0339363,
+          38.5973461
+        ]
+      },
+      "id": "node/8430468317"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430860718",
+        "name": "菊地屋",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0236741,
+          38.5991106
+        ]
+      },
+      "id": "node/8430860718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8433529520",
+        "name": "エーコープ宮城 Aコープ おおぬき店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.107154,
+          38.6075625
+        ]
+      },
+      "id": "node/8433529520"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677911922",
+        "name": "重泉商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9212912,
+          38.6097865
+        ]
+      },
+      "id": "node/8677911922"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677922219",
+        "branch": "大崎古川新田店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 26 5130",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9270588,
+          38.600545
+        ]
+      },
+      "id": "node/8677922219"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677922322",
+        "name": "アドバンス",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9305227,
+          38.5983041
+        ]
+      },
+      "id": "node/8677922322"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677977726",
+        "name": "セブン-イレブン 古川インター店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 22 6051",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9396974,
+          38.5887232
+        ]
+      },
+      "id": "node/8677977726"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8681530617",
+        "name": "水上商店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9547353,
+          38.582277
+        ]
+      },
+      "id": "node/8681530617"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689304027",
+        "branch": "古川南町2丁目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 22 5707",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9538755,
+          38.5709921
+        ]
+      },
+      "id": "node/8689304027"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689325819",
+        "branch": "大崎古川稲葉二丁目店",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "opening_hours": "24/7",
+        "phone": "+81 229 24 5138",
+        "shop": "convenience",
+        "website": "https://www.lawson.co.jp/"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9531618,
+          38.5578955
+        ]
+      },
+      "id": "node/8689325819"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692089917",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9401227,
+          38.5650801
+        ]
+      },
+      "id": "node/8692089917"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692143421",
+        "name": "セブン-イレブン 大崎古川飯川店",
+        "name:en": "Seven-Eleven",
+        "opening_hours": "Mo-Su 06:00-23:00",
+        "phone": "+81 229 26 3010",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9200277,
+          38.5719759
+        ]
+      },
+      "id": "node/8692143421"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8695432540",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9431874,
+          38.5676438
+        ]
+      },
+      "id": "node/8695432540"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8695461619",
+        "branch": "大崎市民病院店",
+        "brand": "ファミリーマート",
+        "brand:en": "FamilyMart",
+        "brand:ja": "ファミリーマート",
+        "brand:wikidata": "Q1191685",
+        "brand:wikipedia": "ja:ファミリーマート (企業)",
+        "name": "ファミリーマート",
+        "name:en": "FamilyMart",
+        "name:ja": "ファミリーマート",
+        "opening_hours": "Mo-Su 07:00-21:00",
+        "phone": "+81 229 91 8115",
+        "shop": "convenience",
+        "website": "http://family.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9434112,
+          38.5657077
+        ]
+      },
+      "id": "node/8695461619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703342619",
+        "name": "ヤマザキYショップ ホットドッグ店",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9603413,
+          38.5633147
+        ]
+      },
+      "id": "node/8703342619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707960017",
+        "addr:block_number": "4-12",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "2丁目",
+        "addr:postcode": "989-6106",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川幸町",
+        "branch": "古川李埣店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 23 7778",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.97049,
+          38.5793299
+        ]
+      },
+      "id": "node/8707960017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707980022",
+        "name": "スマイル&リラックス 古川店",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9733023,
+          38.57491
+        ]
+      },
+      "id": "node/8707980022"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8707980023",
+        "branch": "大崎古川福沼2丁目店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 229 24 8575",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.977706,
+          38.5780952
+        ]
+      },
+      "id": "node/8707980023"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122624",
+        "amenity": "shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9534925,
+          38.5904801
+        ]
+      },
+      "id": "node/8711122624"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8713517132",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9443886,
+          38.5601966
+        ]
+      },
+      "id": "node/8713517132"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8718116818",
+        "addr:block_number": "35-6",
+        "addr:city": "大和町",
+        "addr:county": "黒川郡",
+        "addr:neighbourhood": "石神沢",
+        "addr:postcode": "981-3621",
+        "addr:province": "宮城県",
+        "addr:quarter": "吉岡",
+        "branch": "大和陸上自衛隊前店",
+        "brand": "セブン-イレブン",
+        "brand:en": "7-Eleven",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "en:7-Eleven",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 22 344 3712",
+        "shop": "convenience",
+        "website": "http://sej.co.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8766946,
+          38.4526642
+        ]
+      },
+      "id": "node/8718116818"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9271213124",
+        "addr:block_number": "8",
+        "addr:city": "色麻町",
+        "addr:county": "加美郡",
+        "addr:postcode": "981-4101",
+        "addr:province": "宮城県",
+        "addr:quarter": "清水川端南",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "brand:wikipedia": "ja:ローソン",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "opening_hours": "24/7",
+        "phone": "+81 229 25 3393",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8177732,
+          38.5621677
+        ]
+      },
+      "id": "node/9271213124"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9598866353",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.939986,
+          38.5652564
+        ]
+      },
+      "id": "node/9598866353"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9665002271",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8974984,
+          38.6056419
+        ]
+      },
+      "id": "node/9665002271"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9676067906",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "brand:wikipedia": "ja:コカ・コーラ",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9517588,
+          38.7367821
+        ]
+      },
+      "id": "node/9676067906"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9676067907",
+        "alt_name:en": "ITOEN",
+        "amenity": "vending_machine",
+        "brand": "伊藤園",
+        "brand:en": "Ito En",
+        "brand:ja": "伊藤園",
+        "brand:wikidata": "Q3079325",
+        "brand:wikipedia": "ja:伊藤園",
+        "drink:tea": "yes",
+        "name": "伊藤園",
+        "name:en": "Ito En",
+        "name:ja": "伊藤園",
+        "operator": "伊藤園",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9517829,
+          38.7367758
+        ]
+      },
+      "id": "node/9676067907"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9688598404",
+        "alt_name:en": "ITOEN",
+        "amenity": "vending_machine",
+        "brand": "伊藤園",
+        "brand:en": "Ito En",
+        "brand:ja": "伊藤園",
+        "brand:wikidata": "Q3079325",
+        "drink:tea": "yes",
+        "name": "伊藤園",
+        "name:en": "Ito En",
+        "name:ja": "伊藤園",
+        "operator": "伊藤園",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9481362,
+          38.7333375
+        ]
+      },
+      "id": "node/9688598404"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9702276281",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0111639,
+          38.656503
+        ]
+      },
+      "id": "node/9702276281"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9721781048",
+        "amenity": "vending_machine",
+        "ref": "アサヒ飲料",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0655753,
+          38.6641337
+        ]
+      },
+      "id": "node/9721781048"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9721781049",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0656102,
+          38.6640751
+        ]
+      },
+      "id": "node/9721781049"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9875937606",
+        "addr:block_number": "16",
+        "addr:city": "栗原市",
+        "addr:housenumber": "14",
+        "addr:postcode": "987-2200",
+        "addr:province": "宮城県",
+        "addr:quarter": "高清水御影",
+        "branch": "栗原高清水御影",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "opening_hours": "24/7",
+        "phone": "+81 228 58 3303",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0093026,
+          38.6688613
+        ]
+      },
+      "id": "node/9875937606"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9976496407",
+        "amenity": "vending_machine",
+        "operator": "アサヒ飲料",
+        "ref": "アサヒ飲料",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0028222,
+          38.6866493
+        ]
+      },
+      "id": "node/9976496407"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9976496408",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0028428,
+          38.6866789
+        ]
+      },
+      "id": "node/9976496408"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9976587481",
+        "amenity": "vending_machine",
+        "operator": "アサヒ飲料",
+        "ref": "アサヒ飲料",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0031724,
+          38.6832165
+        ]
+      },
+      "id": "node/9976587481"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9976605363",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.00702,
+          38.6779906
+        ]
+      },
+      "id": "node/9976605363"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9981169368",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9860893,
+          38.7002441
+        ]
+      },
+      "id": "node/9981169368"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10010218163",
+        "amenity": "vending_machine",
+        "operator": "アサヒ飲料",
+        "ref": "アサヒ飲料",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8832011,
+          38.5605571
+        ]
+      },
+      "id": "node/10010218163"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10017177502",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0085877,
+          38.6698331
+        ]
+      },
+      "id": "node/10017177502"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10017532180",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0121236,
+          38.7067593
+        ]
+      },
+      "id": "node/10017532180"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10028527091",
+        "amenity": "vending_machine",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8657774,
+          38.4869253
+        ]
+      },
+      "id": "node/10028527091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10033077768",
+        "amenity": "vending_machine",
+        "operator": "キリン",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0188716,
+          38.6452684
+        ]
+      },
+      "id": "node/10033077768"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10035251862",
+        "amenity": "vending_machine",
+        "brand": "コカ・コーラ",
+        "brand:en": "Coca-Cola",
+        "brand:ja": "コカ・コーラ",
+        "brand:wikidata": "Q2813",
+        "drink:cola": "yes",
+        "name": "コカ・コーラ",
+        "name:en": "Coca-Cola",
+        "name:ja": "コカ・コーラ",
+        "operator": "コカ・コーラ",
+        "vending": "drinks"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9968502,
+          38.6419926
+        ]
+      },
+      "id": "node/10035251862"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10135488542",
+        "branch": "古川福浦店",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9661986,
+          38.5911684
+        ]
+      },
+      "id": "node/10135488542"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877679287",
+        "amenity": "shelter",
+        "name": "パーゴラ",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9573833,
+          38.6311514
+        ]
+      },
+      "id": "node/10877679287"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877679289",
+        "amenity": "shelter",
+        "name": "東屋",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9569869,
+          38.630482
+        ]
+      },
+      "id": "node/10877679289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877880152",
+        "amenity": "shelter",
+        "name": "パーゴラ",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.957077,
+          38.6308365
+        ]
+      },
+      "id": "node/10877880152"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877880153",
+        "amenity": "shelter",
+        "name": "ピクニックテーブル",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9576198,
+          38.6308552
+        ]
+      },
+      "id": "node/10877880153"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877880154",
+        "amenity": "shelter",
+        "name": "ピクニックテーブル",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9567832,
+          38.6310877
+        ]
+      },
+      "id": "node/10877880154"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10877880155",
+        "amenity": "shelter",
+        "name": "炊事場"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9552551,
+          38.6306784
+        ]
+      },
+      "id": "node/10877880155"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885588103",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9555296,
+          38.6298596
+        ]
+      },
+      "id": "node/10885588103"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885588104",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9555296,
+          38.6297818
+        ]
+      },
+      "id": "node/10885588104"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885588105",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9549963,
+          38.6297778
+        ]
+      },
+      "id": "node/10885588105"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885588106",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9547871,
+          38.6298137
+        ]
+      },
+      "id": "node/10885588106"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885588247",
+        "amenity": "shelter",
+        "name": "ステージ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9555104,
+          38.6293989
+        ]
+      },
+      "id": "node/10885588247"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885836409",
+        "amenity": "shelter",
+        "name": "東屋"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9502387,
+          38.6256652
+        ]
+      },
+      "id": "node/10885836409"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885836410",
+        "amenity": "shelter",
+        "name": "東屋",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9498837,
+          38.6254495
+        ]
+      },
+      "id": "node/10885836410"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885836411",
+        "amenity": "shelter",
+        "name": "東屋",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9490037,
+          38.6249722
+        ]
+      },
+      "id": "node/10885836411"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10885923410",
+        "amenity": "shelter",
+        "name": "東屋",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9478935,
+          38.6263503
+        ]
+      },
+      "id": "node/10885923410"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10886416558",
+        "amenity": "shelter",
+        "name": "東屋",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9636106,
+          38.6264379
+        ]
+      },
+      "id": "node/10886416558"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10904601443",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9628184,
+          38.6358891
+        ]
+      },
+      "id": "node/10904601443"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10905152759",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.962524,
+          38.6363354
+        ]
+      },
+      "id": "node/10905152759"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10905152781",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9634901,
+          38.6361601
+        ]
+      },
+      "id": "node/10905152781"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10905152788",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9639082,
+          38.6352361
+        ]
+      },
+      "id": "node/10905152788"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10905172778",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9723057,
+          38.5815087
+        ]
+      },
+      "id": "node/10905172778"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10911222190",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9583735,
+          38.6372184
+        ]
+      },
+      "id": "node/10911222190"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10939120371",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9394771,
+          38.5677258
+        ]
+      },
+      "id": "node/10939120371"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10939120389",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9414856,
+          38.5720974
+        ]
+      },
+      "id": "node/10939120389"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10964818757",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9400769,
+          38.565006
+        ]
+      },
+      "id": "node/10964818757"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10996569180",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.967594,
+          38.5675173
+        ]
+      },
+      "id": "node/10996569180"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11009567635",
+        "brand": "ヨークベニマル",
+        "brand:en": "York Benimaru",
+        "brand:ja": "ヨークベニマル",
+        "brand:wikidata": "Q11346199",
+        "name": "ヨークベニマル",
+        "name:en": "York Benimaru",
+        "name:ja": "ヨークベニマル",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9722873,
+          38.5734496
+        ]
+      },
+      "id": "node/11009567635"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11009759614",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9694618,
+          38.5881169
+        ]
+      },
+      "id": "node/11009759614"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11166053809",
+        "brand": "LAWSON",
+        "brand:en": "LAWSON",
+        "brand:ja": "ローソン",
+        "brand:wikidata": "Q1557223",
+        "name": "ローソン",
+        "name:en": "Lawson",
+        "name:ja": "ローソン",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9592077,
+          38.5749337
+        ]
+      },
+      "id": "node/11166053809"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11404399709",
+        "branch": "古川荒谷店",
+        "brand": "7-ELEVEN",
+        "brand:en": "7-ELEVEN",
+        "brand:ja": "セブン-イレブン",
+        "brand:wikidata": "Q259340",
+        "name": "セブン-イレブン",
+        "name:en": "7-Eleven",
+        "name:ja": "セブン-イレブン",
+        "official_name:en": "Seven-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9820314,
+          38.607927
+        ]
+      },
+      "id": "node/11404399709"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11406998491",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8619948,
+          38.657844
+        ]
+      },
+      "id": "node/11406998491"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11407007178",
+        "amenity": "drinking_water"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8626532,
+          38.6583875
+        ]
+      },
+      "id": "node/11407007178"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11464499222",
+        "branch": "宮城田尻店",
+        "brand": "MINISTOP",
+        "brand:en": "MINISTOP",
+        "brand:ja": "ミニストップ",
+        "brand:wikidata": "Q1038929",
+        "name": "ミニストップ",
+        "name:en": "Ministop",
+        "name:ja": "ミニストップ",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0434491,
+          38.6184773
+        ]
+      },
+      "id": "node/11464499222"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11541719910",
+        "name": "スーパーセンター TRUST 岩出山",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8666233,
+          38.6676889
+        ]
+      },
+      "id": "node/11541719910"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11968255113",
+        "amenity": "shelter",
+        "shelter_type": "picnic_shelter"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0535833,
+          38.5604567
+        ]
+      },
+      "id": "node/11968255113"
+    }
+  ]
+}

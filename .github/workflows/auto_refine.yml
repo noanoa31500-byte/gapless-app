@@ -1,0 +1,42 @@
+name: Daily AI Code Refinement
+
+on:
+  # ⏰ スケジュール実行: 2時間おき (0時, 2時, 4時...)
+  schedule:
+    - cron: '0 */2 * * *'
+  
+  # 👆 手動実行ボタンも有効化 (テスト用)
+  workflow_dispatch:
+
+jobs:
+  refine-code:
+    runs-on: ubuntu-latest
+    
+    # 🔑 PRを作成するための権限設定
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      # 1. コードをチェックアウト (持ってくる)
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Python環境のセットアップ
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      # 3. 必要なライブラリをインストール
+      - name: Install dependencies
+        run: pip install anthropic google-generativeai PyGithub requests
+
+      # 4. AIスクリプトを実行
+      - name: Run AI Refinement
+        env:
+          # GitHubのSecretsに登録した鍵を読み込む
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # これは自動で入る
+        run: python scripts/daily_refine.py

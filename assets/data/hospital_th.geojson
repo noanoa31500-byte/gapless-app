@@ -1,0 +1,100 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-26T14:15:44Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1021407604",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "โรงพยาบาลควนกาหลง",
+        "name:en": "Khuan Kalong Hospital",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9740541,
+          6.866015
+        ]
+      },
+      "id": "way/1021407604"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3318085125",
+        "amenity": "hospital",
+        "emergency": "yes",
+        "healthcare": "hospital",
+        "healthcare:speciality": "general",
+        "name": "Satun Hospital",
+        "name:th": "โรงพยาบาลสตูล"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0707083,
+          6.6181096
+        ]
+      },
+      "id": "node/3318085125"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7856632137",
+        "amenity": "hospital",
+        "name": "โรงพยาบาลควนโดน",
+        "name:en": "Khuan Don Hospital"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0954324,
+          6.7765608
+        ]
+      },
+      "id": "node/7856632137"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7856632138",
+        "amenity": "hospital",
+        "name": "โรงพยาบาลท่าแพ",
+        "name:en": "Tha Phae Hospital"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9694919,
+          6.7884717
+        ]
+      },
+      "id": "node/7856632138"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/9893357129",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "Klinik Kesihatan Kaki Bukit",
+        "name:ms": "Klinik Kesihatan Kaki Bukit",
+        "phone": "+60 4-945 6237"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.211301,
+          6.6424341
+        ]
+      },
+      "id": "node/9893357129"
+    }
+  ]
+}

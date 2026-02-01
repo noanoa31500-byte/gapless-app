@@ -1,0 +1,605 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-28T13:01:07Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/1197806364",
+        "amenity": "fuel",
+        "brand": "Caltex",
+        "brand:en": "Caltex",
+        "brand:th": "คาลเท็กซ์",
+        "name": "Caltex",
+        "name:en": "Caltex",
+        "name:th": "คาลเท็กซ์"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0646827,
+          6.6094612
+        ]
+      },
+      "id": "node/1197806364"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2657418717",
+        "alt_name": "7-11",
+        "brand": "7-Eleven",
+        "brand:website": "http://www.7eleven.co.th/",
+        "brand:wikidata": "Q259340",
+        "brand:wikipedia": "th:เซเว่น อีเลฟเว่น",
+        "name": "7-Eleven",
+        "name:en": "7-Eleven",
+        "opening_hours": "24/7",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0168761,
+          6.8612315
+        ]
+      },
+      "id": "node/2657418717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3047032100",
+        "contact:email": "sgm.satun@bigc.co.th",
+        "contact:phone": "+66 7474 1910",
+        "contact:website": "http://corporate.bigc.co.th/en/stores/bigc/satun/",
+        "name": "Big C",
+        "opening_hours": "09:00-23:00",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0700677,
+          6.6383461
+        ]
+      },
+      "id": "node/3047032100"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3104196040",
+        "amenity": "fuel",
+        "name:en": "PTT"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0668937,
+          6.6977649
+        ]
+      },
+      "id": "node/3104196040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3284312671",
+        "amenity": "fuel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0744673,
+          6.6685675
+        ]
+      },
+      "id": "node/3284312671"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3318094587",
+        "amenity": "fuel",
+        "brand": "PTT",
+        "name": "PTT (Theerasak Service)",
+        "operator": "PTT"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0477374,
+          6.6246279
+        ]
+      },
+      "id": "node/3318094587"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3318095664",
+        "amenity": "fuel",
+        "brand": "PTT",
+        "name": "PTT"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.069543,
+          6.6322746
+        ]
+      },
+      "id": "node/3318095664"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544229594",
+        "amenity": "fuel",
+        "name:en": "ptt"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0063974,
+          6.8621207
+        ]
+      },
+      "id": "node/4544229594"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544231292",
+        "name:en": "7 Eleven",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.91224,
+          6.9990212
+        ]
+      },
+      "id": "node/4544231292"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4577560256",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0667413,
+          6.7188981
+        ]
+      },
+      "id": "node/4577560256"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4805979622",
+        "name:en": "Tesco",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0662805,
+          6.7254359
+        ]
+      },
+      "id": "node/4805979622"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4805979721",
+        "name:en": "Tesco",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0676645,
+          6.7530777
+        ]
+      },
+      "id": "node/4805979721"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4821929923",
+        "amenity": "fuel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9371594,
+          6.8191511
+        ]
+      },
+      "id": "node/4821929923"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4821929924",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9371348,
+          6.8188814
+        ]
+      },
+      "id": "node/4821929924"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4822297821",
+        "name:en": "7-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0749425,
+          6.6654938
+        ]
+      },
+      "id": "node/4822297821"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5300510783",
+        "alt_name": "7-11",
+        "brand": "7-Eleven",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0663895,
+          6.6162451
+        ]
+      },
+      "id": "node/5300510783"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5301462335",
+        "alt_name": "7-11",
+        "brand": "7-Eleven",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0646087,
+          6.6091446
+        ]
+      },
+      "id": "node/5301462335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5358659722",
+        "name": "SK มินิมาร์เก็ต",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9089395,
+          6.8473983
+        ]
+      },
+      "id": "node/5358659722"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5805937553",
+        "amenity": "fuel",
+        "brand": "Caltex",
+        "brand:wikidata": "Q277470",
+        "name": "Caltex Wang Kelian",
+        "name:en": "Caltex Wang Kelian",
+        "name:ms": "Caltex Wang Kelian"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.186764,
+          6.681126
+        ]
+      },
+      "id": "node/5805937553"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6142100388",
+        "brand": "7-Eleven",
+        "brand:wikidata": "Q259340",
+        "name": "7-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0801178,
+          6.7884402
+        ]
+      },
+      "id": "node/6142100388"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/6369602786",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0736202,
+          6.6714624
+        ]
+      },
+      "id": "node/6369602786"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7244502786",
+        "name:en": "7 Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0065904,
+          6.8620172
+        ]
+      },
+      "id": "node/7244502786"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7246551185",
+        "name:en": "Mini C",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0896034,
+          6.8404406
+        ]
+      },
+      "id": "node/7246551185"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7288109685",
+        "amenity": "fuel",
+        "name:en": "Shell"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0893362,
+          6.8410054
+        ]
+      },
+      "id": "node/7288109685"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/7288109785",
+        "name:en": "mini Big C",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0897104,
+          6.8408768
+        ]
+      },
+      "id": "node/7288109785"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/10173072017",
+        "name:en": "7-Eleven",
+        "shop": "convenience"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0668629,
+          6.6979791
+        ]
+      },
+      "id": "node/10173072017"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329679471",
+        "amenity": "fuel",
+        "name": "Independent"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0246205,
+          6.9295629
+        ]
+      },
+      "id": "node/11329679471"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329679472",
+        "amenity": "fuel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9019482,
+          6.9972785
+        ]
+      },
+      "id": "node/11329679472"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329708035",
+        "amenity": "fuel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1048147,
+          6.8431475
+        ]
+      },
+      "id": "node/11329708035"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329708036",
+        "amenity": "fuel",
+        "name": "Independent"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1027797,
+          6.8410765
+        ]
+      },
+      "id": "node/11329708036"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329708038",
+        "amenity": "fuel",
+        "name": "Independent"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0569799,
+          6.8491112
+        ]
+      },
+      "id": "node/11329708038"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329708040",
+        "amenity": "fuel",
+        "name": "Independent"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0187629,
+          6.8857431
+        ]
+      },
+      "id": "node/11329708040"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/11329708043",
+        "amenity": "fuel"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.1055198,
+          6.8460362
+        ]
+      },
+      "id": "node/11329708043"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12291443602",
+        "name": "7-Eleven",
+        "shop": "supermarket"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          100.0671157,
+          6.6204801
+        ]
+      },
+      "id": "node/12291443602"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/13105689759",
+        "addr:district": "ท่าแพ",
+        "addr:housenumber": "22",
+        "addr:place": "บ้านสาคร หมู่2",
+        "addr:postcode": "91150",
+        "addr:province": "สตูล",
+        "addr:subdistrict": "สาคร",
+        "check_date": "2025-09-15",
+        "check_date:currency:XBT": "2025-09-15",
+        "currency:XBT": "yes",
+        "name": "ไทรทองวัสดุ",
+        "name:en": "Tritong Watsadu",
+        "opening_hours": "Mo-Su 06:00-21:00",
+        "payment:lightning": "yes",
+        "payment:lightning_contactless": "no",
+        "payment:onchain": "no",
+        "phone": "+66 83 658 5904",
+        "shop": "general",
+        "survey:date": "2025-09-15"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          99.9012791,
+          6.738352
+        ]
+      },
+      "id": "node/13105689759"
+    }
+  ]
+}

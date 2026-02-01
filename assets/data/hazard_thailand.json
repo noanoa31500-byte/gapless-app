@@ -1,0 +1,118 @@
+{
+  "generated_by": "GapLess_Unified_Engine",
+  "type": "polygon_hazard",
+  "region": "th_satun",
+  "total_polygons": 5,
+  "description": "Satun flood risk zones - merged from AI prediction data",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Satun Central Flood Zone",
+        "risk_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [100.0550, 6.6050],
+          [100.0900, 6.6050],
+          [100.0950, 6.6200],
+          [100.0900, 6.6450],
+          [100.0850, 6.6700],
+          [100.0750, 6.6850],
+          [100.0600, 6.6900],
+          [100.0450, 6.6850],
+          [100.0350, 6.6700],
+          [100.0300, 6.6500],
+          [100.0350, 6.6250],
+          [100.0450, 6.6100],
+          [100.0550, 6.6050]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "La-ngu Coastal Zone",
+        "risk_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [99.8500, 6.8800],
+          [99.9200, 6.8600],
+          [99.9500, 6.8800],
+          [99.9600, 6.9200],
+          [99.9400, 6.9600],
+          [99.9000, 6.9800],
+          [99.8600, 6.9700],
+          [99.8300, 6.9400],
+          [99.8200, 6.9100],
+          [99.8500, 6.8800]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Thung Wa Agricultural Zone",
+        "risk_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [100.0000, 6.7500],
+          [100.0500, 6.7300],
+          [100.0800, 6.7500],
+          [100.0900, 6.7900],
+          [100.0700, 6.8200],
+          [100.0400, 6.8400],
+          [100.0100, 6.8300],
+          [99.9800, 6.8000],
+          [99.9700, 6.7700],
+          [100.0000, 6.7500]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Khuan Don Riverside",
+        "risk_level": "high"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [100.0600, 6.8300],
+          [100.1100, 6.8100],
+          [100.1300, 6.8400],
+          [100.1200, 6.8800],
+          [100.0900, 6.9000],
+          [100.0600, 6.8900],
+          [100.0400, 6.8600],
+          [100.0600, 6.8300]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Khuan Kalong Basin",
+        "risk_level": "medium"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [100.0200, 6.9500],
+          [100.0700, 6.9300],
+          [100.1000, 6.9600],
+          [100.0900, 7.0000],
+          [100.0500, 7.0200],
+          [100.0100, 7.0000],
+          [99.9900, 6.9700],
+          [100.0200, 6.9500]
+        ]]
+      }
+    }
+  ]
+}

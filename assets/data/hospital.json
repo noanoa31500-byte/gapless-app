@@ -1,0 +1,1955 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-01-25T15:10:45Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1173186808",
+        "addr:block_number": "1",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "末沢",
+        "addr:postcode": "989-6814",
+        "addr:province": "宮城県",
+        "addr:quarter": "鳴子温泉",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "大崎市民病院 鳴子温泉分院",
+        "phone": "+81-229-82-2311",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7261277,
+          38.751284
+        ]
+      },
+      "id": "way/1173186808"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1377351018",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "healthcare:speciality": "neurosurgery;surgery;internal;neurology",
+        "name": "片倉病院",
+        "name:en": "Katakura Hospital",
+        "name:ja": "片倉病院",
+        "phone": "+81 229 22 0016",
+        "website": "http://katakura-hospital.com/index.html",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9575041,
+          38.577993
+        ]
+      },
+      "id": "way/1377351018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1379228391",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "大崎市民病院",
+        "name:en": "Osaki Citizen Hospital",
+        "name:ja": "大崎市民病院",
+        "name:ja-Hira": "おおさきしみんびょういん",
+        "name:ja-Latn": "Ōsaki Shimin Byōin",
+        "phone": "+81 229 23 3311",
+        "wikidata": "Q11435028",
+        "wikipedia": "ja:大崎市民病院",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9441341,
+          38.5653141
+        ]
+      },
+      "id": "way/1379228391"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1381584673",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "星陵あすか病院",
+        "name:en": "Seiryo Asuka Hospital",
+        "name:ja": "星陵あすか病院",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9526842,
+          38.5562287
+        ]
+      },
+      "id": "way/1381584673"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1387429279",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9743149,
+          38.5731892
+        ]
+      },
+      "id": "way/1387429279"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1395365861",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "@geometry": "center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.953998,
+          38.5702186
+        ]
+      },
+      "id": "way/1395365861"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2289995771",
+        "amenity": "dentist",
+        "name": "高橋歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7208,
+          38.747843
+        ]
+      },
+      "id": "node/2289995771"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/2290053005",
+        "amenity": "dentist",
+        "name": "若林歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.717889,
+          38.742914
+        ]
+      },
+      "id": "node/2290053005"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/3510437915",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "古川民主病院",
+        "name:ja": "古川民主病院",
+        "wikidata": "Q97191655",
+        "wikipedia": "ja:古川民主病院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9744001,
+          38.5731667
+        ]
+      },
+      "id": "node/3510437915"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510191396",
+        "amenity": "clinic",
+        "name": "佐藤医院",
+        "name:ja": "佐藤医院",
+        "phone": "+81 229 22 0320"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9601339,
+          38.5760791
+        ]
+      },
+      "id": "node/4510191396"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510209202",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "こだしろクリニック",
+        "name:ja": "こだしろクリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9694674,
+          38.5695317
+        ]
+      },
+      "id": "node/4510209202"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510242197",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "森歯科医院",
+        "name:en": "Mori Dental Clinic",
+        "name:ja": "森歯科医院",
+        "phone": "+81 229 22 8049"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9715429,
+          38.5726724
+        ]
+      },
+      "id": "node/4510242197"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510242199",
+        "amenity": "clinic",
+        "name": "古川中央眼科",
+        "name:ja": "古川中央眼科",
+        "phone": "+81 229 22 6111"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9634561,
+          38.5741524
+        ]
+      },
+      "id": "node/4510242199"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510246691",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "すずき脳外科クリニック",
+        "name:ja": "すずき脳外科クリニック",
+        "phone": "+81 229 24 3770"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9698531,
+          38.5758313
+        ]
+      },
+      "id": "node/4510246691"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510250497",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "古川駅南耳鼻咽喉科",
+        "name:ja": "古川駅南耳鼻咽喉科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9692758,
+          38.5701161
+        ]
+      },
+      "id": "node/4510250497"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510263196",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "関井レディースクリニック",
+        "name:ja": "関井レディースクリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9747733,
+          38.5720818
+        ]
+      },
+      "id": "node/4510263196"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510277596",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "せきや整形外科",
+        "name:ja": "せきや整形外科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9654195,
+          38.5765701
+        ]
+      },
+      "id": "node/4510277596"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510285391",
+        "amenity": "dentist",
+        "name": "阿部歯科医院",
+        "name:en": "Abe Dental Clinic",
+        "name:ja": "阿部歯科医院",
+        "phone": "+81 229 22 0524"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9611096,
+          38.5756863
+        ]
+      },
+      "id": "node/4510285391"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510292992",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "佐藤まさひでクリニック",
+        "name:ja": "佐藤まさひでクリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9682798,
+          38.5772305
+        ]
+      },
+      "id": "node/4510292992"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510292996",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "徳永歯科医院",
+        "name:en": "Tokunaga Dental Clinic",
+        "name:ja": "徳永歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.968872,
+          38.5687475
+        ]
+      },
+      "id": "node/4510292996"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510312293",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "ありま小児科医院",
+        "name:ja": "ありま小児科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9683984,
+          38.5671651
+        ]
+      },
+      "id": "node/4510312293"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510315592",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "中川産婦人科",
+        "name:ja": "中川産婦人科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9657268,
+          38.5784117
+        ]
+      },
+      "id": "node/4510315592"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4510316590",
+        "amenity": "dentist",
+        "name": "鹿郷歯科医院",
+        "name:ja": "鹿郷歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9616213,
+          38.5742305
+        ]
+      },
+      "id": "node/4510316590"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544636910",
+        "addr:block_number": "46",
+        "addr:city": "大崎市",
+        "addr:housenumber": "3",
+        "addr:neighbourhood": "塩加良",
+        "addr:postcode": "989-4308",
+        "addr:province": "宮城県",
+        "addr:quarter": "田尻沼部",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "healthcare:speciality": "dentist",
+        "name": "中沢歯科医院",
+        "name:en": "Nakazawa Dental Clinic",
+        "name:ja": "中沢歯科医院",
+        "phone": "+81 229 39 1188"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0582527,
+          38.5964042
+        ]
+      },
+      "id": "node/4544636910"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4544812792",
+        "amenity": "clinic",
+        "name": "たじり中央クリニック",
+        "name:ja": "たじり中央クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0554838,
+          38.5980705
+        ]
+      },
+      "id": "node/4544812792"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613993191",
+        "amenity": "dentist",
+        "name": "千葉歯科医院",
+        "name:en": "Chiba Dental Clinic",
+        "name:ja": "千葉歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8657971,
+          38.6516384
+        ]
+      },
+      "id": "node/4613993191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613993889",
+        "amenity": "clinic",
+        "name": "高橋医院",
+        "name:en": "Takahashi Clinic",
+        "name:ja": "高橋医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8661292,
+          38.6577763
+        ]
+      },
+      "id": "node/4613993889"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613993989",
+        "amenity": "dentist",
+        "name": "伊藤歯科医院",
+        "name:en": "Ito Dental Clinic",
+        "name:ja": "伊藤歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8653598,
+          38.6555283
+        ]
+      },
+      "id": "node/4613993989"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4613994090",
+        "amenity": "dentist",
+        "name": "角田歯科医院",
+        "name:ja": "角田歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.8770633,
+          38.6465065
+        ]
+      },
+      "id": "node/4613994090"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623217197",
+        "amenity": "dentist",
+        "name": "ひまわり歯科医院",
+        "name:en": "Himawari Dental Clinic",
+        "name:ja": "ひまわり歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9429393,
+          38.5247558
+        ]
+      },
+      "id": "node/4623217197"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623231289",
+        "amenity": "dentist",
+        "name": "本宮歯科医院",
+        "name:ja": "本宮歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9331539,
+          38.5188726
+        ]
+      },
+      "id": "node/4623231289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623232289",
+        "amenity": "clinic",
+        "name": "岩渕胃腸科内科医院",
+        "name:ja": "岩渕胃腸科内科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9459315,
+          38.5251695
+        ]
+      },
+      "id": "node/4623232289"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623328004",
+        "amenity": "dentist",
+        "name": "歯科なおきクリニック",
+        "name:ja": "歯科なおきクリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9418202,
+          38.5661146
+        ]
+      },
+      "id": "node/4623328004"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623347296",
+        "amenity": "dentist",
+        "name": "弓歯科医院",
+        "name:ja": "弓歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9396247,
+          38.5670325
+        ]
+      },
+      "id": "node/4623347296"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623375690",
+        "amenity": "dentist",
+        "name": "つのだ歯科クリニック",
+        "name:en": "Tsunoda Dental Clinic",
+        "name:ja": "つのだ歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9452677,
+          38.5274318
+        ]
+      },
+      "id": "node/4623375690"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4623375693",
+        "amenity": "clinic",
+        "name": "近江医院",
+        "name:ja": "近江医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9431143,
+          38.5308636
+        ]
+      },
+      "id": "node/4623375693"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625251093",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "高橋歯科診療所",
+        "name:ja": "高橋歯科診療所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9811452,
+          38.6156314
+        ]
+      },
+      "id": "node/4625251093"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625251191",
+        "amenity": "dentist",
+        "name": "三沢歯科医院",
+        "name:en": "Misawa Dental Clinic",
+        "name:ja": "三沢歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9525437,
+          38.5835292
+        ]
+      },
+      "id": "node/4625251191"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4625266796",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "秋山内科医院",
+        "name:ja": "秋山内科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9815683,
+          38.6133845
+        ]
+      },
+      "id": "node/4625266796"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628365490",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "大崎市民病院鹿島台分院",
+        "name:ja": "大崎市民病院鹿島台分院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0981016,
+          38.4792649
+        ]
+      },
+      "id": "node/4628365490"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628379392",
+        "amenity": "dentist",
+        "name": "田中歯科医院",
+        "name:en": "Tanaka Dental Clinic",
+        "name:ja": "田中歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.097416,
+          38.4767589
+        ]
+      },
+      "id": "node/4628379392"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628472792",
+        "amenity": "dentist",
+        "name": "千葉歯科医院",
+        "name:en": "Chiba Dental Clinic",
+        "name:ja": "千葉歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0974845,
+          38.4737741
+        ]
+      },
+      "id": "node/4628472792"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473296",
+        "amenity": "dentist",
+        "name": "駅東歯科クリニック",
+        "name:ja": "駅東歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.098769,
+          38.47538
+        ]
+      },
+      "id": "node/4628473296"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473303",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "旭山病院",
+        "name:ja": "旭山病院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0932683,
+          38.4893853
+        ]
+      },
+      "id": "node/4628473303"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628473794",
+        "amenity": "clinic",
+        "name": "かしまだい中央眼科",
+        "name:ja": "かしまだい中央眼科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1045225,
+          38.4764635
+        ]
+      },
+      "id": "node/4628473794"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628612893",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "大原歯科医院",
+        "name:en": "Ohara Dental Clinic",
+        "name:ja": "大原歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0983203,
+          38.4806726
+        ]
+      },
+      "id": "node/4628612893"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4628613591",
+        "amenity": "clinic",
+        "name": "東北整形外科大崎",
+        "name:ja": "東北整形外科大崎"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1044935,
+          38.475189
+        ]
+      },
+      "id": "node/4628613591"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4665051392",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "さの整形外科クリニック",
+        "name:ja": "さの整形外科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9754604,
+          38.5739285
+        ]
+      },
+      "id": "node/4665051392"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4665107189",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "みやざき内科クリニック",
+        "name:ja": "みやざき内科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.975703,
+          38.5738728
+        ]
+      },
+      "id": "node/4665107189"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/4679793091",
+        "amenity": "dentist",
+        "name": "阿部歯科医院",
+        "name:en": "Abe Dental Clinic",
+        "name:ja": "阿部歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.7466118,
+          38.7365242
+        ]
+      },
+      "id": "node/4679793091"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059790822",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "寛内科胃腸科クリニック",
+        "name:ja": "寛内科胃腸科クリニック",
+        "phone": "+81 229 24 8822"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9631974,
+          38.5720993
+        ]
+      },
+      "id": "node/5059790822"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059790928",
+        "amenity": "hospital",
+        "name": "佐藤病院",
+        "name:en": "Sato Hospital",
+        "name:ja": "佐藤病院",
+        "phone": "+81 229 22 0207"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9609,
+          38.5741413
+        ]
+      },
+      "id": "node/5059790928"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059791526",
+        "amenity": "dentist",
+        "name": "豊島歯科医院",
+        "name:ja": "豊島歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9585285,
+          38.5743951
+        ]
+      },
+      "id": "node/5059791526"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059906136",
+        "amenity": "dentist",
+        "name": "守安歯科医院",
+        "name:en": "Moriyasu Dental Clinic",
+        "name:ja": "守安歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9581882,
+          38.577028
+        ]
+      },
+      "id": "node/5059906136"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5059906142",
+        "amenity": "dentist",
+        "name": "日野歯科",
+        "name:en": "Hino Dental Clinic",
+        "name:ja": "日野歯科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.955626,
+          38.5784351
+        ]
+      },
+      "id": "node/5059906142"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5061591336",
+        "amenity": "clinic",
+        "name": "渋谷皮膚科泌尿器科医院",
+        "name:ja": "渋谷皮膚科泌尿器科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9619587,
+          38.5758951
+        ]
+      },
+      "id": "node/5061591336"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487525",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "青田歯科医院",
+        "name:en": "Aota Dental Clinic",
+        "name:ja": "青田歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9635474,
+          38.5812945
+        ]
+      },
+      "id": "node/5063487525"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487623",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "青沼内科胃腸科医院",
+        "name:ja": "青沼内科胃腸科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9650744,
+          38.578511
+        ]
+      },
+      "id": "node/5063487623"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063487624",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "徳永整形外科病院",
+        "name:ja": "徳永整形外科病院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9649083,
+          38.5796009
+        ]
+      },
+      "id": "node/5063487624"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063489622",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "千葉医院",
+        "name:en": "Chiba Clinic",
+        "name:ja": "千葉医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.96719,
+          38.5781631
+        ]
+      },
+      "id": "node/5063489622"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063489628",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "すぎはら歯科医院",
+        "name:en": "Sugihara Dental Clinic",
+        "name:ja": "すぎはら歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9657366,
+          38.5818526
+        ]
+      },
+      "id": "node/5063489628"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063562529",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "いのせ医院",
+        "name:en": "Inose Clinic",
+        "name:ja": "いのせ医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9598014,
+          38.5821767
+        ]
+      },
+      "id": "node/5063562529"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063562530",
+        "amenity": "dentist",
+        "name": "かんの歯科クリニック",
+        "name:en": "Kanno Dental Clinic",
+        "name:ja": "かんの歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9588398,
+          38.5803424
+        ]
+      },
+      "id": "node/5063562530"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063569825",
+        "amenity": "clinic",
+        "name": "まつうら内科小児科クリニック",
+        "name:ja": "まつうら内科小児科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9583259,
+          38.581026
+        ]
+      },
+      "id": "node/5063569825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063659421",
+        "amenity": "hospital",
+        "name": "大崎市夜間救急センター",
+        "name:ja": "大崎市夜間救急センター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9558619,
+          38.5795415
+        ]
+      },
+      "id": "node/5063659421"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5063659426",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "鎌田内科クリニック",
+        "name:ja": "鎌田内科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9524485,
+          38.5828284
+        ]
+      },
+      "id": "node/5063659426"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5068568022",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "のだ歯科医院",
+        "name:ja": "のだ歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.975965,
+          38.5927259
+        ]
+      },
+      "id": "node/5068568022"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5071066221",
+        "amenity": "dentist",
+        "name": "野村歯科医院",
+        "name:en": "Nomura Dental Clinic",
+        "name:ja": "野村歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.952254,
+          38.5761383
+        ]
+      },
+      "id": "node/5071066221"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088020737",
+        "amenity": "clinic",
+        "name": "遠藤皮膚科医院",
+        "name:ja": "遠藤皮膚科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9558228,
+          38.5655621
+        ]
+      },
+      "id": "node/5088020737"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088023824",
+        "amenity": "clinic",
+        "name": "高橋医院",
+        "name:en": "Takahashi Clinic",
+        "name:ja": "高橋医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9598626,
+          38.5701848
+        ]
+      },
+      "id": "node/5088023824"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088023830",
+        "amenity": "clinic",
+        "name": "木村病院",
+        "name:en": "Kimura Hospital"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9565072,
+          38.5663499
+        ]
+      },
+      "id": "node/5088023830"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5088033528",
+        "amenity": "dentist",
+        "name": "かれい歯科",
+        "name:ja": "かれい歯科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9584493,
+          38.5670993
+        ]
+      },
+      "id": "node/5088033528"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437434",
+        "addr:block_number": "3-32",
+        "addr:city": "大崎市",
+        "addr:neighbourhood": "3丁目",
+        "addr:postcode": "989-6143",
+        "addr:province": "宮城県",
+        "addr:quarter": "古川中里",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "healthcare:speciality": "dentist",
+        "name": "中里歯科医院",
+        "name:en": "Nakazato Dental Clinic",
+        "name:ja": "中里歯科医院",
+        "phone": "+81 229 23 6400"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9602749,
+          38.5659811
+        ]
+      },
+      "id": "node/5091437434"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437445",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "一迫眼科",
+        "name:en": "Ichihasama Eye Clinic",
+        "name:ja": "一迫眼科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9705377,
+          38.5653294
+        ]
+      },
+      "id": "node/5091437445"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437446",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "石川泌尿器科クリニック",
+        "name:ja": "石川泌尿器科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9700945,
+          38.5655018
+        ]
+      },
+      "id": "node/5091437446"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091437447",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "こしの皮膚科医院",
+        "name:ja": "こしの皮膚科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9711397,
+          38.5657628
+        ]
+      },
+      "id": "node/5091437447"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091442223",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "三塚歯科クリニック",
+        "name:en": "Mitsutsuka Dental Clinic",
+        "name:ja": "三塚歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9629707,
+          38.5614101
+        ]
+      },
+      "id": "node/5091442223"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091442230",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "宮崎歯科",
+        "name:en": "Miyazaki Dental Clinic",
+        "name:ja": "宮崎歯科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9750955,
+          38.5653053
+        ]
+      },
+      "id": "node/5091442230"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091442427",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "わんや産婦人科医院",
+        "name:ja": "わんや産婦人科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9696746,
+          38.5665557
+        ]
+      },
+      "id": "node/5091442427"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091442431",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "歯科おのでら",
+        "name:en": "Dental Clinic Onodera",
+        "name:ja": "歯科おのでら"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.972544,
+          38.5680019
+        ]
+      },
+      "id": "node/5091442431"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5091443421",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "永仁会病院",
+        "name:ja": "永仁会病院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9713173,
+          38.5647072
+        ]
+      },
+      "id": "node/5091443421"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5106991946",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "古川星陵病院",
+        "name:en": "Furukawa Seiryo Hospital",
+        "operator": "医療法人華桜会",
+        "phone": "+81 229 23 8181"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9538183,
+          38.5700977
+        ]
+      },
+      "id": "node/5106991946"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107023632",
+        "amenity": "clinic",
+        "name": "早川整形外科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9558703,
+          38.5651392
+        ]
+      },
+      "id": "node/5107023632"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107023637",
+        "amenity": "dentist",
+        "name": "ア歯科有馬診療所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9541109,
+          38.5593518
+        ]
+      },
+      "id": "node/5107023637"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5107031027",
+        "amenity": "clinic",
+        "name": "三浦医院",
+        "name:en": "Miura Clinic"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.955622,
+          38.5728347
+        ]
+      },
+      "id": "node/5107031027"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437707",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "大崎ミッドタウン総合メディアケアセンター"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0622409,
+          38.5147853
+        ]
+      },
+      "id": "node/5810437707"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/5810437708",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "大崎東部クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0627498,
+          38.5144171
+        ]
+      },
+      "id": "node/5810437708"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8178576621",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "まつむら歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9444961,
+          38.5744142
+        ]
+      },
+      "id": "node/8178576621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8404722260",
+        "amenity": "clinic",
+        "name": "わたなべ産婦人科 内科 小児科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0511727,
+          38.5147515
+        ]
+      },
+      "id": "node/8404722260"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8416854018",
+        "amenity": "dentist",
+        "name": "松山歯科",
+        "name:en": "Matsuyama Dental Clinic"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.059967,
+          38.5134545
+        ]
+      },
+      "id": "node/8416854018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8417261723",
+        "amenity": "dentist",
+        "name": "松山歯科診療所"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0545219,
+          38.5174343
+        ]
+      },
+      "id": "node/8417261723"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8417262917",
+        "amenity": "clinic",
+        "name": "三浦内科小児科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0565427,
+          38.5153077
+        ]
+      },
+      "id": "node/8417262917"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8425265319",
+        "amenity": "dentist",
+        "name": "菊地歯科診療所",
+        "name:en": "Kikuchi Dental Clinic",
+        "phone": "+81 229 56 5650"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.097406,
+          38.4779132
+        ]
+      },
+      "id": "node/8425265319"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8427366120",
+        "amenity": "clinic",
+        "name": "小野寺内科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.1038677,
+          38.4780085
+        ]
+      },
+      "id": "node/8427366120"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430454517",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "天野内科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0482207,
+          38.5963517
+        ]
+      },
+      "id": "node/8430454517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8430860625",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "柳沢歯科医院",
+        "name:en": "Yanagisawa Dental Clinic",
+        "phone": "+81 229 39 0114"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          141.0266471,
+          38.5988308
+        ]
+      },
+      "id": "node/8430860625"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677977718",
+        "amenity": "clinic",
+        "name": "大崎西整形外科",
+        "name:en": "Ōsaki Nishi Orthopedic Clinic",
+        "phone": "+81 229 36 1050",
+        "website": "http://osakinishi.byoinnavi.jp"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9322416,
+          38.5960189
+        ]
+      },
+      "id": "node/8677977718"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8677978025",
+        "amenity": "clinic",
+        "name": "みやぎ北部循環器科"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9420351,
+          38.5864277
+        ]
+      },
+      "id": "node/8677978025"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8681451422",
+        "amenity": "clinic",
+        "name": "伊藤内科小児科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9477633,
+          38.5886414
+        ]
+      },
+      "id": "node/8681451422"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8681544521",
+        "amenity": "clinic",
+        "name": "佐々木内科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9515266,
+          38.5810632
+        ]
+      },
+      "id": "node/8681544521"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689379520",
+        "amenity": "clinic",
+        "name": "佐々木耳鼻咽喉科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9523013,
+          38.5709166
+        ]
+      },
+      "id": "node/8689379520"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8689379621",
+        "amenity": "dentist",
+        "name": "ササキ歯科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9528005,
+          38.5709783
+        ]
+      },
+      "id": "node/8689379621"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8692089619",
+        "amenity": "clinic",
+        "name": "穂波の里クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9392424,
+          38.5667398
+        ]
+      },
+      "id": "node/8692089619"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703386717",
+        "amenity": "clinic",
+        "name": "さとう内科・循環器科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9601497,
+          38.5641551
+        ]
+      },
+      "id": "node/8703386717"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8703478517",
+        "amenity": "dentist",
+        "healthcare": "dentist",
+        "name": "関歯科医院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9603486,
+          38.5743784
+        ]
+      },
+      "id": "node/8703478517"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122522",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "内科・小児科 冨樫クリニック",
+        "name:en": "Togashi Clinic"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9556691,
+          38.5892816
+        ]
+      },
+      "id": "node/8711122522"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/8711122620",
+        "amenity": "clinic",
+        "healthcare": "clinic",
+        "name": "塩沢整形外科クリニック"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.9585616,
+          38.5871508
+        ]
+      },
+      "id": "node/8711122620"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "node/12618587906",
+        "amenity": "hospital",
+        "healthcare": "hospital",
+        "name": "大崎市民病院 岩出山分院"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          140.869655,
+          38.6576209
+        ]
+      },
+      "id": "node/12618587906"
+    }
+  ]
+}
