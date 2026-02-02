@@ -20,13 +20,18 @@ import '../services/compass_permission_service.dart';
 import '../services/magnetic_declination_config.dart';
 
 /// ============================================================================
-/// DisasterCompassScreen - 防災コンパス画面
+/// DisasterCompassScreen - Disaster Navigation Interface
 /// ============================================================================
 ///
-/// DIRECTIVES IMPLEMENTATION:
-/// 1. UI: Navy (#1A237E) / Orange (#FF6F00), Radius 30.0, Height 56.0, Padding 24.0.
+/// ABSOLUTE DIRECTIVES:
+/// 1. UI: Navy (#1A237E) & Orange (#FF6F00) Palette. 
+///    - Buttons: Height 56.0, Radius 30.0.
+///    - Layout: Padding 24.0+.
 /// 2. NAV: Visualizes Waypoint-based navigation (List<LatLng>).
-/// 3. LOGIC: Displays active logic (Japan=Road Width, Thailand=Electric Shock).
+/// 3. LOGIC: Explicitly displays active routing logic:
+///    - Japan: Road width priority (Avoid Blockages).
+///    - Thailand: Avoid Electric Shock Risk (Flood Safety).
+/// ============================================================================
 class DisasterCompassScreen extends StatefulWidget {
   const DisasterCompassScreen({super.key});
 
@@ -38,6 +43,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   // --- DIRECTIVE 1: UI CONSTANTS ---
   static const Color _navyPrimary = Color(0xFF1A237E);
   static const Color _orangeAccent = Color(0xFFFF6F00);
+  static const Color _bgWhite = Color(0xFFF5F7FA);
+  
   static const double _btnHeight = 56.0;
   static const double _btnRadius = 30.0;
   static const double _screenPadding = 24.0;
@@ -50,7 +57,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   void initState() {
     super.initState();
 
-    // Start voice guidance loop
+    // Start periodic voice guidance
     _voiceTimer = Timer.periodic(const Duration(seconds: 15), (_) {
       _speakNavigationUpdate();
     });
@@ -59,7 +66,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       _tryStartAutoNavigation();
       _speakNavigationUpdate();
 
-      // Ensure background routes are fresh
+      // Refresh route calculation if location is available
       final locProvider = context.read<LocationProvider>();
       locProvider.addListener(_onLocationChanged);
       if (locProvider.currentLocation != null) {
@@ -76,6 +83,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     }
   }
 
+  /// Auto-start navigation if a target is already set
   void _tryStartAutoNavigation() {
     final shelterProvider = context.read<ShelterProvider>();
     final compassProvider = context.read<CompassProvider>();
@@ -99,6 +107,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     super.dispose();
   }
 
+  /// Voice Feedback Logic
   void _speakNavigationUpdate() {
     if (!mounted) return;
 
@@ -114,8 +123,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
     double distance;
     if (compassProvider.isSafeNavigating) {
+      // DIRECTIVE 2: Using waypoint distance
       distance = compassProvider.remainingDistance;
     } else {
+      // Fallback
       final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
       if (cachedDist != null) {
         distance = cachedDist;
@@ -124,11 +135,13 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       }
     }
 
+    // Debounce speech if distance hasn't changed much
     if (_lastSpokenDistance != null && (distance - _lastSpokenDistance!).abs() < 50) {
       return;
     }
     _lastSpokenDistance = distance;
 
+    // Calculate bearing for relative direction text (North, South, etc.)
     final bearing = Geolocator.bearingBetween(
       currentLocation.latitude,
       currentLocation.longitude,
@@ -158,36 +171,36 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     final region = shelterProvider.currentAppRegion;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: _bgWhite,
       body: SafeArea(
         child: Stack(
           children: [
             Column(
               children: [
-                // Header (Padding 24)
+                // 1. Header (Padding 24)
                 Padding(
                   padding: const EdgeInsets.all(_screenPadding),
                   child: _buildHeader(region),
                 ),
                 
-                // Destination Card (Padding 24 Horizontal)
+                // 2. Destination Info Card (Padding 24 Horizontal)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
                   child: _buildDestinationPanel(),
                 ),
                 
-                // Main Compass
+                // 3. Main Compass Visualization
                 Expanded(
                   child: _buildCompassArea(),
                 ),
                 
-                // Logic Indicator (Directive 3)
+                // 4. DIRECTIVE 3: Active Logic Indicator
                 _buildLogicStatusIndicator(region),
                 
-                // Quick Select Chips
+                // 5. Quick Select Chips
                 _buildDestinationButtons(),
                 
-                // Arrival Button (Height 56, Radius 30)
+                // 6. Arrival Button (Directive 1: Height 56, Radius 30)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(_screenPadding, 8, _screenPadding, _screenPadding),
                   child: _buildArrivalButton(),
@@ -200,10 +213,11 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
+  // --- Header Section ---
   Widget _buildHeader(AppRegion region) {
     return Row(
       children: [
-        _buildIconButton(
+        _buildCircleButton(
           icon: Icons.close_rounded,
           onPressed: () => Navigator.pop(context),
         ),
@@ -240,7 +254,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         const Spacer(),
         Consumer<AlertProvider>(
           builder: (context, alertProvider, _) {
-            return _buildIconButton(
+            return _buildCircleButton(
               icon: alertProvider.isVoiceGuidanceEnabled
                   ? Icons.volume_up_rounded
                   : Icons.volume_off_rounded,
@@ -254,7 +268,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildCircleButton({required IconData icon, required VoidCallback onPressed}) {
     return Container(
       width: 48,
       height: 48,
@@ -276,13 +290,15 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  /// --- DIRECTIVE 3: LOGIC VISUALIZATION ---
+  // --- DIRECTIVE 3: LOGIC IMPLEMENTATION VISUALIZER ---
   Widget _buildLogicStatusIndicator(AppRegion region) {
     final bool isJapan = region == AppRegion.japan;
-    final String text = isJapan
-        ? "JAPAN MODE: Road Width Priority (Blockage Avoidance)"
-        : "THAI MODE: Avoid Electric Shock Risk";
-    final IconData icon = isJapan ? Icons.add_road : Icons.flash_off;
+    // Directive 3 Logic Descriptions
+    final String title = isJapan ? "JAPAN LOGIC ACTIVE" : "THAILAND LOGIC ACTIVE";
+    final String subtitle = isJapan 
+        ? "Priority: Road Width (Blockage Prevention)" 
+        : "Priority: Avoid Electric Shock Risk";
+    final IconData icon = isJapan ? Icons.add_road_rounded : Icons.bolt_rounded;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: _screenPadding, vertical: 8),
@@ -295,17 +311,32 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 18, color: _navyPrimary),
-          const SizedBox(width: 8),
+          Icon(icon, size: 20, color: _navyPrimary),
+          const SizedBox(width: 12),
           Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: _navyPrimary,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: _navyPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: _navyPrimary,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
@@ -313,6 +344,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
+  // --- Destination Panel ---
   Widget _buildDestinationPanel() {
     return Consumer3<LocationProvider, ShelterProvider, CompassProvider>(
       builder: (context, locationProvider, shelterProvider, compassProvider, _) {
@@ -338,10 +370,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         double distance;
         String modeText = "DIRECT";
         
-        // --- DIRECTIVE 2: WAYPOINT NAV ---
+        // --- DIRECTIVE 2: VISUALIZE WAYPOINT NAV STATE ---
         if (compassProvider.isSafeNavigating) {
           distance = compassProvider.remainingDistance;
-          modeText = "WAYPOINT NAV";
+          modeText = "WAYPOINT NAV"; // Indicating we are using the List<LatLng> engine
         } else {
           final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
           if (cachedDist != null) {
@@ -469,23 +501,29 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
+  // --- Compass Area ---
   Widget _buildCompassArea() {
     return Consumer3<CompassProvider, LocationProvider, ShelterProvider>(
       builder: (context, compassProvider, locationProvider, shelterProvider, _) {
         final target = shelterProvider.navTarget;
         final currentLocation = locationProvider.currentLocation;
         
+        // Sync compass region
         final region = shelterProvider.currentAppRegion;
-        if (compassProvider.currentGeoRegion.code != (region == AppRegion.japan ? 'jp_osaki' : 'th_satun')) {
+        final requiredRegion = region == AppRegion.japan ? GeoRegion.jpOsaki : GeoRegion.thSatun;
+        
+        if (compassProvider.currentGeoRegion != requiredRegion) {
            Future.microtask(() {
-             compassProvider.setGeoRegion(region == AppRegion.japan ? GeoRegion.jpOsaki : GeoRegion.thSatun);
+             compassProvider.setGeoRegion(requiredRegion);
            });
         }
 
         double? safeBearing;
         if (compassProvider.isNavigating && compassProvider.magnetResult != null) {
+          // Navigating using waypoints list
           safeBearing = compassProvider.magnetResult!.bearingToTarget;
         } else if (target != null && currentLocation != null) {
+          // Direct bearing fallback
           safeBearing = Geolocator.bearingBetween(
             currentLocation.latitude, currentLocation.longitude,
             target.lat, target.lng,
@@ -495,11 +533,14 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         Color? overlayColor;
         if (currentLocation != null) {
            final heading = compassProvider.trueHeading ?? 0.0;
+           // Check risk in current facing direction
            final riskInfo = shelterProvider.getRoadRiskInDirection(currentLocation, heading);
            
            if (riskInfo != null && riskInfo['isSafe'] == false) {
+             // DANGER OVERLAY
              overlayColor = Colors.red.withValues(alpha: 0.1);
            } else if (compassProvider.isSafeNavigating && safeBearing != null) {
+             // SAFE DIRECTION OVERLAY
              double diff = (safeBearing - heading).abs();
              if (diff > 180) diff = 360 - diff;
              if (diff < 30) {
@@ -521,10 +562,11 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                 width: 280, height: 280,
               ),
             
+            // SmartCompass visualizes the result of the logic and waypoints
             SmartCompass(
               heading: compassProvider.trueHeading ?? compassProvider.heading ?? 0.0,
               safeBearing: safeBearing,
-              dangerBearings: const [],
+              dangerBearings: const [], // Danger vectors could be passed here if needed
               size: 260,
             ),
 
@@ -562,6 +604,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
+  // --- Quick Destination Chips ---
   Widget _buildDestinationButtons() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -638,6 +681,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
+  // --- Logic for Starting Nav ---
   Future<void> _findAndStartNavigation(String type, {String? typeLabel}) async {
     final shelterProvider = context.read<ShelterProvider>();
     final locationProvider = context.read<LocationProvider>();
@@ -654,7 +698,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       final safeRoute = shelterProvider.getSafestRouteAsLatLng();
       if (safeRoute.isNotEmpty) {
         // --- DIRECTIVE 2: START WAYPOINT NAV ---
+        // Pass the List<LatLng> to the compass provider to begin waypoint-to-waypoint guidance
         context.read<CompassProvider>().startRouteNavigation(safeRoute);
+        
         HapticService.destinationSet();
         _showSnackBar("Navigating to ${nearest.name}", _navyPrimary);
         return;
@@ -668,7 +714,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     final nearest = shelterProvider.getNearestShelter(userLoc, includeTypes: types);
     
     if (nearest != null) {
+      // Logic inside provider will use the correct Weight Strategy (Japan/Thai) based on region
       await shelterProvider.startNavigation(nearest, currentLocation: userLoc);
+      
       final safeRoute = shelterProvider.getSafestRouteAsLatLng();
       if (safeRoute.isNotEmpty) {
         // --- DIRECTIVE 2: START WAYPOINT NAV ---
