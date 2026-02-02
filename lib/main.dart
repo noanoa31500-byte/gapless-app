@@ -28,7 +28,6 @@
       - Error Handling: Use try-catch for each file independently so one failure doesn't stop the other.
 */
 
-
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
