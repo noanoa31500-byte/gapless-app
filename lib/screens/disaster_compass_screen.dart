@@ -487,8 +487,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           safeBearing = compassProvider.magnetResult!.bearingToTarget;
         } else if (target != null && currentLocation != null) {
           safeBearing = Geolocator.bearingBetween(
-            currentLocation.latitude, currentLocation.longitude,
-            target.lat, target.lng,
+            currentLocation.latitude,
+            currentLocation.longitude,
+            target.lat,
+            target.lng,
           );
         }
 
