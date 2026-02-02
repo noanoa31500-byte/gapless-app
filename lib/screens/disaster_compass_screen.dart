@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -15,7 +13,6 @@ import '../utils/localization.dart';
 import '../services/haptic_service.dart';
 import '../widgets/smart_compass.dart';
 import 'shelter_dashboard_screen.dart';
-import '../models/shelter.dart';
 import '../services/compass_permission_service.dart';
 import '../services/magnetic_declination_config.dart';
 
@@ -25,8 +22,8 @@ import '../services/magnetic_declination_config.dart';
 ///
 /// DIRECTIVES IMPLEMENTATION:
 /// 1. UI: Navy (#1A237E) / Orange (#FF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-/// 2. NAV: Visualizes Waypoint-based navigation (List<LatLng>).
-/// 3. LOGIC: Displays active logic (Japan=Road Width, Thailand=Electric Shock).
+/// 2. NAV: Visualizes Waypoint-based navigation status.
+/// 3. LOGIC: Explicitly displays active safety logic (Japan vs Thailand).
 class DisasterCompassScreen extends StatefulWidget {
   const DisasterCompassScreen({super.key});
 
@@ -49,8 +46,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   @override
   void initState() {
     super.initState();
+    _initNavigation();
+  }
 
-    // Start voice guidance loop
+  void _initNavigation() {
     _voiceTimer = Timer.periodic(const Duration(seconds: 15), (_) {
       _speakNavigationUpdate();
     });
@@ -58,22 +57,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tryStartAutoNavigation();
       _speakNavigationUpdate();
-
-      // Ensure background routes are fresh
+      
       final locProvider = context.read<LocationProvider>();
-      locProvider.addListener(_onLocationChanged);
       if (locProvider.currentLocation != null) {
         context.read<ShelterProvider>().updateBackgroundRoutes(locProvider.currentLocation!);
       }
     });
-  }
-
-  void _onLocationChanged() {
-    if (!mounted) return;
-    final loc = context.read<LocationProvider>().currentLocation;
-    if (loc != null) {
-      context.read<ShelterProvider>().updateBackgroundRoutes(loc);
-    }
   }
 
   void _tryStartAutoNavigation() {
@@ -94,8 +83,6 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   @override
   void dispose() {
     _voiceTimer?.cancel();
-    final locProvider = context.read<LocationProvider>();
-    locProvider.removeListener(_onLocationChanged);
     super.dispose();
   }
 
@@ -117,12 +104,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       distance = compassProvider.remainingDistance;
     } else {
       final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
-      if (cachedDist != null) {
-        distance = cachedDist;
-      } else {
-        return;
-      }
+      distance = cachedDist ?? -1.0;
     }
+
+    if (distance < 0) return;
 
     if (_lastSpokenDistance != null && (distance - _lastSpokenDistance!).abs() < 50) {
       return;
@@ -141,14 +126,14 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   String _getDirectionText(double bearing) {
-    final normalizedBearing = (bearing + 360) % 360;
-    if (normalizedBearing >= 337.5 || normalizedBearing < 22.5) return AppLocalizations.t('dir_north');
-    if (normalizedBearing >= 22.5 && normalizedBearing < 67.5) return AppLocalizations.t('dir_northeast');
-    if (normalizedBearing >= 67.5 && normalizedBearing < 112.5) return AppLocalizations.t('dir_east');
-    if (normalizedBearing >= 112.5 && normalizedBearing < 157.5) return AppLocalizations.t('dir_southeast');
-    if (normalizedBearing >= 157.5 && normalizedBearing < 202.5) return AppLocalizations.t('dir_south');
-    if (normalizedBearing >= 202.5 && normalizedBearing < 247.5) return AppLocalizations.t('dir_southwest');
-    if (normalizedBearing >= 247.5 && normalizedBearing < 292.5) return AppLocalizations.t('dir_west');
+    final normalized = (bearing + 360) % 360;
+    if (normalized >= 337.5 || normalized < 22.5) return AppLocalizations.t('dir_north');
+    if (normalized >= 22.5 && normalized < 67.5) return AppLocalizations.t('dir_northeast');
+    if (normalized >= 67.5 && normalized < 112.5) return AppLocalizations.t('dir_east');
+    if (normalized >= 112.5 && normalized < 157.5) return AppLocalizations.t('dir_southeast');
+    if (normalized >= 157.5 && normalized < 202.5) return AppLocalizations.t('dir_south');
+    if (normalized >= 202.5 && normalized < 247.5) return AppLocalizations.t('dir_southwest');
+    if (normalized >= 247.5 && normalized < 292.5) return AppLocalizations.t('dir_west');
     return AppLocalizations.t('dir_northwest');
   }
 
@@ -160,39 +145,40 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                // Header (Padding 24)
-                Padding(
-                  padding: const EdgeInsets.all(_screenPadding),
-                  child: _buildHeader(region),
-                ),
-                
-                // Destination Card (Padding 24 Horizontal)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
-                  child: _buildDestinationPanel(),
-                ),
-                
-                // Main Compass
-                Expanded(
-                  child: _buildCompassArea(),
-                ),
-                
-                // Logic Indicator (Directive 3)
-                _buildLogicStatusIndicator(region),
-                
-                // Quick Select Chips
-                _buildDestinationButtons(),
-                
-                // Arrival Button (Height 56, Radius 30)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(_screenPadding, 8, _screenPadding, _screenPadding),
-                  child: _buildArrivalButton(),
-                ),
-              ],
+            // 1. Header Area (Padding 24)
+            Padding(
+              padding: const EdgeInsets.all(_screenPadding),
+              child: _buildHeader(region),
+            ),
+
+            // 2. Destination Info Card
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+              child: _buildDestinationCard(),
+            ),
+
+            // 3. Main Compass Visualization
+            Expanded(
+              child: _buildCompassCenter(),
+            ),
+
+            // 4. Logic Indicator (Directive 3)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+              child: _buildLogicIndicator(region),
+            ),
+            
+            const SizedBox(height: 16),
+
+            // 5. Quick Select Chips
+            _buildQuickSelectChips(),
+
+            // 6. Arrival Button (Directive 1: Height 56, Radius 30)
+            Padding(
+              padding: const EdgeInsets.all(_screenPadding),
+              child: _buildArrivalButton(),
             ),
           ],
         ),
@@ -202,12 +188,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
   Widget _buildHeader(AppRegion region) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildIconButton(
+        _buildCircleButton(
           icon: Icons.close_rounded,
           onPressed: () => Navigator.pop(context),
         ),
-        const Spacer(),
         Column(
           children: [
             const Text(
@@ -216,14 +202,14 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                 color: _navyPrimary,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 2.0,
+                letterSpacing: 1.5,
               ),
             ),
+            const SizedBox(height: 4),
             Container(
-              margin: const EdgeInsets.only(top: 4),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: _navyPrimary.withValues(alpha: 0.1),
+                color: _navyPrimary.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -237,126 +223,74 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             ),
           ],
         ),
-        const Spacer(),
         Consumer<AlertProvider>(
-          builder: (context, alertProvider, _) {
-            return _buildIconButton(
-              icon: alertProvider.isVoiceGuidanceEnabled
-                  ? Icons.volume_up_rounded
-                  : Icons.volume_off_rounded,
-              onPressed: () {
-                alertProvider.toggleVoiceGuidance();
-              },
-            );
-          },
+          builder: (context, alert, _) => _buildCircleButton(
+            icon: alert.isVoiceGuidanceEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+            onPressed: () => alert.toggleVoiceGuidance(),
+            active: alert.isVoiceGuidanceEnabled,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildIconButton({required IconData icon, required VoidCallback onPressed}) {
+  Widget _buildCircleButton({required IconData icon, required VoidCallback onPressed, bool active = false}) {
     return Container(
       width: 48,
       height: 48,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
       ),
       child: IconButton(
-        icon: Icon(icon, color: _navyPrimary),
+        icon: Icon(icon, color: active ? _orangeAccent : _navyPrimary),
         onPressed: onPressed,
       ),
     );
   }
 
-  /// --- DIRECTIVE 3: LOGIC VISUALIZATION ---
-  Widget _buildLogicStatusIndicator(AppRegion region) {
-    final bool isJapan = region == AppRegion.japan;
-    final String text = isJapan
-        ? "JAPAN MODE: Road Width Priority (Blockage Avoidance)"
-        : "THAI MODE: Avoid Electric Shock Risk";
-    final IconData icon = isJapan ? Icons.add_road : Icons.flash_off;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: _screenPadding, vertical: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: _navyPrimary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _navyPrimary.withValues(alpha: 0.1)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 18, color: _navyPrimary),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: _navyPrimary,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDestinationPanel() {
+  Widget _buildDestinationCard() {
     return Consumer3<LocationProvider, ShelterProvider, CompassProvider>(
-      builder: (context, locationProvider, shelterProvider, compassProvider, _) {
-        final target = shelterProvider.navTarget;
-        final currentLocation = locationProvider.currentLocation;
+      builder: (context, locProv, shelterProv, compassProv, _) {
+        final target = shelterProv.navTarget;
+        final loc = locProv.currentLocation;
 
-        if (currentLocation == null) {
-          return _buildInfoCard(
-            title: AppLocalizations.t('loc_acquiring'),
-            icon: Icons.location_searching,
-            isLoading: true,
-          );
+        if (loc == null) {
+          return _buildStatusCard(AppLocalizations.t('loc_acquiring'), Icons.gps_fixed);
         }
-
         if (target == null) {
-          return _buildInfoCard(
-            title: AppLocalizations.t('loc_no_destination'),
-            subtitle: AppLocalizations.t('loc_select_in_chat'),
-            icon: Icons.flag_outlined,
-          );
+          return _buildStatusCard(AppLocalizations.t('loc_no_destination'), Icons.flag_outlined);
         }
 
-        double distance;
+        // DIRECTIVE 2: Visualize Waypoint vs Direct navigation
         String modeText = "DIRECT";
-        
-        // --- DIRECTIVE 2: WAYPOINT NAV ---
-        if (compassProvider.isSafeNavigating) {
-          distance = compassProvider.remainingDistance;
+        double distance = -1;
+
+        if (compassProv.isSafeNavigating) {
           modeText = "WAYPOINT NAV";
+          distance = compassProv.remainingDistance;
         } else {
-          final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
+          final cachedDist = shelterProv.getDistanceToTargetIfCached(target);
           if (cachedDist != null) {
-            distance = cachedDist;
             modeText = "CACHED ROUTE";
+            distance = cachedDist;
           } else {
-            distance = -1.0;
+            distance = const Distance().as(LengthUnit.Meter, loc, LatLng(target.lat, target.lng));
           }
         }
 
-        final distanceText = distance < 0
-            ? 'Calculating...'
-            : distance < 1000
-                ? '${distance.toStringAsFixed(0)}m'
-                : '${(distance / 1000).toStringAsFixed(1)}km';
+        final distStr = distance < 0 
+            ? "--" 
+            : distance < 1000 
+                ? "${distance.toStringAsFixed(0)}m" 
+                : "${(distance / 1000).toStringAsFixed(1)}km";
 
         return Container(
           padding: const EdgeInsets.all(20),
@@ -365,8 +299,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: _navyPrimary.withValues(alpha: 0.08),
-                blurRadius: 20,
+                color: _navyPrimary.withOpacity(0.08),
+                blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
             ],
@@ -376,12 +310,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _orangeAccent.withValues(alpha: 0.1),
+                      color: _orangeAccent.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(Icons.flag_rounded, color: _orangeAccent),
+                    child: const Icon(Icons.flag_rounded, color: _orangeAccent, size: 28),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -392,9 +326,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                           "DESTINATION",
                           style: TextStyle(
                             color: Colors.grey[500],
-                            fontSize: 11,
+                            fontSize: 10,
                             fontWeight: FontWeight.bold,
-                            letterSpacing: 1.0,
+                            letterSpacing: 1.2,
                           ),
                         ),
                         Text(
@@ -419,9 +353,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStat("DISTANCE", distanceText),
-                  _buildStat("MODE", modeText),
-                  _buildStat("ETA", distance < 0 ? "--" : "${(distance / 60).ceil()} min"),
+                  _buildDetailItem("DISTANCE", distStr),
+                  _buildDetailItem("MODE", modeText),
+                  _buildDetailItem("ETA", distance < 0 ? "--" : "${(distance / 60).ceil()} min"),
                 ],
               ),
             ],
@@ -431,7 +365,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  Widget _buildInfoCard({required String title, String? subtitle, required IconData icon, bool isLoading = false}) {
+  Widget _buildStatusCard(String title, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -443,71 +377,81 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         children: [
           Icon(icon, color: Colors.grey),
           const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey)),
-                if (subtitle != null) Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey[400])),
-              ],
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey,
             ),
           ),
-          if (isLoading) const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
         ],
       ),
     );
   }
 
-  Widget _buildStat(String label, String value) {
+  Widget _buildDetailItem(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Colors.grey[400], fontSize: 10, fontWeight: FontWeight.bold)),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.grey[400],
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(value, style: const TextStyle(color: _navyPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+        Text(
+          value,
+          style: const TextStyle(
+            color: _navyPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildCompassArea() {
+  Widget _buildCompassCenter() {
     return Consumer3<CompassProvider, LocationProvider, ShelterProvider>(
-      builder: (context, compassProvider, locationProvider, shelterProvider, _) {
-        final target = shelterProvider.navTarget;
-        final currentLocation = locationProvider.currentLocation;
-        
-        final region = shelterProvider.currentAppRegion;
-        if (compassProvider.currentGeoRegion.code != (region == AppRegion.japan ? 'jp_osaki' : 'th_satun')) {
-           Future.microtask(() {
-             compassProvider.setGeoRegion(region == AppRegion.japan ? GeoRegion.jpOsaki : GeoRegion.thSatun);
-           });
-        }
+      builder: (context, compassProv, locProv, shelterProv, _) {
+        final target = shelterProv.navTarget;
+        final loc = locProv.currentLocation;
 
         double? safeBearing;
-        if (compassProvider.isNavigating && compassProvider.magnetResult != null) {
-          safeBearing = compassProvider.magnetResult!.bearingToTarget;
-        } else if (target != null && currentLocation != null) {
+        
+        final region = shelterProv.currentAppRegion;
+        final targetGeoRegion = region == AppRegion.japan ? GeoRegion.jpOsaki : GeoRegion.thSatun;
+        
+        if (compassProv.currentGeoRegion.code != targetGeoRegion.code) {
+          Future.microtask(() => compassProv.setGeoRegion(targetGeoRegion));
+        }
+
+        if (compassProv.isSafeNavigating && compassProv.magnetResult != null) {
+          safeBearing = compassProv.magnetResult!.bearingToTarget;
+        } else if (target != null && loc != null) {
           safeBearing = Geolocator.bearingBetween(
-            currentLocation.latitude,
-            currentLocation.longitude,
-            target.lat,
-            target.lng,
+            loc.latitude, loc.longitude, target.lat, target.lng
           );
         }
 
         Color? overlayColor;
-        if (currentLocation != null) {
-           final heading = compassProvider.trueHeading ?? 0.0;
-           final riskInfo = shelterProvider.getRoadRiskInDirection(currentLocation, heading);
-           
-           if (riskInfo != null && riskInfo['isSafe'] == false) {
-             overlayColor = Colors.red.withValues(alpha: 0.1);
-           } else if (compassProvider.isSafeNavigating && safeBearing != null) {
-             double diff = (safeBearing - heading).abs();
-             if (diff > 180) diff = 360 - diff;
-             if (diff < 30) {
-               overlayColor = Colors.green.withValues(alpha: 0.05);
-             }
-           }
+        if (loc != null) {
+          final heading = compassProv.trueHeading ?? 0.0;
+          final riskInfo = shelterProv.getRoadRiskInDirection(loc, heading);
+          
+          if (riskInfo != null && riskInfo['isSafe'] == false) {
+            overlayColor = Colors.red.withOpacity(0.1);
+          } else if (safeBearing != null) {
+            double diff = (safeBearing - heading).abs();
+            if (diff > 180) diff = 360 - diff;
+            if (diff < 30) {
+              overlayColor = Colors.green.withOpacity(0.05);
+            }
+          }
         }
 
         return Stack(
@@ -515,87 +459,147 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           children: [
             if (overlayColor != null)
               Container(
+                width: 280,
+                height: 280,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: overlayColor,
-                  boxShadow: [BoxShadow(color: overlayColor!, blurRadius: 60, spreadRadius: 20)],
+                  boxShadow: [
+                    BoxShadow(color: overlayColor, blurRadius: 60, spreadRadius: 20)
+                  ],
                 ),
-                width: 280, height: 280,
               ),
             
             SmartCompass(
-              heading: compassProvider.trueHeading ?? compassProvider.heading ?? 0.0,
+              heading: compassProv.trueHeading ?? compassProv.heading ?? 0.0,
               safeBearing: safeBearing,
               dangerBearings: const [],
               size: 260,
             ),
 
-            if (!compassProvider.hasSensorData && !_dismissPermissionBanner)
-              _buildPermissionRequest(),
+            if (!compassProv.hasSensorData && !_dismissPermissionBanner)
+              _buildPermissionOverlay(),
           ],
         );
       },
     );
   }
 
-  Widget _buildPermissionRequest() {
-    return Positioned.fill(
-      child: Container(
-        color: Colors.white.withValues(alpha: 0.9),
-        child: Center(
-          child: GestureDetector(
-            onTap: () async {
-              final result = await requestIOSCompassPermission();
-              if (result == 'granted' || result == 'not_supported') {
-                setState(() => _dismissPermissionBanner = true);
-              }
-            },
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: _navyPrimary,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const Text("Tap to Enable Compass", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            ),
+  Widget _buildPermissionOverlay() {
+    return Center(
+      child: GestureDetector(
+        onTap: () async {
+          final result = await requestIOSCompassPermission();
+          if (result == 'granted' || result == 'not_supported') {
+            setState(() => _dismissPermissionBanner = true);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          decoration: BoxDecoration(
+            color: _navyPrimary,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: const Text(
+            "Enable Compass",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildDestinationButtons() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+  // --- DIRECTIVE 3: LOGIC INDICATOR ---
+  Widget _buildLogicIndicator(AppRegion region) {
+    final isJapan = region == AppRegion.japan;
+    final icon = isJapan ? Icons.add_road : Icons.flash_off;
+    final title = isJapan ? "JAPAN LOGIC" : "THAI LOGIC";
+    final desc = isJapan 
+        ? "Priority: Road Width (Blockage Avoidance)" 
+        : "Priority: Avoid Electric Shock & Flood";
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: _navyPrimary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _navyPrimary.withOpacity(0.1)),
+      ),
       child: Row(
         children: [
-          _buildChip(Icons.water_drop_rounded, 'Water', 'water'),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              border: Border.all(color: _navyPrimary.withOpacity(0.2)),
+            ),
+            child: Icon(icon, color: _navyPrimary, size: 20),
+          ),
           const SizedBox(width: 12),
-          _buildChip(Icons.local_hospital_rounded, 'Hospital', 'hospital'),
-          const SizedBox(width: 12),
-          _buildChip(Icons.store_rounded, 'Store', 'convenience'),
-          const SizedBox(width: 12),
-          _buildChip(Icons.home_rounded, 'Shelter', 'shelter'),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: _navyPrimary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    color: _navyPrimary.withOpacity(0.8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildChip(IconData icon, String label, String type) {
+  Widget _buildQuickSelectChips() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+      child: Row(
+        children: [
+          _buildQuickChip(Icons.water_drop, "Water", "water"),
+          const SizedBox(width: 12),
+          _buildQuickChip(Icons.local_hospital, "Hospital", "hospital"),
+          const SizedBox(width: 12),
+          _buildQuickChip(Icons.store, "Store", "convenience"),
+          const SizedBox(width: 12),
+          _buildQuickChip(Icons.night_shelter, "Shelter", "shelter"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickChip(IconData icon, String label, String type) {
     return GestureDetector(
       onTap: () => _findAndStartNavigation(type, typeLabel: label),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.grey.shade200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -603,36 +607,47 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           children: [
             Icon(icon, size: 18, color: _navyPrimary),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(color: _navyPrimary, fontWeight: FontWeight.bold)),
+            Text(
+              label,
+              style: const TextStyle(
+                color: _navyPrimary,
+                fontWeight: FontWeight.bold,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  // --- DIRECTIVE 1: UI BUTTON SPECS ---
+  // --- DIRECTIVE 1: ARRIVAL BUTTON (Height 56, Radius 30) ---
   Widget _buildArrivalButton() {
     return SizedBox(
       width: double.infinity,
-      height: _btnHeight, // Directive: Height 56.0
+      height: _btnHeight,
       child: ElevatedButton(
-        onPressed: () => _confirmArrival(context),
+        onPressed: () => _confirmArrival(),
         style: ElevatedButton.styleFrom(
-          backgroundColor: _navyPrimary, // Directive: Navy
+          backgroundColor: _navyPrimary,
           foregroundColor: Colors.white,
           elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_btnRadius), // Directive: Radius 30.0
+            borderRadius: BorderRadius.circular(_btnRadius),
           ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle_outline_rounded),
+            const Icon(Icons.check_circle_outline),
             const SizedBox(width: 12),
             Text(
               AppLocalizations.t('btn_arrived_label'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 1.0),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.0,
+              ),
             ),
           ],
         ),
@@ -650,12 +665,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       return;
     }
 
-    // Try starting from cache first
     if (shelterProvider.startCachedNavigation(type)) {
       final nearest = shelterProvider.navTarget!;
       final safeRoute = shelterProvider.getSafestRouteAsLatLng();
       if (safeRoute.isNotEmpty) {
-        // --- DIRECTIVE 2: START WAYPOINT NAV ---
         context.read<CompassProvider>().startRouteNavigation(safeRoute);
         HapticService.destinationSet();
         _showSnackBar("Navigating to ${nearest.name}", _navyPrimary);
@@ -663,7 +676,6 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       }
     }
 
-    // Fallback: search and calculate
     List<String> types = [type];
     if (type == 'water') types = ['water', 'convenience', 'store'];
     
@@ -672,14 +684,15 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     if (nearest != null) {
       await shelterProvider.startNavigation(nearest, currentLocation: userLoc);
       final safeRoute = shelterProvider.getSafestRouteAsLatLng();
+      
       if (safeRoute.isNotEmpty) {
-        // --- DIRECTIVE 2: START WAYPOINT NAV ---
         context.read<CompassProvider>().startRouteNavigation(safeRoute);
       }
+      
       HapticService.destinationSet();
-      _showSnackBar("Calculated Safe Route to ${nearest.name}", _navyPrimary);
+      _showSnackBar("Route Calculated: ${nearest.name}", _navyPrimary);
     } else {
-      _showSnackBar("No facilities found nearby", Colors.grey);
+      _showSnackBar("No facility found nearby", Colors.grey);
     }
   }
 
@@ -695,15 +708,19 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  void _confirmArrival(BuildContext context) {
+  void _confirmArrival() {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(AppLocalizations.t('dialog_safety_title'), style: const TextStyle(color: _navyPrimary, fontWeight: FontWeight.bold)),
+        title: Text(AppLocalizations.t('dialog_safety_title'), 
+            style: const TextStyle(color: _navyPrimary, fontWeight: FontWeight.bold)),
         content: Text(AppLocalizations.t('dialog_safety_desc')),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(AppLocalizations.t('btn_cancel'))),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.t('btn_cancel'), style: const TextStyle(color: Colors.grey)),
+          ),
           ElevatedButton(
             onPressed: () {
               HapticService.arrivedAtDestination();
