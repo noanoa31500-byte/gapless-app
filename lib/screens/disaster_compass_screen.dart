@@ -12,9 +12,9 @@ import '../providers/region_mode_provider.dart';
 import '../utils/localization.dart';
 import '../services/haptic_service.dart';
 import '../widgets/smart_compass.dart';
-import 'shelter_dashboard_screen.dart';
 import '../services/compass_permission_service.dart';
 import '../services/magnetic_declination_config.dart';
+import 'shelter_dashboard_screen.dart';
 
 /// ============================================================================
 /// DisasterCompassScreen - 防災コンパス画面
@@ -31,7 +31,7 @@ import '../services/magnetic_declination_config.dart';
 ///
 /// 3. LOGIC: Explicitly displays the active safety logic based on region.
 ///        Japan = Road Width Priority (Blockage Avoidance).
-///        Thailand = Electric Shock & Flood Avoidance.
+///        Thailand = Avoid Electric Shock Risk (Flood + Power Infra).
 /// ============================================================================
 class DisasterCompassScreen extends StatefulWidget {
   const DisasterCompassScreen({super.key});
@@ -45,6 +45,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   static const Color _navyPrimary = Color(0xFF1A237E);
   static const Color _orangeAccent = Color(0xFFFF6F00);
   static const Color _bgWhite = Color(0xFFF5F7FA);
+  
   static const double _btnHeight = 56.0;
   static const double _btnRadius = 30.0;
   static const double _cardRadius = 30.0;
@@ -117,6 +118,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     // Get distance based on active mode
     double distance;
     if (compassProvider.isSafeNavigating) {
+      // Directive 2: Waypoint Navigation distance
       distance = compassProvider.remainingDistance;
     } else {
       final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
@@ -165,13 +167,13 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Header Area (Padding 24)
+            // 1. Header Area (Directive 1: Padding 24)
             Padding(
               padding: const EdgeInsets.all(_screenPadding),
               child: _buildHeader(region),
             ),
 
-            // 2. Destination Info Card (Radius 30)
+            // 2. Destination Info Card (Directive 1: Radius 30)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
               child: _buildDestinationCard(),
@@ -182,7 +184,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
               child: _buildCompassCenter(),
             ),
 
-            // 4. Logic Indicator (Directive 3)
+            // 4. Logic Indicator (Directive 3: Explicit Logic Display)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
               child: _buildLogicIndicator(region),
@@ -452,9 +454,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           Future.microtask(() => compassProv.setGeoRegion(targetGeoRegion));
         }
 
-        // Logic to determine bearing
+        // DIRECTIVE 2: Using calculated Waypoint route bearing if available
         if (compassProv.isSafeNavigating && compassProv.magnetResult != null) {
-          // DIRECTIVE 2: Using calculated waypoint route
           safeBearing = compassProv.magnetResult!.bearingToTarget;
         } else if (target != null && loc != null) {
           // Direct fallback
