@@ -1,32 +1,37 @@
-/* AI INSTRUCTION: FIX HAZARD MAP RENDERING (DUAL FORMAT SUPPORT)
-
-   The user has provided two specific hazard data files in 'assets/'.
-   They have DIFFERENT JSON structures. You must parse them differently.
+/* CRITICAL FIX: LOAD & RENDER HAZARD MAPS (JAPAN & THAILAND)
+   
+   The user has provided two distinct hazard files in 'assets/'. 
+   You MUST parse them differently because their JSON structures are NOT the same.
 
    1. FILE: assets/hazard_japan.json (Custom Format)
-      - Structure: { "polygons": [ [ [lon, lat], ... ], ... ] }
-      - Action:
-        a. Load file.
-        b. Access data['polygons'].
-        c. Iterate through the list. Each item is a list of points.
-        d. Convert [lon, lat] to LatLng(lat, lon).
-        e. Create Polygon objects (color: 0x88FF6F00).
+      - Structure: Root object has "polygons" key. 
+        { "polygons": [ [ [140.90..., 38.59...], ... ], ... ] }
+      - LOGIC:
+        a. Load string from 'assets/hazard_japan.json'.
+        b. Decode JSON -> access `data['polygons']`.
+        c. Iterate list. Each item is a list of points.
+        d. Point format is [Longitude, Latitude]. 
+        e. Convert to LatLng(latitude, longitude). *Note the swap!*
+        f. Create Polygon objects (color: Color(0x88FF6F00)).
 
-   2. FILE: assets/hazard_thailand.json (GeoJSON Format)
-      - Structure: { "features": [ { "geometry": { "coordinates": [ [ [lon, lat], ... ] ] } }, ... ] }
-      - Action:
-        a. Load file.
-        b. Access data['features'].
-        c. Iterate through features. Access feature['geometry']['coordinates'][0].
-        d. Convert [lon, lat] to LatLng(lat, lon).
-        e. Create Polygon objects (color: 0x88FF6F00).
+   2. FILE: assets/hazard_thailand.json (Standard GeoJSON)
+      - Structure: Root object has "features" list.
+        { "features": [ { "geometry": { "coordinates": [ [ [100.05..., 6.60...], ... ] ] } }, ... ] }
+      - LOGIC:
+        a. Load string from 'assets/hazard_thailand.json'.
+        b. Decode JSON -> access `data['features']`.
+        c. Iterate features. Access `feature['geometry']['coordinates'][0]`.
+        d. Point format is [Longitude, Latitude].
+        e. Convert to LatLng(latitude, longitude). *Note the swap!*
+        f. Create Polygon objects (color: Color(0x88FF6F00)).
 
-   3. IMPLEMENTATION DETAILS:
-      - Function: `_loadHazardData()` called in `initState()`.
-      - Store in: `List<Polygon> _hazardPolygons`.
-      - Widget: Add `PolygonLayer(polygons: _hazardPolygons)` to the FlutterMap.
-      - Error Handling: Use try-catch for each file independently so one failure doesn't stop the other.
+   3. IMPLEMENTATION:
+      - Create a function `_loadHazardData()` called in `initState()`.
+      - Store all polygons in a `List<Polygon> _hazardPolygons`.
+      - Add `PolygonLayer(polygons: _hazardPolygons)` to the FlutterMap widget.
+      - Wrap in try-catch to prevent app crash if one file fails.
 */
+
 
 import 'dart:async';
 import 'dart:ui';
