@@ -12,7 +12,7 @@
         c. Iterate list. Each item is a list of points.
         d. Point format is [Longitude, Latitude]. 
         e. Convert to LatLng(latitude, longitude). *Note the swap!*
-        f. Create Polygon objects (color: Color(0x88FF6F00)).
+        f. Create Polygon objects (color: Color(0x882196F3)). // CHANGED TO BLUE
 
    2. FILE: assets/hazard_thailand.json (Standard GeoJSON)
       - Structure: Root object has "features" list.
@@ -23,7 +23,7 @@
         c. Iterate features. Access `feature['geometry']['coordinates'][0]`.
         d. Point format is [Longitude, Latitude].
         e. Convert to LatLng(latitude, longitude). *Note the swap!*
-        f. Create Polygon objects (color: Color(0x88FF6F00)).
+        f. Create Polygon objects (color: Color(0x882196F3)). // CHANGED TO BLUE
 
    3. IMPLEMENTATION:
       - Create a function `_loadHazardData()` called in `initState()`.
@@ -31,6 +31,7 @@
       - Add `PolygonLayer(polygons: _hazardPolygons)` to the FlutterMap widget.
       - Wrap in try-catch to prevent app crash if one file fails.
 */
+
 
 import 'dart:async';
 import 'dart:ui';
