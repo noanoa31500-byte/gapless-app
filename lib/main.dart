@@ -32,7 +32,6 @@
       - Wrap in try-catch to prevent app crash if one file fails.
 */
 
-
 import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
