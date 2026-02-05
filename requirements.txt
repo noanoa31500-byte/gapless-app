@@ -1,0 +1,3 @@
+PyGithub
+anthropic
+google-generativeai
