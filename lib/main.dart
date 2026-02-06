@@ -1,44 +1,54 @@
-/* CRITICAL FIX: LOAD & RENDER HAZARD MAPS (JAPAN & THAILAND)
+/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+   FIXME: CRITICAL UPDATE - ASYNC SAFE ROUTING ENGINE
+   PRIORITY: P0 (HIGHEST) - BLOCKER
+
+   You must REWRITE this file to implement a "High-Performance Risk-Aware Navigation System".
    
-   The user has provided two distinct hazard files in 'assets/'. 
-   You MUST parse them differently because their JSON structures are NOT the same.
+   ============================================================================
+   GOAL: 
+   Real-time, offline pathfinding that avoids Flood Zones (Blue Polygons) 
+   and prioritizes Road Width, WITHOUT freezing the UI.
+   ============================================================================
 
-   1. FILE: assets/hazard_japan.json (Custom Format)
-      - Structure: Root object has "polygons" key. 
-        { "polygons": [ [ [140.90..., 38.59...], ... ], ... ] }
-      - LOGIC:
-        a. Load string from 'assets/hazard_japan.json'.
-        b. Decode JSON -> access `data['polygons']`.
-        c. Iterate list. Each item is a list of points.
-        d. Point format is [Longitude, Latitude]. 
-        e. Convert to LatLng(latitude, longitude). *Note the swap!*
-        f. Create Polygon objects (color: Color(0x882196F3)). // CHANGED TO BLUE
+   [REQUIREMENT 1: VISUALIZATION - HAZARD MAPS]
+   - Parse `assets/hazard_japan.json` (Custom) & `assets/hazard_thailand.json` (GeoJSON).
+   - Render them as `PolygonLayer`.
+   - COLOR: Fill `Color(0x882196F3)` (Blue), Border `Color(0xFF0D47A1)` (Navy).
+   - LOGIC: Store these polygons globally to use as "No-Go Zones" for navigation.
 
-   2. FILE: assets/hazard_thailand.json (Standard GeoJSON)
-      - Structure: Root object has "features" list.
-        { "features": [ { "geometry": { "coordinates": [ [ [100.05..., 6.60...], ... ] ] } }, ... ] }
-      - LOGIC:
-        a. Load string from 'assets/hazard_thailand.json'.
-        b. Decode JSON -> access `data['features']`.
-        c. Iterate features. Access `feature['geometry']['coordinates'][0]`.
-        d. Point format is [Longitude, Latitude].
-        e. Convert to LatLng(latitude, longitude). *Note the swap!*
-        f. Create Polygon objects (color: Color(0x882196F3)). // CHANGED TO BLUE
+   [REQUIREMENT 2: OFFLINE DATA & GRAPH BUILD]
+   - Load `assets/roads_jp.bin` or `assets/roads_th.bin` based on region.
+   - Construct a routing Graph from this binary data.
 
-   3. IMPLEMENTATION:
-      - Create a function `_loadHazardData()` called in `initState()`.
-      - Store all polygons in a `List<Polygon> _hazardPolygons`.
-      - Add `PolygonLayer(polygons: _hazardPolygons)` to the FlutterMap widget.
-      - Wrap in try-catch to prevent app crash if one file fails.
-*/
+   [REQUIREMENT 3: BACKGROUND PATHFINDING (CRITICAL UX)]
+   - The A* (A-Star) algorithm MUST run in a separate ISOLATE (use `compute` function).
+   - CALCULATION TRIGGERS:
+     1. ON STARTUP: Immediately calculate route from Current Location to Nearest Safe Point.
+     2. ON MOVE: Listen to `LocationStream`. When user moves > 20 meters, 
+        trigger a SILENT background recalculation.
+   - SMOOTHNESS: The UI must remain 60fps during calculation.
 
+   [REQUIREMENT 4: THE ALGORITHM (RISK-AWARE A*)]
+   - Cost Function:
+     - Base Cost: Distance.
+     - Penalty: Narrow roads (width < 4m).
+     - BLOCKER: If a road segment intersects with any BLUE POLYGON (Req 1), Cost = Infinity.
+   - Output: A List<LatLng> representing the safe path (Green Polyline).
+
+   ----------------------------------------------------------------------------
+   IMPLEMENTATION PLAN:
+   1. `initState`: Load Hazards -> Load Bin -> Trigger Initial `compute(calculateRoute)`.
+   2. `build`: Show Map with Blue Hazards and Green Route Polyline.
+   3. `onLocationChanged`: If distance > threshold, spawn new `compute` task.
+   4. Update state only when the computation returns result.
+   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/foundation.dart'; // for compute
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
