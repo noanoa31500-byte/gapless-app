@@ -1,16 +1,7 @@
-/* 
-   GapLess: Disaster Navigation System
-   Architectural Revision: Risk-Aware Routing & Async Pathfinding
-   
-   Directives Implemented:
-   1. UI: Navy (#1A237E) / Orange (#FF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Background Isolate-based routing (A*) triggered by movement (>20m).
-   3. LOGIC: Region-specific heuristics (Japan: Road Width, Thailand: Flood/Shock).
-*/
 
 import 'dart:async';
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'; // for compute
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';

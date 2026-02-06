@@ -854,7 +854,6 @@ class ShelterProvider with ChangeNotifier {
       mode: _currentAppRegion == AppRegion.japan ? 'japan' : 'thailand',
       hazardPolygons: mathPolygons,
       hazardPoints: _hazardPoints,
-      avoidDangerZones: true,
     );
     
     // Configure shared Navigation Engine

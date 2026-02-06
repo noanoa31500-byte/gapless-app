@@ -229,7 +229,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: _navyPrimary.withOpacity(0.1),
+                color: _navyPrimary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -263,7 +263,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -322,7 +322,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             borderRadius: BorderRadius.circular(_cardRadius), // Directive 1
             boxShadow: [
               BoxShadow(
-                color: _navyPrimary.withOpacity(0.08),
+                color: _navyPrimary.withValues(alpha: 0.08),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -335,7 +335,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: _orangeAccent.withOpacity(0.1),
+                      color: _orangeAccent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(Icons.flag_rounded, color: _orangeAccent, size: 32),
@@ -471,12 +471,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           final riskInfo = shelterProv.getRoadRiskInDirection(loc, heading);
           
           if (riskInfo != null && riskInfo['isSafe'] == false) {
-            overlayColor = Colors.red.withOpacity(0.1);
+            overlayColor = Colors.red.withValues(alpha: 0.1);
           } else if (safeBearing != null) {
             double diff = (safeBearing - heading).abs();
             if (diff > 180) diff = 360 - diff;
             if (diff < 30) {
-              overlayColor = Colors.green.withOpacity(0.05);
+              overlayColor = Colors.green.withValues(alpha: 0.05);
             }
           }
         }
@@ -548,9 +548,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: _navyPrimary.withOpacity(0.05),
+        color: _navyPrimary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _navyPrimary.withOpacity(0.1)),
+        border: Border.all(color: _navyPrimary.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -559,7 +559,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               shape: BoxShape.circle,
-              border: Border.all(color: _navyPrimary.withOpacity(0.2)),
+              border: Border.all(color: _navyPrimary.withValues(alpha: 0.2)),
             ),
             child: Icon(icon, color: _navyPrimary, size: 20),
           ),
@@ -580,7 +580,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                 Text(
                   desc,
                   style: TextStyle(
-                    color: _navyPrimary.withOpacity(0.8),
+                    color: _navyPrimary.withValues(alpha: 0.8),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -624,7 +624,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           border: Border.all(color: Colors.grey.shade200),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
