@@ -50,6 +50,7 @@ import 'screens/onboarding_screen.dart';
 //  ISOLATE ROUTING ENGINE (High-Performance A*)
 // ---------------------------------------------------------------------------
 
+/// Simple DTO for Route Calculation to pass across Isolate boundary
 class RouteParams {
   final double startLat;
   final double startLng;
@@ -70,50 +71,54 @@ class RouteParams {
 
 /// TOP-LEVEL FUNCTION FOR COMPUTE ISOLATE
 /// Calculates a safe path (Waypoints) avoiding hazards and optimizing for region.
+/// Returns List of [Lat, Lng] representing waypoints.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   // Logic Directive: Japan vs Thailand
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
 
-  // Cost Multipliers
-  // Japan: Prioritize Road Width to prevent bottlenecking in narrow streets.
-  // Thailand: Avoid Electric Shock from low-hanging/fallen utility lines.
-  double widthPenalty = isJapan ? 2.5 : 1.0; 
-  double shockRiskPenalty = isThailand ? 10.0 : 1.0;
+  // Cost Multipliers & Heuristics
+  // Japan: Prioritize Road Width to prevent bottlenecking in narrow streets during evacuation.
+  // Thailand: Avoid Electric Shock from low-hanging/fallen utility lines (Flood scenario).
+  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
+  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
-  List<List<double>> path = [];
+  List<List<double>> waypoints = [];
   
   // 1. Add Start Point
-  path.add([params.startLat, params.startLng]);
+  waypoints.add([params.startLat, params.startLng]);
 
-  // 2. Simulated Pathfinding (Real A* would use Graph nodes here)
-  // We generate waypoints interpolated between start and dest, 
-  // applying jitter based on the specific region risks to simulate routing.
+  // 2. Simulated Pathfinding (A* Logic Placeholder)
+  // In a real implementation, this would traverse a graph node network.
+  // Here we interpolate waypoints and apply "Risk Jitter" based on directives.
   
-  int steps = 8; // Number of waypoints
+  int steps = 10; // Number of waypoints
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
+    // Linear interpolation
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Jitter
+    // Apply Logic-Specific Jitter/Correction
     if (isThailand) {
-       // Avoid "poles" (Simulated Shock Risk Avoidance)
-       // Shift slightly East/West based on heuristic
-       lng += 0.0002 * shockRiskPenalty * (i % 2 == 0 ? 1 : -1);
+       // DIRECTIVE: Avoid Electric Shock Risk
+       // Heuristic: Shift away from known utility pole lines (simulated by longitude offset)
+       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
+       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
     } else if (isJapan) {
-       // Prefer "Wide Roads" (Simulated Width Priority)
-       // Shift towards main arterials (Simulated grid alignment)
-       lat += 0.0001 * widthPenalty * (i % 2 == 0 ? 1 : -1);
+       // DIRECTIVE: Road Width Priority
+       // Heuristic: Snap to wider arterial roads (simulated by latitude grid alignment)
+       double widthBonus = 0.0001 * widthPriorityWeight;
+       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
     }
     
-    path.add([lat, lng]);
+    waypoints.add([lat, lng]);
   }
 
   // 3. Add Destination
-  path.add([params.destLat, params.destLng]);
+  waypoints.add([params.destLat, params.destLng]);
 
-  return path;
+  return waypoints;
 }
 
 // ---------------------------------------------------------------------------
@@ -189,14 +194,18 @@ class GapLessApp extends StatelessWidget {
     );
   }
 
-  // UI Directive: Navy/Orange, Radius 30, Height 56, Padding 24
+  // -------------------------------------------------------------------------
+  // UI DIRECTIVE IMPLEMENTATION
+  // Palette: Navy (0xFF1A237E) / Orange (0xFFFF6F00)
+  // Specs: Radius 30.0, Height 56.0, Padding 24.0
+  // -------------------------------------------------------------------------
   ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
     final String primaryFont = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
     final List<String> fallbackFonts = lang == 'th'
         ? ['NotoSansJP', 'sans-serif']
         : ['NotoSansThai', 'sans-serif'];
     
-    // CONSTANTS FROM DIRECTIVE
+    // Directive Constants
     const Color navyPrimary = Color(0xFF1A237E);
     const Color orangeAccent = Color(0xFFFF6F00);
     const double radius = 30.0;
@@ -298,7 +307,7 @@ class GapLessApp extends StatelessWidget {
       cardTheme: CardThemeData(
         color: surface,
         elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
     );
@@ -433,6 +442,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       destLng = shelterProvider.shelters.first.longitude;
     }
 
+    // Prepare parameters for Isolate
     final params = RouteParams(
       startLat: loc.latitude,
       startLng: loc.longitude,
@@ -449,6 +459,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       // Update Provider with new Waypoints
       if (mounted) {
         debugPrint("Background Route Calculated: ${route.length} waypoints");
+        // Here we would pass 'route' to a provider to draw on map
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
