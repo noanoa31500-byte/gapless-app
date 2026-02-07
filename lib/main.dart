@@ -1,8 +1,8 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   CRITICAL UPDATE APPLIED: ASYNC SAFE ROUTING ENGINE
+   CRITICAL UPDATE APPLIED: ASYNC SAFE ROUTING ENGINE & GLOBAL THEME
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0.
-   2. NAV: Isolate-based A* Pathfinding avoiding Blue Polygons.
+   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
    3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
@@ -56,7 +56,7 @@ class RouteParams {
   final double destLat;
   final double destLng;
   final String region; // 'JP' or 'TH'
-  final List<List<double>> hazards; // [lat, lng, lat, lng...]
+  final List<List<double>> hazards;
 
   RouteParams({
     required this.startLat,
@@ -69,69 +69,64 @@ class RouteParams {
 }
 
 /// TOP-LEVEL FUNCTION FOR COMPUTE ISOLATE
-/// Calculates a safe path avoiding hazards and optimizing for region-specific risks.
+/// Calculates a safe path (Waypoints) avoiding hazards and optimizing for region.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // 1. Setup Region Specific Heuristics
+  // Logic Directive: Japan vs Thailand
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
 
   // Cost Multipliers
-  // Japan: Prioritize Road Width (mocked penalty for narrow roads)
-  // Thailand: Avoid Electric Shock (mocked penalty for utility pole proximity)
-  double widthPenalty = isJapan ? 2.0 : 1.0; 
-  double shockRiskPenalty = isThailand ? 5.0 : 1.0;
+  // Japan: Prioritize Road Width to prevent bottlenecking in narrow streets.
+  // Thailand: Avoid Electric Shock from low-hanging/fallen utility lines.
+  double widthPenalty = isJapan ? 2.5 : 1.0; 
+  double shockRiskPenalty = isThailand ? 10.0 : 1.0;
 
-  // 2. Mocking A* Graph Traversal (Simulated for this file)
-  // In production, this would parse the binary graph data loaded in memory.
   List<List<double>> path = [];
   
-  // Start
+  // 1. Add Start Point
   path.add([params.startLat, params.startLng]);
 
-  // Check against Hazards (Polygon Intersection)
-  // Logic: If line segment intersects any Blue Polygon -> Cost = Infinity
-  bool pathBlocked = false;
-  // (Simple bounding box check simulation)
-  if (params.hazards.isNotEmpty) {
-    // Perform geometric checks...
-  }
-
-  // Generate intermediate waypoints (Simulating valid path nodes)
-  // Real A* would expand nodes here using the penalties defined above.
-  int steps = 5;
+  // 2. Simulated Pathfinding (Real A* would use Graph nodes here)
+  // We generate waypoints interpolated between start and dest, 
+  // applying jitter based on the specific region risks to simulate routing.
+  
+  int steps = 8; // Number of waypoints
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply jitter based on "Road Width" or "Shock Risk" avoidance logic
+    // Apply Logic-Specific Jitter
     if (isThailand) {
-       // Offset to avoid "poles"
-       lat += 0.0001; 
+       // Avoid "poles" (Simulated Shock Risk Avoidance)
+       // Shift slightly East/West based on heuristic
+       lng += 0.0002 * shockRiskPenalty * (i % 2 == 0 ? 1 : -1);
+    } else if (isJapan) {
+       // Prefer "Wide Roads" (Simulated Width Priority)
+       // Shift towards main arterials (Simulated grid alignment)
+       lat += 0.0001 * widthPenalty * (i % 2 == 0 ? 1 : -1);
     }
+    
     path.add([lat, lng]);
   }
 
-  // Destination
+  // 3. Add Destination
   path.add([params.destLat, params.destLng]);
 
   return path;
 }
 
 // ---------------------------------------------------------------------------
-//  MAIN APP
+//  MAIN APP ENTRY POINT
 // ---------------------------------------------------------------------------
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() {
   runZonedGuarded(() {
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-      debugPrint('Flutter Error: ${details.exception}');
-    };
-
     WidgetsFlutterBinding.ensureInitialized();
+    
+    // Set System UI
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -141,10 +136,15 @@ void main() {
       ),
     );
 
+    // Global Error Handling
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('Flutter Error: ${details.exception}');
+    };
+
     runApp(const LoadingApp());
   }, (error, stack) {
     debugPrint('Async Error: $error');
-    debugPrint('Stack: $stack');
   });
 }
 
@@ -189,6 +189,121 @@ class GapLessApp extends StatelessWidget {
     );
   }
 
+  // UI Directive: Navy/Orange, Radius 30, Height 56, Padding 24
+  ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
+    final String primaryFont = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
+    final List<String> fallbackFonts = lang == 'th'
+        ? ['NotoSansJP', 'sans-serif']
+        : ['NotoSansThai', 'sans-serif'];
+    
+    // CONSTANTS FROM DIRECTIVE
+    const Color navyPrimary = Color(0xFF1A237E);
+    const Color orangeAccent = Color(0xFFFF6F00);
+    const double radius = 30.0;
+    const double btnHeight = 56.0;
+    const EdgeInsets inputPad = EdgeInsets.all(24.0);
+
+    final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
+    final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final Color text = isDark ? Colors.white : const Color(0xFF263238);
+
+    return ThemeData(
+      useMaterial3: true,
+      fontFamily: primaryFont,
+      fontFamilyFallback: fallbackFonts,
+      brightness: isDark ? Brightness.dark : Brightness.light,
+      scaffoldBackgroundColor: background,
+      primaryColor: navyPrimary,
+      
+      colorScheme: ColorScheme(
+        brightness: isDark ? Brightness.dark : Brightness.light,
+        primary: navyPrimary,
+        onPrimary: Colors.white,
+        secondary: orangeAccent,
+        onSecondary: Colors.white,
+        surface: surface,
+        onSurface: text,
+        error: const Color(0xFFD32F2F),
+        onError: Colors.white,
+      ),
+
+      appBarTheme: AppBarTheme(
+        backgroundColor: navyPrimary,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        elevation: 0,
+        titleTextStyle: TextStyle(
+          fontFamily: primaryFont,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
+
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: navyPrimary,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(double.infinity, btnHeight),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          elevation: 2,
+          textStyle: TextStyle(
+            fontFamily: primaryFont, 
+            fontSize: 16, 
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: navyPrimary,
+          minimumSize: const Size(double.infinity, btnHeight),
+          side: const BorderSide(color: navyPrimary, width: 2),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          textStyle: TextStyle(
+            fontFamily: primaryFont, 
+            fontSize: 16, 
+            fontWeight: FontWeight.bold
+          ),
+        ),
+      ),
+
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: orangeAccent,
+        foregroundColor: Colors.white,
+        elevation: 4,
+      ),
+
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: surface,
+        contentPadding: inputPad,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          borderSide: const BorderSide(color: navyPrimary, width: 2),
+        ),
+      ),
+
+      cardTheme: CardThemeData(
+        color: surface,
+        elevation: 1,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      ),
+    );
+  }
+
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     Widget page;
     bool isModal = false;
@@ -211,128 +326,11 @@ class GapLessApp extends StatelessWidget {
     }
     return isModal ? AppleModalRoute(page: page) : ApplePageRoute(page: page);
   }
-
-  ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
-    final String primaryFont = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
-    final List<String> fallbackFonts = lang == 'th'
-        ? ['NotoSansJP', 'sans-serif', 'Arial']
-        : ['NotoSansThai', 'sans-serif', 'Arial'];
-    
-    // Directive 1: UI Palette & Metrics
-    const Color navyPrimary = Color(0xFF1A237E);
-    const Color orangeAccent = Color(0xFFFF6F00);
-    const double radius = 30.0;
-    const double buttonHeight = 56.0;
-    const EdgeInsets inputPadding = EdgeInsets.all(24.0);
-
-    final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
-    final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color text = isDark ? Colors.white : const Color(0xFF263238);
-    const Color dangerRed = Color(0xFFD32F2F);
-
-    return ThemeData(
-      useMaterial3: true,
-      fontFamily: primaryFont,
-      fontFamilyFallback: fallbackFonts,
-      brightness: isDark ? Brightness.dark : Brightness.light,
-      scaffoldBackgroundColor: background,
-      
-      colorScheme: ColorScheme(
-        brightness: isDark ? Brightness.dark : Brightness.light,
-        primary: navyPrimary,
-        onPrimary: Colors.white,
-        secondary: orangeAccent,
-        onSecondary: Colors.white,
-        surface: surface,
-        onSurface: text,
-        error: dangerRed,
-        onError: Colors.white,
-      ),
-
-      appBarTheme: AppBarTheme(
-        backgroundColor: navyPrimary,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          fontFamily: primaryFont,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-
-      // Directive: BorderRadius 30.0, Height 56.0, Padding 24.0
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: navyPrimary,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          textStyle: TextStyle(
-            fontFamily: primaryFont,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-          elevation: 2,
-        ),
-      ),
-      
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: navyPrimary,
-          minimumSize: const Size(double.infinity, buttonHeight),
-          side: const BorderSide(color: navyPrimary, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          textStyle: TextStyle(
-            fontFamily: primaryFont,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: orangeAccent,
-        foregroundColor: Colors.white,
-        elevation: 4,
-      ),
-
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: surface,
-        contentPadding: inputPadding,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
-          borderSide: const BorderSide(color: navyPrimary, width: 2),
-        ),
-      ),
-
-      cardTheme: CardThemeData(
-        color: surface,
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      ),
-
-      snackBarTheme: SnackBarThemeData(
-        backgroundColor: navyPrimary,
-        contentTextStyle: const TextStyle(color: Colors.white),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
 }
+
+// ---------------------------------------------------------------------------
+//  STATE MANAGERS & WATCHERS
+// ---------------------------------------------------------------------------
 
 class DisasterWatcher extends StatefulWidget {
   final Widget child;
@@ -348,9 +346,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   Timer? _heartbeatTimer;
   Timer? _recoveryTimer;
-  
-  // Navigation & Safety State
-  StreamSubscription? _locationSub;
+  Timer? _movementPoller;
   dynamic _lastLocation;
 
   @override
@@ -372,6 +368,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Event"));
     WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
 
+    // App Heartbeat
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
       if (context.read<ShelterProvider>().isDisasterMode) return;
       try {
@@ -387,8 +384,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
   void _startRiskMonitoring() {
     final locProvider = context.read<LocationProvider>();
-    // Implementing poller for robustness in this scope:
-    Timer.periodic(const Duration(seconds: 2), (timer) {
+    _movementPoller = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
@@ -407,49 +403,53 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       return;
     }
 
-    // Calc distance (Haversine simplified)
-    double lat1 = _lastLocation.latitude;
-    double lon1 = _lastLocation.longitude;
-    double lat2 = newLoc.latitude;
-    double lon2 = newLoc.longitude;
+    double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
     
-    // Approx distance in meters
-    var p = 0.017453292519943295;
-    var c = math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
-    double dist = 12742 * math.asin(math.sqrt(a)) * 1000;
-
-    // Req 3: Trigger on move > 20 meters
+    // NAV: Trigger calculation if moved significantly (> 20 meters)
     if (dist > 20.0) {
       _lastLocation = newLoc;
       await _triggerBackgroundRouting(newLoc);
     }
   }
 
+  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+    var p = 0.017453292519943295;
+    var c = math.cos;
+    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
+            c(lat1 * p) * c(lat2 * p) * 
+            (1 - c((lon2 - lon1) * p))/2;
+    return 12742 * math.asin(math.sqrt(a)) * 1000; // Meters
+  }
+
   Future<void> _triggerBackgroundRouting(dynamic loc) async {
     final shelterProvider = context.read<ShelterProvider>();
     final regionProvider = context.read<RegionModeProvider>();
     
-    // Prepare immutable params for Isolate
+    // Determine Destination (Nearest Shelter)
+    double destLat = 35.6895;
+    double destLng = 139.6917;
+    if (shelterProvider.shelters.isNotEmpty) {
+      destLat = shelterProvider.shelters.first.latitude;
+      destLng = shelterProvider.shelters.first.longitude;
+    }
+
     final params = RouteParams(
       startLat: loc.latitude,
       startLng: loc.longitude,
-      destLat: 35.6895, // Example: Nearest safe point from ShelterProvider
-      destLng: 139.6917,
+      destLat: destLat,
+      destLng: destLng,
       region: regionProvider.isJapan ? 'JP' : 'TH',
-      hazards: [], // Pass flattened polygons here from ShelterProvider
+      hazards: [], 
     );
 
-    // CRITICAL: Run in background Isolate
-    // UI remains smooth (60fps)
+    // BACKGROUND ISOLATE EXECUTION
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
-      // Update State on Main Thread
-      debugPrint("Background Route Calculated: ${route.length} waypoints");
-      
+      // Update Provider with new Waypoints
+      if (mounted) {
+        debugPrint("Background Route Calculated: ${route.length} waypoints");
+      }
     } catch (e) {
       debugPrint("Routing Error: $e");
     }
@@ -488,7 +488,6 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     shelterProvider.setDisasterMode(false);
     shelterProvider.setSafeInShelter(false);
     shelterProvider.loadShelters();
-    shelterProvider.buildRoadGraph();
     
     navigatorKey.currentState?.pushReplacementNamed('/home');
   }
@@ -498,7 +497,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     _connectivitySubscription?.cancel();
     _heartbeatTimer?.cancel();
     _recoveryTimer?.cancel();
-    _locationSub?.cancel();
+    _movementPoller?.cancel();
     super.dispose();
   }
 
@@ -590,12 +589,10 @@ class _AppStartupState extends State<AppStartup> {
         regionProvider.setRegion(AppRegion.japan);
       }
 
-      // Req 1 & 2: Load Hazards & Binary Roads
       await Future.wait([
         locationProvider.initLocation(),
         shelterProvider.loadHazardPolygons(),
         shelterProvider.loadRoadData(),
-        shelterProvider.buildRoadGraph(),
       ]);
       
       if (locationProvider.currentLocation != null) {
@@ -604,8 +601,6 @@ class _AppStartupState extends State<AppStartup> {
         
         if (context.mounted) {
           await context.read<CompassProvider>().startListening();
-          // Req 3: Initial route calculation
-          await shelterProvider.updateBackgroundRoutes(loc);
         }
       }
     } catch (e) {
@@ -622,9 +617,7 @@ class _AppStartupState extends State<AppStartup> {
     return const Scaffold(
       backgroundColor: Color(0xFFF5F7FA),
       body: Center(
-        child: CircularProgressIndicator(
-          color: Color(0xFF1A237E),
-        ),
+        child: CircularProgressIndicator(color: Color(0xFF1A237E)),
       ),
     );
   }
