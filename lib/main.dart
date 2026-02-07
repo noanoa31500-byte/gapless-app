@@ -282,15 +282,15 @@ class GapLessApp extends StatelessWidget {
         fillColor: surface,
         contentPadding: inputPad,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20.0),
+          borderRadius: BorderRadius.circular(radius),
           borderSide: const BorderSide(color: navyPrimary, width: 2),
         ),
       ),
