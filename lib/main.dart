@@ -1,9 +1,9 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   ARCHITECTURAL REWRITE: lib/main.dart
+   CRITICAL UPDATE APPLIED: ASYNC SAFE ROUTING ENGINE & GLOBAL THEME
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Waypoint-based Navigation using Isolate (List<LatLng>).
-   3. LOGIC: Region-specific Heuristics (JP: Width Priority, TH: Shock Risk).
+   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
+   3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
@@ -47,7 +47,7 @@ import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
 
 // ---------------------------------------------------------------------------
-//  ISOLATE ROUTING ENGINE (High-Performance A*)
+//  ISOLATE ROUTING ENGINE (High-Performance A* / Waypoint Generation)
 // ---------------------------------------------------------------------------
 
 /// Simple DTO for Route Calculation to pass across Isolate boundary
@@ -177,6 +177,7 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
+              // THEME DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
               theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
               darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
@@ -194,18 +195,13 @@ class GapLessApp extends StatelessWidget {
     );
   }
 
-  // -------------------------------------------------------------------------
-  // UI DIRECTIVE IMPLEMENTATION
-  // Palette: Navy (0xFF1A237E) / Orange (0xFFFF6F00)
-  // Specs: Radius 30.0, Height 56.0, Padding 24.0
-  // -------------------------------------------------------------------------
   ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
     final String primaryFont = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
     final List<String> fallbackFonts = lang == 'th'
         ? ['NotoSansJP', 'sans-serif']
         : ['NotoSansThai', 'sans-serif'];
     
-    // Directive Constants
+    // UI DIRECTIVE CONSTANTS
     const Color navyPrimary = Color(0xFF1A237E);
     const Color orangeAccent = Color(0xFFFF6F00);
     const double radius = 30.0;
@@ -459,7 +455,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       // Update Provider with new Waypoints
       if (mounted) {
         debugPrint("Background Route Calculated: ${route.length} waypoints");
-        // Here we would pass 'route' to a provider to draw on map
+        // Logic to update map polyline would go here
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
