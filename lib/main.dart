@@ -1,7 +1,7 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    CRITICAL UPDATE APPLIED: ASYNC SAFE ROUTING ENGINE & GLOBAL THEME
    Directives Implemented:
-   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0.
+   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
    2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
    3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
