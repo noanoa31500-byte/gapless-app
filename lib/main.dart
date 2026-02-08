@@ -1,5 +1,5 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   CRITICAL UPDATE APPLIED: ASYNC SAFE ROUTING ENGINE & GLOBAL THEME
+   CRITICAL UPDATE APPLIED: ARCHITECTURAL SPINE & ISOLATE ROUTING
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
    2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
@@ -50,7 +50,8 @@ import 'screens/onboarding_screen.dart';
 //  ISOLATE ROUTING ENGINE (High-Performance A* / Waypoint Generation)
 // ---------------------------------------------------------------------------
 
-/// Simple DTO for Route Calculation to pass across Isolate boundary
+/// Data Transfer Object for Route Calculation passing across Isolate boundary.
+/// Implements [NAV] directive: Waypoint-based navigation.
 class RouteParams {
   final double startLat;
   final double startLng;
@@ -72,14 +73,15 @@ class RouteParams {
 /// TOP-LEVEL FUNCTION FOR COMPUTE ISOLATE
 /// Calculates a safe path (Waypoints) avoiding hazards and optimizing for region.
 /// Returns List of [Lat, Lng] representing waypoints.
+/// Implements [LOGIC] directive: Japan=Road width, Thailand=Shock Risk.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   // Logic Directive: Japan vs Thailand
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
 
   // Cost Multipliers & Heuristics
-  // Japan: Prioritize Road Width to prevent bottlenecking in narrow streets during evacuation.
-  // Thailand: Avoid Electric Shock from low-hanging/fallen utility lines (Flood scenario).
+  // Japan: Prioritize Road Width (avoid narrow crush zones).
+  // Thailand: Avoid Electric Shock (avoid low lines/water).
   double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
   double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
@@ -92,7 +94,7 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   // In a real implementation, this would traverse a graph node network.
   // Here we interpolate waypoints and apply "Risk Jitter" based on directives.
   
-  int steps = 10; // Number of waypoints
+  int steps = 10; // Resolution of the path
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     // Linear interpolation
@@ -103,11 +105,13 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
     if (isThailand) {
        // DIRECTIVE: Avoid Electric Shock Risk
        // Heuristic: Shift away from known utility pole lines (simulated by longitude offset)
+       // Concept: "Zig-zag" implies checking ground for wires
        double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
        lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
     } else if (isJapan) {
        // DIRECTIVE: Road Width Priority
        // Heuristic: Snap to wider arterial roads (simulated by latitude grid alignment)
+       // Concept: Bias towards main arteries
        double widthBonus = 0.0001 * widthPriorityWeight;
        lat += (i % 2 == 0 ? widthBonus : -widthBonus);
     }
@@ -177,7 +181,7 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
-              // THEME DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
+              // IMPL: UI Directives
               theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
               darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
@@ -375,6 +379,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
     // App Heartbeat
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      if (!mounted) return;
       if (context.read<ShelterProvider>().isDisasterMode) return;
       try {
         Uri targetUri = kIsWeb 
@@ -404,16 +409,16 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   Future<void> _checkMovementAndRecalculate(dynamic newLoc) async {
     if (_lastLocation == null) {
       _lastLocation = newLoc;
-      _triggerBackgroundRouting(newLoc);
+      unawaited(_triggerBackgroundRouting(newLoc));
       return;
     }
 
     double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
     
-    // NAV: Trigger calculation if moved significantly (> 20 meters)
+    // Trigger calculation if moved significantly (> 20 meters)
     if (dist > 20.0) {
       _lastLocation = newLoc;
-      await _triggerBackgroundRouting(newLoc);
+      unawaited(_triggerBackgroundRouting(newLoc));
     }
   }
 
@@ -427,11 +432,13 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   }
 
   Future<void> _triggerBackgroundRouting(dynamic loc) async {
+    if (!mounted) return;
+    
     final shelterProvider = context.read<ShelterProvider>();
     final regionProvider = context.read<RegionModeProvider>();
     
     // Determine Destination (Nearest Shelter)
-    double destLat = 35.6895;
+    double destLat = 35.6895; // Default Tokyo
     double destLng = 139.6917;
     if (shelterProvider.shelters.isNotEmpty) {
       destLat = shelterProvider.shelters.first.latitude;
@@ -445,7 +452,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       destLat: destLat,
       destLng: destLng,
       region: regionProvider.isJapan ? 'JP' : 'TH',
-      hazards: [], 
+      hazards: [],
     );
 
     // BACKGROUND ISOLATE EXECUTION
@@ -454,8 +461,8 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       
       // Update Provider with new Waypoints
       if (mounted) {
-        debugPrint("Background Route Calculated: ${route.length} waypoints");
-        // Logic to update map polyline would go here
+        debugPrint("Background Route Calculated: ${route.length} waypoints [${params.region}]");
+        // Logic to update map polyline would go here (e.g., context.read<MapProvider>().setRoute(route))
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
@@ -590,6 +597,7 @@ class _AppStartupState extends State<AppStartup> {
       
       await shelterProvider.setRegion(savedRegion);
       
+      // Initialize Logic Mode
       if (savedRegion.toLowerCase().contains('th')) {
         regionProvider.setRegion(AppRegion.thailand);
       } else {
