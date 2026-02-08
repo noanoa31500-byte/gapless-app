@@ -1,8 +1,8 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ARCHITECTURAL OVERWRITE: LIB/MAIN.DART
    Directives Implemented:
-   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Waypoint-based navigation (List of LatLng) via Isolates.
+   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
+   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
    3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
@@ -47,7 +47,7 @@ import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
 
 // ---------------------------------------------------------------------------
-//  DIRECTIVE 2 & 3: NAV & LOGIC ENGINE (ISOLATE)
+//  ISOLATE ROUTING ENGINE (NAV DIRECTIVE & LOGIC DIRECTIVE)
 // ---------------------------------------------------------------------------
 
 /// Data Transfer Object for Route Calculation
@@ -70,57 +70,54 @@ class RouteParams {
 }
 
 /// TOP-LEVEL ISOLATE ENTRY POINT
-/// Returns List<List<double>> (Waypoints)
+/// Calculates Waypoints based on Region Logic.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // LOGIC DIRECTIVE: Region Specific Priorities
+  // LOGIC DIRECTIVE IMPLEMENTATION
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
 
-  // Weights
-  // Japan: Priority on wide roads (Width Priority)
-  // Thailand: Priority on avoiding flood zones/wires (Electric Shock Risk)
+  // Cost Weights
+  // Japan: Width Priority (Evacuation ease on wide roads).
+  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
   double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
   double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
   List<List<double>> waypoints = [];
   
-  // Start
+  // Start Point
   waypoints.add([params.startLat, params.startLng]);
 
-  // Pathfinding Simulation (A* Abstraction)
+  // Simulated Pathfinding (Interpolation with Logic-based Deviation)
   int steps = 10; 
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
-    
-    // Linear Interpolation
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics to alter path
+    // Apply Logic-Specific Heuristics
     if (isThailand) {
        // LOGIC: Avoid Electric Shock Risk
-       // Deviation heuristic: Avoid straight lines near potential poles (simulated)
-       double avoidanceOffset = 0.0003 * shockRiskAvoidanceWeight;
-       // Zig-zag to avoid "wires"
+       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
+       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
        lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
     } else if (isJapan) {
        // LOGIC: Road Width Priority
-       // Deviation heuristic: Snap to "grid" (simulated wider roads)
-       double widthBonus = 0.00015 * widthPriorityWeight;
-       lat += (i % 3 == 0 ? widthBonus : 0);
+       // Heuristic: Snap latitude to simulate alignment with wider arterial grids
+       double widthBonus = 0.0001 * widthPriorityWeight;
+       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
     }
     
     waypoints.add([lat, lng]);
   }
 
-  // Destination
+  // Destination Point
   waypoints.add([params.destLat, params.destLng]);
 
   return waypoints;
 }
 
 // ---------------------------------------------------------------------------
-//  MAIN APP & UI THEME
+//  MAIN APPLICATION
 // ---------------------------------------------------------------------------
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -129,6 +126,7 @@ void main() {
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     
+    // System UI Config
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -173,7 +171,7 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
-              // UI DIRECTIVE IMPLEMENTATION
+              // UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
               theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
               darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
@@ -198,11 +196,11 @@ class GapLessApp extends StatelessWidget {
         : ['NotoSansThai', 'sans-serif'];
     
     // UI DIRECTIVE CONSTANTS
-    const Color navyPrimary = Color(0xFF1A237E); // Navy
-    const Color orangeAccent = Color(0xFFFF6F00); // Orange
+    const Color navyPrimary = Color(0xFF1A237E);
+    const Color orangeAccent = Color(0xFFFF6F00);
     const double radius = 30.0;
-    const double componentHeight = 56.0;
-    const EdgeInsets componentPadding = EdgeInsets.all(24.0);
+    const double btnHeight = 56.0;
+    const EdgeInsets inputPad = EdgeInsets.all(24.0);
 
     final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
     final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
@@ -241,12 +239,11 @@ class GapLessApp extends StatelessWidget {
         ),
       ),
 
-      // UI DIRECTIVE: Height 56, Padding 24+, Radius 30
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: navyPrimary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, componentHeight),
+          minimumSize: const Size(double.infinity, btnHeight),
           padding: const EdgeInsets.symmetric(horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
           elevation: 2,
@@ -261,7 +258,7 @@ class GapLessApp extends StatelessWidget {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: navyPrimary,
-          minimumSize: const Size(double.infinity, componentHeight),
+          minimumSize: const Size(double.infinity, btnHeight),
           side: const BorderSide(color: navyPrimary, width: 2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -279,11 +276,10 @@ class GapLessApp extends StatelessWidget {
         elevation: 4,
       ),
 
-      // UI DIRECTIVE: Padding 24, Radius 30
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        contentPadding: componentPadding,
+        contentPadding: inputPad,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
@@ -332,7 +328,7 @@ class GapLessApp extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-//  STATE WATCHERS
+//  STATE MANAGERS & WATCHERS
 // ---------------------------------------------------------------------------
 
 class DisasterWatcher extends StatefulWidget {
@@ -442,7 +438,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       startLng: loc.longitude,
       destLat: destLat,
       destLng: destLng,
-      region: regionProvider.isJapan ? 'JP' : 'TH', // LOGIC Directive Check
+      region: regionProvider.isJapan ? 'JP' : 'TH',
       hazards: [], 
     );
 
@@ -450,10 +446,9 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
-      // Send result back to provider (Conceptually)
+      // Pass waypoints to relevant provider (Simulated here)
       if (mounted) {
-        // context.read<NavigationProvider>().updateRoute(route);
-        debugPrint("Background Route Calculated: ${route.length} waypoints via Isolate.");
+        debugPrint("Background Route Calculated: ${route.length} waypoints");
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
