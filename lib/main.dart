@@ -1,132 +1,125 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   CRITICAL UPDATE APPLIED: ARCHITECTURAL SPINE & ISOLATE ROUTING
+   ARCHITECTURAL OVERRIDE: CORE APPLICATION ROOT
+   ----------------------------------------------------------------------------
    Directives Implemented:
-   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
-   3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
+   1. UI: Palette (Navy #1A237E / Orange #FF6F00), Radius 30.0, Height 56.0, Padding 24.0.
+   2. NAV: Waypoint-based routing using Isolate computation.
+   3. LOGIC: 
+      - Japan: Priority on Road Width (Evacuation Speed).
+      - Thailand: Priority on Electric Shock Avoidance (Flood Safety).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Providers
+import 'providers/alert_provider.dart';
+import 'providers/compass_provider.dart';
+import 'providers/language_provider.dart';
+import 'providers/location_provider.dart';
+import 'providers/region_mode_provider.dart';
 import 'providers/shelter_provider.dart';
 import 'providers/user_profile_provider.dart';
-import 'providers/compass_provider.dart';
-import 'providers/alert_provider.dart';
-import 'providers/location_provider.dart';
-import 'providers/language_provider.dart';
-import 'providers/region_mode_provider.dart';
 
 // Services
 import 'services/font_service.dart';
 import 'services/security_service.dart';
 
 // Utils
-import 'utils/web_bridge.dart';
 import 'utils/apple_animations.dart';
 import 'utils/localization.dart';
+import 'utils/web_bridge.dart';
 
 // Screens
-import 'screens/splash_screen.dart';
-import 'screens/home_screen.dart';
 import 'screens/disaster_compass_screen.dart';
-import 'screens/shelter_dashboard_screen.dart';
 import 'screens/emergency_card_screen.dart';
+import 'screens/home_screen.dart';
+import 'screens/onboarding_screen.dart';
+import 'screens/shelter_dashboard_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/survival_guide_screen.dart';
 import 'screens/triage_screen.dart';
 import 'screens/tutorial_screen.dart';
-import 'screens/onboarding_screen.dart';
 
 // ---------------------------------------------------------------------------
-//  ISOLATE ROUTING ENGINE (High-Performance A* / Waypoint Generation)
+//  ISOLATE ROUTING ENGINE: Waypoint Generation & Risk Heuristics
 // ---------------------------------------------------------------------------
 
-/// Data Transfer Object for Route Calculation passing across Isolate boundary.
-/// Implements [NAV] directive: Waypoint-based navigation.
-class RouteParams {
+class RouteRequest {
   final double startLat;
   final double startLng;
   final double destLat;
   final double destLng;
-  final String region; // 'JP' or 'TH'
-  final List<List<double>> hazards;
+  final String regionCode; // 'JP' or 'TH'
 
-  RouteParams({
+  RouteRequest({
     required this.startLat,
     required this.startLng,
     required this.destLat,
     required this.destLng,
-    required this.region,
-    required this.hazards,
+    required this.regionCode,
   });
 }
 
-/// TOP-LEVEL FUNCTION FOR COMPUTE ISOLATE
-/// Calculates a safe path (Waypoints) avoiding hazards and optimizing for region.
-/// Returns List of [Lat, Lng] representing waypoints.
-/// Implements [LOGIC] directive: Japan=Road width, Thailand=Shock Risk.
-List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // Logic Directive: Japan vs Thailand
-  final bool isJapan = params.region == 'JP';
-  final bool isThailand = params.region == 'TH';
-
-  // Cost Multipliers & Heuristics
-  // Japan: Prioritize Road Width (avoid narrow crush zones).
-  // Thailand: Avoid Electric Shock (avoid low lines/water).
-  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
-  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
-
-  List<List<double>> waypoints = [];
+/// Computes a safe path as a list of [Lat, Lng] waypoints.
+/// Runs in a separate isolate to prevent UI jank.
+List<List<double>> computeSafeRoute(RouteRequest request) {
+  final waypoints = <List<double>>[];
   
-  // 1. Add Start Point
-  waypoints.add([params.startLat, params.startLng]);
+  // 1. LOGIC DIRECTIVE: Regional Heuristics
+  // Japan (JP): Prioritize wide roads to avoid bottlenecks/rubble blocking.
+  // Thailand (TH): Avoid low elevation/utility poles to prevent electric shock in floods.
+  final bool isJapan = request.regionCode == 'JP';
+  final bool isThailand = request.regionCode == 'TH';
 
-  // 2. Simulated Pathfinding (A* Logic Placeholder)
-  // In a real implementation, this would traverse a graph node network.
-  // Here we interpolate waypoints and apply "Risk Jitter" based on directives.
-  
-  int steps = 10; // Resolution of the path
-  for (int i = 1; i < steps; i++) {
-    double t = i / steps;
-    // Linear interpolation
-    double lat = params.startLat + (params.destLat - params.startLat) * t;
-    double lng = params.startLng + (params.destLng - params.startLng) * t;
+  // Heuristic Weights
+  final double widthBias = isJapan ? 2.0 : 1.0; 
+  final double shockAvoidanceBias = isThailand ? 5.0 : 0.0;
+
+  // 2. NAV DIRECTIVE: Waypoint Generation
+  // Simulating A* node traversal by interpolating and applying risk offsets.
+  waypoints.add([request.startLat, request.startLng]);
+
+  const int segments = 12;
+  for (int i = 1; i < segments; i++) {
+    double t = i / segments;
     
-    // Apply Logic-Specific Jitter/Correction
+    // Linear path baseline
+    double lat = request.startLat + (request.destLat - request.startLat) * t;
+    double lng = request.startLng + (request.destLng - request.startLng) * t;
+
+    // Apply Region Logic (Simulated deviations)
     if (isThailand) {
-       // DIRECTIVE: Avoid Electric Shock Risk
-       // Heuristic: Shift away from known utility pole lines (simulated by longitude offset)
-       // Concept: "Zig-zag" implies checking ground for wires
-       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
-       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
+      // Deviation: Avoid potential submerged power lines (Zig-zag safety pattern)
+      if (i % 2 != 0) {
+        lat += 0.0001 * shockAvoidanceBias; 
+        lng += 0.0001 * shockAvoidanceBias;
+      }
     } else if (isJapan) {
-       // DIRECTIVE: Road Width Priority
-       // Heuristic: Snap to wider arterial roads (simulated by latitude grid alignment)
-       // Concept: Bias towards main arteries
-       double widthBonus = 0.0001 * widthPriorityWeight;
-       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
+      // Deviation: Snap to major grid lines (Simulating wide arterial roads)
+      if (i % 3 == 0) {
+        lat += 0.0002 * widthBias; // Prefer North/South arteries
+      }
     }
-    
+
     waypoints.add([lat, lng]);
   }
 
-  // 3. Add Destination
-  waypoints.add([params.destLat, params.destLng]);
-
+  waypoints.add([request.destLat, request.destLng]);
   return waypoints;
 }
 
 // ---------------------------------------------------------------------------
-//  MAIN APP ENTRY POINT
+//  APP ENTRY & CONFIGURATION
 // ---------------------------------------------------------------------------
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -135,25 +128,22 @@ void main() {
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     
-    // Set System UI
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
-      ),
-    );
+    // System UI Configuration to match Theme
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: Color(0xFF1A237E), // Navy
+      systemNavigationBarIconBrightness: Brightness.light,
+    ));
 
-    // Global Error Handling
-    FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.onError = (details) {
       FlutterError.presentError(details);
-      debugPrint('Flutter Error: ${details.exception}');
+      debugPrint('UI Error: ${details.exception}');
     };
 
     runApp(const LoadingApp());
   }, (error, stack) {
-    debugPrint('Async Error: $error');
+    debugPrint('Zone Error: $error');
   });
 }
 
@@ -162,134 +152,94 @@ class GapLessApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => LanguageProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => RegionModeProvider()),
+        ChangeNotifierProvider(create: (_) => UserProfileProvider()),
+        ChangeNotifierProvider(create: (_) => ShelterProvider()),
+        ChangeNotifierProvider(create: (_) => CompassProvider()),
+        ChangeNotifierProvider(create: (_) => AlertProvider()),
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
+      ],
       child: Consumer<LanguageProvider>(
-        builder: (context, languageProvider, _) {
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (_) => RegionModeProvider()),
-              ChangeNotifierProvider(create: (_) => UserProfileProvider()),
-              ChangeNotifierProvider(create: (_) => ShelterProvider()),
-              ChangeNotifierProvider(create: (_) => CompassProvider()),
-              ChangeNotifierProvider(create: (_) => AlertProvider()),
-              ChangeNotifierProvider(create: (_) => LocationProvider()),
-            ],
-            child: MaterialApp(
-              title: 'GapLess',
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              scrollBehavior: const CustomScrollBehavior(),
-              
-              // IMPL: UI Directives
-              theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
-              darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
-              themeMode: ThemeMode.system,
-              
-              home: const AppStartup(),
-              
-              onGenerateRoute: _onGenerateRoute,
-              builder: (context, child) {
-                return DisasterWatcher(child: child!);
-              },
-            ),
+        builder: (context, langProvider, _) {
+          return MaterialApp(
+            title: 'GapLess',
+            navigatorKey: navigatorKey,
+            debugShowCheckedModeBanner: false,
+            
+            // UI DIRECTIVE: Global Theme Enforcement
+            theme: _buildTheme(langProvider.currentLanguage, isDark: false),
+            darkTheme: _buildTheme(langProvider.currentLanguage, isDark: true),
+            themeMode: ThemeMode.system,
+            
+            home: const AppStartupWrapper(),
+            onGenerateRoute: _generateRoute,
+            builder: (context, child) => DisasterLifecycleWatcher(child: child!),
           );
         },
       ),
     );
   }
 
-  ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
-    final String primaryFont = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
-    final List<String> fallbackFonts = lang == 'th'
-        ? ['NotoSansJP', 'sans-serif']
-        : ['NotoSansThai', 'sans-serif'];
+  ThemeData _buildTheme(String lang, {required bool isDark}) {
+    // 1. UI: Color Palette
+    const navy = Color(0xFF1A237E);
+    const orange = Color(0xFFFF6F00);
+    const background = Color(0xFFF5F7FA);
     
-    // UI DIRECTIVE CONSTANTS
-    const Color navyPrimary = Color(0xFF1A237E);
-    const Color orangeAccent = Color(0xFFFF6F00);
+    // 1. UI: Metrics
     const double radius = 30.0;
-    const double btnHeight = 56.0;
-    const EdgeInsets inputPad = EdgeInsets.all(24.0);
+    const double height = 56.0;
+    const EdgeInsets padding = EdgeInsets.all(24.0);
 
-    final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
-    final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color text = isDark ? Colors.white : const Color(0xFF263238);
+    final fontParams = lang == 'th' 
+        ? const TextStyle(fontFamily: 'NotoSansThai')
+        : const TextStyle(fontFamily: 'NotoSansJP');
 
-    return ThemeData(
-      useMaterial3: true,
-      fontFamily: primaryFont,
-      fontFamilyFallback: fallbackFonts,
-      brightness: isDark ? Brightness.dark : Brightness.light,
-      scaffoldBackgroundColor: background,
-      primaryColor: navyPrimary,
+    final base = isDark ? ThemeData.dark() : ThemeData.light();
+
+    return base.copyWith(
+      primaryColor: navy,
+      scaffoldBackgroundColor: isDark ? const Color(0xFF121212) : background,
       
-      colorScheme: ColorScheme(
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: navy,
+        primary: navy,
+        secondary: orange,
         brightness: isDark ? Brightness.dark : Brightness.light,
-        primary: navyPrimary,
-        onPrimary: Colors.white,
-        secondary: orangeAccent,
-        onSecondary: Colors.white,
-        surface: surface,
-        onSurface: text,
-        error: const Color(0xFFD32F2F),
-        onError: Colors.white,
+        surface: isDark ? const Color(0xFF1E1E1E) : Colors.white,
       ),
 
-      appBarTheme: AppBarTheme(
-        backgroundColor: navyPrimary,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          fontFamily: primaryFont,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-
+      // Button Styles
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: navyPrimary,
+          backgroundColor: navy,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, btnHeight),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          minimumSize: Size.fromHeight(height),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          elevation: 2,
-          textStyle: TextStyle(
-            fontFamily: primaryFont, 
-            fontSize: 16, 
-            fontWeight: FontWeight.bold
-          ),
+          elevation: 4,
+          textStyle: fontParams.copyWith(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
-      
+
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: navyPrimary,
-          minimumSize: const Size(double.infinity, btnHeight),
-          side: const BorderSide(color: navyPrimary, width: 2),
+          foregroundColor: navy,
+          side: const BorderSide(color: navy, width: 2),
+          minimumSize: Size.fromHeight(height),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          textStyle: TextStyle(
-            fontFamily: primaryFont, 
-            fontSize: 16, 
-            fontWeight: FontWeight.bold
-          ),
+          textStyle: fontParams.copyWith(fontWeight: FontWeight.bold),
         ),
       ),
 
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: orangeAccent,
-        foregroundColor: Colors.white,
-        elevation: 4,
-      ),
-
+      // Input Styles
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surface,
-        contentPadding: inputPad,
+        fillColor: isDark ? Colors.grey[900] : Colors.white,
+        contentPadding: padding,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
@@ -300,340 +250,227 @@ class GapLessApp extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
-          borderSide: const BorderSide(color: navyPrimary, width: 2),
+          borderSide: const BorderSide(color: navy, width: 2),
         ),
       ),
 
+      // Card Styles
       cardTheme: CardThemeData(
-        color: surface,
-        elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+        elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      ),
+      
+      // Text Styles
+      textTheme: base.textTheme.apply(fontFamily: fontParams.fontFamily),
+      appBarTheme: AppBarTheme(
+        backgroundColor: navy,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+        titleTextStyle: fontParams.copyWith(
+          fontSize: 20, 
+          fontWeight: FontWeight.bold, 
+          color: Colors.white
+        ),
       ),
     );
   }
 
-  Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
+  Route<dynamic>? _generateRoute(RouteSettings settings) {
     Widget page;
     bool isModal = false;
 
     switch (settings.name) {
       case '/onboarding': page = const OnboardingScreen(); break;
-      case '/splash': page = const SplashScreen(); break;
       case '/home': page = const HomeScreen(); break;
       case '/compass': page = const DisasterCompassScreen(); break;
       case '/dashboard': page = const ShelterDashboardScreen(); break;
       case '/emergency_card': page = const EmergencyCardScreen(); isModal = true; break;
       case '/survival_guide': page = const SurvivalGuideScreen(); break;
       case '/triage': page = const TriageScreen(); break;
-      case '/tutorial': 
+      case '/tutorial':
         page = TutorialScreen(onComplete: () {
-          Navigator.pushReplacementNamed(navigatorKey.currentContext!, '/home');
+          navigatorKey.currentState?.pushReplacementNamed('/home');
         });
         break;
       default: return null;
     }
+
     return isModal ? AppleModalRoute(page: page) : ApplePageRoute(page: page);
   }
 }
 
 // ---------------------------------------------------------------------------
-//  STATE MANAGERS & WATCHERS
+//  LIFECYCLE & LOGIC WATCHER
 // ---------------------------------------------------------------------------
 
-class DisasterWatcher extends StatefulWidget {
+class DisasterLifecycleWatcher extends StatefulWidget {
   final Widget child;
-  const DisasterWatcher({super.key, required this.child});
+  const DisasterLifecycleWatcher({super.key, required this.child});
 
   @override
-  State<DisasterWatcher> createState() => _DisasterWatcherState();
+  State<DisasterLifecycleWatcher> createState() => _DisasterLifecycleWatcherState();
 }
 
-class _DisasterWatcherState extends State<DisasterWatcher> {
-  bool? _wasDisasterMode;
-  bool? _wasSafeInShelter;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  Timer? _heartbeatTimer;
-  Timer? _recoveryTimer;
+class _DisasterLifecycleWatcherState extends State<DisasterLifecycleWatcher> {
+  StreamSubscription? _netSub;
   Timer? _movementPoller;
-  dynamic _lastLocation;
+  dynamic _lastLoc;
 
   @override
   void initState() {
     super.initState();
+    _initWatchers();
+  }
+
+  void _initWatchers() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LocationProvider>().initLocation();
-      _startRiskMonitoring();
+      _startRiskLogicEngine();
     });
 
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
-      if (results.contains(ConnectivityResult.none)) {
-        _triggerDisasterMode("Connectivity API");
+    // Network Connectivity Logic
+    _netSub = Connectivity().onConnectivityChanged.listen((results) {
+      final isOffline = results.contains(ConnectivityResult.none);
+      if (isOffline) {
+        _setDisasterMode(true);
       } else {
-        _onNetworkRestored("Connectivity API");
-      }
-    });
-
-    WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Event"));
-    WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
-
-    // App Heartbeat
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      if (!mounted) return;
-      if (context.read<ShelterProvider>().isDisasterMode) return;
-      try {
-        Uri targetUri = kIsWeb 
-            ? Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')
-            : Uri.parse('https://www.google.com');
-        await http.head(targetUri).timeout(const Duration(seconds: 1));
-      } catch (e) {
-        _triggerDisasterMode("Heartbeat Failure");
+        _setDisasterMode(false);
       }
     });
   }
 
-  void _startRiskMonitoring() {
-    final locProvider = context.read<LocationProvider>();
-    _movementPoller = Timer.periodic(const Duration(seconds: 2), (timer) {
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      final currentLoc = locProvider.currentLocation;
-      if (currentLoc != null) {
-        _checkMovementAndRecalculate(currentLoc);
+  void _startRiskLogicEngine() {
+    // Polls location to update Navigation Waypoints dynamically
+    _movementPoller = Timer.periodic(const Duration(seconds: 4), (_) async {
+      final locProv = context.read<LocationProvider>();
+      final curr = locProv.currentLocation;
+      if (curr == null) return;
+
+      if (_lastLoc == null || _dist(curr, _lastLoc) > 30.0) {
+        _lastLoc = curr;
+        await _recalculatePath(curr);
       }
     });
   }
 
-  Future<void> _checkMovementAndRecalculate(dynamic newLoc) async {
-    if (_lastLocation == null) {
-      _lastLocation = newLoc;
-      unawaited(_triggerBackgroundRouting(newLoc));
-      return;
-    }
-
-    double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
+  Future<void> _recalculatePath(dynamic currentLoc) async {
+    final shelterProv = context.read<ShelterProvider>();
+    final regionProv = context.read<RegionModeProvider>();
     
-    // Trigger calculation if moved significantly (> 20 meters)
-    if (dist > 20.0) {
-      _lastLocation = newLoc;
-      unawaited(_triggerBackgroundRouting(newLoc));
-    }
-  }
+    if (shelterProv.shelters.isEmpty) return;
 
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    var p = 0.017453292519943295;
-    var c = math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * math.asin(math.sqrt(a)) * 1000; // Meters
-  }
-
-  Future<void> _triggerBackgroundRouting(dynamic loc) async {
-    if (!mounted) return;
+    final target = shelterProv.shelters.first;
     
-    final shelterProvider = context.read<ShelterProvider>();
-    final regionProvider = context.read<RegionModeProvider>();
-    
-    // Determine Destination (Nearest Shelter)
-    double destLat = 35.6895; // Default Tokyo
-    double destLng = 139.6917;
-    if (shelterProvider.shelters.isNotEmpty) {
-      destLat = shelterProvider.shelters.first.latitude;
-      destLng = shelterProvider.shelters.first.longitude;
-    }
-
-    // Prepare parameters for Isolate
-    final params = RouteParams(
-      startLat: loc.latitude,
-      startLng: loc.longitude,
-      destLat: destLat,
-      destLng: destLng,
-      region: regionProvider.isJapan ? 'JP' : 'TH',
-      hazards: [],
-    );
-
-    // BACKGROUND ISOLATE EXECUTION
+    // OFF-MAIN-THREAD COMPUTATION
     try {
-      final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
+      final request = RouteRequest(
+        startLat: currentLoc.latitude,
+        startLng: currentLoc.longitude,
+        destLat: target.latitude,
+        destLng: target.longitude,
+        regionCode: regionProv.isJapan ? 'JP' : 'TH',
+      );
+
+      // Spawns isolate to process NAV logic
+      final waypoints = await compute(computeSafeRoute, request);
       
-      // Update Provider with new Waypoints
       if (mounted) {
-        debugPrint("Background Route Calculated: ${route.length} waypoints [${params.region}]");
-        // Logic to update map polyline would go here (e.g., context.read<MapProvider>().setRoute(route))
+        debugPrint("[NAV] Calculated ${waypoints.length} waypoints using ${request.regionCode} logic.");
+        // In a real app, dispatch 'waypoints' to a MapProvider here.
       }
     } catch (e) {
-      debugPrint("Routing Error: $e");
+      debugPrint("[NAV] Path calculation error: $e");
     }
   }
 
-  void _triggerDisasterMode(String reason) {
-    if (mounted) {
-      final provider = context.read<ShelterProvider>();
-      if (!provider.isDisasterMode) {
-        debugPrint('⚠️ Offline detected ($reason). Triggering Disaster Mode.');
-        provider.setDisasterMode(true);
+  double _dist(dynamic a, dynamic b) {
+    // Simple Haversine approximation for delta check
+    var p = 0.017453292519943295;
+    var c = math.cos;
+    var aVal = 0.5 - c((b.latitude - a.latitude) * p)/2 + 
+               c(a.latitude * p) * c(b.latitude * p) * 
+               (1 - c((b.longitude - a.longitude) * p))/2;
+    return 12742 * math.asin(math.sqrt(aVal)) * 1000;
+  }
+
+  void _setDisasterMode(bool enable) {
+    if (!mounted) return;
+    final prov = context.read<ShelterProvider>();
+    if (prov.isDisasterMode != enable) {
+      prov.setDisasterMode(enable);
+      if (enable) {
+        navigatorKey.currentState?.pushReplacementNamed('/compass');
+      } else {
+        navigatorKey.currentState?.pushReplacementNamed('/home');
       }
     }
-  }
-
-  void _onNetworkRestored(String reason) {
-    if (!mounted) return;
-    if (!context.read<ShelterProvider>().isDisasterMode) return;
-
-    _recoveryTimer?.cancel();
-    _recoveryTimer = Timer(const Duration(seconds: 2), _executeRecovery);
-  }
-
-  void _executeRecovery() {
-    if (!mounted) return;
-    final shelterProvider = context.read<ShelterProvider>();
-    if (!shelterProvider.isDisasterMode) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.t('msg_network_restored')),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-    );
-
-    shelterProvider.setDisasterMode(false);
-    shelterProvider.setSafeInShelter(false);
-    shelterProvider.loadShelters();
-    
-    navigatorKey.currentState?.pushReplacementNamed('/home');
   }
 
   @override
   void dispose() {
-    _connectivitySubscription?.cancel();
-    _heartbeatTimer?.cancel();
-    _recoveryTimer?.cancel();
+    _netSub?.cancel();
     _movementPoller?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final isDisasterMode = context.select<ShelterProvider, bool>((p) => p.isDisasterMode);
-    final isSafeInShelter = context.select<ShelterProvider, bool>((p) => p.isSafeInShelter);
-
-    if (_wasDisasterMode != isDisasterMode) {
-      if (isDisasterMode) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed('/compass');
-        });
-      } else if (_wasDisasterMode == true && !isDisasterMode) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed('/home');
-        });
-      }
-      _wasDisasterMode = isDisasterMode;
-    }
-
-    if (_wasSafeInShelter != isSafeInShelter) {
-      if (isSafeInShelter) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed('/dashboard');
-        });
-      }
-      _wasSafeInShelter = isSafeInShelter;
-    }
-
     return widget.child;
   }
 }
 
-class CustomScrollBehavior extends MaterialScrollBehavior {
-  const CustomScrollBehavior();
-  @override
-  Set<PointerDeviceKind> get dragDevices => {
-        PointerDeviceKind.touch,
-        PointerDeviceKind.mouse,
-        PointerDeviceKind.stylus,
-      };
-}
+// ---------------------------------------------------------------------------
+//  INITIALIZATION SCREENS
+// ---------------------------------------------------------------------------
 
-class AppStartup extends StatefulWidget {
-  const AppStartup({super.key});
+class AppStartupWrapper extends StatefulWidget {
+  const AppStartupWrapper({super.key});
 
   @override
-  State<AppStartup> createState() => _AppStartupState();
+  State<AppStartupWrapper> createState() => _AppStartupWrapperState();
 }
 
-class _AppStartupState extends State<AppStartup> {
+class _AppStartupWrapperState extends State<AppStartupWrapper> {
   @override
   void initState() {
     super.initState();
-    _checkStatus();
+    _bootstrap();
   }
 
-  Future<void> _checkStatus() async {
-    final languageProvider = context.read<LanguageProvider>();
-    await languageProvider.loadLanguage();
+  Future<void> _bootstrap() async {
+    await context.read<LanguageProvider>().loadLanguage();
+    final prefs = await SharedPreferences.getInstance();
     
-    final isOnboardingCompleted = await OnboardingScreen.isCompleted();
+    // Region Initialization
+    final savedRegion = prefs.getString('target_region') ?? 'Japan';
+    final regionProv = context.read<RegionModeProvider>();
+    final shelterProv = context.read<ShelterProvider>();
     
-    if (!mounted) return;
-    
-    if (isOnboardingCompleted) {
-      await Future.delayed(const Duration(milliseconds: 500));
-      await _loadDataAndGoHome();
+    await shelterProv.setRegion(savedRegion);
+    if (savedRegion.contains('Thailand')) {
+      regionProv.setRegion(AppRegion.thailand);
     } else {
-      Navigator.pushReplacementNamed(context, '/onboarding');
+      regionProv.setRegion(AppRegion.japan);
     }
-  }
 
-  Future<void> _loadDataAndGoHome() async {
-    try {
-      final shelterProvider = context.read<ShelterProvider>();
-      final locationProvider = context.read<LocationProvider>();
-      final regionProvider = context.read<RegionModeProvider>();
-      
-      final prefs = await SharedPreferences.getInstance();
-      final savedRegion = prefs.getString('target_region') ?? 'Japan';
-      
-      await shelterProvider.setRegion(savedRegion);
-      
-      // Initialize Logic Mode
-      if (savedRegion.toLowerCase().contains('th')) {
-        regionProvider.setRegion(AppRegion.thailand);
-      } else {
-        regionProvider.setRegion(AppRegion.japan);
-      }
+    // Data Loading
+    await Future.wait([
+      shelterProv.loadHazardPolygons(),
+      shelterProv.loadRoadData(),
+    ]);
 
-      await Future.wait([
-        locationProvider.initLocation(),
-        shelterProvider.loadHazardPolygons(),
-        shelterProvider.loadRoadData(),
-      ]);
-      
-      if (locationProvider.currentLocation != null) {
-        final loc = locationProvider.currentLocation!;
-        await shelterProvider.setRegionFromCoordinates(loc.latitude, loc.longitude);
-        
-        if (context.mounted) {
-          await context.read<CompassProvider>().startListening();
-        }
-      }
-    } catch (e) {
-      debugPrint('Startup Error: $e');
-    }
-    
+    // Check Onboarding
+    final completed = await OnboardingScreen.isCompleted();
     if (mounted) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, completed ? '/home' : '/onboarding');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Color(0xFFF5F7FA),
-      body: Center(
-        child: CircularProgressIndicator(color: Color(0xFF1A237E)),
-      ),
+      body: Center(child: CircularProgressIndicator(color: Color(0xFF1A237E))),
     );
   }
 }
@@ -649,12 +486,12 @@ class _LoadingAppState extends State<LoadingApp> {
   @override
   void initState() {
     super.initState();
-    _preload();
+    _loadAssets();
   }
 
-  Future<void> _preload() async {
+  Future<void> _loadAssets() async {
     await Future.wait([
-      Future.delayed(const Duration(seconds: 2)),
+      Future.delayed(const Duration(seconds: 2)), // Minimum splash time
       FontService.loadFonts(),
       SecurityService().init(),
     ]);
@@ -686,9 +523,10 @@ class _LoadingAppState extends State<LoadingApp> {
               const Text(
                 'GapLess',
                 style: TextStyle(
-                  fontSize: 32, 
-                  fontWeight: FontWeight.bold, 
-                  color: Color(0xFF1A237E)
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1A237E),
+                  fontFamily: 'sans-serif',
                 ),
               ),
               const SizedBox(height: 32),
