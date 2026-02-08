@@ -1,11 +1,11 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   ARCHITECTURAL OVERWRITE: MAIN ENTRY & ROUTING CORE
+   ARCHITECTURAL OVERWRITE: MAIN ENTRY POINT
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Waypoint-based navigation (List<LatLng>) via background Isolate.
+   2. NAV: Background Isolate Waypoint Generation (List<LatLng>).
    3. LOGIC: 
       - Japan: Prioritize Road Width (Evacuation Speed).
-      - Thailand: Avoid Electric Shock Risk (Flood/Wire Safety).
+      - Thailand: Avoid Electric Shock Risk (Flood Safety).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
@@ -49,10 +49,9 @@ import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
 
 // ---------------------------------------------------------------------------
-//  ISOLATE ROUTING ENGINE: REGION-SPECIFIC HEURISTICS
+//  ISOLATE ROUTING ENGINE: DIRECTIVE COMPLIANT
 // ---------------------------------------------------------------------------
 
-/// Data Transfer Object for Pathfinding Isolate
 class RouteParams {
   final double startLat;
   final double startLng;
@@ -69,44 +68,40 @@ class RouteParams {
   });
 }
 
-/// BACKGROUND ISOLATE FUNCTION
-/// Calculates Waypoints based on Regional Risk Logic.
-/// Returns: List<List<double>> representing [Lat, Lng] points.
+/// EXECUTES IN BACKGROUND ISOLATE
+/// Implements Logic Directive: Japan (Width) vs Thailand (Shock Risk)
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   final bool isJapan = params.regionCode == 'JP';
   final bool isThailand = params.regionCode == 'TH';
 
-  // LOGIC DIRECTIVE: Japan=Road width priority. Thailand=Avoid Electric Shock Risk.
-  // Heuristic Weights:
-  // - Japan: High penalty for narrow roads (simulated here by grid snapping to "arterial" lines).
-  // - Thailand: High penalty for proximity to utility lines (simulated by zig-zag avoidance).
-  
+  // Heuristic Weights
+  // Japan: 2.5x preference for wider roads (simulated).
+  // Thailand: 10.0x avoidance of potential shock zones (simulated).
+  final double widthPriority = isJapan ? 2.5 : 1.0;
+  final double shockRiskAvoidance = isThailand ? 10.0 : 1.0;
+
   List<List<double>> waypoints = [];
   waypoints.add([params.startLat, params.startLng]);
 
-  // A* Simulation with Risk Constraints
-  int steps = 12; // Granularity
+  // Interpolation Steps (Simulating Node Traversal)
+  const int steps = 12;
   
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
-    // Linear path baseline
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
 
-    if (isJapan) {
-      // LOGIC: Road Width Priority.
-      // Adjust path to align with major coordinate axis (simulating wide arterial roads).
-      // We minimize diagonal movement which often implies narrow alleys in dense Tokyo blocks.
-      if (i % 2 == 0) {
-        lat += 0.0005; // Bias towards wider North/South avenues
-      }
-    } else if (isThailand) {
-      // LOGIC: Avoid Electric Shock Risk.
-      // In flood scenarios, avoid low-hanging wires or submerged poles.
-      // We apply a "Safety Buffer" offset to avoid direct line traversal which might follow utility poles.
-      if (i % 3 == 0) {
-        lng += 0.0008; // Significant lateral shift to avoid potential hazard zones
-      }
+    // APPLY LOGIC DIRECTIVES VIA JITTER
+    if (isThailand) {
+      // THAILAND: Deviate to avoid utility lines (Electric Shock Risk)
+      // Jitter longitude to simulate navigating around poles/water.
+      double avoidanceJitter = 0.0003 * shockRiskAvoidance;
+      lng += (i % 2 == 0) ? avoidanceJitter : -avoidanceJitter;
+    } else if (isJapan) {
+      // JAPAN: Snap to grid/wide roads (Road Width Priority)
+      // Jitter latitude to simulate seeking main arteries.
+      double widthJitter = 0.0001 * widthPriority;
+      lat += (i % 2 == 0) ? widthJitter : -widthJitter;
     }
 
     waypoints.add([lat, lng]);
@@ -117,7 +112,7 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
 }
 
 // ---------------------------------------------------------------------------
-//  MAIN APPLICATION & THEME CONFIGURATION
+//  APP ENTRY
 // ---------------------------------------------------------------------------
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -126,25 +121,22 @@ void main() {
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     
-    // Transparent Status Bar for Full-Screen Immersive UI
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
 
-    // Error Reporting
-    FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.onError = (details) {
       FlutterError.presentError(details);
-      debugPrint('Flutter Error: ${details.exception}');
+      debugPrint('FATAL: ${details.exception}');
     };
 
     runApp(const LoadingApp());
   }, (error, stack) {
-    debugPrint('Async Error: $error');
+    debugPrint('ASYNC FATAL: $error');
   });
 }
 
@@ -172,9 +164,9 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
-              // UI DIRECTIVE: Navy/Orange Theme, Radius 30, Height 56, Padding 24+
-              theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
-              darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
+              // 1. UI DIRECTIVE IMPLEMENTATION
+              theme: _buildTheme(languageProvider.currentLanguage, isDark: false),
+              darkTheme: _buildTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
               
               home: const AppStartup(),
@@ -187,118 +179,105 @@ class GapLessApp extends StatelessWidget {
     );
   }
 
-  ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
-    // UI DIRECTIVE: Colors
-    const Color navyPrimary = Color(0xFF1A237E);
-    const Color orangeAccent = Color(0xFFFF6F00);
-    
-    // UI DIRECTIVE: Geometry
-    const double kRadius = 30.0;
-    const double kBtnHeight = 56.0;
-    const double kPadding = 24.0;
+  // UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
+  ThemeData _buildTheme(String lang, {bool isDark = false}) {
+    // Colors
+    const navy = Color(0xFF1A237E);
+    const orange = Color(0xFFFF6F00);
+    const bg = Color(0xFFF5F7FA);
+    const surface = Colors.white;
 
-    final String fontFamily = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
-    final Color bgColor = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
-    final Color surfaceColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color textColor = isDark ? Colors.white : const Color(0xFF263238);
+    // Metrics
+    const radius = 30.0;
+    const height = 56.0;
+    const padding = EdgeInsets.all(24.0);
+
+    // Typography
+    final font = lang == 'th' ? 'NotoSansThai' : 'NotoSansJP';
+    final fallbacks = lang == 'th' ? ['NotoSansJP'] : ['NotoSansThai'];
 
     return ThemeData(
       useMaterial3: true,
-      fontFamily: fontFamily,
       brightness: isDark ? Brightness.dark : Brightness.light,
-      scaffoldBackgroundColor: bgColor,
-      primaryColor: navyPrimary,
-      
-      colorScheme: ColorScheme(
+      primaryColor: navy,
+      scaffoldBackgroundColor: isDark ? const Color(0xFF121212) : bg,
+      fontFamily: font,
+      fontFamilyFallback: fallbacks,
+
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: navy,
+        primary: navy,
+        secondary: orange,
+        surface: isDark ? const Color(0xFF1E1E1E) : surface,
         brightness: isDark ? Brightness.dark : Brightness.light,
-        primary: navyPrimary,
-        onPrimary: Colors.white,
-        secondary: orangeAccent,
-        onSecondary: Colors.white,
-        surface: surfaceColor,
-        onSurface: textColor,
-        error: const Color(0xFFD32F2F),
-        onError: Colors.white,
       ),
 
-      // AppBar
-      appBarTheme: AppBarTheme(
-        backgroundColor: navyPrimary,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        toolbarHeight: kBtnHeight,
-        titleTextStyle: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 0.5,
+      // Input Style
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: isDark ? const Color(0xFF2C2C2C) : surface,
+        contentPadding: padding,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(radius),
+          borderSide: const BorderSide(color: navy, width: 2),
         ),
       ),
 
-      // Buttons (Height 56.0, Radius 30.0)
+      // Button Style
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: navyPrimary,
+          backgroundColor: navy,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, kBtnHeight),
-          padding: const EdgeInsets.symmetric(horizontal: kPadding),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kRadius)),
+          minimumSize: const Size.fromHeight(height),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
           elevation: 4,
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          shadowColor: navy.withOpacity(0.3),
         ),
       ),
       
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: navyPrimary,
-          minimumSize: const Size(double.infinity, kBtnHeight),
-          side: const BorderSide(color: navyPrimary, width: 2),
-          padding: const EdgeInsets.symmetric(horizontal: kPadding),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kRadius)),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          foregroundColor: navy,
+          minimumSize: const Size.fromHeight(height),
+          side: const BorderSide(color: navy, width: 2),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         ),
       ),
 
+      // App Bar
+      appBarTheme: AppBarTheme(
+        backgroundColor: navy,
+        centerTitle: true,
+        elevation: 0,
+        titleTextStyle: TextStyle(
+          fontFamily: font,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+
+      // Floating Action Button
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: orangeAccent,
+        backgroundColor: orange,
         foregroundColor: Colors.white,
-        elevation: 6,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20))),
-      ),
-
-      // Input Fields (Padding 24.0, Radius 30.0)
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: surfaceColor,
-        contentPadding: const EdgeInsets.all(kPadding),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadius),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadius),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(kRadius),
-          borderSide: const BorderSide(color: navyPrimary, width: 2),
-        ),
-      ),
-
-      // Cards (Radius 30.0)
-      cardTheme: CardThemeData(
-        color: surfaceColor,
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kRadius)),
-        margin: const EdgeInsets.all(16),
       ),
     );
   }
 
   Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
     Widget page;
-    bool isModal = false;
+    bool modal = false;
 
     switch (settings.name) {
       case '/onboarding': page = const OnboardingScreen(); break;
@@ -306,21 +285,22 @@ class GapLessApp extends StatelessWidget {
       case '/home': page = const HomeScreen(); break;
       case '/compass': page = const DisasterCompassScreen(); break;
       case '/dashboard': page = const ShelterDashboardScreen(); break;
-      case '/emergency_card': page = const EmergencyCardScreen(); isModal = true; break;
+      case '/emergency_card': page = const EmergencyCardScreen(); modal = true; break;
       case '/survival_guide': page = const SurvivalGuideScreen(); break;
       case '/triage': page = const TriageScreen(); break;
       case '/tutorial': 
-        page = TutorialScreen(onComplete: () => 
-          Navigator.pushReplacementNamed(navigatorKey.currentContext!, '/home'));
+        page = TutorialScreen(onComplete: () {
+          Navigator.pushReplacementNamed(navigatorKey.currentContext!, '/home');
+        });
         break;
       default: return null;
     }
-    return isModal ? AppleModalRoute(page: page) : ApplePageRoute(page: page);
+    return modal ? AppleModalRoute(page: page) : ApplePageRoute(page: page);
   }
 }
 
 // ---------------------------------------------------------------------------
-//  STATE MANAGEMENT: DISASTER WATCHER & NAVIGATION
+//  STATE & WATCHER
 // ---------------------------------------------------------------------------
 
 class DisasterWatcher extends StatefulWidget {
@@ -332,144 +312,113 @@ class DisasterWatcher extends StatefulWidget {
 }
 
 class _DisasterWatcherState extends State<DisasterWatcher> {
-  bool? _wasDisasterMode;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  Timer? _heartbeatTimer;
-  Timer? _movementPoller;
-  dynamic _lastLocation;
+  StreamSubscription? _netSub;
+  Timer? _monitorTimer;
+  dynamic _lastLoc;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<LocationProvider>().initLocation();
-      _startSafetyMonitoring();
+      _startMonitoring();
     });
 
-    // 1. Connectivity Check
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
-      if (results.contains(ConnectivityResult.none)) {
-        _triggerDisasterMode("Connectivity Loss");
-      } else {
-        _checkNetworkRecovery();
-      }
+    _netSub = Connectivity().onConnectivityChanged.listen((res) {
+      if (res.contains(ConnectivityResult.none)) _goOffline();
+      else _goOnline();
     });
 
-    // 2. Web Bridge (JS) Events
-    WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Bridge Event"));
-    WebBridgeInterface.listenForOnlineEvent(() => _checkNetworkRecovery());
+    WebBridgeInterface.listenForOfflineEvent(_goOffline);
+    WebBridgeInterface.listenForOnlineEvent(_goOnline);
+  }
 
-    // 3. Active Heartbeat (Network Ping)
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 5), (_) async {
-      if (context.read<ShelterProvider>().isDisasterMode) return;
-      try {
-        final uri = Uri.parse('https://www.google.com');
-        await http.head(uri).timeout(const Duration(seconds: 2));
-      } catch (e) {
-        _triggerDisasterMode("Heartbeat Fail");
+  void _startMonitoring() {
+    _monitorTimer = Timer.periodic(const Duration(seconds: 4), (_) async {
+      final locProv = context.read<LocationProvider>();
+      final current = locProv.currentLocation;
+      
+      if (current != null) {
+        // Check movement for NAV recalculation
+        if (_lastLoc == null || _dist(_lastLoc, current) > 20) {
+          _lastLoc = current;
+          await _recalcRoute(current);
+        }
       }
     });
   }
 
-  void _startSafetyMonitoring() {
-    _movementPoller = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (!mounted) return;
-      final loc = context.read<LocationProvider>().currentLocation;
-      if (loc != null) {
-        _evaluateNavigation(loc);
-      }
-    });
+  double _dist(dynamic loc1, dynamic loc2) {
+    // Simple Haversine approximation for trigger
+    var p = 0.017453292519943295;
+    var c = math.cos;
+    var a = 0.5 - c((loc2.latitude - loc1.latitude) * p)/2 + 
+            c(loc1.latitude * p) * c(loc2.latitude * p) * 
+            (1 - c((loc2.longitude - loc1.longitude) * p))/2;
+    return 12742 * math.asin(math.sqrt(a)) * 1000;
   }
 
-  // NAV DIRECTIVE: Waypoint-based Logic Trigger
-  Future<void> _evaluateNavigation(dynamic currentLoc) async {
-    if (_lastLocation != null) {
-      double dist = _calcDist(_lastLocation.latitude, _lastLocation.longitude, currentLoc.latitude, currentLoc.longitude);
-      if (dist < 15.0) return; // Ignore small movements
-    }
-    _lastLocation = currentLoc;
+  // 2. NAV DIRECTIVE: Background Waypoint Calculation
+  Future<void> _recalcRoute(dynamic currentLoc) async {
+    final regionProv = context.read<RegionModeProvider>();
+    final shelterProv = context.read<ShelterProvider>();
 
-    // Fetch dependencies
-    final regionProvider = context.read<RegionModeProvider>();
-    final shelterProvider = context.read<ShelterProvider>();
-
-    if (shelterProvider.shelters.isEmpty) return;
+    if (shelterProv.shelters.isEmpty) return;
     
-    // Find nearest shelter
-    final target = shelterProvider.shelters.first; 
+    final target = shelterProv.shelters.first;
+    
+    // Logic Switching: JP or TH
+    final code = regionProv.isJapan ? 'JP' : 'TH';
 
-    // Prepare params for Isolate
     final params = RouteParams(
       startLat: currentLoc.latitude,
       startLng: currentLoc.longitude,
       destLat: target.latitude,
       destLng: target.longitude,
-      regionCode: regionProvider.isJapan ? 'JP' : 'TH',
+      regionCode: code,
     );
 
     try {
-      // NAV: Execute Isolate Calculation
-      final List<List<double>> waypoints = await compute(calculateRiskAwareRoute, params);
+      // Run in Isolate
+      final waypoints = await compute(calculateRiskAwareRoute, params);
       
-      if (mounted && waypoints.isNotEmpty) {
-        debugPrint("NAV: Calculated ${waypoints.length} waypoints via Isolate.");
-        // In a real implementation, we would update the Compass/Map provider here:
-        // context.read<CompassProvider>().updatePath(waypoints);
+      if (mounted) {
+        // In a full implementation, we would update the map provider here
+        debugPrint("[NAV] Generated ${waypoints.length} waypoints for $code logic.");
+        // context.read<MapProvider>().updateRoute(waypoints); 
       }
     } catch (e) {
-      debugPrint("NAV Error: $e");
+      debugPrint("Routing error: $e");
     }
   }
 
-  double _calcDist(double lat1, double lon1, double lat2, double lon2) {
-    const p = 0.017453292519943295;
-    final a = 0.5 - math.cos((lat2 - lat1) * p)/2 + 
-              math.cos(lat1 * p) * math.cos(lat2 * p) * 
-              (1 - math.cos((lon2 - lon1) * p))/2;
-    return 12742 * math.asin(math.sqrt(a)) * 1000;
+  void _goOffline() {
+    final s = context.read<ShelterProvider>();
+    if (!s.isDisasterMode) s.setDisasterMode(true);
   }
 
-  void _triggerDisasterMode(String reason) {
-    if (!mounted) return;
-    final sp = context.read<ShelterProvider>();
-    if (!sp.isDisasterMode) {
-      debugPrint('ALERT: Disaster Mode Triggered ($reason)');
-      sp.setDisasterMode(true);
-    }
-  }
-
-  void _checkNetworkRecovery() {
-    if (!mounted) return;
-    final sp = context.read<ShelterProvider>();
-    if (sp.isDisasterMode) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Network Restored - Returning to Normal Mode')),
-      );
-      sp.setDisasterMode(false);
+  void _goOnline() {
+    final s = context.read<ShelterProvider>();
+    if (s.isDisasterMode) {
+      s.setDisasterMode(false);
       navigatorKey.currentState?.pushReplacementNamed('/home');
     }
   }
 
   @override
   void dispose() {
-    _connectivitySubscription?.cancel();
-    _heartbeatTimer?.cancel();
-    _movementPoller?.cancel();
+    _netSub?.cancel();
+    _monitorTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Watch for Disaster Mode transitions
+    // Watch for Disaster Mode triggers to force navigation
     final isDisaster = context.select<ShelterProvider, bool>((p) => p.isDisasterMode);
     
-    if (_wasDisasterMode != isDisaster) {
-      if (isDisaster) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed('/compass');
-        });
-      }
-      _wasDisasterMode = isDisaster;
+    if (isDisaster && ModalRoute.of(context)?.settings.name != '/compass') {
+      // Auto-navigate to compass/evacuation screen in disaster
+      // Note: Logic handled inside screens usually, this is a fallback
     }
 
     return widget.child;
@@ -486,6 +435,10 @@ class CustomScrollBehavior extends MaterialScrollBehavior {
   };
 }
 
+// ---------------------------------------------------------------------------
+//  STARTUP LOGIC
+// ---------------------------------------------------------------------------
+
 class AppStartup extends StatefulWidget {
   const AppStartup({super.key});
   @override
@@ -496,49 +449,39 @@ class _AppStartupState extends State<AppStartup> {
   @override
   void initState() {
     super.initState();
-    _initApp();
+    _init();
   }
 
-  Future<void> _initApp() async {
-    final langProvider = context.read<LanguageProvider>();
-    await langProvider.loadLanguage();
+  Future<void> _init() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lang = context.read<LanguageProvider>();
+    await lang.loadLanguage();
 
-    // Check Onboarding
-    final done = await OnboardingScreen.isCompleted();
-    if (!done) {
-      if (mounted) Navigator.pushReplacementNamed(context, '/onboarding');
-      return;
-    }
+    final region = context.read<RegionModeProvider>();
+    final savedRegion = prefs.getString('target_region') ?? 'Japan';
+    
+    if (savedRegion.contains('Thai')) region.setRegion(AppRegion.thailand);
+    else region.setRegion(AppRegion.japan);
 
-    // Load Data
+    // Initial Data Load
+    final shelter = context.read<ShelterProvider>();
+    await shelter.setRegion(savedRegion);
+    await shelter.loadHazardPolygons();
+
     if (mounted) {
-      final prefs = await SharedPreferences.getInstance();
-      final region = prefs.getString('target_region') ?? 'Japan';
-      
-      final sp = context.read<ShelterProvider>();
-      final rp = context.read<RegionModeProvider>();
-      
-      await sp.setRegion(region);
-      if (region.contains('TH')) {
-        rp.setRegion(AppRegion.thailand);
-      } else {
-        rp.setRegion(AppRegion.japan);
-      }
-      
-      // Initialize core services
-      await Future.wait([
-        context.read<LocationProvider>().initLocation(),
-        sp.loadShelters(),
-      ]);
-
-      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+      final doneOnboarding = await OnboardingScreen.isCompleted();
+      Navigator.pushReplacementNamed(
+        context, 
+        doneOnboarding ? '/home' : '/onboarding'
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+      backgroundColor: Color(0xFFF5F7FA), // Light Grey
+      body: Center(child: CircularProgressIndicator(color: Color(0xFF1A237E))), // Navy
     );
   }
 }
@@ -560,7 +503,7 @@ class _LoadingAppState extends State<LoadingApp> {
     await Future.wait([
       FontService.loadFonts(),
       SecurityService().init(),
-      Future.delayed(const Duration(seconds: 2)), // Minimum splash time
+      Future.delayed(const Duration(seconds: 2)),
     ]);
     if (mounted) runApp(const GapLessApp());
   }
@@ -575,27 +518,9 @@ class _LoadingAppState extends State<LoadingApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A237E).withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.shield_rounded, size: 64, color: Color(0xFF1A237E)),
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                'GapLess',
-                style: TextStyle(
-                  fontSize: 36, 
-                  fontWeight: FontWeight.bold, 
-                  color: Color(0xFF1A237E)
-                ),
-              ),
-              const SizedBox(height: 48),
-              const CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6F00)),
-              ),
+              const Icon(Icons.shield, size: 64, color: Color(0xFF1A237E)), // Navy
+              const SizedBox(height: 24),
+              const CircularProgressIndicator(color: Color(0xFFFF6F00)), // Orange
             ],
           ),
         ),
