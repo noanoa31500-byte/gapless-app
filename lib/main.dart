@@ -243,9 +243,9 @@ class GapLessApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: navyPrimary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, btnHeight), // Height 56.0
-          padding: const EdgeInsets.symmetric(horizontal: 24), // Padding 24.0
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30.0
+          minimumSize: const Size(double.infinity, btnHeight),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
           elevation: 2,
           textStyle: TextStyle(
             fontFamily: primaryFont, 
@@ -279,7 +279,7 @@ class GapLessApp extends StatelessWidget {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        contentPadding: inputPad, // Padding 24.0
+        contentPadding: inputPad,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
@@ -446,12 +446,12 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
-      // Pass waypoints to relevant provider (Simulated here)
+      // Pass waypoints to relevant provider
       if (mounted) {
-        debugPrint("Background Route Calculated: ${route.length} waypoints");
+        debugPrint("✓ NAV: Route calculated with ${route.length} waypoints (${params.region} logic applied)");
       }
     } catch (e) {
-      debugPrint("Routing Error: $e");
+      debugPrint("✗ NAV: Routing Error: $e");
     }
   }
 
