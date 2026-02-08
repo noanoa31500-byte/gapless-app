@@ -243,9 +243,9 @@ class GapLessApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: navyPrimary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, btnHeight),
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          minimumSize: const Size(double.infinity, btnHeight), // Height 56.0
+          padding: const EdgeInsets.symmetric(horizontal: 24), // Padding 24.0
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30.0
           elevation: 2,
           textStyle: TextStyle(
             fontFamily: primaryFont, 
@@ -279,7 +279,7 @@ class GapLessApp extends StatelessWidget {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        contentPadding: inputPad,
+        contentPadding: inputPad, // Padding 24.0
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
           borderSide: BorderSide.none,
