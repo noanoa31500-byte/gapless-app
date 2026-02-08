@@ -1,8 +1,8 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ARCHITECTURAL OVERWRITE: LIB/MAIN.DART
    Directives Implemented:
-   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
-   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
+   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0.
+   2. NAV: Isolate-based Risk-Aware Pathfinding returning LatLng Waypoints.
    3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
@@ -72,13 +72,13 @@ class RouteParams {
 /// TOP-LEVEL ISOLATE ENTRY POINT
 /// Calculates Waypoints based on Region Logic.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // LOGIC DIRECTIVE IMPLEMENTATION
+  // LOGIC DIRECTIVE: Region-Specific heuristics
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
 
   // Cost Weights
-  // Japan: Width Priority (Evacuation ease on wide roads).
-  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
+  // Japan: Width Priority (Evacuation ease on wide roads to prevent crushing).
+  // Thailand: Shock Avoidance (Avoid low hanging wires/flooded poles).
   double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
   double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
@@ -87,17 +87,19 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   // Start Point
   waypoints.add([params.startLat, params.startLng]);
 
-  // Simulated Pathfinding (Interpolation with Logic-based Deviation)
+  // Simulated A* Pathfinding (Interpolation with Logic-based Deviation)
+  // In a real implementation, this would traverse a Graph structure.
+  // Here we mathematically simulate the deviation logic.
   int steps = 10; 
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics
+    // Apply Logic-Specific Heuristics to Waypoints
     if (isThailand) {
        // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
+       // Heuristic: Deviate longitude significantly to simulate avoiding utility pole lines
        double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
        lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
     } else if (isJapan) {
@@ -126,7 +128,7 @@ void main() {
   runZonedGuarded(() {
     WidgetsFlutterBinding.ensureInitialized();
     
-    // System UI Config
+    // System UI Config to match design specs
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -171,7 +173,7 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
-              // UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
+              // UI DIRECTIVE IMPLEMENTATION
               theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
               darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
@@ -180,6 +182,7 @@ class GapLessApp extends StatelessWidget {
               
               onGenerateRoute: _onGenerateRoute,
               builder: (context, child) {
+                // Wrap app in Disaster Watcher for global risk monitoring
                 return DisasterWatcher(child: child!);
               },
             ),
@@ -196,11 +199,11 @@ class GapLessApp extends StatelessWidget {
         : ['NotoSansThai', 'sans-serif'];
     
     // UI DIRECTIVE CONSTANTS
-    const Color navyPrimary = Color(0xFF1A237E);
-    const Color orangeAccent = Color(0xFFFF6F00);
-    const double radius = 30.0;
-    const double btnHeight = 56.0;
-    const EdgeInsets inputPad = EdgeInsets.all(24.0);
+    const Color navyPrimary = Color(0xFF1A237E); // Navy
+    const Color orangeAccent = Color(0xFFFF6F00); // Orange
+    const double radius = 30.0; // BorderRadius 30.0
+    const double btnHeight = 56.0; // Height 56.0
+    const EdgeInsets inputPad = EdgeInsets.all(24.0); // Padding 24.0
 
     final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
     final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
@@ -239,6 +242,7 @@ class GapLessApp extends StatelessWidget {
         ),
       ),
 
+      // Buttons: Radius 30, Height 56
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: navyPrimary,
@@ -276,6 +280,7 @@ class GapLessApp extends StatelessWidget {
         elevation: 4,
       ),
 
+      // Inputs: Padding 24, Radius 30
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
@@ -446,12 +451,12 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
-      // Pass waypoints to relevant provider
+      // Update Providers (Mock)
       if (mounted) {
-        debugPrint("✓ NAV: Route calculated with ${route.length} waypoints (${params.region} logic applied)");
+        debugPrint("Background Route Calculated: ${route.length} waypoints using ${regionProvider.isJapan ? 'Japan' : 'Thailand'} Logic");
       }
     } catch (e) {
-      debugPrint("✗ NAV: Routing Error: $e");
+      debugPrint("Routing Error: $e");
     }
   }
 
