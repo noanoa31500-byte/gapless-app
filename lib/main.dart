@@ -286,7 +286,7 @@ class GapLessApp extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
+          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
@@ -428,8 +428,8 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     double destLat = 35.6895;
     double destLng = 139.6917;
     if (shelterProvider.shelters.isNotEmpty) {
-      destLat = shelterProvider.shelters.first.latitude;
-      destLng = shelterProvider.shelters.first.longitude;
+      destLat = shelterProvider.shelters.first.lat;
+      destLng = shelterProvider.shelters.first.lng;
     }
 
     // Prepare parameters for Isolate
@@ -438,7 +438,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       startLng: loc.longitude,
       destLat: destLat,
       destLng: destLng,
-      region: regionProvider.isJapan ? 'JP' : 'TH',
+      region: regionProvider.isJapanMode ? 'JP' : 'TH',
       hazards: [], 
     );
 
@@ -662,7 +662,7 @@ class _LoadingAppState extends State<LoadingApp> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A237E).withOpacity(0.1),
+                  color: const Color(0xFF1A237E).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.shield_rounded, size: 48, color: Color(0xFF1A237E)),
