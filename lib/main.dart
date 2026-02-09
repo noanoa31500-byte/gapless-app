@@ -447,6 +447,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
       if (mounted) {
+        // 計算結果をマップ管理へ渡す
         shelterProvider.updateSafeRoute(route); 
         debugPrint("✅ Route Updated: ${route.length} points");
       }

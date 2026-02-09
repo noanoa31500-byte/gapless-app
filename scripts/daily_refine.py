@@ -7,7 +7,7 @@ import google.generativeai as genai
 # ==========================================
 # ⚙️ Tier 1 課金版リミッター解除設定
 # ==========================================
-TARGET_PATTERNS = ["lib/main.dart"]
+TARGET_PATTERNS = ["lib/**/*.dart", "pubspec.yaml"]
 IGNORE_KEYWORDS = [".env", "key.properties", "google-services.json", "test/", "assets/map_data/"]
 BRANCH_NAME = "ai-refinement-auto"
 

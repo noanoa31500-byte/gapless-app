@@ -43,3 +43,27 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Large binary and data files
+# These files should be downloaded from external storage or CDN
+*.enc
+GapLess.enc
+
+# Large GeoJSON files (use external storage)
+assets/data/*.geojson
+assets/data/roads_*.bin
+
+# Font files (consider using google_fonts package instead)
+# Uncomment if moved to external source:
+# assets/fonts/*.ttf
+# assets/fonts/*.otf
+
+# Build artifacts
+build/web/
+.dart_tool/flutter_build/
+.dart_tool/hooks_runner/
+
+# Temporary and cache files
+*.tmp
+*.cache
+.DS_Store
