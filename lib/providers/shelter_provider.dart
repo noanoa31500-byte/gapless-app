@@ -64,12 +64,16 @@ class ShelterProvider with ChangeNotifier {
   // Background Route Cache
   Map<String, CachedRouteData> _cachedRoutes = {}; // Key: type (shelter, hospital)
   final Map<String, CachedRouteData> _targetSpecificCache = {}; // Key: Shelter ID
-  
+
   // Internal State
   bool _isCaching = false;
   
   // Safe State
   bool _isSafeInShelter = false;
+
+  // --- 外部ルート統合 (main.dartのIsolateから受信) ---
+  // Isolate（main.dart）から受け取ったルートを一時保存する変数
+  List<LatLng>? _externalRoute;
 
   // 民間施設などを除外するためのブラックリスト
   static const List<String> _blackListKeywords = [
@@ -1171,8 +1175,25 @@ class ShelterProvider with ChangeNotifier {
     }
   }
   
+  /// main.dart で計算されたルートを受け取り、地図更新を通知する
+  void updateSafeRoute(List<List<double>> points) {
+    if (points.isEmpty) return;
+    
+    // [lat, lng] のリストを LatLng オブジェクトに変換して保存
+    _externalRoute = points.map((p) => LatLng(p[0], p[1])).toList();
+    
+    // 画面（地図）に「データが変わったぞ！」と知らせる
+    notifyListeners();
+  }
+
   /// 安全ルートをLatLngリストとして取得（コンパスナビゲーション用）
   List<LatLng> getSafestRouteAsLatLng() {
+    // 1. main.dart からのルートがあればそれを最優先で返す
+    if (_externalRoute != null && _externalRoute!.isNotEmpty) {
+      return _externalRoute!;
+    }
+
+    // 2. なければ従来のグラフ計算ルートを返す
     if (_safestRoute == null || _safestRoute!.isEmpty || _roadGraph == null) {
       return [];
     }
