@@ -1,7 +1,7 @@
 /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
    ARCHITECTURAL OVERWRITE: LIB/SCREENS/HOME_SCREEN.DART
    Directives Implemented:
-   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00) Palette. 
+   1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00) Palette.
           BorderRadius 30.0, Height 56.0, Padding 24.0.
    2. NAV: Visualizes Waypoint-based navigation route (List<LatLng>).
    3. LOGIC: Displays active Logic Mode (Japan: Width Priority / Thai: Shock Risk).
@@ -24,7 +24,6 @@ import '../providers/shelter_provider.dart';
 import '../providers/region_mode_provider.dart';
 import '../providers/language_provider.dart';
 import '../services/haptic_service.dart';
-import '../services/risk_visualization_service.dart';
 
 // Models
 import '../models/shelter.dart';
@@ -36,7 +35,6 @@ import 'emergency_card_screen.dart';
 
 // Utils
 import '../utils/localization.dart';
-import '../widgets/safe_text.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,7 +44,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  // --- UI DIRECTIVE CONSTANTS ---
+  // --- DIRECTIVE 1: UI CONSTANTS ---
   static const Color _navyPrimary = Color(0xFF1A237E);
   static const Color _orangeAccent = Color(0xFFFF6F00);
   static const double _uiRadius = 30.0;
