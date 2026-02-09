@@ -2,9 +2,13 @@
    ARCHITECTURAL OVERWRITE: LIB/SCREENS/HOME_SCREEN.DART
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00) Palette.
-          BorderRadius 30.0, Height 56.0, Padding 24.0.
-   2. NAV: Visualizes Waypoint-based navigation route (List<LatLng>).
-   3. LOGIC: Displays active Logic Mode (Japan: Width Priority / Thai: Shock Risk).
+          BorderRadius 30.0 for buttons/cards.
+          Height 56.0 for primary actions.
+          Padding 24.0+ for layout breathing room.
+   2. NAV: Visualizes Waypoint-based navigation (List<LatLng>) via Polyline.
+   3. LOGIC: Explicitly displays the active safety logic based on region.
+             Japan = Road Width Priority.
+             Thailand = Avoid Electric Shock Risk.
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
@@ -102,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final regionProvider = context.watch<RegionModeProvider>();
     context.watch<LanguageProvider>();
     
-    // Region change detection
+    // Region change detection for map centering
     if (_lastRegion != shelterProvider.currentRegion) {
       _lastRegion = shelterProvider.currentRegion;
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -160,7 +164,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           _buildMapLayer(locationProvider, shelterProvider, regionProvider),
 
           // ---------------------------------------------------------
-          // LAYER 2: UI OVERLAY (Navy/Orange, Radius 30)
+          // LAYER 2: UI OVERLAY (Navy/Orange, Radius 30, Padding 24)
           // ---------------------------------------------------------
           SafeArea(
             child: Padding(
@@ -188,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           // ---------------------------------------------------------
           Positioned(
             right: _uiPadding,
-            bottom: _uiPadding + _uiHeight + 32,
+            bottom: _uiPadding + 80 + 32, // Above bottom bar
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -241,11 +245,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         TileLayer(
           urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
           subdomains: const ['a', 'b', 'c'],
-          userAgentPackageName: 'com.safejapan.app',
+          userAgentPackageName: 'com.gapless.app',
           tileProvider: CancellableNetworkTileProvider(silenceExceptions: true),
         ),
 
-        // 2. Road Polylines
+        // 2. Road Polylines (Background)
         if (shelterProv.roadPolylines.isNotEmpty)
           PolylineLayer(
             polylines: shelterProv.roadPolylines.map((points) => Polyline(
@@ -267,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             )).toList(),
           ),
 
-        // 4. Flood Risk Circles
+        // 4. Flood Risk Circles (Thailand)
         if (shelterProv.floodRiskCircles.isNotEmpty)
           CircleLayer(
             circles: shelterProv.floodRiskCircles.map((data) => CircleMarker(
@@ -280,7 +284,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             )).toList(),
           ),
 
-        // 5. Power Risk Circles
+        // 5. Power Risk Circles (Thailand)
         if (shelterProv.powerRiskCircles.isNotEmpty)
           CircleLayer(
             circles: shelterProv.powerRiskCircles.map((data) => CircleMarker(
@@ -293,8 +297,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             )).toList(),
           ),
 
-        // 6. WAYPOINT NAVIGATION ROUTE (Directive 2)
-        if (shelterProv.safestRoute != null && shelterProv.safestRoute!.isNotEmpty)
+        // 6. DIRECTIVE 2: WAYPOINT NAVIGATION ROUTE (List<LatLng>)
+        if (shelterProv.getSafestRouteAsLatLng().isNotEmpty)
           PolylineLayer(
             polylines: [
               Polyline(
@@ -303,11 +307,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 color: _navyPrimary.withValues(alpha: 0.8),
                 borderColor: Colors.white,
                 borderStrokeWidth: 2.0,
+                strokeCap: StrokeCap.round,
+                strokeJoin: StrokeJoin.round,
               ),
             ],
           ),
 
-        // 7. Shelter Markers
+        // 7. Shelter Markers (Clustered)
         MarkerClusterLayerWidget(
           options: MarkerClusterLayerOptions(
             maxClusterRadius: 80,
@@ -333,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
         ),
 
-        // 8. Current Location
+        // 8. Current Location (Pulsing)
         if (locProv.currentLocation != null)
           MarkerLayer(
             markers: [
@@ -376,10 +382,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               'OpenStreetMap contributors',
               onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
             ),
-            TextSourceAttribution(
-              'CartoDB',
-              onTap: () => launchUrl(Uri.parse('https://carto.com/attributions')),
-            ),
           ],
         ),
       ],
@@ -395,12 +397,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         height: 60,
         child: GestureDetector(
           onTap: () {
+            // Start navigation to this shelter
             provider.startNavigation(shelter);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("To: ${shelter.name}"),
+                content: Text("Target Set: ${shelter.name}"),
                 backgroundColor: _navyPrimary,
                 duration: const Duration(milliseconds: 1500),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                behavior: SnackBarBehavior.floating,
               ),
             );
           },
@@ -457,7 +462,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildTopBar(RegionModeProvider regionProv) {
     return Row(
       children: [
-        // App Title
+        // App Title Card
         Container(
           height: _uiHeight,
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -506,9 +511,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  // DIRECTIVE 3: LOGIC INDICATOR
+  // --- DIRECTIVE 3: LOGIC INDICATOR ---
   Widget _buildLogicIndicator(RegionModeProvider regionProv) {
     final isJapan = regionProv.isJapanMode;
+    // Display specific logic based on region
     final text = isJapan 
         ? "LOGIC: Road Width Priority (Blockage Avoidance)" 
         : "LOGIC: Avoid Electric Shock & Flood Risk";
@@ -518,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: _navyPrimary.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(_uiRadius),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
         ],
@@ -633,7 +639,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   // ---------------------------------------------------------------------------
-  // HELPERS
+  // HELPERS & MODALS
   // ---------------------------------------------------------------------------
 
   void _handleAutoZoom(LocationProvider loc, ShelterProvider shelter) {
@@ -645,6 +651,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       effectiveLocation = null;
     }
     
+    // Default fallback to Osaki if no GPS
     const japanBase = LatLng(38.3591, 140.9405);
     effectiveLocation ??= japanBase;
 
