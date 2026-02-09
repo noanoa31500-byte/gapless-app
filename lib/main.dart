@@ -446,9 +446,10 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
-      // Pass waypoints to relevant provider (Simulated here)
       if (mounted) {
-        debugPrint("Background Route Calculated: ${route.length} waypoints");
+        // 計算結果をマップ管理へ渡す
+        shelterProvider.updateSafeRoute(route); 
+        debugPrint("✅ Route Updated: ${route.length} points");
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
