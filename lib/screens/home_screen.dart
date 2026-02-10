@@ -12,8 +12,6 @@
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
-import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
@@ -130,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: _navyPrimary.withValues(alpha: 0.1),
+                  color: _navyPrimary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Center(
@@ -255,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             polylines: shelterProv.roadPolylines.map((points) => Polyline(
               points: points,
               strokeWidth: 2.0,
-              color: Colors.grey.withValues(alpha: 0.3),
+              color: Colors.grey.withOpacity(0.3),
             )).toList(),
           ),
 
@@ -264,8 +262,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           PolygonLayer(
             polygons: shelterProv.hazardPolygons.map((points) => Polygon(
               points: points,
-              color: Colors.red.withValues(alpha: 0.15),
-              borderColor: Colors.red.withValues(alpha: 0.5),
+              color: Colors.red.withOpacity(0.15),
+              borderColor: Colors.red.withOpacity(0.5),
               borderStrokeWidth: 2.0,
               isFilled: true,
             )).toList(),
@@ -278,8 +276,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               point: data.position,
               radius: 40.0,
               useRadiusInMeter: true,
-              color: Colors.blue.withValues(alpha: 0.2 + (data.riskScore / 10).clamp(0.0, 0.6)),
-              borderColor: Colors.blue.withValues(alpha: 0.5),
+              color: Colors.blue.withOpacity(0.2 + (data.riskScore / 10).clamp(0.0, 0.6)),
+              borderColor: Colors.blue.withOpacity(0.5),
               borderStrokeWidth: 1.0,
             )).toList(),
           ),
@@ -291,8 +289,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               point: data.position,
               radius: 20.0,
               useRadiusInMeter: true,
-              color: Colors.amber.withValues(alpha: 0.4),
-              borderColor: Colors.amber.withValues(alpha: 0.8),
+              color: Colors.amber.withOpacity(0.4),
+              borderColor: Colors.amber.withOpacity(0.8),
               borderStrokeWidth: 2.0,
             )).toList(),
           ),
@@ -304,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               Polyline(
                 points: shelterProv.getSafestRouteAsLatLng(),
                 strokeWidth: 6.0,
-                color: _navyPrimary.withValues(alpha: 0.8),
+                color: _navyPrimary.withOpacity(0.8),
                 borderColor: Colors.white,
                 borderStrokeWidth: 2.0,
                 strokeCap: StrokeCap.round,
@@ -353,7 +351,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     scale: _pulseAnimation.value,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: _navyPrimary.withValues(alpha: 0.3),
+                        color: _navyPrimary.withOpacity(0.3),
                         shape: BoxShape.circle,
                         border: Border.all(color: Colors.white, width: 2),
                       ),
@@ -471,7 +469,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             borderRadius: BorderRadius.circular(_uiRadius),
             boxShadow: [
               BoxShadow(
-                color: _navyPrimary.withValues(alpha: 0.1),
+                color: _navyPrimary.withOpacity(0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -523,7 +521,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: _navyPrimary.withValues(alpha: 0.9),
+        color: _navyPrimary.withOpacity(0.9),
         borderRadius: BorderRadius.circular(_uiRadius),
         boxShadow: const [
           BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
@@ -558,7 +556,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(_uiRadius),
         boxShadow: [
           BoxShadow(
-            color: _navyPrimary.withValues(alpha: 0.1),
+            color: _navyPrimary.withOpacity(0.1),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -625,7 +623,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
