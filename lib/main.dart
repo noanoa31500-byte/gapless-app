@@ -448,7 +448,6 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       
       if (mounted) {
         shelterProvider.updateSafeRoute(route); 
-        debugPrint("✅ Route Updated: ${route.length} points");
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
