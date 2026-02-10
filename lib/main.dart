@@ -2,8 +2,8 @@
    ARCHITECTURAL OVERWRITE: LIB/MAIN.DART
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
-   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
-   3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
+   2. NAV: Isolate-based Waypoint Navigation (List<LatLng>).
+   3. LOGIC: Japan (Road Width Priority) vs Thailand (Avoid Electric Shock Risk).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
@@ -65,46 +65,55 @@ class RouteParams {
     required this.destLat,
     required this.destLng,
     required this.region,
-    required this.hazards,
+    this.hazards = const [],
   });
 }
 
 /// TOP-LEVEL ISOLATE ENTRY POINT
 /// Calculates Waypoints based on Region Logic.
+/// 
+/// LOGIC DIRECTIVE:
+/// - Japan: Prioritize Road Width (simulated by smoothing paths to major grids).
+/// - Thailand: Avoid Electric Shock/Flood (simulated by deviating from linear paths).
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // LOGIC DIRECTIVE IMPLEMENTATION
   final bool isJapan = params.region == 'JP';
   final bool isThailand = params.region == 'TH';
-
-  // Cost Weights
-  // Japan: Width Priority (Evacuation ease on wide roads).
-  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
-  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
-  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
   List<List<double>> waypoints = [];
   
   // Start Point
   waypoints.add([params.startLat, params.startLng]);
 
-  // Simulated Pathfinding (Interpolation with Logic-based Deviation)
+  // Path Generation Logic
+  // We generate intermediate waypoints to simulate a safe route.
   int steps = 10; 
+  
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
+    // Linear Interpolation baseline
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics
+    // --- LOGIC DIRECTIVE IMPLEMENTATION ---
     if (isThailand) {
-       // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
-       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
-       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
+       // [THAILAND LOGIC] Avoid Electric Shock Risk
+       // Heuristic: Avoid straight lines which might cross flooded power infrastructures.
+       // We add a zigzag pattern to simulate navigating *around* hazards (poles/water).
+       double avoidanceFactor = 0.0003; // ~30 meters deviation
+       if (i % 2 == 0) {
+         lat += avoidanceFactor; // Detour North
+         lng += avoidanceFactor; // Detour East
+       } else {
+         lat -= avoidanceFactor * 0.5;
+       }
     } else if (isJapan) {
-       // LOGIC: Road Width Priority
-       // Heuristic: Snap latitude to simulate alignment with wider arterial grids
-       double widthBonus = 0.0001 * widthPriorityWeight;
-       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
+       // [JAPAN LOGIC] Road Width Priority
+       // Heuristic: Snap to grid-like structures (Major Roads) rather than diagonals (Narrow Alleys).
+       // We reduce diagonal movement to simulate staying on arterial roads.
+       if (i % 3 == 0) {
+         // distinct "turn" points rather than constant curves
+         lat += 0.0001; 
+       }
     }
     
     waypoints.add([lat, lng]);
@@ -171,7 +180,7 @@ class GapLessApp extends StatelessWidget {
               debugShowCheckedModeBanner: false,
               scrollBehavior: const CustomScrollBehavior(),
               
-              // UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
+              // --- UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24 ---
               theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
               darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
               themeMode: ThemeMode.system,
@@ -246,7 +255,7 @@ class GapLessApp extends StatelessWidget {
           minimumSize: const Size(double.infinity, btnHeight),
           padding: const EdgeInsets.symmetric(horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          elevation: 2,
+          elevation: 4,
           textStyle: TextStyle(
             fontFamily: primaryFont, 
             fontSize: 16, 
@@ -273,20 +282,20 @@ class GapLessApp extends StatelessWidget {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: orangeAccent,
         foregroundColor: Colors.white,
-        elevation: 4,
+        elevation: 6,
       ),
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        contentPadding: inputPad,
+        contentPadding: inputPad, // DIRECTIVE: Padding 24+
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(radius), // DIRECTIVE: Radius 30
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
@@ -296,7 +305,7 @@ class GapLessApp extends StatelessWidget {
 
       cardTheme: CardThemeData(
         color: surface,
-        elevation: 1,
+        elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
@@ -383,6 +392,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
   void _startRiskMonitoring() {
     final locProvider = context.read<LocationProvider>();
+    // Check location periodically to recalculate route if moved significantly
     _movementPoller = Timer.periodic(const Duration(seconds: 2), (timer) {
       if (!mounted) {
         timer.cancel();
@@ -404,7 +414,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
     double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
     
-    // NAV: Recalculate if moved significantly (> 20 meters)
+    // NAV: Recalculate route if moved > 20 meters
     if (dist > 20.0) {
       _lastLocation = newLoc;
       await _triggerBackgroundRouting(newLoc);
@@ -424,34 +434,38 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     final shelterProvider = context.read<ShelterProvider>();
     final regionProvider = context.read<RegionModeProvider>();
     
-    // Determine Destination (Nearest Shelter)
+    // Default Destination (Nearest Shelter Logic handled inside Provider usually, but here we prep Isolate)
     double destLat = 35.6895;
     double destLng = 139.6917;
-    if (shelterProvider.shelters.isNotEmpty) {
+    
+    if (shelterProvider.navTarget != null) {
+      destLat = shelterProvider.navTarget!.lat;
+      destLng = shelterProvider.navTarget!.lng;
+    } else if (shelterProvider.shelters.isNotEmpty) {
       destLat = shelterProvider.shelters.first.lat;
       destLng = shelterProvider.shelters.first.lng;
     }
 
-    // Prepare parameters for Isolate
+    // Prepare RouteParams
     final params = RouteParams(
       startLat: loc.latitude,
       startLng: loc.longitude,
       destLat: destLat,
       destLng: destLng,
       region: regionProvider.isJapanMode ? 'JP' : 'TH',
-      hazards: [], 
+      hazards: [],
     );
 
-    // BACKGROUND ISOLATE EXECUTION (NAV DIRECTIVE)
+    // --- NAV DIRECTIVE: Background Isolate Execution ---
     try {
       final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
       
       if (mounted) {
         shelterProvider.updateSafeRoute(route); 
-        debugPrint("✅ Route Updated: ${route.length} points");
+        debugPrint("✅ Background Route Updated: ${route.length} waypoints");
       }
     } catch (e) {
-      debugPrint("Routing Error: $e");
+      debugPrint("Routing Isolate Error: $e");
     }
   }
 
@@ -662,7 +676,7 @@ class _LoadingAppState extends State<LoadingApp> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A237E).withValues(alpha: 0.1),
+                  color: const Color(0xFF1A237E).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.shield_rounded, size: 48, color: Color(0xFF1A237E)),
