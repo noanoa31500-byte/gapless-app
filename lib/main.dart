@@ -88,16 +88,18 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   waypoints.add([params.startLat, params.startLng]);
 
   // Simulated Pathfinding (Interpolation with Logic-based Deviation)
+  // In a real scenario, this would traverse a graph loaded in the isolate.
+  // Here we simulate the output of such an algorithm for demonstration.
   int steps = 10; 
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics
+    // Apply Logic-Specific Heuristics to Waypoints
     if (isThailand) {
        // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
+       // Heuristic: Deviate longitude to simulate avoiding utility pole lines (grid hopping)
        double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
        lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
     } else if (isJapan) {
@@ -424,12 +426,19 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     final shelterProvider = context.read<ShelterProvider>();
     final regionProvider = context.read<RegionModeProvider>();
     
-    // Determine Destination (Nearest Shelter)
+    // Determine Destination (Nearest Shelter or Current Target)
     double destLat = 35.6895;
     double destLng = 139.6917;
-    if (shelterProvider.shelters.isNotEmpty) {
+    
+    if (shelterProvider.navTarget != null) {
+      destLat = shelterProvider.navTarget!.lat;
+      destLng = shelterProvider.navTarget!.lng;
+    } else if (shelterProvider.shelters.isNotEmpty) {
+      // Fallback to first in list if no target
       destLat = shelterProvider.shelters.first.lat;
       destLng = shelterProvider.shelters.first.lng;
+    } else {
+      return;
     }
 
     // Prepare parameters for Isolate
@@ -448,7 +457,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       
       if (mounted) {
         shelterProvider.updateSafeRoute(route); 
-        debugPrint("✅ Route Updated: ${route.length} points");
+        // debugPrint("✅ Route Updated: ${route.length} points");
       }
     } catch (e) {
       debugPrint("Routing Error: $e");
