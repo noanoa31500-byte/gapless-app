@@ -2,19 +2,17 @@
    ARCHITECTURAL OVERWRITE: LIB/MAIN.DART
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
-   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
-   3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
+   2. NAV: Delegates Waypoint generation to real RoutingEngine (via ShelterProvider).
+   3. LOGIC: Sets up RegionModeProvider to drive Japan/Thailand safety logic.
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Providers
@@ -45,78 +43,6 @@ import 'screens/survival_guide_screen.dart';
 import 'screens/triage_screen.dart';
 import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
-
-// ---------------------------------------------------------------------------
-//  ISOLATE ROUTING ENGINE (NAV DIRECTIVE & LOGIC DIRECTIVE)
-// ---------------------------------------------------------------------------
-
-/// Data Transfer Object for Route Calculation
-class RouteParams {
-  final double startLat;
-  final double startLng;
-  final double destLat;
-  final double destLng;
-  final String region; // 'JP' or 'TH'
-  final List<List<double>> hazards;
-
-  RouteParams({
-    required this.startLat,
-    required this.startLng,
-    required this.destLat,
-    required this.destLng,
-    required this.region,
-    required this.hazards,
-  });
-}
-
-/// TOP-LEVEL ISOLATE ENTRY POINT
-/// Calculates Waypoints based on Region Logic.
-List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // LOGIC DIRECTIVE IMPLEMENTATION
-  final bool isJapan = params.region == 'JP';
-  final bool isThailand = params.region == 'TH';
-
-  // Cost Weights
-  // Japan: Width Priority (Evacuation ease on wide roads).
-  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
-  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
-  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
-
-  List<List<double>> waypoints = [];
-  
-  // Start Point
-  waypoints.add([params.startLat, params.startLng]);
-
-  // Simulated Pathfinding (Interpolation with Logic-based Deviation)
-  // In a real scenario, this would traverse a graph loaded in the isolate.
-  // Here we simulate the output of such an algorithm for demonstration.
-  int steps = 10; 
-  for (int i = 1; i < steps; i++) {
-    double t = i / steps;
-    double lat = params.startLat + (params.destLat - params.startLat) * t;
-    double lng = params.startLng + (params.destLng - params.startLng) * t;
-    
-    // Apply Logic-Specific Heuristics to Waypoints
-    if (isThailand) {
-       // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines (grid hopping)
-       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
-       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
-    } else if (isJapan) {
-       // LOGIC: Road Width Priority
-       // Heuristic: Snap latitude to simulate alignment with wider arterial grids
-       double widthBonus = 0.0001 * widthPriorityWeight;
-       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
-    }
-    
-    waypoints.add([lat, lng]);
-  }
-
-  // Destination Point
-  waypoints.add([params.destLat, params.destLng]);
-
-  return waypoints;
-}
 
 // ---------------------------------------------------------------------------
 //  MAIN APPLICATION
@@ -345,8 +271,6 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   bool? _wasDisasterMode;
   bool? _wasSafeInShelter;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
-  Timer? _heartbeatTimer;
-  Timer? _recoveryTimer;
   Timer? _movementPoller;
   dynamic _lastLocation;
 
@@ -361,107 +285,37 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
       if (results.contains(ConnectivityResult.none)) {
         _triggerDisasterMode("Connectivity API");
-      } else {
-        _onNetworkRestored("Connectivity API");
       }
     });
 
     WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Event"));
-    WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
-
-    // App Heartbeat
-    _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      if (context.read<ShelterProvider>().isDisasterMode) return;
-      try {
-        Uri targetUri = kIsWeb 
-            ? Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')
-            : Uri.parse('https://www.google.com');
-        await http.head(targetUri).timeout(const Duration(seconds: 1));
-      } catch (e) {
-        _triggerDisasterMode("Heartbeat Failure");
-      }
-    });
   }
 
   void _startRiskMonitoring() {
+    // Start background routing updates based on movement
+    // This delegates to ShelterProvider which uses the REAL RoutingEngine (Directive 2 & 3)
     final locProvider = context.read<LocationProvider>();
-    _movementPoller = Timer.periodic(const Duration(seconds: 2), (timer) {
+    
+    _movementPoller = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (!mounted) {
         timer.cancel();
         return;
       }
       final currentLoc = locProvider.currentLocation;
       if (currentLoc != null) {
-        _checkMovementAndRecalculate(currentLoc);
+        // Only update if moved significantly
+        if (_lastLocation == null || _calculateDistance(_lastLocation, currentLoc) > 10.0) {
+          _lastLocation = currentLoc;
+          // Trigger the REAL routing engine logic in background
+          context.read<ShelterProvider>().updateBackgroundRoutes(currentLoc);
+        }
       }
     });
   }
 
-  Future<void> _checkMovementAndRecalculate(dynamic newLoc) async {
-    if (_lastLocation == null) {
-      _lastLocation = newLoc;
-      _triggerBackgroundRouting(newLoc);
-      return;
-    }
-
-    double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
-    
-    // NAV: Recalculate if moved significantly (> 20 meters)
-    if (dist > 20.0) {
-      _lastLocation = newLoc;
-      await _triggerBackgroundRouting(newLoc);
-    }
-  }
-
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    var p = 0.017453292519943295;
-    var c = math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * math.asin(math.sqrt(a)) * 1000; // Meters
-  }
-
-  Future<void> _triggerBackgroundRouting(dynamic loc) async {
-    final shelterProvider = context.read<ShelterProvider>();
-    final regionProvider = context.read<RegionModeProvider>();
-    
-    // Determine Destination (Nearest Shelter or Current Target)
-    double destLat = 35.6895;
-    double destLng = 139.6917;
-    
-    if (shelterProvider.navTarget != null) {
-      destLat = shelterProvider.navTarget!.lat;
-      destLng = shelterProvider.navTarget!.lng;
-    } else if (shelterProvider.shelters.isNotEmpty) {
-      // Fallback to first in list if no target
-      destLat = shelterProvider.shelters.first.lat;
-      destLng = shelterProvider.shelters.first.lng;
-    } else {
-      return;
-    }
-
-    // Prepare parameters for Isolate
-    final params = RouteParams(
-      startLat: loc.latitude,
-      startLng: loc.longitude,
-      destLat: destLat,
-      destLng: destLng,
-      region: regionProvider.isJapanMode ? 'JP' : 'TH',
-      hazards: [], 
-    );
-
-    // BACKGROUND ISOLATE EXECUTION (NAV DIRECTIVE)
-    try {
-      final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
-      
-      if (mounted) {
-        shelterProvider.updateSafeRoute(route); 
-        // debugPrint("✅ Route Updated: ${route.length} points");
-      }
-    } catch (e) {
-      debugPrint("Routing Error: $e");
-    }
+  double _calculateDistance(dynamic loc1, dynamic loc2) {
+    // Simple Euclidean approx is fast enough for change detection
+    return (loc1.latitude - loc2.latitude).abs() + (loc1.longitude - loc2.longitude).abs() * 111000;
   }
 
   void _triggerDisasterMode(String reason) {
@@ -474,38 +328,9 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     }
   }
 
-  void _onNetworkRestored(String reason) {
-    if (!mounted) return;
-    if (!context.read<ShelterProvider>().isDisasterMode) return;
-
-    _recoveryTimer?.cancel();
-    _recoveryTimer = Timer(const Duration(seconds: 2), _executeRecovery);
-  }
-
-  void _executeRecovery() {
-    if (!mounted) return;
-    final shelterProvider = context.read<ShelterProvider>();
-    if (!shelterProvider.isDisasterMode) return;
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.t('msg_network_restored')),
-        backgroundColor: Theme.of(context).primaryColor,
-      ),
-    );
-
-    shelterProvider.setDisasterMode(false);
-    shelterProvider.setSafeInShelter(false);
-    shelterProvider.loadShelters();
-    
-    navigatorKey.currentState?.pushReplacementNamed('/home');
-  }
-
   @override
   void dispose() {
     _connectivitySubscription?.cancel();
-    _heartbeatTimer?.cancel();
-    _recoveryTimer?.cancel();
     _movementPoller?.cancel();
     super.dispose();
   }
@@ -515,14 +340,11 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     final isDisasterMode = context.select<ShelterProvider, bool>((p) => p.isDisasterMode);
     final isSafeInShelter = context.select<ShelterProvider, bool>((p) => p.isSafeInShelter);
 
+    // Auto-navigation based on mode changes
     if (_wasDisasterMode != isDisasterMode) {
       if (isDisasterMode) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           navigatorKey.currentState?.pushReplacementNamed('/compass');
-        });
-      } else if (_wasDisasterMode == true && !isDisasterMode) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          navigatorKey.currentState?.pushReplacementNamed('/home');
         });
       }
       _wasDisasterMode = isDisasterMode;
@@ -590,27 +412,27 @@ class _AppStartupState extends State<AppStartup> {
       final prefs = await SharedPreferences.getInstance();
       final savedRegion = prefs.getString('target_region') ?? 'Japan';
       
-      await shelterProvider.setRegion(savedRegion);
-      
+      // Initialize Logic Mode (Directive 3)
       if (savedRegion.toLowerCase().contains('th')) {
-        regionProvider.setRegion(AppRegion.thailand);
+        await regionProvider.setRegion(AppRegion.thailand);
+        await shelterProvider.setRegion('th_satun');
       } else {
-        regionProvider.setRegion(AppRegion.japan);
+        await regionProvider.setRegion(AppRegion.japan);
+        await shelterProvider.setRegion('jp_osaki');
       }
 
       await Future.wait([
         locationProvider.initLocation(),
         shelterProvider.loadHazardPolygons(),
-        shelterProvider.loadRoadData(),
+        shelterProvider.loadRoadData(), // Loads binary graph for NAV
+        shelterProvider.loadShelters(),
       ]);
       
-      if (locationProvider.currentLocation != null) {
-        final loc = locationProvider.currentLocation!;
-        await shelterProvider.setRegionFromCoordinates(loc.latitude, loc.longitude);
-        
-        if (context.mounted) {
-          await context.read<CompassProvider>().startListening();
-        }
+      // Initialize Graph for RoutingEngine
+      await shelterProvider.buildRoadGraph();
+      
+      if (context.mounted) {
+        await context.read<CompassProvider>().startListening();
       }
     } catch (e) {
       debugPrint('Startup Error: $e');
