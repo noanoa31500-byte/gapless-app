@@ -2,7 +2,7 @@
    ARCHITECTURAL OVERWRITE: LIB/MAIN.DART
    Directives Implemented:
    1. UI: Navy (0xFF1A237E) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
-   2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
+   2. NAV: Isolate-based Pathfinding returning LatLng Waypoints (List<List<double>>).
    3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
@@ -71,6 +71,7 @@ class RouteParams {
 
 /// TOP-LEVEL ISOLATE ENTRY POINT
 /// Calculates Waypoints based on Region Logic.
+/// Returns a List of [Lat, Lng] points.
 List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   // LOGIC DIRECTIVE IMPLEMENTATION
   final bool isJapan = params.region == 'JP';
@@ -78,33 +79,43 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
 
   // Cost Weights
   // Japan: Width Priority (Evacuation ease on wide roads).
-  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
-  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
-  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
-
+  // Thailand: Shock Avoidance (Avoid low hanging wires/infrastructure in floods).
+  
   List<List<double>> waypoints = [];
   
   // Start Point
   waypoints.add([params.startLat, params.startLng]);
 
   // Simulated Pathfinding (Interpolation with Logic-based Deviation)
+  // In a real scenario, this would traverse the graph nodes using A*.
+  // Here we simulate the *result* of that logic to demonstrate the architectural directive.
+  
   int steps = 10; 
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics
+    // Apply Logic-Specific Heuristics (Directive 3)
     if (isThailand) {
        // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
-       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
-       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
+       // Behavior: Deviate significantly to avoid "simulated" power lines
+       // In production: Graph weights would be set to Infinity for nodes near power lines.
+       double shockAvoidanceOffset = 0.0005; // Significant deviation
+       // Zig-zag to simulate navigating around obstacles/water
+       if (i % 2 != 0) {
+         lat += shockAvoidanceOffset; 
+         lng += shockAvoidanceOffset;
+       }
     } else if (isJapan) {
        // LOGIC: Road Width Priority
-       // Heuristic: Snap latitude to simulate alignment with wider arterial grids
-       double widthBonus = 0.0001 * widthPriorityWeight;
-       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
+       // Behavior: Snap to grid/main roads (simulated by cleaner lines)
+       // Japan logic prioritizes straight, wide paths over shortcuts through narrow alleys.
+       double widthSnap = 0.0001; 
+       if (i % 3 == 0) {
+         // Snap to "Main Road" latitude
+         lat += widthSnap;
+       }
     }
     
     waypoints.add([lat, lng]);
@@ -246,7 +257,7 @@ class GapLessApp extends StatelessWidget {
           minimumSize: const Size(double.infinity, btnHeight),
           padding: const EdgeInsets.symmetric(horizontal: 24),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-          elevation: 2,
+          elevation: 4,
           textStyle: TextStyle(
             fontFamily: primaryFont, 
             fontSize: 16, 
@@ -273,7 +284,8 @@ class GapLessApp extends StatelessWidget {
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: orangeAccent,
         foregroundColor: Colors.white,
-        elevation: 4,
+        elevation: 6,
+        shape: CircleBorder(),
       ),
 
       inputDecorationTheme: InputDecorationTheme(
@@ -286,7 +298,7 @@ class GapLessApp extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
+          borderSide: BorderSide(color: Colors.grey.withOpacity(0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radius),
@@ -296,7 +308,7 @@ class GapLessApp extends StatelessWidget {
 
       cardTheme: CardThemeData(
         color: surface,
-        elevation: 1,
+        elevation: 2,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
@@ -662,7 +674,7 @@ class _LoadingAppState extends State<LoadingApp> {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1A237E).withValues(alpha: 0.1),
+                  color: const Color(0xFF1A237E).withOpacity(0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.shield_rounded, size: 48, color: Color(0xFF1A237E)),
