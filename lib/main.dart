@@ -77,9 +77,9 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   final bool isThailand = params.region == 'TH';
 
   // Cost Weights
-  // Japan: Width Priority (Evacuation ease on wide roads).
-  // Thailand: Shock Avoidance (Avoid low hanging wires in floods).
-  double widthPriorityWeight = isJapan ? 2.5 : 1.0; 
+  // Japan: Width Priority (Evacuation ease on wide roads to avoid blockage).
+  // Thailand: Shock Avoidance (Avoid low hanging wires & flooded zones).
+  double widthPriorityWeight = isJapan ? 3.0 : 1.0; 
   double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
 
   List<List<double>> waypoints = [];
@@ -88,23 +88,32 @@ List<List<double>> calculateRiskAwareRoute(RouteParams params) {
   waypoints.add([params.startLat, params.startLng]);
 
   // Simulated Pathfinding (Interpolation with Logic-based Deviation)
-  int steps = 10; 
+  // In a real scenario, this would traverse a graph loaded in the isolate.
+  // Here we simulate the trajectory adjustments based on safety logic.
+  int steps = 12; 
   for (int i = 1; i < steps; i++) {
     double t = i / steps;
     double lat = params.startLat + (params.destLat - params.startLat) * t;
     double lng = params.startLng + (params.destLng - params.startLng) * t;
     
-    // Apply Logic-Specific Heuristics
+    // Apply Logic-Specific Heuristics to the path
     if (isThailand) {
        // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate longitude to simulate avoiding utility pole lines
-       double avoidanceOffset = 0.0002 * shockRiskAvoidanceWeight;
-       lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
+       // Heuristic: Deviate path to maximize distance from potential power poles (simulated oscillation)
+       // This simulates avoiding straight lines where power lines typically run.
+       double avoidanceOffset = 0.0003 * shockRiskAvoidanceWeight;
+       if (i % 3 != 0) { // Add zigzag to simulate avoiding obstacles
+          lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
+       }
     } else if (isJapan) {
        // LOGIC: Road Width Priority
-       // Heuristic: Snap latitude to simulate alignment with wider arterial grids
+       // Heuristic: Snap to "major artery" alignments. 
+       // We reduce micro-deviations to simulate sticking to wide, straight roads.
        double widthBonus = 0.0001 * widthPriorityWeight;
-       lat += (i % 2 == 0 ? widthBonus : -widthBonus);
+       // Less zigzag, more straight segments
+       if (i % 4 == 0) {
+          lat += (i % 2 == 0 ? widthBonus : -widthBonus);
+       }
     }
     
     waypoints.add([lat, lng]);
@@ -243,9 +252,9 @@ class GapLessApp extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: navyPrimary,
           foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, btnHeight),
+          minimumSize: const Size(double.infinity, btnHeight), // Height 56
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30
           elevation: 2,
           textStyle: TextStyle(
             fontFamily: primaryFont, 
@@ -258,9 +267,9 @@ class GapLessApp extends StatelessWidget {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: navyPrimary,
-          minimumSize: const Size(double.infinity, btnHeight),
+          minimumSize: const Size(double.infinity, btnHeight), // Height 56
           side: const BorderSide(color: navyPrimary, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30
           padding: const EdgeInsets.symmetric(horizontal: 24),
           textStyle: TextStyle(
             fontFamily: primaryFont, 
@@ -279,9 +288,9 @@ class GapLessApp extends StatelessWidget {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        contentPadding: inputPad,
+        contentPadding: inputPad, // Padding 24
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
+          borderRadius: BorderRadius.circular(radius), // Radius 30
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
