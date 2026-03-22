@@ -334,13 +334,11 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   }
 
   Widget _buildSafeText(String text, {double fontSize = 16, Color color = Colors.black}) {
-    // ユーザー要望の "NotoApp" 的な堅牢なフォント指定
-    // 言語設定やテキスト内容に関わらず豆腐化を防ぐため、Fallbackを指定
     return Text(
       text,
       style: TextStyle(
-        fontFamily: 'NotoSansJP', 
-        fontFamilyFallback: const ['NotoSansThai', 'sans-serif'], 
+        fontFamily: GapLessL10n.currentFont,
+        fontFamilyFallback: GapLessL10n.fallbackFonts,
         fontSize: fontSize,
         height: 1.5,
         color: color,

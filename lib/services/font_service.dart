@@ -12,10 +12,36 @@ class FontService {
 
     try {
       await Future.wait([
-        _loadFont('NotoSansJP', 'assets/fonts/NotoSansJP-Regular.ttf'),
-        _loadFont('NotoSansJP', 'assets/fonts/NotoSansJP-Bold.ttf', weight: FontWeight.bold),
-        _loadFont('NotoSansThai', 'assets/fonts/NotoSansThai-Regular.ttf'),
-        _loadFont('NotoSansThai', 'assets/fonts/NotoSansThai-Bold.ttf', weight: FontWeight.bold),
+        // Latin / Base
+        _loadFont('NotoSans',             'assets/fonts/NotoSans-Regular.ttf'),
+        _loadFont('NotoSans',             'assets/fonts/NotoSans-Bold.ttf',             weight: FontWeight.bold),
+        // Japanese (CJK + Latin)
+        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Regular.otf'),
+        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Bold.otf',           weight: FontWeight.bold),
+        // Chinese Simplified
+        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Regular.otf'),
+        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Bold.otf',           weight: FontWeight.bold),
+        // Chinese Traditional
+        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Regular.otf'),
+        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Bold.otf',           weight: FontWeight.bold),
+        // Korean
+        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Regular.otf'),
+        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Bold.otf',           weight: FontWeight.bold),
+        // Thai (complex ligatures — eager load to prevent tofu)
+        _loadFont('NotoSansThai',         'assets/fonts/NotoSansThai-Regular.ttf'),
+        _loadFont('NotoSansThai',         'assets/fonts/NotoSansThai-Bold.ttf',         weight: FontWeight.bold),
+        // Myanmar (complex ligatures — eager load to prevent tofu)
+        _loadFont('NotoSansMyanmar',      'assets/fonts/NotoSansMyanmar-Regular.ttf'),
+        _loadFont('NotoSansMyanmar',      'assets/fonts/NotoSansMyanmar-Bold.ttf',      weight: FontWeight.bold),
+        // Sinhala (complex ligatures — eager load to prevent tofu)
+        _loadFont('NotoSansSinhala',      'assets/fonts/NotoSansSinhala-Regular.ttf'),
+        _loadFont('NotoSansSinhala',      'assets/fonts/NotoSansSinhala-Bold.ttf',      weight: FontWeight.bold),
+        // Devanagari: Hindi / Nepali (eager load to prevent tofu)
+        _loadFont('NotoSansDevanagari',   'assets/fonts/NotoSansDevanagari-Regular.ttf'),
+        _loadFont('NotoSansDevanagari',   'assets/fonts/NotoSansDevanagari-Bold.ttf',   weight: FontWeight.bold),
+        // Bengali (eager load to prevent tofu)
+        _loadFont('NotoSansBengali',      'assets/fonts/NotoSansBengali-Regular.ttf'),
+        _loadFont('NotoSansBengali',      'assets/fonts/NotoSansBengali-Bold.ttf',      weight: FontWeight.bold),
       ]);
       _loaded = true;
       debugPrint('--- [FontService] All fonts loaded successfully ---');

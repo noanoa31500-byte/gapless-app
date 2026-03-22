@@ -593,7 +593,11 @@ class _DangerZonesPainter extends CustomPainter {
         text: icon,
         style: const TextStyle(
           fontSize: 22,
-          fontFamilyFallback: ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+          fontFamilyFallback: [
+            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,
@@ -646,7 +650,11 @@ class _CompassMarkersPainter extends CustomPainter {
             color: cardinalColors[i],
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            fontFamilyFallback: const ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+            fontFamilyFallback: const [
+            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+          ],
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -741,7 +749,11 @@ class _SafetyArrowPainter extends CustomPainter {
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.bold,
-            fontFamilyFallback: ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+            fontFamilyFallback: [
+            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+          ],
           ),
         ),
         textDirection: TextDirection.ltr,

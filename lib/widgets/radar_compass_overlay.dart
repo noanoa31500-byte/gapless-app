@@ -405,7 +405,12 @@ class _RiskRadarPainter extends CustomPainter {
         text: icon,
         style: const TextStyle(
           fontSize: 24,
-          fontFamilyFallback: ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+          fontFamily: 'NotoSansJP',
+          fontFamilyFallback: [
+            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,

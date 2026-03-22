@@ -241,7 +241,11 @@ class RoadMapPainter extends CustomPainter {
           fontSize: 9,
           fontWeight: FontWeight.bold,
           fontFamily: 'NotoSansJP',
-          fontFamilyFallback: ['NotoSansThai', 'sans-serif'],
+          fontFamilyFallback: [
+            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+          ],
         ),
       ),
       textDirection: TextDirection.ltr,

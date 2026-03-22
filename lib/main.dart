@@ -797,13 +797,24 @@ class _LoadingAppState extends State<LoadingApp> {
   }
 
   Future<void> _preloadFonts() async {
+    // 複雑な文字結合ルールを持つスクリプトは pubspec.yaml の遅延ロードでは
+    // 最初のフレームに間に合わないため FontLoader で明示的にプリロードする
     final loaders = [
-      FontLoader('NotoSansMyanmar')
-        ..addFont(rootBundle.load('assets/fonts/NotoSansMyanmar-Regular.ttf')),
-      FontLoader('NotoSansSinhala')
-        ..addFont(rootBundle.load('assets/fonts/NotoSansSinhala-Regular.ttf')),
       FontLoader('NotoSansThai')
-        ..addFont(rootBundle.load('assets/fonts/NotoSansThai-Regular.ttf')),
+        ..addFont(rootBundle.load('assets/fonts/NotoSansThai-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansThai-Bold.ttf')),
+      FontLoader('NotoSansMyanmar')
+        ..addFont(rootBundle.load('assets/fonts/NotoSansMyanmar-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansMyanmar-Bold.ttf')),
+      FontLoader('NotoSansSinhala')
+        ..addFont(rootBundle.load('assets/fonts/NotoSansSinhala-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansSinhala-Bold.ttf')),
+      FontLoader('NotoSansDevanagari')
+        ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-Bold.ttf')),
+      FontLoader('NotoSansBengali')
+        ..addFont(rootBundle.load('assets/fonts/NotoSansBengali-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansBengali-Bold.ttf')),
     ];
     await Future.wait(loaders.map((l) => l.load()));
   }

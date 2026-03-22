@@ -29,7 +29,7 @@ class SafeText extends StatelessWidget {
       if (c >= 0x4E00 && c <= 0x9FFF) return 'NotoSansSC';          // CJK Unified (Chinese)
       if (c >= 0x3040 && c <= 0x30FF) return 'NotoSansJP';          // Hiragana/Katakana
     }
-    return 'NotoSansJP'; // デフォルト
+    return 'NotoSans'; // デフォルト（ラテン文字等）
   }
 
   @override

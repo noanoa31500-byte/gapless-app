@@ -265,7 +265,7 @@ class _CompassRingPainter extends CustomPainter {
             fontWeight: labels[i] == 'N'
                 ? FontWeight.bold
                 : FontWeight.normal,
-            fontFamilyFallback: const ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+            fontFamilyFallback: GapLessL10n.fallbackFonts,
           ),
         ),
         textDirection: TextDirection.ltr,
