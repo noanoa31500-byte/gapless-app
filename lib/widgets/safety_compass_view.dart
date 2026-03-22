@@ -83,11 +83,11 @@ class SafetyCompassView extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             message,
-            style: TextStyle(
+            style: GapLessL10n.safeStyle(TextStyle(
               color: color,
               fontWeight: FontWeight.bold,
               fontSize: 16,
-            ),
+            )),
           ),
         ],
       ),
@@ -257,10 +257,10 @@ class SafetyCompassView extends StatelessWidget {
               ),
               Text(
                 _getDistanceLabel(),
-                style: TextStyle(
+                style: GapLessL10n.safeStyle(TextStyle(
                   fontSize: 12,
                   color: Colors.grey.shade600,
-                ),
+                )),
               ),
             ],
           ),
@@ -287,10 +287,10 @@ class SafetyCompassView extends StatelessWidget {
                 ),
                 Text(
                   _getTotalLabel(),
-                  style: TextStyle(
+                  style: GapLessL10n.safeStyle(TextStyle(
                     fontSize: 12,
                     color: Colors.grey.shade600,
-                  ),
+                  )),
                 ),
               ],
             ),

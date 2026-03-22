@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../services/risk_radar_scanner.dart';
 import '../services/offline_risk_scanner.dart';
+import '../utils/localization.dart';
 
 /// ============================================================================
 /// RiskRadarCompassWidget - リスクレーダー付きコンパスウィジェット
@@ -331,11 +332,11 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
             const SizedBox(width: 4),
             Text(
               _getRiskLevelText(riskPercent),
-              style: const TextStyle(
+              style: GapLessL10n.safeStyle(const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 12,
-              ),
+              )),
             ),
           ],
         ),
@@ -368,11 +369,11 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
         ),
         child: Text(
           guidance.reason,
-          style: const TextStyle(
+          style: GapLessL10n.safeStyle(const TextStyle(
             color: Colors.white,
             fontSize: 11,
             fontWeight: FontWeight.w500,
-          ),
+          )),
         ),
       ),
     );
@@ -880,11 +881,11 @@ class RiskRadarCompassCard extends StatelessWidget {
         const SizedBox(width: 8),
         Text(
           _getTitle(),
-          style: const TextStyle(
+          style: GapLessL10n.safeStyle(const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
-          ),
+          )),
         ),
         const Spacer(),
         Container(
@@ -946,7 +947,7 @@ class RiskRadarCompassCard extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           label,
-          style: TextStyle(color: color, fontSize: 11),
+          style: GapLessL10n.safeStyle(TextStyle(color: color, fontSize: 11)),
         ),
       ],
     );
@@ -988,10 +989,10 @@ class RiskRadarCompassCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         _getWarningText(zone),
-                        style: const TextStyle(
+                        style: GapLessL10n.safeStyle(const TextStyle(
                           color: Colors.white,
                           fontSize: 12,
-                        ),
+                        )),
                       ),
                     ),
                   ],

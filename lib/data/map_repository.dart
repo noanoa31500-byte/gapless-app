@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../utils/localization.dart';
+import 'area_data.dart';
 import 'map_cache_manager.dart';
 import 'map_download_service.dart';
 
@@ -250,7 +251,7 @@ class MapRepository {
 
   Future<String> readString(String fileName) async {
     final bytes = await readBytes(fileName);
-    return utf8.decode(bytes);
+    return utf8.decode(bytes, allowMalformed: true);
   }
 
   // ────────────────────────────────────
@@ -273,19 +274,13 @@ class MapRepository {
   // キャッシュ済みなら即返し、なければダウンロードして保存する
   // 戻り値: fileKey → 解凍済みバイト列（roads, poi_*, hazard）
   // ────────────────────────────────────
-  Future<Map<String, Uint8List>?> loadAreaData(String areaId) async {
+  Future<AreaData?> loadAreaData(String areaId) async {
     final cache = MapCacheManager();
 
     // キャッシュから roads を確認
     final roads = await cache.loadMapData(areaId, 'roads');
     if (roads != null) {
-      // roads があれば他のファイルも同じキャッシュから読んで返す
-      final result = <String, Uint8List>{'roads': roads};
-      for (final key in ['poi_hospital', 'poi_shelter', 'poi_store', 'poi_water', 'hazard']) {
-        final data = await cache.loadMapData(areaId, key);
-        if (data != null) result[key] = data;
-      }
-      return result;
+      return _parseAreaData(areaId, roads, cache);
     }
 
     // キャッシュなし → index.json を取得してダウンロード
@@ -303,6 +298,14 @@ class MapRepository {
     for (final entry in files.entries) {
       await cache.saveMapData(areaId, entry.key, entry.value);
     }
-    return files;
+    final roadsData = files['roads']!;
+    return _parseAreaData(areaId, roadsData, cache);
   }
+
+  Future<AreaData> _parseAreaData(
+    String areaId,
+    Uint8List roads,
+    MapCacheManager cache,
+  ) =>
+      AreaData.load(areaId, roads, cache);
 }

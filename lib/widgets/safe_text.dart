@@ -19,7 +19,7 @@ class SafeText extends StatelessWidget {
 
   /// テキスト内容に基づいて最適なフォントを返す
   String _fontForContent(String str) {
-    for (final c in str.codeUnits) {
+    for (final c in str.runes) {
       if (c >= 0x0E00 && c <= 0x0E7F) return 'NotoSansThai';       // Thai
       if (c >= 0x1000 && c <= 0x109F) return 'NotoSansMyanmar';     // Myanmar
       if (c >= 0x0D80 && c <= 0x0DFF) return 'NotoSansSinhala';     // Sinhala

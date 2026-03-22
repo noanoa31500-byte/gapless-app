@@ -268,15 +268,11 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
           ),
           child: Text(
             _errorMessage,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Color(0xFF991B1B),
-              fontFamily: 'monospace',
-              fontFamilyFallback: [
-                'NotoSansJP', 'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
-              ],
+              color: const Color(0xFF991B1B),
+              fontFamily: GapLessL10n.currentFont,
+              fontFamilyFallback: GapLessL10n.fallbackFonts,
             ),
             textAlign: TextAlign.center,
           ),

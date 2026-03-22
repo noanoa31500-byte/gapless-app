@@ -207,7 +207,7 @@ class BleSyncService extends ChangeNotifier {
       await completer.future.timeout(const Duration(seconds: 10));
 
       // ④ 受信バッファをパース（終端マーカーを除去）
-      final rawJson = utf8.decode(receiveBuffer.where((b) => b != 0x00).toList());
+      final rawJson = utf8.decode(receiveBuffer.where((b) => b != 0x00).toList(), allowMalformed: true);
       await _processReceivedData(rawJson);
 
       _lastSyncTime = DateTime.now();

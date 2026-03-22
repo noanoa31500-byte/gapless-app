@@ -129,7 +129,7 @@ class BlePacket {
 
     if (bytes.length < _headerSize + payloadLen) return null;
     final payloadStr =
-        payloadLen > 0 ? utf8.decode(bytes.sublist(off, off + payloadLen)) : '';
+        payloadLen > 0 ? utf8.decode(bytes.sublist(off, off + payloadLen), allowMalformed: true) : '';
 
     return BlePacket(
       senderDeviceId: _bytesToUuid(idBytes),

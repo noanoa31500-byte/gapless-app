@@ -36,7 +36,7 @@ class MapDownloadService {
         final response =
             await http.get(Uri.parse(_indexUrl)).timeout(_timeout);
         if (response.statusCode == 200) {
-          final json = jsonDecode(utf8.decode(response.bodyBytes))
+          final json = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true))
               as Map<String, dynamic>;
           return TileIndex.fromJson(json);
         }

@@ -275,7 +275,7 @@ class BleRoadReportService extends ChangeNotifier {
   void _handleReceivedBytes(List<int> bytes) {
     if (bytes.isEmpty) return;
     try {
-      final lines = utf8.decode(bytes).split('\n');
+      final lines = utf8.decode(bytes, allowMalformed: true).split('\n');
       final reports = <PeerRoadReport>[];
 
       for (final line in lines) {
