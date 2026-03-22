@@ -1,0 +1,28 @@
+{
+  "@@locale": "pt",
+  "appTitle": "GapLess",
+  "loadingMap": "Carregando mapa...",
+  "hazardZone": "Zona de risco",
+  "safeRoute": "Rota segura",
+  "currentLocation": "Localização atual",
+  "offlineMode": "Modo offline",
+  "noDataAvailable": "Sem dados disponíveis",
+  "compassHeading": "Direção",
+  "nearbyHazard": "Zona de risco próxima",
+  "distanceToHazard": "Zona de risco a {distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Baixando dados...",
+  "downloadComplete": "Download concluído",
+  "downloadError": "Falha ao recuperar dados",
+  "poiHospital": "Hospital / Clínica",
+  "poiShelter": "Abrigo de evacuação",
+  "poiStore": "Loja de conveniência / Supermercado",
+  "poiWater": "Ponto de abastecimento de água",
+  "riskLow": "Risco de inundação: Baixo",
+  "riskMedium": "Risco de inundação: Médio",
+  "riskHigh": "Risco de inundação: Alto"
+}

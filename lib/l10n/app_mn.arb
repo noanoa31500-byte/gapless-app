@@ -1,0 +1,28 @@
+{
+  "@@locale": "mn",
+  "appTitle": "GapLess",
+  "loadingMap": "Газрын зураг ачааллаж байна...",
+  "hazardZone": "Аюулын бүс",
+  "safeRoute": "Аюулгүй маршрут",
+  "currentLocation": "Одоогийн байршил",
+  "offlineMode": "Офлайн горим",
+  "noDataAvailable": "Мэдээлэл байхгүй",
+  "compassHeading": "Чиглэл",
+  "nearbyHazard": "Ойролцоо аюулын бүс байна",
+  "distanceToHazard": "Аюулын бүс {distance}м зайтай",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Мэдээлэл татаж байна...",
+  "downloadComplete": "Татаж дуусав",
+  "downloadError": "Мэдээлэл авч чадсангүй",
+  "poiHospital": "Эмнэлэг / Клиник",
+  "poiShelter": "Нүүлгэн шилжүүлэлтийн хоргодох газар",
+  "poiStore": "Тохиромжтой дэлгүүр / Супермаркет",
+  "poiWater": "Усны хангамж",
+  "riskLow": "Үерийн эрсдэл: Бага",
+  "riskMedium": "Үерийн эрсдэл: Дунд",
+  "riskHigh": "Үерийн эрсдэл: Өндөр"
+}

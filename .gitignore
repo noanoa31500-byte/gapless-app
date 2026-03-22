@@ -1,0 +1,75 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Large binary and data files
+# These files should be downloaded from external storage or CDN
+*.enc
+GapLess.enc
+
+# Large GeoJSON files (use external storage)
+assets/data/*.geojson
+assets/data/roads_*.bin
+
+# Font files (consider using google_fonts package instead)
+# Uncomment if moved to external source:
+# assets/fonts/*.ttf
+# assets/fonts/*.otf
+
+# Build artifacts
+build/web/
+.dart_tool/flutter_build/
+.dart_tool/hooks_runner/
+
+# Temporary and cache files
+*.tmp
+*.cache
+.DS_Store
+
+# Claude Code local settings
+.claude/
+
+# Large hazard/GIS data (never commit to git)
+/data/

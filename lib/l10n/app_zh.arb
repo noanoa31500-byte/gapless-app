@@ -1,0 +1,28 @@
+{
+  "@@locale": "zh",
+  "appTitle": "GapLess",
+  "loadingMap": "正在加载地图...",
+  "hazardZone": "危险区域",
+  "safeRoute": "安全路线",
+  "currentLocation": "当前位置",
+  "offlineMode": "离线模式",
+  "noDataAvailable": "暂无数据",
+  "compassHeading": "方向",
+  "nearbyHazard": "附近有危险区域",
+  "distanceToHazard": "距离危险区域{distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "正在下载数据...",
+  "downloadComplete": "下载完成",
+  "downloadError": "数据获取失败",
+  "poiHospital": "医院 / 诊所",
+  "poiShelter": "避难所",
+  "poiStore": "便利店 / 超市",
+  "poiWater": "供水点",
+  "riskLow": "洪水风险：低",
+  "riskMedium": "洪水风险：中",
+  "riskHigh": "洪水风险：高"
+}

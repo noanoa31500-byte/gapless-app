@@ -1,0 +1,89 @@
+{
+  "@@locale": "en",
+  "appTitle": "GapLess",
+  "@appTitle": {
+    "description": "Application name. Do not translate."
+  },
+  "loadingMap": "Loading map...",
+  "@loadingMap": {
+    "description": "Shown while map data is being loaded"
+  },
+  "hazardZone": "Hazard zone",
+  "@hazardZone": {
+    "description": "Label for a flood/disaster hazard zone"
+  },
+  "safeRoute": "Safe route",
+  "@safeRoute": {
+    "description": "Label for a safe evacuation route"
+  },
+  "currentLocation": "Current location",
+  "@currentLocation": {
+    "description": "Label for the user's current GPS location"
+  },
+  "offlineMode": "Offline mode",
+  "@offlineMode": {
+    "description": "Indicator that the app is running without network"
+  },
+  "noDataAvailable": "No data available",
+  "@noDataAvailable": {
+    "description": "Shown when no map or POI data is cached"
+  },
+  "compassHeading": "Heading",
+  "@compassHeading": {
+    "description": "Compass bearing direction label"
+  },
+  "nearbyHazard": "Hazard zone nearby",
+  "@nearbyHazard": {
+    "description": "Alert shown when a hazard zone is within range"
+  },
+  "distanceToHazard": "Hazard zone is {distance}m away",
+  "@distanceToHazard": {
+    "description": "Distance to the nearest hazard zone",
+    "placeholders": {
+      "distance": {
+        "type": "int",
+        "format": "decimalPattern"
+      }
+    }
+  },
+  "downloadingData": "Downloading data...",
+  "@downloadingData": {
+    "description": "Shown while map tile data is being downloaded"
+  },
+  "downloadComplete": "Download complete",
+  "@downloadComplete": {
+    "description": "Shown when all tile data has finished downloading"
+  },
+  "downloadError": "Failed to retrieve data",
+  "@downloadError": {
+    "description": "Shown when a download fails"
+  },
+  "poiHospital": "Hospital / Clinic",
+  "@poiHospital": {
+    "description": "POI category: medical facilities"
+  },
+  "poiShelter": "Evacuation shelter",
+  "@poiShelter": {
+    "description": "POI category: evacuation shelters"
+  },
+  "poiStore": "Convenience store / Supermarket",
+  "@poiStore": {
+    "description": "POI category: food supply stores"
+  },
+  "poiWater": "Water supply",
+  "@poiWater": {
+    "description": "POI category: water supply points"
+  },
+  "riskLow": "Flood risk: Low",
+  "@riskLow": {
+    "description": "Hazard risk level 1"
+  },
+  "riskMedium": "Flood risk: Medium",
+  "@riskMedium": {
+    "description": "Hazard risk level 2"
+  },
+  "riskHigh": "Flood risk: High",
+  "@riskHigh": {
+    "description": "Hazard risk level 3"
+  }
+}

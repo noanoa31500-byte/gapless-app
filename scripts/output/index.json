@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "updated_at": "2026-03-14",
+  "tiles": [
+    {
+      "id": "tokyo_center",
+      "lat_min": 35.6,
+      "lat_max": 35.78,
+      "lng_min": 139.6,
+      "lng_max": 139.85,
+      "files": {
+        "roads": "tokyo_center_roads.gplb.gz",
+        "poi": "tokyo_center_poi.gplb.gz",
+        "hazard": "tokyo_center_hazard.gplh.gz"
+      },
+      "size_kb": 1541,
+      "updated_at": "2026-03-14"
+    },
+    {
+      "id": "jp_osaki",
+      "lat_min": 38.3,
+      "lat_max": 38.9,
+      "lng_min": 140.6,
+      "lng_max": 141.2,
+      "files": {
+        "roads": "jp_osaki_roads.gplb.gz",
+        "poi": "jp_osaki_poi.gplb.gz",
+        "hazard": "jp_osaki_hazard.gplh.gz"
+      },
+      "size_kb": 650,
+      "updated_at": "2026-03-14"
+    },
+    {
+      "id": "th_satun",
+      "lat_min": 6.4,
+      "lat_max": 7.1,
+      "lng_min": 99.5,
+      "lng_max": 100.4,
+      "files": {
+        "roads": "th_satun_roads.gplb.gz",
+        "poi": "th_satun_poi.gplb.gz",
+        "hazard": "th_satun_hazard.gplh.gz"
+      },
+      "size_kb": 500,
+      "updated_at": "2026-03-14"
+    }
+  ]
+}

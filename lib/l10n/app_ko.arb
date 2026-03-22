@@ -1,0 +1,28 @@
+{
+  "@@locale": "ko",
+  "appTitle": "GapLess",
+  "loadingMap": "지도 로딩 중...",
+  "hazardZone": "위험 구역",
+  "safeRoute": "안전 경로",
+  "currentLocation": "현재 위치",
+  "offlineMode": "오프라인 모드",
+  "noDataAvailable": "데이터 없음",
+  "compassHeading": "방향",
+  "nearbyHazard": "근처에 위험 구역이 있습니다",
+  "distanceToHazard": "위험 구역까지 {distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "데이터 다운로드 중...",
+  "downloadComplete": "다운로드 완료",
+  "downloadError": "데이터 가져오기 실패",
+  "poiHospital": "병원 / 진료소",
+  "poiShelter": "대피소",
+  "poiStore": "편의점 / 슈퍼마켓",
+  "poiWater": "급수 지점",
+  "riskLow": "침수 위험: 낮음",
+  "riskMedium": "침수 위험: 중간",
+  "riskHigh": "침수 위험: 높음"
+}

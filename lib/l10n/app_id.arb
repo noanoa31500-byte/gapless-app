@@ -1,0 +1,28 @@
+{
+  "@@locale": "id",
+  "appTitle": "GapLess",
+  "loadingMap": "Memuat peta...",
+  "hazardZone": "Zona bahaya",
+  "safeRoute": "Rute aman",
+  "currentLocation": "Lokasi saat ini",
+  "offlineMode": "Mode offline",
+  "noDataAvailable": "Tidak ada data tersedia",
+  "compassHeading": "Arah",
+  "nearbyHazard": "Ada zona bahaya di sekitar",
+  "distanceToHazard": "Zona bahaya berjarak {distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Mengunduh data...",
+  "downloadComplete": "Unduhan selesai",
+  "downloadError": "Gagal mengambil data",
+  "poiHospital": "Rumah sakit / Klinik",
+  "poiShelter": "Tempat pengungsian",
+  "poiStore": "Minimarket / Supermarket",
+  "poiWater": "Titik pasokan air",
+  "riskLow": "Risiko banjir: Rendah",
+  "riskMedium": "Risiko banjir: Sedang",
+  "riskHigh": "Risiko banjir: Tinggi"
+}

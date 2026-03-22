@@ -1,0 +1,28 @@
+{
+  "@@locale": "my",
+  "appTitle": "GapLess",
+  "loadingMap": "မြေပုံ ဖွင့်နေသည်...",
+  "hazardZone": "အန္တရာယ် ဇုန်",
+  "safeRoute": "လုံခြုံသော လမ်းကြောင်း",
+  "currentLocation": "လက်ရှိ တည်နေရာ",
+  "offlineMode": "အွန်လိုင်းမဲ့ မုဒ်",
+  "noDataAvailable": "ဒေတာ မရှိပါ",
+  "compassHeading": "ဦးတည်ရာ",
+  "nearbyHazard": "အနီးတွင် အန္တရာယ် ဇုန် ရှိသည်",
+  "distanceToHazard": "အန္တရာယ် ဇုန် {distance}မီတာ ဝေးသည်",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "ဒေတာ ဒေါင်းလုဒ် ဆွဲနေသည်...",
+  "downloadComplete": "ဒေါင်းလုဒ် ပြီးမြောက်သည်",
+  "downloadError": "ဒေတာ ရယူ၍ မရပါ",
+  "poiHospital": "ဆေးရုံ / ဆေးခန်း",
+  "poiShelter": "ဒုက္ခသည် စခန်း",
+  "poiStore": "လက်ဖက်ရည်ဆိုင် / စူပါမားကတ်",
+  "poiWater": "ရေ ထောက်ပံ့ ရေး",
+  "riskLow": "ရေကြီး အန္တရာယ်: နိမ့်",
+  "riskMedium": "ရေကြီး အန္တရာယ်: အလတ်",
+  "riskHigh": "ရေကြီး အန္တရာယ်: မြင့်"
+}

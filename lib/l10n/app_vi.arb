@@ -1,0 +1,28 @@
+{
+  "@@locale": "vi",
+  "appTitle": "GapLess",
+  "loadingMap": "Đang tải bản đồ...",
+  "hazardZone": "Khu vực nguy hiểm",
+  "safeRoute": "Tuyến đường an toàn",
+  "currentLocation": "Vị trí hiện tại",
+  "offlineMode": "Chế độ ngoại tuyến",
+  "noDataAvailable": "Không có dữ liệu",
+  "compassHeading": "Hướng",
+  "nearbyHazard": "Có khu vực nguy hiểm gần đây",
+  "distanceToHazard": "Khu vực nguy hiểm cách {distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Đang tải dữ liệu...",
+  "downloadComplete": "Tải xuống hoàn tất",
+  "downloadError": "Lấy dữ liệu thất bại",
+  "poiHospital": "Bệnh viện / Phòng khám",
+  "poiShelter": "Nơi trú ẩn",
+  "poiStore": "Cửa hàng tiện lợi / Siêu thị",
+  "poiWater": "Điểm cấp nước",
+  "riskLow": "Nguy cơ lũ lụt: Thấp",
+  "riskMedium": "Nguy cơ lũ lụt: Trung bình",
+  "riskHigh": "Nguy cơ lũ lụt: Cao"
+}

@@ -1,0 +1,28 @@
+{
+  "@@locale": "th",
+  "appTitle": "GapLess",
+  "loadingMap": "กำลังโหลดแผนที่...",
+  "hazardZone": "เขตอันตราย",
+  "safeRoute": "เส้นทางปลอดภัย",
+  "currentLocation": "ตำแหน่งปัจจุบัน",
+  "offlineMode": "โหมดออฟไลน์",
+  "noDataAvailable": "ไม่มีข้อมูล",
+  "compassHeading": "ทิศทาง",
+  "nearbyHazard": "มีเขตอันตรายอยู่ใกล้ๆ",
+  "distanceToHazard": "เขตอันตรายอยู่ห่าง {distance}ม.",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "กำลังดาวน์โหลดข้อมูล...",
+  "downloadComplete": "ดาวน์โหลดเสร็จสิ้น",
+  "downloadError": "ไม่สามารถดึงข้อมูลได้",
+  "poiHospital": "โรงพยาบาล / คลินิก",
+  "poiShelter": "ศูนย์อพยพ",
+  "poiStore": "ร้านสะดวกซื้อ / ซูเปอร์มาร์เก็ต",
+  "poiWater": "จุดจ่ายน้ำ",
+  "riskLow": "ความเสี่ยงน้ำท่วม: ต่ำ",
+  "riskMedium": "ความเสี่ยงน้ำท่วม: ปานกลาง",
+  "riskHigh": "ความเสี่ยงน้ำท่วม: สูง"
+}

@@ -1,0 +1,28 @@
+{
+  "@@locale": "si",
+  "appTitle": "GapLess",
+  "loadingMap": "සිතියම පූරණය වෙමින්...",
+  "hazardZone": "අනතුරු කලාපය",
+  "safeRoute": "ආරක්ෂිත මාර්ගය",
+  "currentLocation": "වත්මන් ස්ථානය",
+  "offlineMode": "ඔෆ්ලයින් මාදිලිය",
+  "noDataAvailable": "දත්ත නොමැත",
+  "compassHeading": "දිශාව",
+  "nearbyHazard": "ළඟ අනතුරු කලාපයක් ඇත",
+  "distanceToHazard": "අනතුරු කලාපය {distance}ම දුරින් ඇත",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "දත්ත බාගත වෙමින්...",
+  "downloadComplete": "බාගැනීම සම්පූර්ණයි",
+  "downloadError": "දත්ත ලබා ගැනීමට අසාර්ථකයි",
+  "poiHospital": "රෝහල / වෛද්‍යාල",
+  "poiShelter": "ජනතාව ඉවත් කිරීමේ නවාතැන",
+  "poiStore": "පහසු සාප්පුව / සුපර්මාර්කට්",
+  "poiWater": "ජල සැපයුම",
+  "riskLow": "ගංවතුර අවදානම: අඩු",
+  "riskMedium": "ගංවතුර අවදානම: මධ්‍යම",
+  "riskHigh": "ගංවතුර අවදානම: ඉහළ"
+}

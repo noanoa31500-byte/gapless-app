@@ -1,0 +1,28 @@
+{
+  "@@locale": "uz",
+  "appTitle": "GapLess",
+  "loadingMap": "Xarita yuklanmoqda...",
+  "hazardZone": "Xavfli zona",
+  "safeRoute": "Xavfsiz yo'l",
+  "currentLocation": "Joriy joylashuv",
+  "offlineMode": "Oflayn rejim",
+  "noDataAvailable": "Ma'lumot yo'q",
+  "compassHeading": "Yo'nalish",
+  "nearbyHazard": "Yaqin atrofda xavfli zona bor",
+  "distanceToHazard": "Xavfli zona {distance}m uzoqda",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Ma'lumot yuklanmoqda...",
+  "downloadComplete": "Yuklash tugadi",
+  "downloadError": "Ma'lumot olishda xatolik",
+  "poiHospital": "Kasalxona / Klinika",
+  "poiShelter": "Evakuatsiya boshpanasi",
+  "poiStore": "Qulay do'kon / Supermarket",
+  "poiWater": "Suv ta'minoti",
+  "riskLow": "Suv toshqini xavfi: Past",
+  "riskMedium": "Suv toshqini xavfi: O'rta",
+  "riskHigh": "Suv toshqini xavfi: Yuqori"
+}

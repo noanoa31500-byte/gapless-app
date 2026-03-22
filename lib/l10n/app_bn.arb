@@ -1,0 +1,28 @@
+{
+  "@@locale": "bn",
+  "appTitle": "GapLess",
+  "loadingMap": "মানচিত্র লোড হচ্ছে...",
+  "hazardZone": "বিপজ্জনক এলাকা",
+  "safeRoute": "নিরাপদ পথ",
+  "currentLocation": "বর্তমান অবস্থান",
+  "offlineMode": "অফলাইন মোড",
+  "noDataAvailable": "কোনো তথ্য নেই",
+  "compassHeading": "দিক",
+  "nearbyHazard": "কাছে বিপজ্জনক এলাকা আছে",
+  "distanceToHazard": "বিপজ্জনক এলাকা {distance}মি দূরে",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "ডেটা ডাউনলোড হচ্ছে...",
+  "downloadComplete": "ডাউনলোড সম্পন্ন",
+  "downloadError": "ডেটা পুনরুদ্ধারে ব্যর্থ",
+  "poiHospital": "হাসপাতাল / ক্লিনিক",
+  "poiShelter": "আশ্রয় কেন্দ্র",
+  "poiStore": "কনভেনিয়েন্স স্টোর / সুপারমার্কেট",
+  "poiWater": "পানি সরবরাহ",
+  "riskLow": "বন্যার ঝুঁকি: কম",
+  "riskMedium": "বন্যার ঝুঁকি: মাঝারি",
+  "riskHigh": "বন্যার ঝুঁকি: উচ্চ"
+}

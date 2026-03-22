@@ -1,0 +1,28 @@
+{
+  "@@locale": "tl",
+  "appTitle": "GapLess",
+  "loadingMap": "Naglo-load ng mapa...",
+  "hazardZone": "Lugar ng panganib",
+  "safeRoute": "Ligtas na ruta",
+  "currentLocation": "Kasalukuyang lokasyon",
+  "offlineMode": "Offline na mode",
+  "noDataAvailable": "Walang available na data",
+  "compassHeading": "Direksyon",
+  "nearbyHazard": "May lugar ng panganib sa malapit",
+  "distanceToHazard": "Ang lugar ng panganib ay {distance}m ang layo",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "Nagda-download ng data...",
+  "downloadComplete": "Kumpleto na ang download",
+  "downloadError": "Nabigo sa pagkuha ng data",
+  "poiHospital": "Ospital / Klinika",
+  "poiShelter": "Evacuation shelter",
+  "poiStore": "Convenience store / Supermarket",
+  "poiWater": "Pinagkukunan ng tubig",
+  "riskLow": "Panganib ng baha: Mababa",
+  "riskMedium": "Panganib ng baha: Katamtaman",
+  "riskHigh": "Panganib ng baha: Mataas"
+}

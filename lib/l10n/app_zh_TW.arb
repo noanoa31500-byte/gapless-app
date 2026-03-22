@@ -1,0 +1,28 @@
+{
+  "@@locale": "zh_TW",
+  "appTitle": "GapLess",
+  "loadingMap": "正在載入地圖...",
+  "hazardZone": "危險區域",
+  "safeRoute": "安全路線",
+  "currentLocation": "目前位置",
+  "offlineMode": "離線模式",
+  "noDataAvailable": "沒有可用資料",
+  "compassHeading": "方位",
+  "nearbyHazard": "附近有危險區域",
+  "distanceToHazard": "距離危險區域{distance}m",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "正在下載資料...",
+  "downloadComplete": "下載完成",
+  "downloadError": "資料獲取失敗",
+  "poiHospital": "醫院 / 診所",
+  "poiShelter": "避難所",
+  "poiStore": "便利商店 / 超市",
+  "poiWater": "供水點",
+  "riskLow": "淹水風險：低",
+  "riskMedium": "淹水風險：中",
+  "riskHigh": "淹水風險：高"
+}

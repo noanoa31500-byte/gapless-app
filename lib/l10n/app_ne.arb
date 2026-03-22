@@ -1,0 +1,28 @@
+{
+  "@@locale": "ne",
+  "appTitle": "GapLess",
+  "loadingMap": "नक्सा लोड हुँदैछ...",
+  "hazardZone": "खतरा क्षेत्र",
+  "safeRoute": "सुरक्षित मार्ग",
+  "currentLocation": "हालको स्थान",
+  "offlineMode": "अफलाइन मोड",
+  "noDataAvailable": "डेटा उपलब्ध छैन",
+  "compassHeading": "दिशा",
+  "nearbyHazard": "नजिकमा खतरा क्षेत्र छ",
+  "distanceToHazard": "खतरा क्षेत्र {distance}m टाढा छ",
+  "@distanceToHazard": {
+    "placeholders": {
+      "distance": { "type": "int", "format": "decimalPattern" }
+    }
+  },
+  "downloadingData": "डेटा डाउनलोड हुँदैछ...",
+  "downloadComplete": "डाउनलोड सम्पन्न",
+  "downloadError": "डेटा प्राप्त गर्न असफल",
+  "poiHospital": "अस्पताल / क्लिनिक",
+  "poiShelter": "शरण स्थान",
+  "poiStore": "सुविधा स्टोर / सुपरमार्केट",
+  "poiWater": "पानी आपूर्ति",
+  "riskLow": "बाढीको जोखिम: कम",
+  "riskMedium": "बाढीको जोखिम: मध्यम",
+  "riskHigh": "बाढीको जोखिम: उच्च"
+}

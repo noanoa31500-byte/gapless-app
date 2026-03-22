@@ -1,0 +1,111 @@
+name: gapless
+version: 5.0.0
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter: { sdk: flutter }
+  flutter_localizations: { sdk: flutter }
+  flutter_map: any
+  flutter_map_cancellable_tile_provider: ^2.0.0
+  flutter_map_marker_cluster: ^1.3.6
+  latlong2: any
+  provider: any
+  geolocator: any
+  flutter_compass: any
+  shared_preferences: any
+  flutter_tts: any
+  vibration: any
+  intl: any
+  animate_do: any
+  url_launcher: any
+  connectivity_plus: ^6.0.0
+  http: ^1.2.0
+  web: any
+  csv: ^6.0.0
+  encrypt: ^5.0.3
+  flutter_secure_storage: ^9.0.0
+  # BLE通信 (iPhone間オフライン同期)
+  flutter_blue_plus: ^1.32.12
+  # ローカルファイル保存 (gplbキャッシュ)
+  path_provider: ^2.1.0
+  # バッテリー監視 (省電力モード)
+  battery_plus: ^6.0.1
+  # パーミッション取得
+  permission_handler: ^11.3.1
+  # 加速度計・ジャイロ（デッドレコニング用）
+  sensors_plus: ^4.0.2
+  # カメラ（クイック危険報告）
+  image_picker: any
+  # BLE データ永続化
+  sqflite: ^2.3.0
+#  google_fonts: ^8.0.0 # Removed to rely on local assets for offline safety
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/
+    - assets/fonts/
+
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Regular.otf
+        - asset: assets/fonts/NotoSansJP-Bold.otf
+          weight: 700
+
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-Regular.otf
+        - asset: assets/fonts/NotoSansSC-Bold.otf
+          weight: 700
+
+    - family: NotoSansTC
+      fonts:
+        - asset: assets/fonts/NotoSansTC-Regular.otf
+        - asset: assets/fonts/NotoSansTC-Bold.otf
+          weight: 700
+
+    - family: NotoSansKR
+      fonts:
+        - asset: assets/fonts/NotoSansKR-Regular.otf
+        - asset: assets/fonts/NotoSansKR-Bold.otf
+          weight: 700
+
+    - family: NotoSansThai
+      fonts:
+        - asset: assets/fonts/NotoSansThai-Regular.ttf
+        - asset: assets/fonts/NotoSansThai-Bold.ttf
+          weight: 700
+
+    - family: NotoSansMyanmar
+      fonts:
+        - asset: assets/fonts/NotoSansMyanmar-Regular.ttf
+        - asset: assets/fonts/NotoSansMyanmar-Bold.ttf
+          weight: 700
+
+    - family: NotoSansSinhala
+      fonts:
+        - asset: assets/fonts/NotoSansSinhala-Regular.ttf
+        - asset: assets/fonts/NotoSansSinhala-Bold.ttf
+          weight: 700
+
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
+          weight: 700
+
+    - family: NotoSansBengali
+      fonts:
+        - asset: assets/fonts/NotoSansBengali-Regular.ttf
+        - asset: assets/fonts/NotoSansBengali-Bold.ttf
+          weight: 700
