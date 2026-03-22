@@ -244,7 +244,10 @@ class GapLessApp extends StatelessWidget {
                 final locale = Localizations.localeOf(context);
                 final fontFamily = _fontFamilyForLocale(locale);
                 return DefaultTextStyle(
-                  style: TextStyle(fontFamily: fontFamily),
+                  style: TextStyle(
+                    fontFamily: fontFamily,
+                    fontFamilyFallback: GapLessL10n.fallbackFonts,
+                  ),
                   child: DisasterWatcher(child: child!),
                 );
               },
