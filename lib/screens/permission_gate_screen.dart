@@ -215,7 +215,7 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('キャンセル'),
+            child: Text(GapLessL10n.t('btn_cancel')),
           ),
           ElevatedButton(
             onPressed: () {
