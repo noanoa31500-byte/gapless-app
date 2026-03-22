@@ -56,7 +56,7 @@ def optimize_geojson(input_path, output_path):
         print(f"Error processing {input_path}: {e}")
 
 # 実行
-base_dir = '/Users/kusakariakiraakira/Desktop/SafeJapan/assets/data'
+base_dir = '/Users/kusakariakiraakira/Desktop/GapLess/assets/data'
 files = [
     ('roads_jp.geojson', 'roads_jp_min.geojson'),
     ('roads_th.geojson', 'roads_th_min.geojson')

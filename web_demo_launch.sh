@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# SafeJapan Web Demo Launcher
+# GapLess Web Demo Launcher
 # このスクリプトはFlutter Webをビルドし、ローカルサーバーを起動します
 
-echo "🚀 SafeJapan Web Demo Launcher"
+echo "🚀 GapLess Web Demo Launcher"
 echo "================================"
 echo ""
 
@@ -25,7 +25,7 @@ echo ""
 echo "🌐 Step 2: Starting local web server on port 8000..."
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "✨ SafeJapan is now running locally!"
+echo "✨ GapLess is now running locally!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "📱 Local Access:"

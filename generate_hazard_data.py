@@ -90,7 +90,7 @@ th_rice_fields = generate_paddy_fields(14.1109, 100.3977, count=40, size_km=1.5)
 th_polygons = th_river_polys + th_khlong_polys + th_rice_fields
 
 th_data = {
-    "generated_by": "SafeJapan_Unified_Engine",
+    "generated_by": "GapLess_Unified_Engine",
     "type": "polygon_hazard",
     "region": "th_pathum",
     "total_polygons": len(th_polygons),
@@ -136,7 +136,7 @@ for lat in [38.16, 38.17, 38.18, 38.19]:
 jp_polygons = jp_osaki_zones + jp_natori_zones
 
 jp_data = {
-    "generated_by": "SafeJapan_Unified_Engine",
+    "generated_by": "GapLess_Unified_Engine",
     "data_source": "Municipal_Hazard_Map_Based_Model",
     "targets": ["Osaki_Furukawa", "Natori_Yuriage"],
     "total_polygons": len(jp_polygons),

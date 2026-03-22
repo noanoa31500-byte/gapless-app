@@ -2,7 +2,7 @@ import qrcode
 import os
 
 def generate_qr():
-    # 1. URLの入力（デフォルトはSafeJapanのFirebase URL）
+    # 1. URLの入力（デフォルトはGapLessのFirebase URL）
     print("--- Firebase App QR Generator ---")
     default_url = "https://safejapan-1299d.web.app"
     url_input = input(f"Enter URL (default: {default_url}): ").strip()
