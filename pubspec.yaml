@@ -11,9 +11,9 @@ dependencies:
   flutter_map_marker_cluster: ^1.3.6
   latlong2: any
   provider: any
-  geolocator: any
+  geolocator: ^12.0.0
   flutter_compass: any
-  shared_preferences: any
+  shared_preferences: ^2.2.0
   flutter_tts: any
   vibration: any
   intl: any

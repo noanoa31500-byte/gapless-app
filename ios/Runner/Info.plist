@@ -33,9 +33,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>周囲の道路・建物の被害状況を写真で記録し、近くの利用者とBLEで共有するために使用します</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>GapLessは現在地から最寄りの避難所を検索するために位置情報を使用します。</string>
+	<string>バックグラウンドで位置情報を更新します</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>GapLessは現在地から最寄りの避難所を検索するために位置情報を使用します。</string>
+	<string>現在地を取得して近くの安全なルートを表示します</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>撮影した被害状況の写真を端末に保存するために使用します</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
