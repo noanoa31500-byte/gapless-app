@@ -440,6 +440,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   bool _isOffline = false; // オフライン状態フラグ（バナー表示制御）
   Timer? _disasterModeDebounce; // 頻繁なモード切替を防ぐデバウンスタイマー
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<MapLoadEvent>? _mapLoaderSubscription;
   Timer? _heartbeatTimer;
   Timer? _recoveryTimer;
   Timer? _movementPoller;
@@ -454,6 +455,11 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     });
 
     MapAutoLoader.instance.start();
+    _mapLoaderSubscription = MapAutoLoader.instance.onEvent.listen((event) {
+      if (event.type == MapLoadEventType.allLoaded && mounted) {
+        setState(() {});
+      }
+    });
 
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
       final offline = results.contains(ConnectivityResult.none);
@@ -608,6 +614,8 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
   @override
   void dispose() {
+    _mapLoaderSubscription?.cancel();
+    MapAutoLoader.instance.stop();
     _connectivitySubscription?.cancel();
     _heartbeatTimer?.cancel();
     _recoveryTimer?.cancel();

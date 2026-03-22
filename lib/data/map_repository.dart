@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../utils/localization.dart';
+import 'map_cache_manager.dart';
+import 'map_download_service.dart';
 
 // ────────────────────────────────────────
 // ダウンロード対象ファイルの定義
@@ -264,5 +266,43 @@ class MapRepository {
       if (await file.exists()) await file.delete();
     }
     await ensureAllData(progressCallback: progressCallback);
+  }
+
+  // ────────────────────────────────────
+  // タイルベースキャッシュからエリアデータを読み込む
+  // キャッシュ済みなら即返し、なければダウンロードして保存する
+  // 戻り値: fileKey → 解凍済みバイト列（roads, poi_*, hazard）
+  // ────────────────────────────────────
+  Future<Map<String, Uint8List>?> loadAreaData(String areaId) async {
+    final cache = MapCacheManager();
+
+    // キャッシュから roads を確認
+    final roads = await cache.loadMapData(areaId, 'roads');
+    if (roads != null) {
+      // roads があれば他のファイルも同じキャッシュから読んで返す
+      final result = <String, Uint8List>{'roads': roads};
+      for (final key in ['poi_hospital', 'poi_shelter', 'poi_store', 'poi_water', 'hazard']) {
+        final data = await cache.loadMapData(areaId, key);
+        if (data != null) result[key] = data;
+      }
+      return result;
+    }
+
+    // キャッシュなし → index.json を取得してダウンロード
+    final index = await cache.loadIndex();
+    if (index == null) return null;
+
+    final matches = index.tiles.where((t) => t.id == areaId);
+    if (matches.isEmpty) return null;
+    final tile = matches.first;
+
+    final service = MapDownloadService();
+    final files = await service.downloadTile(tile);
+    if (files.isEmpty || !files.containsKey('roads')) return null;
+
+    for (final entry in files.entries) {
+      await cache.saveMapData(areaId, entry.key, entry.value);
+    }
+    return files;
   }
 }
