@@ -636,7 +636,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
     if (userLoc == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location not available')),
+        SnackBar(content: SafeText(GapLessL10n.t('nav_no_location'), style: safeStyle(color: Colors.white))),
       );
       return;
     }
@@ -723,12 +723,12 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(GapLessL10n.t('dialog_safety_title')),
-        content: Text(GapLessL10n.t('dialog_safety_desc')),
+        title: SafeText(GapLessL10n.t('dialog_safety_title')),
+        content: SafeText(GapLessL10n.t('dialog_safety_desc')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(GapLessL10n.t('btn_cancel')),
+            child: SafeText(GapLessL10n.t('btn_cancel')),
           ),
           ElevatedButton(
             onPressed: () {
@@ -745,7 +745,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
             ),
-            child: Text(GapLessL10n.t('btn_yes_arrived')),
+            child: SafeText(GapLessL10n.t('btn_yes_arrived')),
           ),
         ],
       ),

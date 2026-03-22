@@ -758,7 +758,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        content: Text(message, style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
         backgroundColor: bg,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -773,13 +773,14 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text(GapLessL10n.t('dialog_safety_title'), 
-            style: const TextStyle(color: _redPrimary, fontWeight: FontWeight.bold)),
-        content: Text(GapLessL10n.t('dialog_safety_desc')),
+        title: Text(GapLessL10n.t('dialog_safety_title'),
+            style: GapLessL10n.safeStyle(const TextStyle(color: _redPrimary, fontWeight: FontWeight.bold))),
+        content: Text(GapLessL10n.t('dialog_safety_desc'),
+            style: GapLessL10n.safeStyle(const TextStyle())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(GapLessL10n.t('btn_cancel'), style: const TextStyle(color: Colors.grey)),
+            child: Text(GapLessL10n.t('btn_cancel'), style: GapLessL10n.safeStyle(const TextStyle(color: Colors.grey))),
           ),
           ElevatedButton(
             onPressed: () {
@@ -793,7 +794,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             ),
-            child: Text(GapLessL10n.t('btn_yes_arrived')),
+            child: Text(GapLessL10n.t('btn_yes_arrived'), style: GapLessL10n.safeStyle(const TextStyle())),
           ),
         ],
       ),

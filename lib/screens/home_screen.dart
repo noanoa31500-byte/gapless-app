@@ -863,20 +863,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             const SizedBox(width: 8),
             Text(
               GapLessL10n.t('disaster_mode_confirm_title'),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: GapLessL10n.safeStyle(const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
         content: Text(
           GapLessL10n.t('disaster_mode_confirm_body'),
-          style: const TextStyle(fontSize: 14),
+          style: GapLessL10n.safeStyle(const TextStyle(fontSize: 14)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               GapLessL10n.t('btn_cancel'),
-              style: const TextStyle(color: Color(0xFF6B7280)),
+              style: GapLessL10n.safeStyle(const TextStyle(color: Color(0xFF6B7280))),
             ),
           ),
           ElevatedButton(

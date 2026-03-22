@@ -161,7 +161,8 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
                               borderRadius: BorderRadius.circular(8),
                               borderSide: const BorderSide(color: Color(0xFFB71C1C), width: 2),
                             ),
-                            hintText: GapLessL10n.t('hint_name'), // Added hintText
+                            hintText: GapLessL10n.t('hint_name'),
+                            hintStyle: GapLessL10n.safeStyle(const TextStyle(fontSize: 16)),
                           ),
                         ),
                       ],
@@ -279,6 +280,7 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
               borderRadius: BorderRadius.circular(8),
               borderSide: const BorderSide(color: Color(0xFFB71C1C), width: 2),
             ),
+            hintStyle: GapLessL10n.safeStyle(const TextStyle(fontSize: 16)),
           ),
         ),
       ],

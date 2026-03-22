@@ -467,11 +467,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 style: GapLessL10n.safeStyle(const TextStyle(fontSize: 18))),
           ],
         ),
-        content: Text(GapLessL10n.t('nav_arrive_body')),
+        content: Text(GapLessL10n.t('nav_arrive_body'), style: GapLessL10n.safeStyle(const TextStyle())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(GapLessL10n.t('nav_still_moving')),
+            child: Text(GapLessL10n.t('nav_still_moving'), style: GapLessL10n.safeStyle(const TextStyle())),
           ),
           ElevatedButton(
             onPressed: () {
@@ -488,7 +488,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text(GapLessL10n.t('nav_safe_confirm')),
+            child: Text(GapLessL10n.t('nav_safe_confirm'), style: GapLessL10n.safeStyle(const TextStyle())),
           ),
         ],
       ),
