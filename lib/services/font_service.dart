@@ -16,17 +16,17 @@ class FontService {
         _loadFont('NotoSans',             'assets/fonts/NotoSans-Regular.ttf'),
         _loadFont('NotoSans',             'assets/fonts/NotoSans-Bold.ttf',             weight: FontWeight.bold),
         // Japanese (CJK + Latin)
-        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Regular.otf'),
-        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Bold.otf',           weight: FontWeight.bold),
+        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Regular.ttf'),
+        _loadFont('NotoSansJP',           'assets/fonts/NotoSansJP-Bold.ttf',           weight: FontWeight.bold),
         // Chinese Simplified
-        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Regular.otf'),
-        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Bold.otf',           weight: FontWeight.bold),
+        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Regular.ttf'),
+        _loadFont('NotoSansSC',           'assets/fonts/NotoSansSC-Bold.ttf',           weight: FontWeight.bold),
         // Chinese Traditional
-        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Regular.otf'),
-        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Bold.otf',           weight: FontWeight.bold),
+        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Regular.ttf'),
+        _loadFont('NotoSansTC',           'assets/fonts/NotoSansTC-Bold.ttf',           weight: FontWeight.bold),
         // Korean
-        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Regular.otf'),
-        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Bold.otf',           weight: FontWeight.bold),
+        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Regular.ttf'),
+        _loadFont('NotoSansKR',           'assets/fonts/NotoSansKR-Bold.ttf',           weight: FontWeight.bold),
         // Thai (complex ligatures — eager load to prevent tofu)
         _loadFont('NotoSansThai',         'assets/fonts/NotoSansThai-Regular.ttf'),
         _loadFont('NotoSansThai',         'assets/fonts/NotoSansThai-Bold.ttf',         weight: FontWeight.bold),
@@ -85,11 +85,14 @@ class FontService {
   }
 
   static void _validateBytes(ByteData data, String path) {
-     // Thai fonts are smaller (~45KB), so we lower the threshold to 20KB.
-     if (data.lengthInBytes < 20 * 1024) throw Exception('Too small');
-     final uint32 = data.getUint32(0);
-     if (uint32 != 0x00010000 && uint32 != 0x4F54544F && uint32 != 0x74746366) {
-       throw Exception('Invalid Header');
-     }
+    // ファイルサイズ最低閾値: Thai/Bengali等は~40KB、CJKは数MB
+    // 最低 30KB 未満は無効（HTMLエラーページ等を弾く）
+    if (data.lengthInBytes < 30 * 1024) throw Exception('Too small: ${data.lengthInBytes} bytes');
+    // フォントのmagicバイトを確認
+    // 0x00010000 = TrueType, 0x4F54544F = OpenType CFF (OTTO), 0x74746366 = TTC
+    final uint32 = data.getUint32(0);
+    if (uint32 != 0x00010000 && uint32 != 0x4F54544F && uint32 != 0x74746366) {
+      throw Exception('Invalid font header: 0x${uint32.toRadixString(16)}');
+    }
   }
 }

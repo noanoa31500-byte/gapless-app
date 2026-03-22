@@ -58,26 +58,26 @@ flutter:
 
     - family: NotoSansJP
       fonts:
-        - asset: assets/fonts/NotoSansJP-Regular.otf
-        - asset: assets/fonts/NotoSansJP-Bold.otf
+        - asset: assets/fonts/NotoSansJP-Regular.ttf
+        - asset: assets/fonts/NotoSansJP-Bold.ttf
           weight: 700
 
     - family: NotoSansSC
       fonts:
-        - asset: assets/fonts/NotoSansSC-Regular.otf
-        - asset: assets/fonts/NotoSansSC-Bold.otf
+        - asset: assets/fonts/NotoSansSC-Regular.ttf
+        - asset: assets/fonts/NotoSansSC-Bold.ttf
           weight: 700
 
     - family: NotoSansTC
       fonts:
-        - asset: assets/fonts/NotoSansTC-Regular.otf
-        - asset: assets/fonts/NotoSansTC-Bold.otf
+        - asset: assets/fonts/NotoSansTC-Regular.ttf
+        - asset: assets/fonts/NotoSansTC-Bold.ttf
           weight: 700
 
     - family: NotoSansKR
       fonts:
-        - asset: assets/fonts/NotoSansKR-Regular.otf
-        - asset: assets/fonts/NotoSansKR-Bold.otf
+        - asset: assets/fonts/NotoSansKR-Regular.ttf
+        - asset: assets/fonts/NotoSansKR-Bold.ttf
           weight: 700
 
     - family: NotoSansThai
