@@ -272,7 +272,11 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
               fontSize: 12,
               color: Color(0xFF991B1B),
               fontFamily: 'monospace',
-              fontFamilyFallback: ['NotoSansJP', 'NotoSansThai', 'sans-serif'],
+              fontFamilyFallback: [
+                'NotoSansJP', 'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+                'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+                'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+              ],
             ),
             textAlign: TextAlign.center,
           ),

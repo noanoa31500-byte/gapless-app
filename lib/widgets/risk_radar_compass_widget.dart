@@ -593,6 +593,7 @@ class _DangerZonesPainter extends CustomPainter {
         text: icon,
         style: const TextStyle(
           fontSize: 22,
+          fontFamily: 'NotoSansJP',
           fontFamilyFallback: [
             'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
             'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
@@ -650,6 +651,7 @@ class _CompassMarkersPainter extends CustomPainter {
             color: cardinalColors[i],
             fontSize: 16,
             fontWeight: FontWeight.bold,
+            fontFamily: 'NotoSansJP',
             fontFamilyFallback: const [
             'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
             'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
@@ -745,10 +747,11 @@ class _SafetyArrowPainter extends CustomPainter {
       final textPainter = TextPainter(
         text: const TextSpan(
           text: '!',
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
             fontWeight: FontWeight.bold,
+            fontFamily: 'NotoSansJP',
             fontFamilyFallback: [
             'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
             'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
