@@ -105,8 +105,8 @@ class _ChatScreenState extends State<ChatScreen> {
         // Combine: "Stay calm, Taro. We are with you.\n\n[Title]\n[Action]"
         String responseText = '';
 
-        if (region.startsWith('th') && shelterProvider.isSafeInShelter) {
-           // Use Strict Thai Bot Logic ONLY when arrived
+        if (shelterProvider.isSafeInShelter) {
+           // 全言語対応: 避難所到着時は MultiLang SanitationBot を使用
            responseText = ThaiSanitationBot.generateResponse(item.id, lang, profile.name);
         } else {
            // Navigation Phase or Japan: Use Default Logic

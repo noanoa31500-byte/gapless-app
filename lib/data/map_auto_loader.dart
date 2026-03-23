@@ -99,12 +99,12 @@ class MapAutoLoader {
     // 3. 近隣タイルを特定
     final nearTiles = index.tilesNear(lat, lng, radiusKm: _radiusKm);
 
-    // 4. 各タイルをダウンロード（roads がキャッシュ済みならスキップ）
+    // 4. 各タイルをダウンロードしてローカルストレージを常に最新で上書き更新
+    //    （キャッシュ済みでも必ず再取得し、古いデータを置き換える）
     for (final tile in nearTiles) {
-      final roadsCached = await cache.isCached(tile.id, 'roads');
-      if (roadsCached) continue;
-
       final files = await service.downloadTile(tile);
+      if (files.isEmpty || !files.containsKey('roads')) continue;
+
       for (final entry in files.entries) {
         await cache.saveMapData(tile.id, entry.key, entry.value);
       }
