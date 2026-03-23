@@ -21,6 +21,10 @@ class GapLessL10n {
 
       // Bot Messages
       'bot_analyzing': '分析中...',
+      'bot_hospital': '🏥 病院へ',
+      'bot_water': '💧 給水所へ',
+      'bot_store': '🏪 コンビニへ',
+      'bot_safe_shelter': '🟢 避難所へ',
       'bot_loc_error': '⚠️ 位置情報が取得できません。',
       'bot_found': '🔍 **施設が見つかりました**',
       'bot_found_desc': '現在地から **@dist** 先に「**@name**」があります。地図上のアイコンを目指してください。',
@@ -465,6 +469,7 @@ class GapLessL10n {
       // Bot Responses
       'bot_hospital': '🏥 To Hospital',
       'bot_water': '💧 To Water Supply',
+      'bot_store': '🏪 To Store',
       'bot_safe_shelter': '🟢 To Shelter',
       'bot_reroute': '⚠️ Hazard Avoidance',
       'bot_sos': '⛑️ SOS Mode',
@@ -900,6 +905,7 @@ class GapLessL10n {
       // Bot Responses
       'bot_hospital': '🏥 ไปโรงพยาบาล',
       'bot_water': '💧 ไปน้ำดื่ม',
+      'bot_store': '🏪 ไปร้านค้า',
       'bot_safe_shelter': '🟢 ไปที่พักพิง',
       'bot_reroute': '⚠️ หลีกเลี่ยงอันตราย',
       'bot_sos': '⛑️ โหมด SOS',
@@ -1317,6 +1323,7 @@ class GapLessL10n {
       'nav_heading': '方向',
       'bot_hospital': '🏥 前往医院',
       'bot_water': '💧 前往供水点',
+      'bot_store': '🏪 前往商店',
       'bot_safe_shelter': '🟢 前往避难所',
       'bot_reroute': '⚠️ 危险绕行',
       'bot_sos': '⛑️ SOS',
@@ -1652,6 +1659,7 @@ class GapLessL10n {
       'nav_heading': '方向',
       'bot_hospital': '🏥 前往医院',
       'bot_water': '💧 前往供水点',
+      'bot_store': '🏪 前往商店',
       'bot_safe_shelter': '🟢 前往避难所',
       'bot_reroute': '⚠️ 危险绕行',
       'bot_sos': '⛑️ SOS',
@@ -1987,6 +1995,7 @@ class GapLessL10n {
       'nav_heading': '방향',
       'bot_hospital': '🏥 병원으로',
       'bot_water': '💧 급수소로',
+      'bot_store': '🏪 편의점으로',
       'bot_safe_shelter': '🟢 대피소로',
       'bot_reroute': '⚠️ 위험 우회',
       'bot_sos': '⛑️ SOS',
@@ -3252,9 +3261,9 @@ class GapLessL10n {
     },
   };
 
-  /// 翻訳を取得
+  /// 翻訳を取得（言語→英語→キー名の順でフォールバック）
   static String t(String key) {
-    return _values[lang]?[key] ?? key;
+    return _values[lang]?[key] ?? _values['en']?[key] ?? key;
   }
 
   // ── フォント設定 ────────────────────────────────────────────────────────────

@@ -9,6 +9,7 @@ import '../models/shelter.dart';
 import '../utils/styles.dart';
 import '../utils/localization.dart';
 import '../services/chat_service.dart';
+import 'safe_text.dart';
 
 class AIChatWidget extends StatefulWidget {
   const AIChatWidget({super.key});
@@ -21,26 +22,18 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   String _aiMessage = '';
   bool _isAnalyzing = false;
   Shelter? _foundShelter;
-  
+
   @override
   void initState() {
     super.initState();
-    _aiMessage = GapLessL10n.lang == 'ja'
-        ? '何かお困りですか？下のボタンから選んでください。'
-        : GapLessL10n.lang == 'th'
-            ? 'มีอะไรให้ฉันช่วยไหม? กรุณาเลือกจากปุ่มด้านล่าง'
-            : 'How can I help you? Select from the buttons below.';
-    // Note: Ideally this init message should also be in GapLessL10n, 
-    // but for now focusing on the dynamic responses which were broken.
+    _aiMessage = GapLessL10n.t('chat_prompt_main');
   }
 
-  Future<void> _handleUserSelection(String type, String label) async {
+  Future<void> _handleUserSelection(String type) async {
     final locationProvider = context.read<LocationProvider>();
     final shelterProvider = context.read<ShelterProvider>();
-    // For ChatService
     final userProfile = context.read<UserProfileProvider>().profile;
-    
-    // 分析中の演出
+
     setState(() {
       _isAnalyzing = true;
       _aiMessage = GapLessL10n.t('bot_analyzing');
@@ -49,98 +42,74 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     await Future.delayed(const Duration(seconds: 1));
     if (!mounted) return;
 
-    // 1. Get Region & Advice
     final region = shelterProvider.currentRegion;
-    // Map type/label to input text for ChatService
-    String inputKey = type; 
-    if (type == 'hospital') inputKey = '怪我 blood'; // Trigger injury/blood advice
+
+    // Map chip type to guide key for ChatService
+    String inputKey = type;
+    if (type == 'hospital') inputKey = 'water blood injury';
     if (type == 'water') inputKey = 'water';
-    if (type == 'convenience') inputKey = 'food'; // Trigger food/allergy advice
+    if (type == 'convenience') inputKey = 'food';
     if (type == 'shelter') inputKey = 'shelter';
 
-    // Import ChatService at top of file first! 
-    // Assuming I will add import in next step or this tool call handles file content updates implicitly if I replace whole file? 
-    // No, I am replacing a block. I need to ensure import exists. 
-    // I will add import in a separate block or assume it's added. 
-    // Wait, I can't add import here easily without file context.
-    // I'll assume ChatService method is available via import (will fix import in separate call if needed, or if I can replace top too).
-    // Actually, I should use `ChatService.generateResponse` here.
-    
-    // 2. Generate Advice
-    // isOffline = true (simulated), isSafeInShelter = shelterProvider.isSafeInShelter
     final botResponse = ChatService.generateResponse(
-       inputKey, 
-       true, 
-       shelterProvider.isSafeInShelter, 
-       userProfile,
-       region
+      guideId: inputKey,
+      isSafeInShelter: shelterProvider.isSafeInShelter,
+      profile: userProfile,
+      region: region,
     );
 
     final userLoc = locationProvider.currentLocation;
-    
-    // 3. Find Nearest Logic
+
     if (userLoc == null) {
       setState(() {
         _isAnalyzing = false;
-        _aiMessage = '${botResponse.text}\n\n(位置情報が取得できませんでした)';
+        _aiMessage = '${botResponse.text}\n\n${GapLessL10n.t('bot_loc_error')}';
       });
       return;
     }
 
-    // 検索タイプのマッピング
-    List<String> targetTypes = [type];
-    
-    // JP/TH Adaptation Logic
+    // Map type to shelter search types
+    List<String> targetTypes;
     if (type == 'shelter') {
       targetTypes = ['shelter', 'school', 'gov', 'community_centre', 'temple'];
-    
     } else if (type == 'hospital') {
-      // TH: Include 'doctors' which is mapped to 'hospital' in provider, so 'hospital' type is enough
       targetTypes = ['hospital'];
-    
     } else if (type == 'convenience') {
-        targetTypes = ['convenience', 'store'];
-    
-    } else if (type == 'water') {
-      targetTypes = ['water'];
+      targetTypes = ['convenience', 'store'];
+    } else {
+      targetTypes = [type];
     }
 
-    // 検索実行
     final nearest = shelterProvider.getNearestShelter(
       LatLng(userLoc.latitude, userLoc.longitude),
-      includeTypes: targetTypes, 
+      includeTypes: targetTypes,
     );
 
     setState(() {
       _isAnalyzing = false;
-      
-      // Combine Advice + Found Info
+
       String finalMsg = botResponse.text;
-      
+
       if (nearest != null) {
         _foundShelter = nearest;
         final distance = const Distance().as(
-          LengthUnit.Meter, 
-          LatLng(userLoc.latitude, userLoc.longitude), 
-          LatLng(nearest.lat, nearest.lng)
+          LengthUnit.Meter,
+          LatLng(userLoc.latitude, userLoc.longitude),
+          LatLng(nearest.lat, nearest.lng),
         );
-        
-        // Add "Found X at Ym" info
-        // Simplified to just show name and distance
-        final foundText = '「${nearest.name}」 (${distance}m)';
-            
-        finalMsg += '\n\n----------------\n📍 見つかりました: $foundText\n(地図上の矢印に従ってください)';
-
+        final foundDesc = GapLessL10n.t('bot_found_desc')
+            .replaceAll('@name', nearest.name)
+            .replaceAll('@dist', '${distance.toStringAsFixed(0)}m');
+        finalMsg += '\n\n${GapLessL10n.t('bot_found')}\n$foundDesc';
       } else {
-         _foundShelter = null;
-         finalMsg += '\n\n(近くに施設が見つかりませんでした)';
+        _foundShelter = null;
+        finalMsg +=
+            '\n\n${GapLessL10n.t('bot_not_found')}\n${GapLessL10n.t('bot_not_found_desc')}';
       }
-      
+
       _aiMessage = finalMsg;
     });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -172,74 +141,81 @@ class _AIChatWidgetState extends State<AIChatWidget> {
             children: [
               CircleAvatar(
                 backgroundColor: const Color(0xFFE53935),
-                child: Text('AI', style: emergencyTextStyle(color: Colors.white, isBold: true)),
+                child: Text(
+                  'AI',
+                  style: emergencyTextStyle(color: Colors.white, isBold: true),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _isAnalyzing
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: LinearProgressIndicator(
-                        backgroundColor: Colors.grey[200],
-                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFE53935)),
-                      ),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildSafeText(
-                          _aiMessage,
-                          fontSize: 15,
-                          color: Colors.black87,
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: LinearProgressIndicator(
+                          backgroundColor: Colors.grey[200],
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFFE53935)),
                         ),
-                        if (_foundShelter != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 12.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // 1. キーボードを閉じる
-                                  FocusScope.of(context).unfocus();
+                      )
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SafeText(
+                            _aiMessage,
+                            style: safeStyle(size: 15, color: Colors.black87),
+                          ),
+                          if (_foundShelter != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 12.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton.icon(
+                                  onPressed: () {
+                                    FocusScope.of(context).unfocus();
+                                    final provider =
+                                        context.read<ShelterProvider>();
+                                    final newTarget = _foundShelter!;
+                                    provider.startNavigation(newTarget);
 
-                                  final provider = context.read<ShelterProvider>();
-                                  final newTarget = _foundShelter!;
-
-                                  // 2. ナビ開始 (Providerを更新するだけで、親のCompassScreenが矢印を更新する)
-                                  provider.startNavigation(newTarget);
-
-                                  // 3. フィードバック (SnackBar)
-                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        GapLessL10n.t('bot_dest_set').replaceAll('@name', newTarget.name),
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: SafeText(
+                                          GapLessL10n.t('bot_dest_set')
+                                              .replaceAll(
+                                                  '@name', newTarget.name),
+                                          style: safeStyle(
+                                              color: Colors.white, size: 14),
+                                        ),
+                                        backgroundColor: Colors.green,
+                                        duration: const Duration(seconds: 2),
                                       ),
-                                      backgroundColor: Colors.green,
-                                      duration: const Duration(seconds: 2),
-                                    ),
-                                  );
-                                  
-                                  // 画面遷移はしない (コンパス画面のまま、矢印が変わる体験がベスト)
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.redAccent,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                ),
-                                icon: const Icon(Icons.navigation, size: 18),
-                                label: Text(
-                                  GapLessL10n.t('bot_go_to').replaceAll('@name', _foundShelter?.name ?? ''),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: emergencyTextStyle(isBold: true, color: Colors.white),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.redAccent,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(8)),
+                                  ),
+                                  icon: const Icon(Icons.navigation, size: 18),
+                                  label: SafeText(
+                                    GapLessL10n.t('bot_go_to').replaceAll(
+                                        '@name', _foundShelter?.name ?? ''),
+                                    style: emergencyTextStyle(
+                                        isBold: true, color: Colors.white),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
-                    ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -250,36 +226,24 @@ class _AIChatWidgetState extends State<AIChatWidget> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _buildChatChip(
-                icon: '💧',
-                label: '給水所',
-                enLabel: 'Water',
-                thLabel: 'น้ำดื่ม',
-                onTap: () => _handleUserSelection('water', '給水所'),
+              _buildChip(
+                type: 'water',
+                labelKey: 'bot_water',
               ),
               const SizedBox(width: 8),
-              _buildChatChip(
-                icon: '🏥',
-                label: '病院',
-                enLabel: 'Hospital',
-                thLabel: 'โรงพยาบาล',
-                onTap: () => _handleUserSelection('hospital', '病院'),
-              ),
-               const SizedBox(width: 8),
-              _buildChatChip(
-                icon: '🏪',
-                label: 'コンビニ',
-                enLabel: 'Store',
-                thLabel: 'ร้านค้า',
-                onTap: () => _handleUserSelection('convenience', 'コンビニ'),
+              _buildChip(
+                type: 'hospital',
+                labelKey: 'bot_hospital',
               ),
               const SizedBox(width: 8),
-              _buildChatChip(
-                icon: '🟢',
-                label: '避難所',
-                enLabel: 'Shelter',
-                thLabel: 'ที่พักพิง',
-                onTap: () => _handleUserSelection('shelter', '避難所'),
+              _buildChip(
+                type: 'convenience',
+                labelKey: 'bot_store',
+              ),
+              const SizedBox(width: 8),
+              _buildChip(
+                type: 'shelter',
+                labelKey: 'bot_safe_shelter',
               ),
             ],
           ),
@@ -288,54 +252,22 @@ class _AIChatWidgetState extends State<AIChatWidget> {
     );
   }
 
-  Widget _buildChatChip({
-    required String icon,
-    required String label,
-    required String enLabel,
-    required String thLabel,
-    required VoidCallback onTap,
+  Widget _buildChip({
+    required String type,
+    required String labelKey,
   }) {
-    final text = GapLessL10n.lang == 'ja'
-        ? '$icon $label'
-        : GapLessL10n.lang == 'th'
-            ? '$icon $thLabel'
-            : '$icon $enLabel';
-            
     return ActionChip(
-      label: _buildSafeText(text),
+      label: SafeText(
+        GapLessL10n.t(labelKey),
+        style: safeStyle(size: 14, color: Colors.black87),
+      ),
       backgroundColor: Colors.white,
       surfaceTintColor: Colors.white,
       elevation: 2,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      onPressed: onTap,
-    );
-  }
-
-
-
-  // どんな言語がプロンプトから返ってきても、トーフにさせない箱
-  Widget translationDisplay(Map<String, String> translatedData) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSafeText(translatedData['jp'] ?? '', fontSize: 18),
-        _buildSafeText(translatedData['en'] ?? '', fontSize: 16),
-        _buildSafeText(translatedData['th'] ?? '', fontSize: 20),
-      ],
-    );
-  }
-
-  Widget _buildSafeText(String text, {double fontSize = 16, Color color = Colors.black}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontFamily: GapLessL10n.currentFont,
-        fontFamilyFallback: GapLessL10n.fallbackFonts,
-        fontSize: fontSize,
-        height: 1.5,
-        color: color,
-      ),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      onPressed: () => _handleUserSelection(type),
     );
   }
 }
