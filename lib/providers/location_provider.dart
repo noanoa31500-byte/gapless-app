@@ -31,6 +31,7 @@ class LocationProvider extends ChangeNotifier {
   LocationPermission? get lastPermissionStatus => _lastPermissionStatus;
   bool get isDeadReckoning => _deadReckoning.isActive;
   int get deadReckoningStepCount => _deadReckoning.stepCount;
+  DeadReckoningService get deadReckoningService => _deadReckoning;
 
   // Internal State
   LocationPermission? _lastPermissionStatus;

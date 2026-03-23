@@ -454,6 +454,11 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       _startRiskMonitoring();
     });
 
+    // DeadReckoningService をバインド（GPS消失時のフォールバック）
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dr = context.read<LocationProvider>().deadReckoningService;
+      MapAutoLoader.instance.bindDeadReckoning(dr);
+    });
     MapAutoLoader.instance.start();
     _mapLoaderSubscription = MapAutoLoader.instance.onEvent.listen((event) {
       if (event.type == MapLoadEventType.allLoaded && mounted) {

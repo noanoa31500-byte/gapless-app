@@ -1,14 +1,17 @@
 // ============================================================
 // map_auto_loader.dart
 // 起動時ロード・10分タイマー・シングルトン
+// GPS消失時はDeadReckoningServiceにフォールバック
 // ============================================================
 
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'map_tile_index.dart';
 import 'map_download_service.dart';
 import 'map_cache_manager.dart';
+import '../services/dead_reckoning_service.dart';
 
 // ────────────────────────────────────────
 // イベント型
@@ -39,8 +42,14 @@ class MapAutoLoader {
   Timer? _timer;
   final _controller = StreamController<MapLoadEvent>.broadcast();
   bool _running = false;
+  DeadReckoningService? _deadReckoning;
 
   Stream<MapLoadEvent> get onEvent => _controller.stream;
+
+  /// DeadReckoningService をバインドする（main.dart の initState で呼ぶ）
+  void bindDeadReckoning(DeadReckoningService dr) {
+    _deadReckoning = dr;
+  }
 
   // ────────────────────────────────────
   // 起動: ローカルキャッシュ即利用 + バックグラウンド更新
@@ -128,7 +137,8 @@ class MapAutoLoader {
   }
 
   // ────────────────────────────────────
-  // 現在地取得（失敗時は SharedPreferences → デフォルト東京）
+  // 現在地取得
+  // 優先順: GPS → DeadReckoning → SharedPreferences → 東京デフォルト
   // ────────────────────────────────────
   Future<(double lat, double lng)> _getCurrentLocation() async {
     try {
@@ -140,7 +150,17 @@ class MapAutoLoader {
       final pos = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.reduced,
       ).timeout(const Duration(seconds: 5));
-      // 成功したら SharedPreferences に保存
+
+      // GPS成功: DRが起動中なら位置を融合して停止
+      final dr = _deadReckoning;
+      if (dr != null && dr.isActive) {
+        final fused = dr.deactivate(LatLng(pos.latitude, pos.longitude));
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setDouble('last_lat', fused.latitude);
+        await prefs.setDouble('last_lng', fused.longitude);
+        return (fused.latitude, fused.longitude);
+      }
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('last_lat', pos.latitude);
       await prefs.setDouble('last_lng', pos.longitude);
@@ -150,13 +170,35 @@ class MapAutoLoader {
     }
   }
 
+  // GPS失敗時のフォールバック
+  // 優先順: DeadReckoning推定位置 → SharedPreferences → 東京デフォルト
   Future<(double, double)> _fallbackLocation() async {
+    // 1. DeadReckoningが起動中なら推定位置を使用
+    final dr = _deadReckoning;
+    if (dr != null && dr.isActive) {
+      final drPos = dr.estimatedPosition;
+      if (drPos != null) {
+        return (drPos.latitude, drPos.longitude);
+      }
+    }
+
+    // 2. SharedPreferencesから前回位置を復元し、DRを起動
     try {
       final prefs = await SharedPreferences.getInstance();
       final lat = prefs.getDouble('last_lat');
       final lng = prefs.getDouble('last_lng');
-      if (lat != null && lng != null) return (lat, lng);
+      if (lat != null && lng != null) {
+        if (dr != null && !dr.isActive) {
+          dr.activate(LatLng(lat, lng));
+        }
+        return (lat, lng);
+      }
     } catch (_) {}
+
+    // 3. 東京デフォルト（DRも起動）
+    if (dr != null && !dr.isActive) {
+      dr.activate(const LatLng(_defaultLat, _defaultLng));
+    }
     return (_defaultLat, _defaultLng);
   }
 }
