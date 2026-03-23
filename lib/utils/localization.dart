@@ -223,6 +223,7 @@ class GapLessL10n {
 
       // Offline Banner
       'offline_banner': 'オフラインモード：保存済みデータを使用中',
+      'offline_nav_ok': 'オフラインでナビゲーション可能',
 
       // Disaster Mode Confirmation
       'disaster_mode_confirm_title': '災害モードを起動しますか？',
@@ -669,6 +670,7 @@ class GapLessL10n {
 
       // Offline Banner
       'offline_banner': 'Offline Mode: Using saved data',
+      'offline_nav_ok': 'Offline navigation available',
 
       // Disaster Mode Confirmation
       'disaster_mode_confirm_title': 'Enable Disaster Mode?',
@@ -1104,6 +1106,7 @@ class GapLessL10n {
 
       // Offline Banner
       'offline_banner': 'ออฟไลน์ | ใช้ข้อมูลท้องถิ่น',
+      'offline_nav_ok': 'นำทางออฟไลน์ได้',
 
       // Disaster Mode Confirmation
       'disaster_mode_confirm_title': 'เปิดโหมดภัยพิบัติ?',
@@ -1476,6 +1479,7 @@ class GapLessL10n {
       'splash_loading_hazard': '生成危险地图（2000个点）...',
       'splash_ready': '准备完成',
       'offline_banner': '离线模式：使用保存的数据',
+      'offline_nav_ok': '可离线导航',
       'disaster_mode_confirm_title': '启用灾难模式？',
       'disaster_mode_confirm_body': '切换到指南针导航，开始引导到最近的避难所。',
       'disaster_mode_confirm_ok': '启用',
@@ -1812,6 +1816,7 @@ class GapLessL10n {
       'splash_loading_hazard': '生成危险地图（2000个点）...',
       'splash_ready': '准备完成',
       'offline_banner': '离线模式：使用保存的数据',
+      'offline_nav_ok': '可离线导航',
       'disaster_mode_confirm_title': '启用灾难模式？',
       'disaster_mode_confirm_body': '切换到指南针导航，开始引导到最近的避难所。',
       'disaster_mode_confirm_ok': '启用',
@@ -2142,6 +2147,7 @@ class GapLessL10n {
       'splash_loading_hazard': '위험 지도 생성 중（2000개 지점）...',
       'splash_ready': '준비 완료',
       'offline_banner': '오프라인 모드：저장된 데이터 사용 중',
+      'offline_nav_ok': '오프라인 내비게이션 가능',
       'disaster_mode_confirm_title': '재난 모드 활성화？',
       'disaster_mode_confirm_body': '나침반 탐색으로 전환하여 최근 대피소로 안내 시작.',
       'disaster_mode_confirm_ok': '활성화',
@@ -2348,6 +2354,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Handa na',
       'offline_banner': 'Offline mode',
+      'offline_nav_ok': 'Available ang offline navigation',
       'header_category_guide': 'Opisyal na Gabay sa Kaligtasan（6 Pangunahing Paksa）',
       'header_category_ai': 'AI Suporta sa Pamumuhay（Iba pang Paksa）',
       'chat_prompt_main': 'Paano kita matutulungan？\nMangyaring pumili sa ibaba。',
@@ -2436,6 +2443,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Siap',
       'offline_banner': 'Mode offline',
+      'offline_nav_ok': 'Navigasi offline tersedia',
       'header_category_guide': 'Panduan Survival Resmi（6 Topik Penting）',
       'header_category_ai': 'Dukungan Hidup AI（Topik Lainnya）',
       'chat_prompt_main': 'Apa yang bisa saya bantu？\nSilakan pilih di bawah ini。',
@@ -2524,6 +2532,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'အဆင်သင့်',
       'offline_banner': 'Offline မုဒ်',
+      'offline_nav_ok': 'Offline နှင့် လမ်းညွှန်နိုင်သည်',
       'header_category_guide': 'တရားဝင် အသက်ရှင်ရပ်တည်ရေး လမ်းညွှန်（အရေးကြီးသော ၆ ခု）',
       'header_category_ai': 'AI ဘဝပံ့ပိုးမှု（အခြားအကြောင်းအရာများ）',
       'chat_prompt_main': 'ဘာကူညီပေးရမလဲ？\nအောက်မှ ရွေးချယ်ပါ။',
@@ -2612,6 +2621,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'සූදානම්',
       'offline_banner': 'Offline ප්‍රකාරය',
+      'offline_nav_ok': 'Offline සංචලනය ලබා ගත හැක',
       'header_category_guide': 'නිල පැවැත්මේ මාර්ගෝපදේශය（වැදගත් මාතෘකා 6）',
       'header_category_ai': 'AI ජීවන සහාය（වෙනත් විමසීම්）',
       'chat_prompt_main': 'මට ඔබට කෙසේ උදව් කළ හැකිද？\nකරුණාකර පහතින් තෝරන්න。',
@@ -2700,6 +2710,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'तैयार',
       'offline_banner': 'ऑफलाइन मोड',
+      'offline_nav_ok': 'ऑफलाइन नेविगेशन उपलब्ध',
       'header_category_guide': 'आधिकारिक जीवन रक्षा गाइड（महत्वपूर्ण 6 विषय）',
       'header_category_ai': 'AI जीवन समर्थन（अन्य सलाह）',
       'chat_prompt_main': 'आपको क्या सहायता चाहिए？\nनीचे से चुनें।',
@@ -2788,6 +2799,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'तयार',
       'offline_banner': 'अफलाइन मोड',
+      'offline_nav_ok': 'अफलाइन नेभिगेसन उपलब्ध',
       'header_category_guide': 'आधिकारिक जीवन रक्षा गाइड（महत्वपूर्ण ६ विषय）',
       'header_category_ai': 'AI जीवन समर्थन（अन्य सल्लाह）',
       'chat_prompt_main': 'तपाईंलाई के सहायता चाहिन्छ？\nतलबाट छनोट गर्नुहोस्।',
@@ -2876,6 +2888,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'প্রস্তুত',
       'offline_banner': 'অফলাইন মোড',
+      'offline_nav_ok': 'অফলাইন নেভিগেশন উপলব্ধ',
       'header_category_guide': 'সরকারি বেঁচে থাকার গাইড（গুরুত্বপূর্ণ ৬টি বিষয়）',
       'header_category_ai': 'AI জীবন সহায়তা（অন্যান্য পরামর্শ）',
       'chat_prompt_main': 'আপনার কী সাহায্য দরকার？\nনীচে থেকে বেছে নিন।',
@@ -2964,6 +2977,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Listo',
       'offline_banner': 'Modo sin conexión',
+      'offline_nav_ok': 'Navegación offline disponible',
       'header_category_guide': 'Guía Oficial de Supervivencia（6 Temas Importantes）',
       'header_category_ai': 'Soporte de Vida AI（Otros Temas）',
       'chat_prompt_main': '¿En qué puedo ayudarte？\nPor favor selecciona a continuación。',
@@ -3052,6 +3066,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Pronto',
       'offline_banner': 'Modo offline',
+      'offline_nav_ok': 'Navegação offline disponível',
       'header_category_guide': 'Guia Oficial de Sobrevivência（6 Tópicos Importantes）',
       'header_category_ai': 'Suporte de Vida AI（Outros Tópicos）',
       'chat_prompt_main': 'Como posso ajudar？\nPor favor, selecione abaixo。',
@@ -3140,6 +3155,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Бэлэн',
       'offline_banner': 'Офлайн горим',
+      'offline_nav_ok': 'Офлайн навигаци боломжтой',
       'header_category_guide': 'Албан ёсны амьд үлдэх гарын авлага（6 чухал сэдэв）',
       'header_category_ai': 'AI амьдралын дэмжлэг（бусад зөвлөгөө）',
       'chat_prompt_main': 'Танд юу хэрэгтэй？\nДоороос сонгоно уу。',
@@ -3228,6 +3244,7 @@ class GapLessL10n {
       'nav_still_moving': 'Moving',
       'splash_ready': 'Tayyor',
       'offline_banner': 'Oflayn rejim',
+      'offline_nav_ok': "Oflayn navigatsiya mavjud",
       'header_category_guide': "Rasmiy omon qolish qo'llanmasi（6 muhim mavzu）",
       'header_category_ai': "AI hayotiy yordam（boshqa maslahatlar）",
       'chat_prompt_main': "Qanday yordam kerak？\nQuyidan tanlang。",

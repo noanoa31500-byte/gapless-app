@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'localization.dart';
 
 /// Apple Human Interface Guidelines (HIG) に準拠したデザインシステム
 /// 
@@ -66,108 +67,99 @@ class AppleColors {
 
 class AppleTypography {
   AppleTypography._();
-  
+
+  // 豆腐・文字化け防止: 全スタイルにNotoSansフォントチェーンを付与
+  static String get _font => GapLessL10n.currentFont;
+  static List<String> get _fallback => GapLessL10n.fallbackFonts;
+
   // Large Title (Navigation bars)
-  static const TextStyle largeTitle = TextStyle(
-    fontSize: 34,
-    fontWeight: FontWeight.w700,
-    letterSpacing: 0.37,
-    height: 1.2,
+  static TextStyle get largeTitle => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 34, fontWeight: FontWeight.w700,
+    letterSpacing: 0.37, height: 1.2,
   );
-  
+
   // Title 1
-  static const TextStyle title1 = TextStyle(
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
-    letterSpacing: 0.36,
-    height: 1.2,
+  static TextStyle get title1 => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 28, fontWeight: FontWeight.w700,
+    letterSpacing: 0.36, height: 1.2,
   );
-  
+
   // Title 2
-  static const TextStyle title2 = TextStyle(
-    fontSize: 22,
-    fontWeight: FontWeight.w700,
-    letterSpacing: 0.35,
-    height: 1.3,
+  static TextStyle get title2 => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 22, fontWeight: FontWeight.w700,
+    letterSpacing: 0.35, height: 1.3,
   );
-  
+
   // Title 3
-  static const TextStyle title3 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w600,
-    letterSpacing: 0.38,
-    height: 1.3,
+  static TextStyle get title3 => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 20, fontWeight: FontWeight.w600,
+    letterSpacing: 0.38, height: 1.3,
   );
-  
+
   // Headline
-  static const TextStyle headline = TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.w600,
-    letterSpacing: -0.41,
-    height: 1.3,
+  static TextStyle get headline => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 17, fontWeight: FontWeight.w600,
+    letterSpacing: -0.41, height: 1.3,
   );
-  
+
   // Body
-  static const TextStyle body = TextStyle(
-    fontSize: 17,
-    fontWeight: FontWeight.w400,
-    letterSpacing: -0.41,
-    height: 1.4,
+  static TextStyle get body => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 17, fontWeight: FontWeight.w400,
+    letterSpacing: -0.41, height: 1.4,
   );
-  
+
   // Callout
-  static const TextStyle callout = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    letterSpacing: -0.32,
-    height: 1.4,
+  static TextStyle get callout => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 16, fontWeight: FontWeight.w400,
+    letterSpacing: -0.32, height: 1.4,
   );
-  
+
   // Subhead
-  static const TextStyle subhead = TextStyle(
-    fontSize: 15,
-    fontWeight: FontWeight.w400,
-    letterSpacing: -0.24,
-    height: 1.4,
+  static TextStyle get subhead => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 15, fontWeight: FontWeight.w400,
+    letterSpacing: -0.24, height: 1.4,
   );
-  
+
   // Footnote
-  static const TextStyle footnote = TextStyle(
-    fontSize: 13,
-    fontWeight: FontWeight.w400,
-    letterSpacing: -0.08,
-    height: 1.4,
+  static TextStyle get footnote => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 13, fontWeight: FontWeight.w400,
+    letterSpacing: -0.08, height: 1.4,
   );
-  
+
   // Caption 1
-  static const TextStyle caption1 = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0,
-    height: 1.3,
+  static TextStyle get caption1 => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 12, fontWeight: FontWeight.w400,
+    letterSpacing: 0, height: 1.3,
   );
-  
+
   // Caption 2
-  static const TextStyle caption2 = TextStyle(
-    fontSize: 11,
-    fontWeight: FontWeight.w400,
-    letterSpacing: 0.07,
-    height: 1.3,
+  static TextStyle get caption2 => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 11, fontWeight: FontWeight.w400,
+    letterSpacing: 0.07, height: 1.3,
   );
-  
+
   // Emergency Mode - 大きく太く
-  static const TextStyle emergencyLarge = TextStyle(
-    fontSize: 48,
-    fontWeight: FontWeight.w800,
-    letterSpacing: -1.0,
-    height: 1.1,
+  static TextStyle get emergencyLarge => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 48, fontWeight: FontWeight.w800,
+    letterSpacing: -1.0, height: 1.1,
   );
-  
-  static const TextStyle emergencyMedium = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w700,
-    letterSpacing: -0.5,
-    height: 1.2,
+
+  static TextStyle get emergencyMedium => TextStyle(
+    fontFamily: _font, fontFamilyFallback: _fallback,
+    fontSize: 32, fontWeight: FontWeight.w700,
+    letterSpacing: -0.5, height: 1.2,
   );
 }
 

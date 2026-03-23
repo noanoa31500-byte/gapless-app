@@ -389,15 +389,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                 ),
                 if (_isCached)
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                     child: Row(
                       children: [
-                        Icon(Icons.check_circle, color: Color(0xFF388E3C), size: 16),
-                        SizedBox(width: 8),
-                        Text(
-                          'オフラインでナビゲーション可能',
-                          style: TextStyle(color: Color(0xFF388E3C), fontSize: 13),
+                        const Icon(Icons.check_circle, color: Color(0xFF388E3C), size: 16),
+                        const SizedBox(width: 8),
+                        SafeText(
+                          GapLessL10n.t('offline_nav_ok'),
+                          style: safeStyle(size: 13, color: const Color(0xFF388E3C)),
                         ),
                       ],
                     ),

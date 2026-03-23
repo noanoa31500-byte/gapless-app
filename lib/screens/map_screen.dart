@@ -397,7 +397,7 @@ class _MapScreenState extends State<MapScreen> {
                         style: GapLessL10n.safeStyle(const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF2E7D32)))),
                       const SizedBox(height: 2),
                       Text('📍 ${_tappedPoint!.latitude.toStringAsFixed(5)}, ${_tappedPoint!.longitude.toStringAsFixed(5)}',
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                        style: GapLessL10n.safeStyle(TextStyle(fontSize: 12, color: Colors.grey[600]))),
                     ])),
                     IconButton(
                       icon: Icon(Icons.close_rounded, color: Colors.grey[400]),
