@@ -300,11 +300,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     ShelterProvider shelterProv,
     RegionModeProvider regionProv,
   ) {
-    // リージョンに応じてマップ初期位置を切替（日本:大崎市 / タイ:サトゥーン）
-    final isThailand = regionProv.currentRegion == AppRegion.thailand;
-    final initialCenter = isThailand
-        ? const LatLng(6.6238, 100.0674)   // サトゥーン県中心
-        : const LatLng(38.3591, 140.9405); // 大崎市中心
+    const initialCenter = LatLng(38.3591, 140.9405); // 大崎市中心
 
     return FlutterMap(
       mapController: _mapController,
@@ -907,13 +903,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       effectiveLocation = null;
     }
 
-    // GPSなし時はリージョンに応じたデフォルト位置へ
-    final isThailand =
-        context.read<RegionModeProvider>().currentRegion == AppRegion.thailand;
-    final regionBase = isThailand
-        ? const LatLng(6.6238, 100.0674) // サトゥーン
-        : const LatLng(38.3591, 140.9405); // 大崎市
-    effectiveLocation ??= regionBase;
+    // GPSなし時は大崎市をデフォルト位置とする
+    effectiveLocation ??= const LatLng(38.3591, 140.9405); // 大崎市
 
     final targetList = shelter.displayedShelters.isNotEmpty 
         ? shelter.displayedShelters 

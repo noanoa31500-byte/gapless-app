@@ -51,8 +51,6 @@ class _AIChatWidgetState extends State<AIChatWidget> {
 
     // 1. Get Region & Advice
     final region = shelterProvider.currentRegion;
-    final countryCode = region.startsWith('th') ? 'TH' : 'JP';
-    
     // Map type/label to input text for ChatService
     String inputKey = type; 
     if (type == 'hospital') inputKey = '怪我 blood'; // Trigger injury/blood advice
@@ -104,12 +102,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
         targetTypes = ['convenience', 'store'];
     
     } else if (type == 'water') {
-      // TH Adaptation: Water points are rare, use Convenience Stores (Water bottles)
-      if (countryCode == 'TH') {
-        targetTypes = ['water', 'convenience', 'store'];
-      } else {
-        targetTypes = ['water'];
-      }
+      targetTypes = ['water'];
     }
 
     // 検索実行

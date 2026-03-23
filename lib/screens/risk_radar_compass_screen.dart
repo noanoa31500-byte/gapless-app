@@ -641,9 +641,6 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
       return;
     }
 
-    final region = shelterProvider.currentRegion;
-    final countryCode = region.startsWith('th') ? 'TH' : 'JP';
-
     List<String> targetTypes = [type];
     if (type == 'shelter') {
       targetTypes = ['shelter', 'school', 'gov', 'community_centre', 'temple'];
@@ -652,11 +649,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
     } else if (type == 'convenience') {
       targetTypes = ['convenience', 'store'];
     } else if (type == 'water') {
-      if (countryCode == 'TH') {
-        targetTypes = ['water', 'convenience', 'store'];
-      } else {
-        targetTypes = ['water'];
-      }
+      targetTypes = ['water'];
     }
 
     final nearest = shelterProvider.getNearestShelter(

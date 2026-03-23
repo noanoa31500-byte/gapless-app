@@ -473,8 +473,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
         double? safeBearing;
         
-        final region = shelterProv.currentAppRegion;
-        final targetGeoRegion = region == AppRegion.japan ? GeoRegion.jpOsaki : GeoRegion.thSatun;
+        const targetGeoRegion = GeoRegion.jpOsaki;
         
         // Sync GeoRegion if changed
         if (compassProv.currentGeoRegion.code != targetGeoRegion.code) {
@@ -728,11 +727,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       }
     }
 
-    // Adjust types for Thailand (Water is scarce, use stores)
     List<String> types = [type];
-    if (shelterProvider.currentAppRegion == AppRegion.thailand && type == 'water') {
-      types = ['water', 'convenience', 'store'];
-    }
     
     // Find nearest
     final nearest = shelterProvider.getNearestShelter(userLoc, includeTypes: types);

@@ -89,7 +89,7 @@ class _ChatScreenState extends State<ChatScreen> {
         // 3. Construct Response
         // Use current language
         final lang = GapLessL10n.lang;
-        final countryCode = region.startsWith('th') ? 'TH' : 'JP';
+        const countryCode = 'JP';
         String systemPrompt = _buildFinalPrompt(countryCode, shelterProvider.isSafeInShelter);
         if (kDebugMode) debugPrint('--- [DEBUG] AI System Prompt: \n$systemPrompt ---');
         // Personalization

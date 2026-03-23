@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math' as math;
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
@@ -15,7 +14,6 @@ import '../services/safest_route_engine.dart';
 import 'region_mode_provider.dart'; // Used for AppRegion enum
 import '../services/risk_visualization_service.dart';
 import '../models/road_graph.dart';
-import '../services/navigation/gapless_navigation_engine.dart'; // New Navigation Engine
 
 /// 避難所データを管理するProvider
 class ShelterProvider with ChangeNotifier {
@@ -34,12 +32,6 @@ class ShelterProvider with ChangeNotifier {
   List<FloodCircleData> _floodRiskCircles = [];
   List<PowerRiskCircleData> _powerRiskCircles = [];
   
-  // タイ専用データ
-  List<Map<String, dynamic>> _floodRiskPoints = []; // satun_flood_prediction.json
-  List<List<LatLng>> _powerLinePolylines = []; // power_risk_th.geojson
-  
-  // サトゥーン避難所データ (GeoJSON) - タイ
-  List<RegionalShelter> _satunShelters = [];
   
   bool _isLoading = false;
   bool _isRoutingLoading = false;
@@ -83,14 +75,10 @@ class ShelterProvider with ChangeNotifier {
   List<Map<String, dynamic>> get hazardPoints => _hazardPoints;
   List<List<LatLng>> get roadPolylines => _roadPolylines; // Updated Type
   
-  // タイ専用データのゲッター
-  List<Map<String, dynamic>> get floodRiskPoints => _floodRiskPoints;
-  List<List<LatLng>> get powerLinePolylines => _powerLinePolylines;
   RoadGraph? get roadGraph => _roadGraph;
   List<String>? get safestRoute => _safestRoute;
   List<FloodCircleData> get floodRiskCircles => _floodRiskCircles;
   List<PowerRiskCircleData> get powerRiskCircles => _powerRiskCircles;
-  List<RegionalShelter> get satunShelters => _satunShelters;
   bool get isLoading => _isLoading;
   bool get isRoutingLoading => _isRoutingLoading;
   bool get isEmergencyMode => _isEmergencyMode;
@@ -118,18 +106,12 @@ class ShelterProvider with ChangeNotifier {
   static bool isOsakiArea(double lat, double lng) =>
       lat >= 38.30 && lat <= 38.90 && lng >= 140.60 && lng <= 141.20;
 
-  static bool isSatunArea(double lat, double lng) =>
-      lat >= 6.40 && lat <= 7.10 && lng >= 99.50 && lng <= 100.40;
-
   /// いずれのエリアにも属さない場合に最近傍エリアを返す
   static String _nearestRegion(double lat, double lng) {
-    // 各エリアの中心との距離（簡易）
     double distTokyo = (lat - 35.69).abs() + (lng - 139.69).abs();
     double distOsaki = (lat - 38.59).abs() + (lng - 140.90).abs();
-    double distSatun = (lat - 6.75).abs() + (lng - 99.95).abs();
-    if (distTokyo <= distOsaki && distTokyo <= distSatun) return 'jp_tokyo';
-    if (distOsaki <= distSatun) return 'jp_osaki';
-    return 'th_satun';
+    if (distTokyo <= distOsaki) return 'jp_tokyo';
+    return 'jp_osaki';
   }
 
   /// 座標から地域を自動設定 (GPS連動)
@@ -137,8 +119,6 @@ class ShelterProvider with ChangeNotifier {
     String newRegion;
     if (isTokyoArea(lat, lng)) {
       newRegion = 'jp_tokyo';
-    } else if (isSatunArea(lat, lng)) {
-      newRegion = 'th_satun';
     } else if (isOsakiArea(lat, lng)) {
       newRegion = 'jp_osaki';
     } else {
@@ -172,9 +152,7 @@ class ShelterProvider with ChangeNotifier {
       
       newShelters = newShelters.where((shelter) {
         final region = shelter.region ?? '';
-        if (_currentRegion.startsWith('th')) return region.startsWith('th_');
-        if (_currentRegion.startsWith('jp')) return region.startsWith('jp_');
-        return region == _currentRegion || region.isEmpty;
+        return region.startsWith('jp_') || region.isEmpty;
       }).toList();
 
       _shelters = newShelters.where((shelter) {
@@ -209,12 +187,6 @@ class ShelterProvider with ChangeNotifier {
         }
       }
 
-      if (_currentAppRegion == AppRegion.thailand) {
-        await _loadThailandPoiGplb();
-        await _loadFloodRiskData();
-        await _loadPowerLineData();
-        await loadThailandData();
-      }
       
       notifyListeners();
 
@@ -312,50 +284,6 @@ class ShelterProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('❌ _loadTokyoPoiGplb error: $e');
-    }
-  }
-
-  /// thailand_poi.gplb からタイのPOIデータを読み込み _shelters に統合
-  Future<void> _loadThailandPoiGplb() async {
-    try {
-      final bytes = await MapRepository.instance.readBytes('thailand_poi.gplb');
-      final grouped = GplbPoiParser.parseAndGroup(bytes);
-      final shelters   = grouped[PoiCategory.shelter]!;
-      final hospitals  = grouped[PoiCategory.hospital]!;
-      final convStores = grouped[PoiCategory.convenience]!;
-      final supplies   = grouped[PoiCategory.supply]!;
-      final landmarks  = grouped[PoiCategory.landmark]!;
-
-      int added = 0;
-      for (final feature in [...shelters, ...hospitals, ...convStores, ...supplies, ...landmarks]) {
-        final String type;
-        if (feature.isShelter) {
-          type = 'shelter';
-        } else if (feature.isHospital) {
-          type = 'hospital';
-        } else if (feature.isConvenience) {
-          type = 'convenience';
-        } else if (feature.isSupply) {
-          type = 'water';
-        } else {
-          type = 'landmark';
-        }
-        _shelters.add(Shelter(
-          id: 'gplb_th_${feature.type.id}_${feature.lat.toStringAsFixed(5)}_${feature.lng.toStringAsFixed(5)}',
-          name: feature.name,
-          lat: feature.lat,
-          lng: feature.lng,
-          type: type,
-          verified: true,
-          region: 'th_satun',
-          isFloodShelter: feature.handlesFlood,
-        ));
-        added++;
-      }
-      debugPrint('📦 _loadThailandPoiGplb: $added POIs loaded');
-      notifyListeners();
-    } catch (e) {
-      debugPrint('❌ _loadThailandPoiGplb error: $e');
     }
   }
 
@@ -502,74 +430,6 @@ class ShelterProvider with ChangeNotifier {
     }
   }
 
-  /// タイの洪水リスクデータを読み込む (thailand_hazard.gplh から flood タイプを抽出)
-  Future<void> _loadFloodRiskData() async {
-    try {
-      final String jsonString = await MapRepository.instance.readString('thailand_hazard.gplh');
-      final Map<String, dynamic> jsonData = json.decode(jsonString) as Map<String, dynamic>;
-      final String? dataType = jsonData['type'] as String?;
-
-      if (dataType == 'point_hazard') {
-        final List<dynamic> points = jsonData['points'] as List<dynamic>? ?? [];
-        _floodRiskPoints = points
-            .map((p) => p as Map<String, dynamic>)
-            .where((p) {
-              final t = (p['type'] as String? ?? '').toLowerCase();
-              final rs = p['risk_score'] as int? ?? 0;
-              return t.contains('flood') || rs > 0;
-            })
-            .toList();
-      } else {
-        _floodRiskPoints = [];
-      }
-
-      if (kDebugMode) {
-        debugPrint('🌊 Loaded ${_floodRiskPoints.length} flood risk points from thailand_hazard.gplh');
-      }
-    } catch (e) {
-      debugPrint('Error loading flood risk data: $e');
-      _floodRiskPoints = [];
-    }
-  }
-
-  /// タイの送電線データを読み込む (thailand_hazard.gplh から power タイプを抽出)
-  Future<void> _loadPowerLineData() async {
-    try {
-      final String jsonString = await MapRepository.instance.readString('thailand_hazard.gplh');
-      final Map<String, dynamic> jsonData = json.decode(jsonString) as Map<String, dynamic>;
-      final String? dataType = jsonData['type'] as String?;
-
-      _powerLinePolylines = [];
-      _powerRiskCircles.clear();
-
-      if (dataType == 'point_hazard') {
-        final List<dynamic> points = jsonData['points'] as List<dynamic>? ?? [];
-        for (final p in points) {
-          final point = p as Map<String, dynamic>;
-          final t = (point['type'] as String? ?? '').toLowerCase();
-          if (t.contains('power') || t.contains('tower') || t.contains('electric')) {
-            final lat = (point['lat'] as num).toDouble();
-            final lng = (point['lng'] as num).toDouble();
-            _powerRiskCircles.add(PowerRiskCircleData(
-              position: LatLng(lat, lng),
-              powerType: t,
-              lat: lat,
-              lng: lng,
-            ));
-          }
-        }
-      }
-
-      if (kDebugMode) {
-        debugPrint('⚡ Loaded ${_powerRiskCircles.length} power risk points from thailand_hazard.gplh');
-      }
-    } catch (e) {
-      debugPrint('Error loading power line data: $e');
-      _powerLinePolylines = [];
-      _powerRiskCircles = [];
-    }
-  }
-
   /// 緊急モード（公式フィルタ）を切り替える
   void toggleEmergencyMode() {
     _isEmergencyMode = !_isEmergencyMode;
@@ -596,20 +456,19 @@ class ShelterProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// 地域を切り替える (Demo用: Japan/Thailand toggle)
+  /// 地域を切り替える (Demo用: jp_osaki / jp_tokyo toggle)
   void toggleRegion() {
-    // jp... -> th_satun, th... -> jp_osaki
-    if (_currentRegion.startsWith('jp')) {
-      _currentRegion = 'th_satun';
-    } else {
+    if (_currentRegion == 'jp_tokyo') {
       _currentRegion = 'jp_osaki';
+    } else {
+      _currentRegion = 'jp_tokyo';
     }
     notifyListeners();
-    
+
     // データ再読み込み
     loadShelters();
-    loadHazardPolygons(); // This will load points for Thailand, polygons for Japan
-    _loadRoadData(); // 道路データも読み込む
+    loadHazardPolygons();
+    _loadRoadData();
   }
 
   /// 特定の地域を設定する
@@ -617,12 +476,6 @@ class ShelterProvider with ChangeNotifier {
     // 文字列を正規化（大文字入力も対応）
     final normalizedRegion = region.toLowerCase();
 
-    // 地域が変わる場合はナビゲーションターゲットをクリア
-    if (_currentRegion != normalizedRegion && _currentRegion != 'jp_osaki' && _currentRegion != 'th_satun') {
-       // 初期値や正規化後の値との比較が複雑なので、常にクリアするか検討
-       // ここではシンプルに、現在の地域と入力が異なる場合にクリア
-    }
-    
     // 安全のため、地域設定時は常にナビゲーション状態をリセット
     _navTarget = null;
     _isNavigating = false;
@@ -632,16 +485,9 @@ class ShelterProvider with ChangeNotifier {
     if (normalizedRegion == 'jp_tokyo') {
       _currentAppRegion = AppRegion.japan;
       _currentRegion = 'jp_tokyo';
-    } else if (normalizedRegion == 'japan' || normalizedRegion.startsWith('jp')) {
-      _currentAppRegion = AppRegion.japan;
-      _currentRegion = 'jp_osaki'; // 内部コードを正規化
-    } else if (normalizedRegion == 'thailand' || normalizedRegion.startsWith('th')) {
-      _currentAppRegion = AppRegion.thailand;
-      _currentRegion = 'th_satun'; // 内部コードを正規化
     } else {
-      // フォールバック: そのまま使用
-      _currentRegion = normalizedRegion;
       _currentAppRegion = AppRegion.japan;
+      _currentRegion = 'jp_osaki'; // デフォルトは大崎市
     }
     
     debugPrint('🌏 Region set to: $_currentRegion (AppRegion: $_currentAppRegion)');
@@ -654,9 +500,7 @@ class ShelterProvider with ChangeNotifier {
 
   /// 現在の地域の中心座標を取得
   Map<String, double> getCenter() {
-    if (_currentAppRegion == AppRegion.thailand) {
-      return {'lat': 6.7371225, 'lng': 100.0798828}; // PCSHS Satun
-    } else if (_currentRegion == 'jp_tokyo') {
+    if (_currentRegion == 'jp_tokyo') {
       return {'lat': 35.6895, 'lng': 139.6917}; // 東京都庁
     } else {
       // Japan (Osaki)
@@ -664,103 +508,38 @@ class ShelterProvider with ChangeNotifier {
     }
   }
 
-  /// ハザードデータを読み込む (ポリゴンまたはポイント)
+  /// ハザードデータを読み込む
   Future<void> loadHazardPolygons() async {
-    // Clear old data first
     _hazardPolygons = [];
     _hazardPoints = [];
-    
-    if (!_currentRegion.startsWith('th')) {
-      // Japan: 地域に応じたハザードファイルを読み込む
-      final hazardFile = _currentRegion == 'jp_tokyo'
-          ? 'tokyo_center_hazard.gplh'
-          : 'osaki_hazard.gplh';
-      try {
-        final jsonString = await MapRepository.instance.readString(hazardFile);
-        final jsonData = json.decode(jsonString) as Map<String, dynamic>;
-        final List<dynamic> polygonsData =
-            (jsonData['polygons'] as List<dynamic>?) ?? [];
-        _hazardPolygons = polygonsData.map((polygon) {
-          final List<dynamic> coords = polygon is Map<String, dynamic> &&
-                  polygon.containsKey('coordinates')
-              ? polygon['coordinates'] as List<dynamic>
-              : polygon as List<dynamic>;
-          return coords.map((coord) {
-            final List<dynamic> pt = coord as List<dynamic>;
-            return LatLng(
-                (pt[1] as num).toDouble(), (pt[0] as num).toDouble());
-          }).toList();
-        }).toList();
-        if (kDebugMode) {
-          debugPrint(
-              'Loaded ${_hazardPolygons.length} Japan hazard polygons from $hazardFile');
-        }
-      } catch (e) {
-        if (kDebugMode) print('Japan hazard load error ($hazardFile): $e');
-        _hazardPolygons = [];
-      }
-      notifyListeners();
-      return;
-    }
 
+    // Japan: 地域に応じたハザードファイルを読み込む
+    final hazardFile = _currentRegion == 'jp_tokyo'
+        ? 'tokyo_center_hazard.gplh'
+        : 'osaki_hazard.gplh';
     try {
-      final String jsonString =
-          await MapRepository.instance.readString('thailand_hazard.gplh');
-      final Map<String, dynamic> jsonData = json.decode(jsonString) as Map<String, dynamic>;
-
-      final String? dataType = jsonData['type'] as String?;
-
-      // Check format type
-      if (dataType == 'point_hazard') {
-        // --- Point Based ---
-        final List<dynamic> pointsData = jsonData['points'] as List<dynamic>;
-        _hazardPoints = pointsData.map((p) => p as Map<String, dynamic>).toList();
-        if (kDebugMode) print('Loaded ${_hazardPoints.length} hazard points');
-        
-      } else if (dataType == 'polygon_hazard') {
-        // --- New Polygon Format (with metadata) ---
-        final List<dynamic> polygonsData = jsonData['polygons'] as List<dynamic>;
-        _hazardPolygons = polygonsData.map((polygon) {
-          // 新形式: { "name": "...", "coordinates": [[lng, lat], ...] }
-          if (polygon is Map<String, dynamic> && polygon.containsKey('coordinates')) {
-            final List<dynamic> coords = polygon['coordinates'] as List<dynamic>;
-            return coords.map((coord) {
-              final List<dynamic> point = coord as List<dynamic>;
-              final double lng = (point[0] as num).toDouble();
-              final double lat = (point[1] as num).toDouble();
-              return LatLng(lat, lng);
-            }).toList();
-          }
-          // 旧形式: [[lng, lat], [lng, lat], ...]
-          final List<dynamic> coords = polygon as List<dynamic>;
-          return coords.map((coord) {
-            final List<dynamic> point = coord as List<dynamic>;
-            final double lng = (point[0] as num).toDouble();
-            final double lat = (point[1] as num).toDouble();
-            return LatLng(lat, lng);
-          }).toList();
+      final jsonString = await MapRepository.instance.readString(hazardFile);
+      final jsonData = json.decode(jsonString) as Map<String, dynamic>;
+      final List<dynamic> polygonsData =
+          (jsonData['polygons'] as List<dynamic>?) ?? [];
+      _hazardPolygons = polygonsData.map((polygon) {
+        final List<dynamic> coords = polygon is Map<String, dynamic> &&
+                polygon.containsKey('coordinates')
+            ? polygon['coordinates'] as List<dynamic>
+            : polygon as List<dynamic>;
+        return coords.map((coord) {
+          final List<dynamic> pt = coord as List<dynamic>;
+          return LatLng(
+              (pt[1] as num).toDouble(), (pt[0] as num).toDouble());
         }).toList();
-        if (kDebugMode) print('Loaded ${_hazardPolygons.length} hazard polygons (new format)');
-        
-      } else {
-        // --- Legacy Polygon Format (Japan) ---
-        final List<dynamic> polygonsData = jsonData['polygons'] as List<dynamic>;
-        _hazardPolygons = polygonsData.map((polygon) {
-          final List<dynamic> coords = polygon as List<dynamic>;
-          return coords.map((coord) {
-            final List<dynamic> point = coord as List<dynamic>;
-            final double lng = (point[0] as num).toDouble();
-            final double lat = (point[1] as num).toDouble();
-            return LatLng(lat, lng);
-          }).toList();
-        }).toList();
-        if (kDebugMode) print('Loaded ${_hazardPolygons.length} hazard polygons (legacy format)');
+      }).toList();
+      if (kDebugMode) {
+        debugPrint(
+            'Loaded ${_hazardPolygons.length} Japan hazard polygons from $hazardFile');
       }
-
     } catch (e) {
-      if (kDebugMode) print('Hazard load error: $e');
+      if (kDebugMode) print('Japan hazard load error ($hazardFile): $e');
       _hazardPolygons = [];
-      _hazardPoints = [];
     }
     notifyListeners();
   }
@@ -774,7 +553,7 @@ class ShelterProvider with ChangeNotifier {
   /// 
   /// タイ地域での災害リスク可視化のため
   Future<void> loadRiskData() async {
-    // このメソッドは非推奨：loadShelters内で_loadFloodRiskDataと_loadPowerLineDataが呼ばれます
+    // このメソッドは非推奨
     if (kDebugMode) {
       debugPrint('⚠️ loadRiskData() is deprecated');
     }
@@ -807,69 +586,8 @@ class ShelterProvider with ChangeNotifier {
   }
 
   /// 道路グラフを構築（ルーティング用）
-  /// 
-  /// compute()でバックグラウンド処理するため、UIをブロックしません
-  /// バイナリファイル（roads_jp.bin / roads_th.bin）を使用
-  Future<void> buildRoadGraph() async {
-    try {
-      String binPath;
-      String mode;
-      
-      if (_currentRegion.startsWith('th')) {
-        binPath = 'assets/data/roads_th.bin';
-        mode = 'thailand';
-
-        if (kDebugMode) print('🗺️ タイの道路グラフを構築中...');
-      } else {
-        return; // Japan road graph is not loaded (roads_jp.bin removed)
-      }
-      
-      // バイナリファイルからグラフを構築
-      _roadGraph = await BinaryGraphLoader.loadGraph(binPath, mode: mode);
-      
-      if (_roadGraph == null || _roadGraph!.nodes.isEmpty) {
-        if (kDebugMode) print('⚠️ バイナリファイルからグラフを構築できませんでした: $binPath');
-      }
-      
-      // RoutingEngineを初期化
-      if (_roadGraph != null) {
-        _reinitializeRoutingEngine();
-        
-        if (kDebugMode) {
-          debugPrint('✅ グラフ構築完了: ${_roadGraph!.getStats()}');
-        }
-      }
-      
-      notifyListeners();
-    } catch (e) {
-      if (kDebugMode) print('❌ グラフ構築エラー: $e');
-    }
-  }
-
-  /// RoutingEngineを現在の設定（ハザード等）で再初期化
-  void _reinitializeRoutingEngine() {
-    if (_roadGraph == null) return;
-
-    // ハザードポリゴンを math.Point 形式に変換
-    List<List<math.Point<double>>>? mathPolygons;
-    if (_hazardPolygons.isNotEmpty) {
-      mathPolygons = _hazardPolygons.map((poly) => 
-        poly.map((p) => math.Point(p.latitude, p.longitude)).toList()
-      ).toList();
-    }
-
-    _routingEngine = RoutingEngine(
-      graph: _roadGraph!,
-      mode: _currentAppRegion == AppRegion.japan ? 'japan' : 'thailand',
-      hazardPolygons: mathPolygons,
-      hazardPoints: _hazardPoints,
-    );
-    
-    // Configure shared Navigation Engine
-    if (_roadGraph != null) {
-      GapLessNavigationEngine().configure(_routingEngine!, _roadGraph!);
-    }
-  }
+  /// Japan road graph is handled via gplb; this is a no-op stub.
+  Future<void> buildRoadGraph() async {}
 
   /// 最大安全ルートを計算
   /// 
@@ -1442,81 +1160,6 @@ class ShelterProvider with ChangeNotifier {
       unawaited(_clearPersistedNavTarget());
     }
     notifyListeners();
-  }
-
-  /// サトゥーン避難所データを thailand_poi.gplb（_shelters）から派生
-  Future<void> loadSatunShelters() async {
-    _satunShelters = _shelters
-        .where((s) => s.region == 'th_satun')
-        .map((s) => RegionalShelter(
-              nameTh: s.name,
-              nameEn: s.name,
-              lat: s.lat,
-              lng: s.lng,
-              amenityType: s.type,
-              isFloodShelter: s.isFloodShelter,
-            ))
-        .toList();
-    if (kDebugMode) {
-      debugPrint('🇹🇭 Derived ${_satunShelters.length} Satun shelters from _shelters');
-    }
-    notifyListeners();
-  }
-
-  List<RegionalShelter> _thaiWaterStations = [];
-
-  /// タイの給水所データを thailand_poi.gplb（_shelters type=='water'）から派生
-  Future<void> loadThaiWaterStations() async {
-    _thaiWaterStations = _shelters
-        .where((s) => s.region == 'th_satun' && s.type == 'water')
-        .map((s) => RegionalShelter(
-              nameTh: s.name,
-              nameEn: s.name,
-              lat: s.lat,
-              lng: s.lng,
-              amenityType: 'water_station',
-            ))
-        .toList();
-    if (kDebugMode) {
-      debugPrint('🇹🇭 Derived ${_thaiWaterStations.length} Thai water stations from _shelters');
-    }
-  }
-
-  /// タイランドデータを一括読み込み
-  Future<void> loadThailandData() async {
-    await loadSatunShelters();
-    await loadThaiWaterStations();
-  }
-
-  /// 最寄りの安全な給水所を取得（タイ専用）
-  /// 
-  /// @param userLoc 現在位置
-  /// @return 最寄りの安全な給水所（RegionalShelter）
-  RegionalShelter? getNearestSafeWaterStation(LatLng userLoc) {
-    RegionalShelter? nearest;
-    double minDistance = double.infinity;
-
-    for (final station in _thaiWaterStations) {
-      // 1. 危険エリア判定 (浸水・感電リスク)
-      if (isPointInHazardZone(station.position)) {
-        continue; // 危険な場所はスキップ
-      }
-
-      // 2. 距離計算
-      final distance = Geolocator.distanceBetween(
-        userLoc.latitude,
-        userLoc.longitude,
-        station.lat,
-        station.lng,
-      );
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearest = station;
-      }
-    }
-    
-    return nearest;
   }
 
   /// 現在向いている方向の道路リスクを取得する

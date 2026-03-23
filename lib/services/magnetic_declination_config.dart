@@ -46,15 +46,6 @@ enum GeoRegion {
   /// 日本（沖縄県）
   jpOkinawa('jp_okinawa', '日本（沖縄）', 'Japan (Okinawa)', -5.0),
   
-  /// タイ（サトゥン県）
-  thSatun('th_satun', 'タイ（サトゥン）', 'Thailand (Satun)', -0.6),
-  
-  /// タイ（バンコク）
-  thBangkok('th_bangkok', 'タイ（バンコク）', 'Thailand (Bangkok)', -0.8),
-  
-  /// タイ（チェンマイ）
-  thChiangMai('th_chiang_mai', 'タイ（チェンマイ）', 'Thailand (Chiang Mai)', -1.0),
-  
   /// ニュージーランド（オークランド）- 将来拡張用
   /// 東偏（Easterly Declination）: 磁北が真北より東
   nzAuckland('nz_auckland', 'NZ（オークランド）', 'New Zealand (Auckland)', 20.0),
@@ -107,14 +98,6 @@ enum GeoRegion {
       return GeoRegion.jpFukuoka;
     }
     
-    // タイ（5-21N, 97-106E）
-    if (latitude >= 5 && latitude <= 21 && longitude >= 97 && longitude <= 106) {
-      // タイ国内の細分化
-      if (latitude <= 8) return GeoRegion.thSatun;
-      if (latitude >= 18) return GeoRegion.thChiangMai;
-      return GeoRegion.thBangkok;
-    }
-    
     // ニュージーランド（-47〜-34, 166〜179）
     if (latitude >= -47 && latitude <= -34 && longitude >= 166 && longitude <= 179) {
       return GeoRegion.nzAuckland;
@@ -146,21 +129,9 @@ class MagneticDeclinationConfig {
   /// 国土地理院データ + WMM2020検証
   static const double declinationJpOsaki = -8.5;
   
-  /// タイ・サトゥン県（2025-2026年）
-  /// WMM2020 + Thai Geomagnetic Survey
-  /// 
-  /// 【技術メモ】
-  /// サトゥン県（緯度6.62°N, 経度100.07°E）の偏角は非常に小さいです。
-  /// これは、磁気赤道（Magnetic Equator）に近いためです。
-  /// 磁気赤道付近では偏角が0に近づく傾向があります。
-  static const double declinationThSatun = -0.6;
-  
   /// 日本・東京（2024-2026年）
   static const double declinationJpTokyo = -7.5;
   
-  /// タイ・バンコク（2024-2026年）
-  static const double declinationThBangkok = -0.8;
-
   /// 偏角テーブル（座標 → 偏角のマッピング）
   /// キー: "lat_lon"（小数点1桁で丸め）
   static final Map<String, double> _declinationTable = {
@@ -174,13 +145,6 @@ class MagneticDeclinationConfig {
     '34.4_132.5': -6.6,  // 広島
     '33.6_130.4': -6.5,  // 福岡
     '26.2_127.7': -5.0,  // 那覇
-    
-    // タイ
-    '6.6_100.1': -0.6,   // サトゥン
-    '7.9_98.4': -0.5,    // プーケット
-    '13.8_100.5': -0.8,  // バンコク
-    '18.8_98.9': -1.0,   // チェンマイ
-    '8.0_99.8': -0.5,    // クラビ
   };
 
   /// 座標から偏角を取得（テーブル参照 + 補間）
@@ -453,11 +417,6 @@ class CompassCalibratorFactory {
   /// 日本（大崎市）用のキャリブレーター
   static CompassCalibrator createForJapanOsaki() {
     return CompassCalibrator(initialRegion: GeoRegion.jpOsaki);
-  }
-
-  /// タイ（サトゥン県）用のキャリブレーター
-  static CompassCalibrator createForThailandSatun() {
-    return CompassCalibrator(initialRegion: GeoRegion.thSatun);
   }
 
   /// 座標から自動生成
