@@ -549,11 +549,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         color: _redPrimary.withValues(alpha: 0.75),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Row(mainAxisSize: MainAxisSize.min, children: [
-        SizedBox(width: 14, height: 14,
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        const SizedBox(width: 14, height: 14,
           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
-        SizedBox(width: 10),
-        Text('センサー取得中...', style: TextStyle(color: Colors.white, fontSize: 13)),
+        const SizedBox(width: 10),
+        Text(GapLessL10n.t('sensor_loading'),
+          style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontSize: 13))),
       ]),
     );
   }

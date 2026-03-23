@@ -507,9 +507,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     color: _greenPrimary,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Text(
-                    "TARGET",
-                    style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                  child: Text(
+                    GapLessL10n.t('label_target'),
+                    style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
                   ),
                 ),
             ],

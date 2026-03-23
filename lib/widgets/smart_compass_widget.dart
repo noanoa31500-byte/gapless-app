@@ -6,6 +6,9 @@ import 'package:provider/provider.dart';
 import '../controllers/smart_compass_controller.dart';
 import '../providers/location_provider.dart';
 import '../providers/shelter_provider.dart';
+import '../utils/localization.dart';
+import '../utils/styles.dart';
+import 'safe_text.dart';
 
 /// ルート追従型スマートコンパスウィジェット
 /// 
@@ -121,7 +124,7 @@ class _SmartCompassWidgetState extends State<SmartCompassWidget>
             stream: _compassController.stateStream,
             builder: (context, stateSnapshot) {
               if (!stateSnapshot.hasData) {
-                return const Center(child: Text('待機中...'));
+                return Center(child: SafeText(GapLessL10n.t('standby'), style: safeStyle(size: 14, color: Colors.grey)));
               }
 
               final state = stateSnapshot.data!;
