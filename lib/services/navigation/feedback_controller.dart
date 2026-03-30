@@ -33,7 +33,7 @@ class FeedbackController {
   /// 正しいルート上 (Light Impact)
   Future<void> vibrateOnRoute() async {
     if (!_hapticEnabled) return;
-    if (await Vibration.hasVibrator() ?? false) {
+    if (await Vibration.hasVibrator()) {
       Vibration.vibrate(duration: 15, amplitude: 60); // Light
     }
   }
@@ -41,7 +41,7 @@ class FeedbackController {
   /// 目的地到着 (Success Pattern)
   Future<void> vibrateArrrival() async {
     if (!_hapticEnabled) return;
-    if (await Vibration.hasVibrator() ?? false) {
+    if (await Vibration.hasVibrator()) {
       Vibration.vibrate(pattern: [0, 100, 50, 100]); // Two pulses
     }
   }
@@ -49,7 +49,7 @@ class FeedbackController {
   /// 危険/逸脱警告 (Warning Pattern)
   Future<void> vibrateWarning() async {
     if (!_hapticEnabled) return;
-    if (await Vibration.hasVibrator() ?? false) {
+    if (await Vibration.hasVibrator()) {
       Vibration.vibrate(duration: 500); // Long heavy
     }
   }

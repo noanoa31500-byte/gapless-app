@@ -203,7 +203,7 @@ class SmartCompassController {
   Future<void> _triggerOffCourseVibration() async {
     try {
       // デバイスがバイブレーション機能を持つか確認
-      final hasVibrator = await Vibration.hasVibrator() ?? false;
+      final hasVibrator = await Vibration.hasVibrator();
       
       if (hasVibrator) {
         // パターン: 短い振動3回（警告）

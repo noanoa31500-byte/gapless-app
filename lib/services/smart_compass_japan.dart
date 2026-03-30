@@ -463,7 +463,7 @@ class SmartCompassJapan with ChangeNotifier {
       await HapticFeedback.lightImpact();
       
       // Vibrationパッケージでより強いフィードバック（対応端末のみ）
-      final hasVibrator = await Vibration.hasVibrator() ?? false;
+      final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator) {
         // 短いパルス振動（50ms × 2回）
         await Vibration.vibrate(pattern: [0, 50, 50, 50], intensities: [0, 128, 0, 128]);
@@ -485,7 +485,7 @@ class SmartCompassJapan with ChangeNotifier {
     try {
       await HapticFeedback.heavyImpact();
       
-      final hasVibrator = await Vibration.hasVibrator() ?? false;
+      final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator) {
         // 到着パターン（長めの振動）
         await Vibration.vibrate(pattern: [0, 200, 100, 200, 100, 200], intensities: [0, 255, 0, 255, 0, 255]);

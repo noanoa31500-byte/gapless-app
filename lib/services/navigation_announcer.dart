@@ -185,7 +185,7 @@ class NavigationAnnouncer {
   Future<void> _hapticTurn(TurnImportance importance) async {
     if (_power.isPowerSaving && importance != TurnImportance.critical) return;
     try {
-      if (await Vibration.hasVibrator() ?? false) {
+      if (await Vibration.hasVibrator()) {
         if (importance == TurnImportance.critical) {
           Vibration.vibrate(pattern: [0, 80, 60, 80]);
         } else {
