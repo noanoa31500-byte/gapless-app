@@ -7,7 +7,6 @@ import '../services/dead_reckoning_service.dart';
 
 class LocationProvider extends ChangeNotifier {
   LatLng? _currentLocation;
-  bool _isDemoMode = false;
   String _currentLocationName = '';
   bool _isTracking = false;
   bool _isLoadingLocation = false;
@@ -23,7 +22,6 @@ class LocationProvider extends ChangeNotifier {
   // Getters
   LatLng? get currentLocation => _currentLocation;
   bool get isUsingLastKnownLocation => _currentLocation != null && _currentLocationName == 'Last Known Location';
-  bool get isDemoMode => _isDemoMode;
   String get currentLocationName => _currentLocationName;
   bool get isTracking => _isTracking;
   bool get isLoadingLocation => _isLoadingLocation;
@@ -36,26 +34,7 @@ class LocationProvider extends ChangeNotifier {
   // Internal State
   LocationPermission? _lastPermissionStatus;
 
-  // デモ用の座標定義
-  static const Map<String, Map<String, dynamic>> _demoLocations = {
-    'school': {
-      'coords': LatLng(38.5805749, 140.9493617),
-      'name': 'School (Demo Venue)',
-      'region': 'Japan',
-    },
-    'osaki': {
-      'coords': LatLng(38.5776362, 140.9559793),
-      'name': 'Osaki City Hall',
-      'region': 'Japan',
-    },
-    'thailand': {
-      'coords': LatLng(6.7371, 100.0799),
-      'name': 'PCSHS Satun',
-      'region': 'Thailand',
-    },
-  };
-
-  /// アプリ起動時の初期化処理（権限リクエストと現在地取得）
+/// アプリ起動時の初期化処理（権限リクエストと現在地取得）
   Future<void> initLocation() async {
     try {
       // 権限チェックとリクエスト
@@ -106,8 +85,7 @@ class LocationProvider extends ChangeNotifier {
       
       _currentLocation = LatLng(position.latitude, position.longitude);
       _currentLocationName = 'GPS Location';
-      _isDemoMode = false;
-      
+
       // 保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setDouble('last_lat', position.latitude);
@@ -200,7 +178,6 @@ class LocationProvider extends ChangeNotifier {
       }
 
       _currentLocationName = 'GPS Location';
-      _isDemoMode = false;
       _isLoadingLocation = false;
       notifyListeners();
 
@@ -266,7 +243,6 @@ class LocationProvider extends ChangeNotifier {
           _currentLocation = gpsPos;
         }
         _currentLocationName = 'GPS Tracking';
-        _isDemoMode = false;
         notifyListeners();
         debugPrint('📍 GPS Tracking update: $_currentLocation');
       },
@@ -302,38 +278,18 @@ class LocationProvider extends ChangeNotifier {
     });
   }
 
-  /// デモ用テレポート機能
-  void teleportForDemo(String locationKey) {
-    if (_demoLocations.containsKey(locationKey)) {
-      final location = _demoLocations[locationKey]!;
-      _currentLocation = location['coords'] as LatLng;
-      _currentLocationName = location['name'] as String;
-      _isDemoMode = true;
-      notifyListeners();
-      
-      debugPrint('📍 Teleported to: $_currentLocationName ($_currentLocation)');
-    }
-  }
-
   /// 現在地を設定
   void setCurrentLocation(LatLng location, {String name = 'Current Location'}) {
     _currentLocation = location;
     _currentLocationName = name;
-    _isDemoMode = false;
     notifyListeners();
   }
 
-  /// デモモードをリセット
+  /// 現在地をクリア
   void exitDemoMode() {
-    _isDemoMode = false;
     _currentLocation = null;
     _currentLocationName = '';
     notifyListeners();
-  }
-
-  /// 指定されたキーの地域を取得
-  String? getRegionForLocation(String locationKey) {
-    return _demoLocations[locationKey]?['region'] as String?;
   }
 
   @override

@@ -496,22 +496,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // Section 3: About
           _buildSectionHeader(GapLessL10n.t('set_about')),
           
-          GestureDetector(
-            onLongPress: _showDeveloperMenu,
-            child: ListTile(
-              leading: const Icon(Icons.info, color: Color(0xFF43A047)),
-              title: Text('${GapLessL10n.t('app_version')} 1.0.0'),
-              subtitle: Text(GapLessL10n.t('label_gapless_project')),
-            ),
+          ListTile(
+            leading: const Icon(Icons.info, color: Color(0xFF43A047)),
+            title: Text('${GapLessL10n.t('app_version')} 1.0.0'),
+            subtitle: Text(GapLessL10n.t('label_gapless_project')),
           ),
-          
-          GestureDetector(
-            onLongPress: _showDeveloperMenu,
-            child: ListTile(
-              leading: const Icon(Icons.developer_mode, color: Color(0xFF43A047)),
-              title: Text(GapLessL10n.t('app_credit')),
-              subtitle: Text(GapLessL10n.t('label_developed_for')),
-            ),
+
+          ListTile(
+            leading: const Icon(Icons.developer_mode, color: Color(0xFF43A047)),
+            title: Text(GapLessL10n.t('app_credit')),
+            subtitle: Text(GapLessL10n.t('label_developed_for')),
           ),
           
           const SizedBox(height: 32),
@@ -706,95 +700,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
 
 
-  /// 隠しデベロッパーメニューを表示（LocationProvider対応）
-  void _showDeveloperMenu() {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Row(
-           children: [
-             const Icon(Icons.code, color: Color(0xFF6B7280)),
-             const SizedBox(width: 12),
-             SafeText(
-               '📍 Debug Teleport',
-               style: emergencyTextStyle(isBold: true),
-             ),
-           ],
-        ),
-        children: [
-          // School (Here)
-          SimpleDialogOption(
-            onPressed: () {
-              Navigator.pop(context);
-              _teleportToLocation('school');
-            },
-            child: const ListTile(
-              leading: Icon(Icons.school, color: Color(0xFFE53935)),
-              title: SafeText('🏫 School (Here)'),
-              subtitle: SafeText('Demo Venue'),
-            ),
-          ),
-          
-          const Divider(),
-          
-          // Osaki City Hall
-          SimpleDialogOption(
-            onPressed: () {
-              Navigator.pop(context);
-              _teleportToLocation('osaki');
-            },
-            child: const ListTile(
-              leading: Icon(Icons.location_city, color: Color(0xFFE53935)),
-              title: SafeText('🇯🇵 Osaki City Hall'),
-              subtitle: SafeText('Miyagi, Japan'),
-            ),
-          ),
-          
-          const Divider(),
-          
-          // Thailand (PCSHS Satun)
-          SimpleDialogOption(
-            onPressed: () {
-              Navigator.pop(context);
-              _teleportToLocation('thailand');
-            },
-            child: const ListTile(
-              leading: Icon(Icons.public, color: Color(0xFFE53935)),
-              title: SafeText('🇹🇭 PCSHS Thailand'),
-              subtitle: SafeText('สตูล (Satun)'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// テレポート機能（LocationProvider使用）
-  void _teleportToLocation(String locationKey) {
-    if (!mounted) return;
-    
-    // LocationProviderを使用してテレポート
-    final locationProvider = context.read<LocationProvider>();
-    locationProvider.teleportForDemo(locationKey);
-    
-    // 地域を自動設定
-    final region = locationProvider.getRegionForLocation(locationKey);
-    if (region != null) {
-      _changeRegion(region);
-    }
-    
-    // フィードバック
-    if (mounted) {
-      final name = locationProvider.currentLocationName;
-            ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: SafeText(
-               GapLessL10n.t('msg_teleport').replaceAll('@name', name),
-            ),
-          duration: const Duration(seconds: 2),
-          backgroundColor: const Color(0xFF6B7280),
-        ),
-      );
-    }
-  }
 }

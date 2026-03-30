@@ -164,9 +164,6 @@ class GapLessL10n {
       'hazard_flood': '洪水警報 (FLOOD)',
       'hazard_earthquake': '地震警報 (EARTHQUAKE)',
       
-      // Teleport
-      'msg_teleport': 'テレポート: @name',
-      
       // Marker Categories (New)
       'marker_shelter': '避難所',
       'marker_food_supply': '食料・物資',
@@ -617,9 +614,6 @@ class GapLessL10n {
       'hazard_flood': 'FLOOD ALERT',
       'hazard_earthquake': 'EARTHQUAKE ALERT',
       
-      // Teleport
-      'msg_teleport': 'Warped to @name',
-      
       // Marker Categories (New)
       'marker_shelter': 'Shelter',
       'marker_food_supply': 'Food/Supply',
@@ -1053,9 +1047,6 @@ class GapLessL10n {
       'hazard_flood': 'แจ้งเตือนน้ำท่วม (FLOOD)',
       'hazard_earthquake': 'แจ้งเตือนแผ่นดินไหว (EARTHQUAKE)',
       
-      // Teleport
-      'msg_teleport': 'วาร์ปไปที่ @name',
-      
       // Marker Categories (New)
       'marker_shelter': 'จุดอพยพ',
       'marker_food_supply': 'จุดเสบียง',
@@ -1441,7 +1432,6 @@ class GapLessL10n {
       'msg_location_cleared': '位置已清除',
       'hazard_flood': '洪水警报',
       'hazard_earthquake': '地震警报',
-      'msg_teleport': '传送至 @name',
       'marker_shelter': '避难所',
       'marker_food_supply': '食物/物资',
       'marker_flood_shelter': '洪水避难所',
@@ -1778,7 +1768,6 @@ class GapLessL10n {
       'msg_location_cleared': '位置已清除',
       'hazard_flood': '洪水警报',
       'hazard_earthquake': '地震警报',
-      'msg_teleport': '传送至 @name',
       'marker_shelter': '避难所',
       'marker_food_supply': '食物/物资',
       'marker_flood_shelter': '洪水避难所',
@@ -2109,7 +2098,6 @@ class GapLessL10n {
       'msg_location_cleared': '위치 지워짐',
       'hazard_flood': '홍수 경보',
       'hazard_earthquake': '지진 경보',
-      'msg_teleport': '@name으로 이동',
       'marker_shelter': '대피소',
       'marker_food_supply': '식량/물자',
       'marker_flood_shelter': '홍수 대피소',
