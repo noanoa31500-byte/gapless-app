@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../utils/localization.dart';
 import '../providers/user_profile_provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
 
@@ -16,6 +17,7 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final profileProvider = context.watch<UserProfileProvider>();
     final profile = profileProvider.profile;
 

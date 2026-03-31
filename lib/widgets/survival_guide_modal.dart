@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/styles.dart';
+import '../utils/localization.dart';
 import 'safe_text.dart';
 
 import '../constants/survival_data.dart'; // Adjust path as needed
@@ -85,7 +86,7 @@ class SurvivalGuideModal {
                     children: [
                       if (steps != null && steps.isNotEmpty) ...[
                         SafeText(
-                          'STEPS / 手順',
+                          GapLessL10n.t('sg_steps_header'),
                           style: emergencyTextStyle(
                             size: 12,
                             isBold: true,
@@ -149,7 +150,9 @@ class SurvivalGuideModal {
                                         Padding(
                                           padding: const EdgeInsets.only(top: 4),
                                           child: Chip(
-                                            label: SafeText('${step.durationSeconds} sec'),
+                                            label: SafeText(
+                                              GapLessL10n.t('sg_seconds').replaceAll('@n', '${step.durationSeconds}'),
+                                            ),
                                             backgroundColor: Colors.blue[50],
                                             labelStyle: emergencyTextStyle(color: Colors.blue[800]!, size: 12),
                                             visualDensity: VisualDensity.compact,
@@ -164,7 +167,7 @@ class SurvivalGuideModal {
                         }),
                       ] else ...[
                         SafeText(
-                          'ACTION:',
+                          GapLessL10n.t('sg_action_header'),
                           style: emergencyTextStyle(
                             size: 12,
                             isBold: true,
@@ -187,7 +190,7 @@ class SurvivalGuideModal {
                       // Multi-language Reference
                       ExpansionTile(
                         title: SafeText(
-                          'All Languages / 多言語で見る',
+                          GapLessL10n.t('sg_all_lang'),
                           style: emergencyTextStyle(size: 16, color: Colors.grey),
                         ),
                         children: [
@@ -220,7 +223,7 @@ class SurvivalGuideModal {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: SafeText('Close', style: emergencyTextStyle(isBold: true)),
+                  child: SafeText(GapLessL10n.t('sg_close'), style: emergencyTextStyle(isBold: true)),
                 ),
               ),
             ],

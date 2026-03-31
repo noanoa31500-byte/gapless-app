@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 
 // ============================================================================
@@ -63,6 +65,7 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     // 矢印の回転角: デバイス方位を除いた相対方位
     final arrowAngle =
         (widget.returnBearingDeg - widget.headingDeg) * math.pi / 180;

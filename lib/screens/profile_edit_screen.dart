@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/styles.dart';
 import '../utils/localization.dart';
+import '../providers/language_provider.dart';
 
 class ProfileEditScreen extends StatefulWidget {
   const ProfileEditScreen({super.key});
@@ -18,6 +20,22 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   final List<String> _selectedAllergies = [];
   final List<String> _selectedSpecialNeeds = [];
 
+  // Stored IDs → localization key mapping
+  static const Map<String, String> _allergyKeyMap = {
+    'Eggs':    'allergy_eggs',
+    'Peanuts': 'allergy_peanuts',
+    'Milk':    'allergy_milk',
+    'Seafood': 'allergy_seafood',
+    'Wheat':   'allergy_wheat',
+  };
+  static const Map<String, String> _needsKeyMap = {
+    'Wheelchair':         'need_wheelchair',
+    'Visual Impairment':  'need_visual',
+    'Hearing Impairment': 'need_hearing',
+    'Pregnancy':          'need_pregnancy',
+    'Infant':             'need_infant',
+    'Halal':              'need_halal',
+  };
   final List<String> _allergyOptions = ['Eggs', 'Peanuts', 'Milk', 'Seafood', 'Wheat'];
   final List<String> _specialNeedsOptions = [
     'Wheelchair', 'Visual Impairment', 'Hearing Impairment', 'Pregnancy', 'Infant', 'Halal'
@@ -71,6 +89,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       appBar: AppBar(title: Text(GapLessL10n.t('profile_settings'))),
       body: SingleChildScrollView(
@@ -92,12 +111,12 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
             const SizedBox(height: 24),
             
             _buildSectionTitle(GapLessL10n.t('label_allergies')),
-            _buildChipGroup(_allergyOptions, _selectedAllergies),
+            _buildChipGroup(_allergyOptions, _selectedAllergies, _allergyKeyMap),
             
             const SizedBox(height: 24),
             
             _buildSectionTitle(GapLessL10n.t('label_needs')),
-            _buildChipGroup(_specialNeedsOptions, _selectedSpecialNeeds),
+            _buildChipGroup(_specialNeedsOptions, _selectedSpecialNeeds, _needsKeyMap),
             
             const SizedBox(height: 40),
             SizedBox(
@@ -123,14 +142,16 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     );
   }
 
-  Widget _buildChipGroup(List<String> options, List<String> selectedList) {
+  Widget _buildChipGroup(List<String> options, List<String> selectedList, Map<String, String> keyMap) {
     return Wrap(
       spacing: 8.0,
       runSpacing: 4.0,
       children: options.map((option) {
         final isSelected = selectedList.contains(option);
+        final l10nKey = keyMap[option];
+        final label = l10nKey != null ? GapLessL10n.t(l10nKey) : option;
         return FilterChip(
-          label: Text(option),
+          label: Text(label),
           selected: isSelected,
           onSelected: (bool selected) {
             setState(() {

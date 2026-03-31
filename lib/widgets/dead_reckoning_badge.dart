@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../providers/location_provider.dart';
 import '../utils/localization.dart';
 
@@ -9,6 +10,7 @@ class DeadReckoningBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     final loc = context.watch<LocationProvider>();
     if (!loc.isDeadReckoning) return const SizedBox.shrink();
 

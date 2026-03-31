@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:vibration/vibration.dart';
 import '../../utils/apple_design_system.dart';
+import '../../utils/localization.dart';
 
 /// ============================================================================
 /// FeedbackController - ユーザーへのフィードバック（振動・音声・視覚）統括
@@ -20,12 +21,30 @@ class FeedbackController {
   String? get alertMessage => _alertMessage;
 
   Future<void> init() async {
-    await _tts.setLanguage('ja-JP');
+    await _tts.setLanguage(_ttsLocale(GapLessL10n.lang));
     await _tts.setSpeechRate(0.5);
     await _tts.setVolume(1.0);
     // iOS/Android settings
     await _tts.setIosAudioCategory(IosTextToSpeechAudioCategory.ambient,
         [IosTextToSpeechAudioCategoryOptions.mixWithOthers]);
+  }
+
+  /// GapLessL10n言語コードをTTSロケール文字列に変換（18言語対応）
+  String _ttsLocale(String lang) {
+    switch (lang) {
+      case 'ja':    return 'ja-JP';
+      case 'th':    return 'th-TH';
+      case 'zh':    return 'zh-CN';
+      case 'zh_TW': return 'zh-TW';
+      case 'ko':    return 'ko-KR';
+      case 'hi':    return 'hi-IN';
+      case 'bn':    return 'bn-BD';
+      case 'id':    return 'id-ID';
+      case 'vi':    return 'vi-VN';
+      case 'es':    return 'es-ES';
+      case 'pt':    return 'pt-BR';
+      default:      return 'en-US';
+    }
   }
 
   // --- Haptic Feedback Methods ---
@@ -62,15 +81,10 @@ class FeedbackController {
   }
 
   Future<void> speakNavigationUpdate(double distance, String direction) async {
-    // "およそ300メートル先、南東です"
-    String distStr;
-    if (distance >= 1000) {
-      distStr = '${(distance / 1000).toStringAsFixed(1)}キロ';
-    } else {
-      distStr = '${distance.round()}メートル';
-    }
-    
-    await speak('およそ$distStr先、$directionです');
+    final distStr = distance >= 1000
+        ? GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distance / 1000).toStringAsFixed(1))
+        : GapLessL10n.t('tts_distance_m').replaceAll('@dist', distance.round().toString());
+    await speak('$distStr $direction');
   }
 
   // --- Visual Alert Management ---

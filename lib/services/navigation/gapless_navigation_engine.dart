@@ -11,6 +11,7 @@ import 'feedback_controller.dart';
 import '../routing_engine.dart';
 import '../../models/road_graph.dart';
 import '../../models/shelter.dart';
+import '../../utils/localization.dart';
 
 /// ============================================================================
 /// GapLessNavigationEngine - ナビゲーションの中核エンジン
@@ -109,7 +110,7 @@ class GapLessNavigationEngine extends ChangeNotifier {
   Future<void> startNavigation(List<LatLng> route, Shelter target) async {
     _routeManager.startNavigation(route, target);
     _isNavigating = true;
-    _feedbackController.speak("ナビゲーションを開始します。目的地は、${target.name}です。");
+    _feedbackController.speak(GapLessL10n.t('bot_dest_set').replaceAll('@name', target.name));
     HapticFeedback.mediumImpact(); // System Haptic
     notifyListeners();
   }
@@ -118,7 +119,7 @@ class GapLessNavigationEngine extends ChangeNotifier {
   void stopNavigation() {
     _routeManager.stopNavigation();
     _isNavigating = false;
-    _feedbackController.speak("ナビゲーションを終了します。");
+    _feedbackController.speak(GapLessL10n.t('tts_backtrack'));
     notifyListeners();
   }
 
@@ -166,13 +167,13 @@ class GapLessNavigationEngine extends ChangeNotifier {
   }
   
   void _handleArrival() {
-    _feedbackController.speak("目的地に到着しました。お疲れ様でした。");
+    _feedbackController.speak(GapLessL10n.t('tts_arrived'));
     _feedbackController.vibrateArrrival();
     stopNavigation();
   }
   
   void _handleOffRoute() {
-    _feedbackController.speak("ルートから外れています。再検索します。");
+    _feedbackController.speak(GapLessL10n.t('tts_out_of_bounds'));
     _feedbackController.vibrateWarning();
     // Trigger Reroute Logic Here
     // _routeManager.recalculate...

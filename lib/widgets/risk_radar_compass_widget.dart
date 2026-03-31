@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../services/risk_radar_scanner.dart';
 import '../services/offline_risk_scanner.dart';
 import '../utils/localization.dart';
@@ -115,6 +117,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     return GestureDetector(
       onTap: widget.onTap,
       child: SizedBox(
@@ -345,14 +348,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   }
 
   String _getRiskLevelText(int percent) {
-    switch (widget.lang) {
-      case 'ja':
-        return '危険度 $percent%';
-      case 'th':
-        return 'ความเสี่ยง $percent%';
-      default:
-        return 'RISK $percent%';
-    }
+    return GapLessL10n.t('risk_level').replaceAll('@pct', '$percent');
   }
 
   /// 補正ガイダンス
@@ -804,6 +800,7 @@ class RiskRadarCompassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     return Card(
       color: Colors.grey.shade900,
       elevation: 8,
@@ -897,12 +894,12 @@ class RiskRadarCompassCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            isLoaded ? 'READY' : 'LOADING',
-            style: TextStyle(
+            isLoaded ? GapLessL10n.t('risk_ready') : GapLessL10n.t('risk_loading'),
+            style: GapLessL10n.safeStyle(TextStyle(
               color: isLoaded ? Colors.green : Colors.orange,
               fontSize: 10,
               fontWeight: FontWeight.bold,
-            ),
+            )),
           ),
         ),
       ],
@@ -915,16 +912,7 @@ class RiskRadarCompassCard extends StatelessWidget {
     return Colors.green;
   }
 
-  String _getTitle() {
-    switch (lang) {
-      case 'ja':
-        return 'リスクレーダー';
-      case 'th':
-        return 'เรดาร์ความเสี่ยง';
-      default:
-        return 'Risk Radar';
-    }
-  }
+  String _getTitle() => GapLessL10n.t('risk_radar_title');
 
   Widget _buildLegend() {
     return Row(
@@ -954,12 +942,12 @@ class RiskRadarCompassCard extends StatelessWidget {
   }
 
   String _getLegendText(String key) {
-    const texts = {
-      'shock': {'ja': '感電', 'en': 'Shock', 'th': 'ไฟฟ้า'},
-      'flood': {'ja': '浸水', 'en': 'Flood', 'th': 'น้ำท่วม'},
-      'safe': {'ja': '安全', 'en': 'Safe', 'th': 'ปลอดภัย'},
-    };
-    return texts[key]?[lang] ?? texts[key]?['en'] ?? key;
+    switch (key) {
+      case 'shock': return GapLessL10n.t('risk_shock');
+      case 'flood': return GapLessL10n.t('risk_flood');
+      case 'safe':  return GapLessL10n.t('risk_safe');
+      default:      return key;
+    }
   }
 
   Widget _buildWarnings() {
@@ -1018,35 +1006,12 @@ class RiskRadarCompassCard extends StatelessWidget {
   String _getWarningText(DangerZone zone) {
     final direction = '${zone.startBearing.toInt()}°-${zone.endBearing.toInt()}°';
     final distance = zone.distance.toInt();
-    
-    switch (lang) {
-      case 'ja':
-        return '${zone.name} ($direction方向, ${distance}m)';
-      case 'th':
-        return '${zone.name} ($direction, ${distance}m)';
-      default:
-        return '${zone.name} ($direction, ${distance}m)';
-    }
+    return GapLessL10n.t('risk_zone_warning')
+        .replaceAll('@name', zone.name)
+        .replaceAll('@dir', direction)
+        .replaceAll('@dist', '$distance');
   }
 
-  String _getScanButtonText() {
-    if (isScanning) {
-      switch (lang) {
-        case 'ja':
-          return 'スキャン中...';
-        case 'th':
-          return 'กำลังสแกน...';
-        default:
-          return 'Scanning...';
-      }
-    }
-    switch (lang) {
-      case 'ja':
-        return '再スキャン';
-      case 'th':
-        return 'สแกนอีกครั้ง';
-      default:
-        return 'Rescan';
-    }
-  }
+  String _getScanButtonText() =>
+      isScanning ? GapLessL10n.t('risk_scanning') : GapLessL10n.t('risk_rescan');
 }

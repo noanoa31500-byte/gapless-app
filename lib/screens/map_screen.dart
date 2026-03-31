@@ -9,6 +9,7 @@ import '../models/shelter.dart';
 import '../models/hazard_spot.dart';
 import '../utils/localization.dart';
 import '../providers/location_provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/styles.dart';
 import '../services/device_id_service.dart';
 import '../services/ble_sync_service.dart';
@@ -160,6 +161,7 @@ class _MapScreenState extends State<MapScreen> {
   // ─── UI ────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     // HazardSpotRepositoryの変更で自動再描画（BLE受信後も即時更新）
     final hazardSpots = HazardSpotRepository.instance.unconfirmedSpots;
     final bleService = BleSyncService.instance;

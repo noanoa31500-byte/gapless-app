@@ -207,7 +207,8 @@ class GapLessApp extends StatelessWidget {
                 Locale('vi'),
                 Locale('ko'),
                 Locale('th'),
-                Locale('tl'),
+                Locale('fil'), // ISO 639-2 (内部コード)
+                Locale('tl'),  // ISO 639-1 (Tagalog, システムロケール tl-PH 対応)
                 Locale('ne'),
                 Locale('pt'),
                 Locale('id'),
@@ -386,6 +387,8 @@ class GapLessApp extends StatelessWidget {
   String _fontFamilyForLocale(Locale locale) {
     switch (locale.languageCode) {
       case 'ja': return 'NotoSansJP';
+      // zh_TW is stored as a single language code string, handle both forms
+      case 'zh_TW': return 'NotoSansTC';
       case 'zh': return locale.countryCode == 'TW' ? 'NotoSansTC' : 'NotoSansSC';
       case 'ko': return 'NotoSansKR';
       case 'th': return 'NotoSansThai';

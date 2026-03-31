@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../services/offline_risk_scanner.dart';
+import '../utils/localization.dart';
 
 /// ============================================================================
 /// RadarCompassOverlay - リスクレーダー付きコンパスウィジェット
@@ -479,6 +482,7 @@ class _RadarCompassCardState extends State<RadarCompassCard>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>();
     return GestureDetector(
       onTap: widget.onTap,
       child: Card(
@@ -568,25 +572,18 @@ class _RadarCompassCardState extends State<RadarCompassCard>
   }
 
   String _getTitle() {
-    switch (widget.lang) {
-      case 'ja':
-        return 'リスクレーダー';
-      case 'th':
-        return 'เรดาร์ความเสี่ยง';
-      default:
-        return 'Risk Radar';
-    }
+    return GapLessL10n.t('risk_radar_title');
   }
 
   Widget _buildLegend() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildLegendItem('⚡', Colors.yellow, _getLegendText('electrocution')),
+        _buildLegendItem('⚡', Colors.yellow, GapLessL10n.t('overlay_power')),
         const SizedBox(width: 24),
-        _buildLegendItem('🌊', Colors.blue, _getLegendText('flood')),
+        _buildLegendItem('🌊', Colors.blue, GapLessL10n.t('overlay_flood')),
         const SizedBox(width: 24),
-        _buildLegendItem('➤', Colors.green, _getLegendText('safe')),
+        _buildLegendItem('➤', Colors.green, GapLessL10n.t('overlay_safe')),
       ],
     );
   }
@@ -611,30 +608,11 @@ class _RadarCompassCardState extends State<RadarCompassCard>
     );
   }
 
-  String _getLegendText(String key) {
-    const texts = {
-      'electrocution': {'ja': '感電', 'en': 'Electric', 'th': 'ไฟฟ้า'},
-      'flood': {'ja': '浸水', 'en': 'Flood', 'th': 'น้ำท่วม'},
-      'safe': {'ja': '安全', 'en': 'Safe', 'th': 'ปลอดภัย'},
-    };
-    return texts[key]?[widget.lang] ?? texts[key]?['en'] ?? key;
-  }
-
   Widget _buildWarningMessages() {
     final warnings = <String>[];
-    
+
     for (final zone in widget.scanResult!.riskZones) {
-      String warning;
-      switch (widget.lang) {
-        case 'ja':
-          warning = zone.warningJa;
-          break;
-        case 'th':
-          warning = zone.warningTh;
-          break;
-        default:
-          warning = zone.warningEn;
-      }
+      final warning = zone.warningLocalized;
       if (!warnings.contains(warning)) {
         warnings.add(warning);
       }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
+import '../providers/language_provider.dart';
 import '../providers/user_profile_provider.dart';
 import '../models/shelter.dart';
 
@@ -22,11 +23,25 @@ class _AIChatWidgetState extends State<AIChatWidget> {
   String _aiMessage = '';
   bool _isAnalyzing = false;
   Shelter? _foundShelter;
+  String _lastLang = '';
 
   @override
   void initState() {
     super.initState();
     _aiMessage = GapLessL10n.t('chat_prompt_main');
+    _lastLang = GapLessL10n.lang;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reset prompt when language changes (but not while analyzing)
+    final currentLang = GapLessL10n.lang;
+    if (!_isAnalyzing && currentLang != _lastLang) {
+      _lastLang = currentLang;
+      _aiMessage = GapLessL10n.t('chat_prompt_main');
+      _foundShelter = null;
+    }
   }
 
   Future<void> _handleUserSelection(String type) async {
@@ -113,6 +128,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import '../data/map_repository.dart';
+import '../utils/localization.dart';
 
 /// ============================================================================
 /// OfflineRiskScanner - 完全オフラインリスク検知エンジン
@@ -98,12 +99,16 @@ class RiskZone {
 
   /// 日本語の警告メッセージ
   String get warningJa => warnings['ja'] ?? '危険な方向です';
-  
+
   /// 英語の警告メッセージ
   String get warningEn => warnings['en'] ?? 'Danger ahead';
-  
+
   /// タイ語の警告メッセージ
   String get warningTh => warnings['th'] ?? 'อันตราย';
+
+  /// 現在の言語に対応した警告メッセージ（GapLessL10n.langを使用）
+  String get warningLocalized =>
+      warnings[GapLessL10n.lang] ?? warnings['en'] ?? warnings['ja'] ?? 'Danger ahead';
 
   @override
   String toString() => 'RiskZone($type: ${startBearing.toStringAsFixed(0)}°-${endBearing.toStringAsFixed(0)}°, severity: ${(severity * 100).toStringAsFixed(0)}%)';

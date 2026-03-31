@@ -114,9 +114,25 @@ class DangerAlertService {
 
   static String _ttsLocale(String lang) {
     switch (lang) {
-      case 'en': return 'en-US';
-      case 'th': return 'th-TH';
-      default:   return 'ja-JP';
+      case 'ja':   return 'ja-JP';
+      case 'en':   return 'en-US';
+      case 'th':   return 'th-TH';
+      case 'zh':   return 'zh-CN';
+      case 'zh_TW': return 'zh-TW';
+      case 'ko':   return 'ko-KR';
+      case 'hi':   return 'hi-IN';
+      case 'bn':   return 'bn-BD';
+      case 'id':   return 'id-ID';
+      case 'vi':   return 'vi-VN';
+      case 'es':   return 'es-ES';
+      case 'pt':   return 'pt-BR';
+      case 'fil':
+      case 'my':
+      case 'si':
+      case 'ne':
+      case 'mn':
+      case 'uz':
+      default:     return 'en-US';
     }
   }
 

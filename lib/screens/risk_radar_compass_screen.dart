@@ -7,6 +7,7 @@ import 'package:latlong2/latlong.dart';
 import '../providers/compass_provider.dart';
 import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
+import '../providers/language_provider.dart';
 import '../services/offline_risk_scanner.dart';
 import '../services/risk_radar_scanner.dart';
 import '../widgets/risk_radar_compass_widget.dart';
@@ -139,6 +140,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final shelterProvider = context.watch<ShelterProvider>();
     final region = shelterProvider.currentRegion;
     final themeColor = _getThemeColor();

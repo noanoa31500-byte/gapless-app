@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/localization.dart';
+import '../providers/language_provider.dart';
 import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
 
@@ -39,6 +41,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final lang = GapLessL10n.lang;
     final pages = _getTutorialPages(lang);
 

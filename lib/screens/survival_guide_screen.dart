@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../constants/first_aid_data.dart';
 import '../constants/survival_data.dart';
 import '../providers/shelter_provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
@@ -34,6 +35,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final lang = GapLessL10n.lang;
 
     return Scaffold(

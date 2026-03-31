@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 
 // ============================================================================
@@ -68,6 +70,7 @@ class _CalibrationOverlayState extends State<CalibrationOverlay>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     if (!widget.visible) return const SizedBox.shrink();
 
     return AnimatedOpacity(

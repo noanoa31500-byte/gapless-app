@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/localization.dart';
+import '../providers/language_provider.dart';
 import 'navigation_screen.dart';
 
 // ============================================================================
@@ -35,7 +37,7 @@ class _PermStep {
   /// true = 拒否されてもスキップして次へ（false = ダイアログを表示）
   final bool isOptional;
 
-  const _PermStep({
+  _PermStep({
     required this.title,
     required this.description,
     required this.icon,
@@ -58,25 +60,25 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
   static const Color _navyPrimary = Color(0xFF2E7D32);
   static const Color _orangeAccent = Color(0xFFFF6F00);
 
-  // ── ステップ定義 ──────────────────────────────────────────────────────────
-  static const List<_PermStep> _steps = [
+  // ── ステップ定義（多言語対応: GapLessL10n.t() で動的取得）────────────────
+  static List<_PermStep> get _steps => [
     _PermStep(
-      title: '位置情報',
-      description: 'ルート案内中もバックグラウンドで現在地を取得します',
+      title: GapLessL10n.t('perm_location_title'),
+      description: GapLessL10n.t('perm_location_desc'),
       icon: Icons.location_on_rounded,
       isSkippable: false,
       isOptional: false,
     ),
     _PermStep(
-      title: 'モーション / センサー',
-      description: 'コンパスと加速度センサーで正確な向きを計算します',
+      title: GapLessL10n.t('perm_motion_title'),
+      description: GapLessL10n.t('perm_motion_desc'),
       icon: Icons.compass_calibration_rounded,
       isSkippable: false,
       isOptional: true,
     ),
     _PermStep(
-      title: 'Bluetooth',
-      description: '近くのユーザーと道路状況を共有します（任意）',
+      title: GapLessL10n.t('perm_ble_title'),
+      description: GapLessL10n.t('perm_ble_desc'),
       icon: Icons.bluetooth_rounded,
       isSkippable: true,
       isOptional: true,
@@ -148,7 +150,7 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
     if (!mounted) return;
 
     if (!status.isGranted) {
-      setState(() => _warningMessage = 'コンパス機能が制限されます');
+      setState(() => _warningMessage = GapLessL10n.t('perm_compass_warning'));
     }
     _advance();
   }
@@ -205,12 +207,12 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        title: const Text(
-          '位置情報が必要です',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          GapLessL10n.t('perm_location_required'),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: const Text(
-          '位置情報がないとナビが使えません。\n設定から位置情報を「常に許可」してください。',
+        content: Text(
+          GapLessL10n.t('perm_location_required_desc'),
         ),
         actions: [
           TextButton(
@@ -240,6 +242,7 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -410,9 +413,9 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
                   color: Colors.white,
                 ),
               )
-            : const Text(
-                '許可する',
-                style: TextStyle(
+            : Text(
+                GapLessL10n.t('perm_allow'),
+                style: const TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
@@ -426,9 +429,9 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
   Widget _buildSkipButton() {
     return TextButton(
       onPressed: _isRequesting ? null : _onSkip,
-      child: const Text(
-        'スキップ',
-        style: TextStyle(
+      child: Text(
+        GapLessL10n.t('perm_skip'),
+        style: const TextStyle(
           color: Color(0xFF78909C),
           fontSize: 14,
           decoration: TextDecoration.underline,

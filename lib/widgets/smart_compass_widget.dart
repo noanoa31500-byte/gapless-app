@@ -4,6 +4,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../controllers/smart_compass_controller.dart';
+import '../providers/language_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/shelter_provider.dart';
 import '../utils/localization.dart';
@@ -80,8 +81,9 @@ class _SmartCompassWidgetState extends State<SmartCompassWidget>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     final locationProvider = context.watch<LocationProvider>();
-   final shelterProvider = context.watch<ShelterProvider>();
+    final shelterProvider = context.watch<ShelterProvider>();
 
     // ルート更新チェック
     if (shelterProvider.safestRoute != null && shelterProvider.roadGraph != null) {

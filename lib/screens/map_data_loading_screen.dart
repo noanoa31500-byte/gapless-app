@@ -110,6 +110,7 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: SafeArea(

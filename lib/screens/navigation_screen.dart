@@ -145,7 +145,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _loadError = e is Exception ? e.toString() : '地図データの読み込みに失敗しました';
+          _loadError = e is Exception ? e.toString() : GapLessL10n.t('map_load_error');
           _isLoadingMap = false;
         });
       }
@@ -596,6 +596,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return ListenableBuilder(
       listenable: Listenable.merge([_fallback, PowerManager.instance]),
       builder: (_, __) {
@@ -651,7 +652,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
         // 機能4: アクセシビリティアイコン
         IconButton(
           onPressed: _showAccessProfileDialog,
-          tooltip: '移動プロファイル',
+          tooltip: GapLessL10n.t('nav_profile_title'),
           icon: Icon(
             _accessProfile == _AccessProfile.wheelchair
                 ? Icons.accessible
@@ -1017,9 +1018,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
           children: [
             const Icon(Icons.cloud_off, size: 64, color: Color(0xFF90A4AE)),
             const SizedBox(height: 16),
-            Text(_loadError ?? '不明なエラー',
+            Text(_loadError ?? GapLessL10n.t('unknown_error'),
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 16)),
+                style: GapLessL10n.safeStyle(const TextStyle(fontSize: 16))),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {

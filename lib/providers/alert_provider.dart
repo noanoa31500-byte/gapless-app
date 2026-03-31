@@ -39,24 +39,33 @@ class AlertProvider with ChangeNotifier {
     await _tts.setPitch(1.0);
   }
   
-  /// 言語設定に応じてTTS言語を更新
+  /// 言語設定に応じてTTS言語を更新（18言語対応）
   Future<void> _updateTtsLanguage() async {
     final lang = GapLessL10n.lang;
     String ttsLang;
-    
+
     switch (lang) {
-      case 'ja':
-        ttsLang = 'ja-JP';
-        break;
-      case 'th':
-        ttsLang = 'th-TH';
-        break;
+      case 'ja':    ttsLang = 'ja-JP'; break;
+      case 'th':    ttsLang = 'th-TH'; break;
+      case 'zh':    ttsLang = 'zh-CN'; break;
+      case 'zh_TW': ttsLang = 'zh-TW'; break;
+      case 'ko':    ttsLang = 'ko-KR'; break;
+      case 'hi':    ttsLang = 'hi-IN'; break;
+      case 'bn':    ttsLang = 'bn-BD'; break;
+      case 'id':    ttsLang = 'id-ID'; break;
+      case 'vi':    ttsLang = 'vi-VN'; break;
+      case 'es':    ttsLang = 'es-ES'; break;
+      case 'pt':    ttsLang = 'pt-BR'; break;
+      case 'fil':
+      case 'my':
+      case 'si':
+      case 'ne':
+      case 'mn':
+      case 'uz':
       case 'en':
-      default:
-        ttsLang = 'en-US';
-        break;
+      default:      ttsLang = 'en-US'; break;
     }
-    
+
     await _tts.setLanguage(ttsLang);
   }
   
@@ -217,76 +226,31 @@ class AlertProvider with ChangeNotifier {
 
   /// 距離と方向を音声で案内（多言語）
   Future<void> speakNavigation(double distanceMeters, String direction) async {
-    final lang = GapLessL10n.lang;
-    String distanceText;
-    String message;
-    
-    if (lang == 'ja') {
-      distanceText = distanceMeters < 1000
-          ? '${distanceMeters.toInt()}メートル'
-          : '${(distanceMeters / 1000).toStringAsFixed(1)}キロメートル';
-      message = '残り$distanceText。$direction';
-    } else if (lang == 'th') {
-      distanceText = distanceMeters < 1000
-          ? '${distanceMeters.toInt()} เมตร'
-          : '${(distanceMeters / 1000).toStringAsFixed(1)} กิโลเมตร';
-      message = 'อีก $distanceText $direction';
-    } else {
-      distanceText = distanceMeters < 1000
-          ? '${distanceMeters.toInt()} meters'
-          : '${(distanceMeters / 1000).toStringAsFixed(1)} kilometers';
-      message = '$distanceText remaining. $direction';
-    }
-
-    await _speakWithCooldown(message);
+    final distanceText = distanceMeters < 1000
+        ? GapLessL10n.t('tts_distance_m').replaceAll('@dist', distanceMeters.toInt().toString())
+        : GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
+    await _speakWithCooldown('$distanceText $direction');
   }
-  
+
   /// 曲がり角通知（多言語）
   Future<void> speakTurnAhead(String turnDirection, double distanceMeters) async {
-    final lang = GapLessL10n.lang;
-    String message;
-    
-    if (lang == 'ja') {
-      message = 'あと${distanceMeters.toInt()}メートル先、$turnDirection';
-    } else if (lang == 'th') {
-      message = 'อีก ${distanceMeters.toInt()} เมตร $turnDirection';
-    } else {
-      message = 'In ${distanceMeters.toInt()} meters, $turnDirection';
-    }
-    
+    final distanceText = distanceMeters < 1000
+        ? GapLessL10n.t('tts_distance_m').replaceAll('@dist', distanceMeters.toInt().toString())
+        : GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
+    final message = GapLessL10n.t('tts_turn')
+        .replaceAll('@dist', distanceText)
+        .replaceAll('@direction', turnDirection);
     await _speakWithCooldown(message);
   }
-  
+
   /// 方向指示（多言語）
   Future<void> speakDirection(String clockPosition) async {
-    final lang = GapLessL10n.lang;
-    String message;
-    
-    if (lang == 'ja') {
-      message = '$clockPositionの方向';
-    } else if (lang == 'th') {
-      message = 'ไปทาง $clockPosition';
-    } else {
-      message = 'Go towards $clockPosition';
-    }
-    
-    await _speakWithCooldown(message);
+    await _speakWithCooldown('$clockPosition');
   }
-  
+
   /// 目的地設定時の音声（多言語）
   Future<void> speakDestinationSet(String destinationName) async {
-    final lang = GapLessL10n.lang;
-    String message;
-    
-    if (lang == 'ja') {
-      message = '目的地を設定しました。$destinationName へ向かいます。';
-    } else if (lang == 'th') {
-      message = 'ตั้งจุดหมายแล้ว กำลังไป $destinationName';
-    } else {
-      message = 'Destination set. Heading to $destinationName.';
-    }
-    
-    await _speak(message);
+    await _speak(GapLessL10n.t('bot_dest_set').replaceAll('@name', destinationName));
   }
   
   /// オフコース警告（多言語）
@@ -294,44 +258,19 @@ class AlertProvider with ChangeNotifier {
     await _speakWithCooldown(_getLocalizedMessage('off_course'));
   }
   
-  /// 多言語メッセージ取得
+  /// 多言語メッセージ取得（GapLessL10n経由で18言語対応）
   String _getLocalizedMessage(String key) {
-    final lang = GapLessL10n.lang;
-    
-    const messages = {
-      'ja': {
-        'monitoring_start': '監視を開始しました。ポケットモードがオンになりました。',
-        'hazard_warning': '警告。危険エリアです。すぐに避難してください。',
-        'safe_area': '安全エリアに入りました。',
-        'arrival': '目的地に到着しました。お疲れ様でした。',
-        'electrical_hazard': '警告！感電の危険があります。この方向を避けてください。',
-        'deep_water': '警告！水深@depthメートルです。注意してください。',
-        'fast_current': '警告！流れが速いです。注意してください。',
-        'off_course': 'ルートから外れています。方向を確認してください。',
-      },
-      'en': {
-        'monitoring_start': 'Monitoring started. Pocket mode is on.',
-        'hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
-        'safe_area': 'You are now in a safe area.',
-        'arrival': 'You have arrived at your destination. Well done.',
-        'electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
-        'deep_water': 'Warning! Water depth is @depth meters. Be careful.',
-        'fast_current': 'Warning! Fast current ahead. Be careful.',
-        'off_course': 'You are off course. Please check your direction.',
-      },
-      'th': {
-        'monitoring_start': 'เริ่มการติดตามแล้ว โหมดกระเป๋าเปิดอยู่',
-        'hazard_warning': 'คำเตือน พื้นที่อันตราย กรุณาอพยพทันที',
-        'safe_area': 'คุณอยู่ในพื้นที่ปลอดภัยแล้ว',
-        'arrival': 'คุณถึงจุดหมายแล้ว ขอบคุณครับ',
-        'electrical_hazard': 'คำเตือน! เสี่ยงไฟดูด หลีกเลี่ยงทิศนี้',
-        'deep_water': 'คำเตือน! น้ำลึก @depth เมตร ระวังด้วย',
-        'fast_current': 'คำเตือน! กระแสน้ำเชี่ยว ระวังด้วย',
-        'off_course': 'คุณออกนอกเส้นทาง กรุณาตรวจสอบทิศทาง',
-      },
-    };
-    
-    return messages[lang]?[key] ?? messages['en']?[key] ?? key;
+    switch (key) {
+      case 'monitoring_start':   return GapLessL10n.t('tts_monitoring_start');
+      case 'hazard_warning':     return GapLessL10n.t('tts_hazard_warning');
+      case 'safe_area':          return GapLessL10n.t('tts_safe_area');
+      case 'arrival':            return GapLessL10n.t('tts_arrived');
+      case 'electrical_hazard':  return GapLessL10n.t('tts_electrical_hazard');
+      case 'deep_water':         return GapLessL10n.t('tts_deep_water');
+      case 'fast_current':       return GapLessL10n.t('tts_fast_current');
+      case 'off_course':         return GapLessL10n.t('tts_off_course');
+      default:                   return key;
+    }
   }
 
   @override

@@ -10,6 +10,7 @@ import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/alert_provider.dart';
 import '../providers/region_mode_provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 import '../services/haptic_service.dart';
 import '../widgets/smart_compass.dart';
@@ -118,7 +119,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             margin: const EdgeInsets.all(24),
             duration: const Duration(seconds: 3),
             action: SnackBarAction(
-              label: '戻る',
+              label: GapLessL10n.t('triage_back'),
               textColor: Colors.white,
               onPressed: () {
                 if (mounted) Navigator.pop(context);
@@ -194,6 +195,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final shelterProvider = context.watch<ShelterProvider>();
     final region = shelterProvider.currentAppRegion;
 

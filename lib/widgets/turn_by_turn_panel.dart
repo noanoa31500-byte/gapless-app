@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 
 // ============================================================================
@@ -164,6 +166,7 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     if (widget.route.isEmpty) return const SizedBox.shrink();
     if (_arrived) return _buildArrivalPanel();
 

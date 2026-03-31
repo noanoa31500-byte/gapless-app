@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:latlong2/latlong.dart';
 import '../providers/compass_provider.dart';
+import '../providers/language_provider.dart';
 import '../services/waypoint_magnet_manager.dart';
 import '../utils/localization.dart';
 
@@ -35,6 +36,7 @@ class SafetyCompassView extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>();
     return Consumer<CompassProvider>(
       builder: (context, compass, _) {
         // ナビゲーション状態に応じた色を決定
@@ -338,25 +340,11 @@ class SafetyCompassView extends StatelessWidget {
   }
   
   String _getDistanceLabel() {
-    switch (GapLessL10n.lang) {
-      case 'ja':
-        return '次のポイントまで';
-      case 'th':
-        return 'ถึงจุดถัดไป';
-      default:
-        return 'to next point';
-    }
+    return GapLessL10n.t('nav_to_next_point');
   }
-  
+
   String _getTotalLabel() {
-    switch (GapLessL10n.lang) {
-      case 'ja':
-        return '総距離';
-      case 'th':
-        return 'ระยะทางทั้งหมด';
-      default:
-        return 'total';
-    }
+    return GapLessL10n.t('nav_total_distance');
   }
 }
 

@@ -231,6 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       appBar: AppBar(
         title: SafeText(GapLessL10n.t('set_region')),
@@ -277,11 +278,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: Text(GapLessL10n.currentLanguageName),
             trailing: DropdownButton<String>(
               value: GapLessL10n.lang,
-              items: const [
-                DropdownMenuItem(value: 'ja', child: Text('🇯🇵')),
-                DropdownMenuItem(value: 'en', child: Text('🇬🇧')),
-                DropdownMenuItem(value: 'th', child: Text('🇹🇭')),
-              ],
+              items: GapLessL10n.availableLanguages.map((lang) {
+                final flag = GapLessL10n.flagForLanguage(lang);
+                final name = GapLessL10n.nameForLanguage(lang);
+                return DropdownMenuItem(
+                  value: lang,
+                  child: Text('$flag $name'),
+                );
+              }).toList(),
               onChanged: (value) {
                 if (value != null) _changeLanguage(value);
               },

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
+import '../utils/localization.dart';
 
 // Models
 import '../models/shelter.dart';
@@ -141,10 +142,8 @@ class CompassProvider with ChangeNotifier {
   // === UI Helpers ===
   
   String getNavigationMessage(String lang) {
-     if (!_engine.isNavigating) return _getLocalizedText('waiting_destination', lang);
-     // Delegate to Engine or keep local? Engine doesn't have localization logic yet.
-     // Keep local map for now.
-     return _getLocalizedText('follow_arrow', lang);
+    if (!_engine.isNavigating) return GapLessL10n.t('waiting_destination');
+    return GapLessL10n.t('follow_arrow');
   }
   
   double getDisplayAngle({
@@ -193,22 +192,6 @@ class CompassProvider with ChangeNotifier {
     return dirs[idx];
   }
   
-  String _getLocalizedText(String key, String lang) {
-     // ... (Same map as before) ...
-     const Map<String, Map<String, String>> texts = {
-      'waiting_destination': {
-        'ja': '目的地を設定してください',
-        'en': 'Set a destination',
-        'th': 'กรุณาตั้งจุดหมาย',
-      },
-      'follow_arrow': {
-        'ja': '矢印の方向に進んでください',
-        'en': 'Follow the arrow',
-        'th': 'ตามลูกศร',
-      },
-     };
-     return texts[key]?[lang] ?? texts[key]?['en'] ?? key;
-  }
 }
 
 // Extensions removed as real getters are now implemented.

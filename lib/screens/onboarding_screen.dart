@@ -79,6 +79,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       backgroundColor: AppleColors.systemBackground,
       body: SafeArea(
@@ -114,8 +115,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
-          const Spacer(flex: 2),
-          
+          const SizedBox(height: 16),
+
           // Icon with subtle gradient background
           Container(
             width: 100,
@@ -148,22 +149,29 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           ),
           const SizedBox(height: 8),
           Text(
-            '言語を選択 / เลือกภาษา',
+            '言語を選択 / Select / เลือก / 选择语言',
             style: AppleTypography.body.copyWith(
               color: AppleColors.secondaryLabel,
             ),
           ),
-          
-          const SizedBox(height: 48),
 
-          // Language Options
-          _buildLanguageOption(flag: '🇯🇵', name: '日本語', code: 'ja'),
-          const SizedBox(height: 12),
-          _buildLanguageOption(flag: '🇬🇧', name: 'English', code: 'en'),
-          const SizedBox(height: 12),
-          _buildLanguageOption(flag: '🇹🇭', name: 'ไทย (Thai)', code: 'th'),
-          
-          const Spacer(flex: 2),
+          const SizedBox(height: 24),
+
+          // Language Options (all 18 languages, scrollable)
+          Expanded(
+            child: ListView(
+              children: GapLessL10n.availableLanguages.map((code) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: _buildLanguageOption(
+                    flag: GapLessL10n.flagForLanguage(code),
+                    name: GapLessL10n.nameForLanguage(code),
+                    code: code,
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
 
           // Next Button (Apple風)
           _buildPrimaryButton(

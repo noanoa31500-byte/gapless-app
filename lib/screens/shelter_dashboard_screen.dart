@@ -51,6 +51,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       backgroundColor: AppleColors.systemBackground,
       body: CustomScrollView(

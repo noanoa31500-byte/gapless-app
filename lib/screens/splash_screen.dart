@@ -66,6 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAFB),
       body: SafeArea(

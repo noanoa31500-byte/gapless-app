@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
+import '../providers/language_provider.dart';
 import '../utils/localization.dart';
 import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
@@ -23,6 +24,7 @@ class _TriageScreenState extends State<TriageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // 言語変更時に再描画
     final lang = GapLessL10n.lang;
 
     return Scaffold(
@@ -442,7 +444,7 @@ class _TriageScreenState extends State<TriageScreen> {
     }
   }
 
-  /// 質問リストを取得
+  /// 質問リストを取得（全18言語対応: GapLessL10n.t() 経由）
   List<TriageQuestion> _getQuestions(String lang) {
     return [
       // 1. 呼吸
@@ -450,29 +452,21 @@ class _TriageScreenState extends State<TriageScreen> {
         id: 'breathing',
         icon: Icons.air,
         color: Colors.blue,
-        text: lang == 'ja'
-            ? '呼吸の状態は？'
-            : (lang == 'th' ? 'สถานะการหายใจ?' : 'Breathing status?'),
+        text: GapLessL10n.t('triage_q_breathing'),
         options: [
           TriageOption(
-            text: lang == 'ja'
-                ? '正常に呼吸できている'
-                : (lang == 'th' ? 'หายใจได้ปกติ' : 'Breathing normally'),
+            text: GapLessL10n.t('triage_breathing_normal'),
             value: 'normal',
             icon: Icons.check_circle,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '息苦しい・浅い'
-                : (lang == 'th' ? 'หายใจลำบาก/ตื้น' : 'Difficult/shallow'),
+            text: GapLessL10n.t('triage_breathing_difficult'),
             value: 'difficult',
             icon: Icons.warning,
             isUrgent: true,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '呼吸していない'
-                : (lang == 'th' ? 'ไม่หายใจ' : 'Not breathing'),
+            text: GapLessL10n.t('triage_breathing_stopped'),
             value: 'stopped',
             icon: Icons.emergency,
             isUrgent: true,
@@ -485,28 +479,20 @@ class _TriageScreenState extends State<TriageScreen> {
         id: 'bleeding',
         icon: Icons.water_drop,
         color: Colors.red,
-        text: lang == 'ja'
-            ? '出血の状態は？'
-            : (lang == 'th' ? 'สถานะการเลือดออก?' : 'Bleeding status?'),
+        text: GapLessL10n.t('triage_q_bleeding'),
         options: [
           TriageOption(
-            text: lang == 'ja'
-                ? '出血なし / 軽い傷'
-                : (lang == 'th' ? 'ไม่มี/บาดแผลเล็กน้อย' : 'None/minor'),
+            text: GapLessL10n.t('triage_bleeding_none'),
             value: 'none',
             icon: Icons.check_circle,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '中程度の出血'
-                : (lang == 'th' ? 'เลือดออกปานกลาง' : 'Moderate bleeding'),
+            text: GapLessL10n.t('triage_bleeding_moderate'),
             value: 'moderate',
             icon: Icons.warning,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '大量出血 / 止まらない'
-                : (lang == 'th' ? 'เลือดออกมาก/ไม่หยุด' : 'Heavy/won\'t stop'),
+            text: GapLessL10n.t('triage_bleeding_heavy'),
             value: 'heavy',
             icon: Icons.emergency,
             isUrgent: true,
@@ -519,32 +505,22 @@ class _TriageScreenState extends State<TriageScreen> {
         id: 'consciousness',
         icon: Icons.psychology,
         color: Colors.purple,
-        text: lang == 'ja'
-            ? '意識の状態は？'
-            : (lang == 'th' ? 'ระดับสติ?' : 'Consciousness level?'),
-        subtext: lang == 'ja'
-            ? '（自分自身または負傷者）'
-            : (lang == 'th' ? '(ตัวเองหรือผู้บาดเจ็บ)' : '(yourself or injured person)'),
+        text: GapLessL10n.t('triage_q_consciousness'),
+        subtext: GapLessL10n.t('triage_q_consciousness_sub'),
         options: [
           TriageOption(
-            text: lang == 'ja'
-                ? 'はっきりしている'
-                : (lang == 'th' ? 'รู้สึกตัวดี' : 'Alert and clear'),
+            text: GapLessL10n.t('triage_consciousness_clear'),
             value: 'clear',
             icon: Icons.check_circle,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '混乱している / ぼんやり'
-                : (lang == 'th' ? 'สับสน/มึนงง' : 'Confused/drowsy'),
+            text: GapLessL10n.t('triage_consciousness_confused'),
             value: 'confused',
             icon: Icons.warning,
             isUrgent: true,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '意識がない'
-                : (lang == 'th' ? 'หมดสติ' : 'Unconscious'),
+            text: GapLessL10n.t('triage_consciousness_unconscious'),
             value: 'unconscious',
             icon: Icons.emergency,
             isUrgent: true,
@@ -557,28 +533,20 @@ class _TriageScreenState extends State<TriageScreen> {
         id: 'mobility',
         icon: Icons.directions_walk,
         color: Colors.orange,
-        text: lang == 'ja'
-            ? '歩行の状態は？'
-            : (lang == 'th' ? 'สามารถเดินได้ไหม?' : 'Can you walk?'),
+        text: GapLessL10n.t('triage_q_mobility'),
         options: [
           TriageOption(
-            text: lang == 'ja'
-                ? '普通に歩ける'
-                : (lang == 'th' ? 'เดินได้ปกติ' : 'Walk normally'),
+            text: GapLessL10n.t('triage_mobility_normal'),
             value: 'normal',
             icon: Icons.check_circle,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '歩きにくい / 痛い'
-                : (lang == 'th' ? 'เดินลำบาก/เจ็บ' : 'Difficult/painful'),
+            text: GapLessL10n.t('triage_mobility_difficult'),
             value: 'difficulty',
             icon: Icons.warning,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '歩けない'
-                : (lang == 'th' ? 'เดินไม่ได้' : 'Cannot walk'),
+            text: GapLessL10n.t('triage_mobility_cannot'),
             value: 'cannot_walk',
             icon: Icons.accessible,
             isUrgent: true,
@@ -591,28 +559,20 @@ class _TriageScreenState extends State<TriageScreen> {
         id: 'pain',
         icon: Icons.healing,
         color: Colors.amber,
-        text: lang == 'ja'
-            ? '痛みの程度は？'
-            : (lang == 'th' ? 'ระดับความเจ็บปวด?' : 'Pain level?'),
+        text: GapLessL10n.t('triage_q_pain'),
         options: [
           TriageOption(
-            text: lang == 'ja'
-                ? '痛みなし / 軽い'
-                : (lang == 'th' ? 'ไม่เจ็บ/เจ็บเล็กน้อย' : 'None/mild'),
+            text: GapLessL10n.t('triage_pain_mild'),
             value: 'mild',
             icon: Icons.check_circle,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '中程度の痛み'
-                : (lang == 'th' ? 'ปานกลาง' : 'Moderate'),
+            text: GapLessL10n.t('triage_pain_moderate'),
             value: 'moderate',
             icon: Icons.warning,
           ),
           TriageOption(
-            text: lang == 'ja'
-                ? '激しい痛み'
-                : (lang == 'th' ? 'เจ็บมาก' : 'Severe pain'),
+            text: GapLessL10n.t('triage_pain_severe'),
             value: 'severe',
             icon: Icons.emergency,
             isUrgent: true,
@@ -704,71 +664,39 @@ enum TriageSeverity {
   String getTitle(String lang) {
     switch (this) {
       case TriageSeverity.critical:
-        return lang == 'ja'
-            ? '緊急：今すぐ医療が必要'
-            : (lang == 'th' ? 'วิกฤต: ต้องการแพทย์ทันที' : 'CRITICAL: Need immediate medical care');
+        return GapLessL10n.t('triage_critical_title');
       case TriageSeverity.urgent:
-        return lang == 'ja'
-            ? '要注意：医療機関への受診を推奨'
-            : (lang == 'th' ? 'ด่วน: แนะนำให้ไปพบแพทย์' : 'URGENT: Medical attention recommended');
+        return GapLessL10n.t('triage_urgent_title');
       case TriageSeverity.moderate:
-        return lang == 'ja'
-            ? '中程度：様子を見ながら避難'
-            : (lang == 'th' ? 'ปานกลาง: อพยพและสังเกตอาการ' : 'MODERATE: Evacuate and monitor');
+        return GapLessL10n.t('triage_moderate_title');
       case TriageSeverity.minor:
-        return lang == 'ja'
-            ? '軽症：避難所で対応可能'
-            : (lang == 'th' ? 'เล็กน้อย: สามารถรักษาที่พักพิงได้' : 'MINOR: Can be handled at shelter');
+        return GapLessL10n.t('triage_minor_title');
     }
   }
 
   String getDescription(String lang) {
     switch (this) {
       case TriageSeverity.critical:
-        return lang == 'ja'
-            ? '生命に関わる可能性があります。直ちに医療機関へ向かってください。'
-            : (lang == 'th'
-                ? 'อาจเป็นอันตรายถึงชีวิต ไปโรงพยาบาลทันที'
-                : 'May be life-threatening. Go to hospital immediately.');
+        return GapLessL10n.t('triage_critical_desc');
       case TriageSeverity.urgent:
-        return lang == 'ja'
-            ? '医療専門家による処置が必要です。できるだけ早く受診してください。'
-            : (lang == 'th'
-                ? 'ต้องการการรักษาจากผู้เชี่ยวชาญ ไปพบแพทย์โดยเร็ว'
-                : 'Professional treatment needed. See a doctor as soon as possible.');
+        return GapLessL10n.t('triage_urgent_desc');
       case TriageSeverity.moderate:
-        return lang == 'ja'
-            ? '避難所で応急処置を受けながら様子を見てください。'
-            : (lang == 'th'
-                ? 'รับการปฐมพยาบาลที่พักพิงและสังเกตอาการ'
-                : 'Get first aid at shelter and monitor your condition.');
+        return GapLessL10n.t('triage_moderate_desc');
       case TriageSeverity.minor:
-        return lang == 'ja'
-            ? '軽い怪我です。避難所のスタッフに相談してください。'
-            : (lang == 'th'
-                ? 'บาดเจ็บเล็กน้อย ปรึกษาเจ้าหน้าที่ที่พักพิง'
-                : 'Minor injury. Consult shelter staff if needed.');
+        return GapLessL10n.t('triage_minor_desc');
     }
   }
 
   String getRecommendation(String lang) {
     switch (this) {
       case TriageSeverity.critical:
-        return lang == 'ja'
-            ? '🚨 最寄りの病院へ直行してください'
-            : (lang == 'th' ? '🚨 ไปโรงพยาบาลใกล้สุดทันที' : '🚨 Go to nearest hospital immediately');
+        return GapLessL10n.t('triage_critical_rec');
       case TriageSeverity.urgent:
-        return lang == 'ja'
-            ? '🏥 医療設備のある避難所を優先'
-            : (lang == 'th' ? '🏥 เลือกที่พักพิงที่มีสถานพยาบาล' : '🏥 Prioritize shelter with medical facility');
+        return GapLessL10n.t('triage_urgent_rec');
       case TriageSeverity.moderate:
-        return lang == 'ja'
-            ? '⚠️ 避難所へ向かい、応急処置を受ける'
-            : (lang == 'th' ? '⚠️ ไปที่พักพิงและรับการปฐมพยาบาล' : '⚠️ Go to shelter and get first aid');
+        return GapLessL10n.t('triage_moderate_rec');
       case TriageSeverity.minor:
-        return lang == 'ja'
-            ? '✅ 最寄りの避難所へ向かう'
-            : (lang == 'th' ? '✅ ไปที่พักพิงใกล้สุด' : '✅ Go to nearest shelter');
+        return GapLessL10n.t('triage_minor_rec');
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../utils/localization.dart';
 import '../ble/ble_packet.dart';
+import '../providers/language_provider.dart';
 import '../providers/location_provider.dart';
 import '../services/ble_road_report_service.dart';
 
@@ -114,6 +115,7 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
 
   @override
   Widget build(BuildContext context) {
+    context.watch<LanguageProvider>(); // rebuild on language change
     return Container(
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
