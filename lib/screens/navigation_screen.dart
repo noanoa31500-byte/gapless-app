@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -128,6 +130,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // 機能4: GPS軌跡バッファ（表示用）
   List<LatLng> _gpsTrack = [];
   Timer? _trackRefreshTimer;
+
 
   // ── ライフサイクル ────────────────────────────────────────────────────────
 
@@ -517,7 +520,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   // 機能3: 道路状況報告BottomSheet
   void _showRoadReportSheet() {
-    final loc = context.read<LocationProvider>().currentLocation;
+    final locationProv = context.read<LocationProvider>();
+    final loc = locationProv.currentLocation;
     if (loc == null) {
       _showSnack(GapLessL10n.t('nav_no_location'));
       return;
@@ -536,6 +540,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             lng: loc.longitude,
             accuracyM: 10.0,
             passable: passable,
+            isDrActive: locationProv.isDeadReckoning,
+            drErrorM: locationProv.deadReckoningErrorMeters,
           );
           _showSnack(passable ? GapLessL10n.t('nav_reported_passable') : GapLessL10n.t('nav_reported_blocked'));
         },
@@ -617,7 +623,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       duration: const Duration(milliseconds: 400),
                       child: inFallback
                           ? _buildFallbackCompass()
-                          : _buildMapStack(locationProv.currentLocation),
+                          : (locationProv.isDeadReckoning && locationProv.isDeadReckoningAccuracyLow)
+                              ? _buildDrUncertaintyScreen(locationProv.currentLocation)
+                              : _buildMapStack(locationProv.currentLocation),
                     ),
                   ),
                 ],
@@ -956,6 +964,106 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   // ── 帰還支援コンパス ──────────────────────────────────────────────────────
+
+  /// DR精度低下時（誤差≥100m or 5分超）に表示する画面。
+  /// コアバリュー「矢印の方向に歩くだけ」を維持しつつ、不確かさを正直に伝える。
+  /// テキストを最小化し、矢印・距離・⚠アイコンだけで言語不問で伝える。
+  Widget _buildDrUncertaintyScreen(LatLng? currentLoc) {
+    // 目的地が設定済みなら方向と距離を計算する
+    double? bearingDeg;
+    double? distM;
+    if (currentLoc != null && _destination != null) {
+      distM = Geolocator.distanceBetween(
+        currentLoc.latitude, currentLoc.longitude,
+        _destination!.latitude, _destination!.longitude,
+      );
+      // 方位角（度）: 北=0、時計回り
+      final dLat = _destination!.latitude - currentLoc.latitude;
+      final dLng = _destination!.longitude - currentLoc.longitude;
+      bearingDeg = (math.atan2(dLng, dLat) * 180 / math.pi + 360) % 360;
+    }
+
+    final loc = context.read<LocationProvider>();
+    final elapsedMin = (loc.deadReckoningElapsedSeconds / 60).round();
+    final errorM = loc.deadReckoningErrorMeters.round();
+
+    return Container(
+      key: const ValueKey('dr_uncertain'),
+      color: const Color(0xFF1A1A2E),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // ── 不確かさ警告バー ──────────────────────────────────────
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            color: const Color(0xCCB71C1C),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.gps_off, color: Colors.white, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  '±${errorM}m  •  ${elapsedMin}min',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const Spacer(),
+
+          // ── 矢印（方向）──────────────────────────────────────────
+          if (bearingDeg != null) ...[
+            // デバイスの向きに対して相対的な矢印を回転させる
+            Transform.rotate(
+              angle: (bearingDeg - _headingDeg) * math.pi / 180,
+              child: const Icon(
+                Icons.navigation,
+                size: 140,
+                color: Color(0xFF4CAF50),
+              ),
+            ),
+            const SizedBox(height: 24),
+            // 距離だけ表示（数字は世界共通）
+            Text(
+              distM! >= 1000
+                  ? '${(distM / 1000).toStringAsFixed(1)} km'
+                  : '${distM.round()} m',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ] else ...[
+            // 目的地未設定時: ⚠アイコンのみ
+            const Icon(Icons.gps_off, size: 100, color: Color(0xFFB71C1C)),
+          ],
+
+          const Spacer(),
+
+          // ── 不確かさの注記（小さく・言語対応）────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+            child: Text(
+              GapLessL10n.t('dr_uncertain_body'),
+              style: GapLessL10n.safeStyle(const TextStyle(
+                color: Colors.white38,
+                fontSize: 12,
+                height: 1.5,
+              )),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _buildFallbackCompass() {
     final state = _fallback.state;

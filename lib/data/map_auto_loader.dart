@@ -195,10 +195,7 @@ class MapAutoLoader {
       }
     } catch (_) {}
 
-    // 3. 東京デフォルト（DRも起動）
-    if (dr != null && !dr.isActive) {
-      dr.activate(const LatLng(_defaultLat, _defaultLng));
-    }
+    // 3. 東京デフォルト（前回位置不明 → DR起動しない。デフォルト座標は地図表示の初期値のみに使う）
     return (_defaultLat, _defaultLng);
   }
 }

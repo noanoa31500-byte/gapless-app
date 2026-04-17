@@ -156,7 +156,7 @@ class RoadReportScorer extends ChangeNotifier {
       double latestOpacity = 0.0;
 
       for (final r in reports) {
-        final w = _reportWeight(r.ageSeconds);
+        final w = _reportWeight(r.ageSeconds) * _drReliability(r);
         if (r.passable) {
           passableWeight += w;
         } else {
@@ -186,6 +186,18 @@ class RoadReportScorer extends ChangeNotifier {
     if (minutes < 30) return 1.0;
     if (minutes < 120) return 0.5;
     return 0.0;
+  }
+
+  /// DR誤差に基づく信頼性係数
+  ///   GPS正常（DR非稼働）: 1.0
+  ///   DR稼働 & 誤差 ≤ 50m: 0.7
+  ///   DR稼働 & 誤差 ≤ 100m: 0.4
+  ///   DR稼働 & 誤差 > 100m: 0.2
+  static double _drReliability(PeerRoadReport r) {
+    if (!r.isDrActive) return 1.0;
+    if (r.drErrorM <= 50) return 0.7;
+    if (r.drErrorM <= 100) return 0.4;
+    return 0.2;
   }
 
   // ---------------------------------------------------------------------------

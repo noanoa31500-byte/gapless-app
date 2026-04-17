@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/dead_reckoning_service.dart';
 
@@ -19,6 +19,10 @@ class LocationProvider extends ChangeNotifier {
   VoidCallback? _drListener; // stop/start サイクルで重複しないよう参照を保持
   static const Duration _gpsTimeoutThreshold = Duration(seconds: 3);
 
+  // 歩幅キャリブレーション用（GPS 連続更新間の距離・時刻を保持）
+  LatLng? _lastCalibPosition;
+  DateTime? _lastCalibTime;
+
   // Getters
   LatLng? get currentLocation => _currentLocation;
   bool get isUsingLastKnownLocation => _currentLocation != null && _currentLocationName == 'Last Known Location';
@@ -29,6 +33,11 @@ class LocationProvider extends ChangeNotifier {
   LocationPermission? get lastPermissionStatus => _lastPermissionStatus;
   bool get isDeadReckoning => _deadReckoning.isActive;
   int get deadReckoningStepCount => _deadReckoning.stepCount;
+  int get deadReckoningElapsedSeconds => _deadReckoning.elapsedSeconds;
+  double get deadReckoningErrorMeters => _deadReckoning.estimatedErrorMeters;
+  bool get isDeadReckoningAccuracyLow => _deadReckoning.isAccuracyLow;
+  double get learnedStrideLengthM => _deadReckoning.learnedStrideLengthM;
+  bool get hasLearnedStride => _deadReckoning.hasLearnedStride;
   DeadReckoningService get deadReckoningService => _deadReckoning;
 
   // Internal State
@@ -36,6 +45,8 @@ class LocationProvider extends ChangeNotifier {
 
 /// アプリ起動時の初期化処理（権限リクエストと現在地取得）
   Future<void> initLocation() async {
+    // 保存済み学習歩幅を読み込む
+    await _deadReckoning.init();
     try {
       // 権限チェックとリクエスト
       LocationPermission permission = await Geolocator.checkPermission();
@@ -120,6 +131,8 @@ class LocationProvider extends ChangeNotifier {
       debugPrint('Error loading last known location: $e');
     }
   }
+
+  // ---------------------------------------------------------------------------
 
   /// GPS位置情報を取得
   Future<bool> getCurrentGPSLocation() async {
@@ -229,17 +242,30 @@ class LocationProvider extends ChangeNotifier {
     };
     _deadReckoning.addListener(_drListener!);
 
+    // GPS 稼働中の歩幅学習を開始
+    _lastCalibPosition = null;
+    _lastCalibTime = null;
+    _deadReckoning.startCalibration();
+
     _positionStream = Geolocator.getPositionStream(
       locationSettings: locationSettings,
     ).listen(
-      (Position position) {
+      (Position position) async {
         _resetGpsTimeoutTimer();
 
         final gpsPos = LatLng(position.latitude, position.longitude);
+        final now = position.timestamp;
+
         if (_deadReckoning.isActive) {
           // DR モードから GPS 復帰 → 融合位置を使う
           _currentLocation = _deadReckoning.deactivate(gpsPos);
+          // GPS 復帰後すぐに学習再開（キャリブ基準点をリセット）
+          _lastCalibPosition = gpsPos;
+          _lastCalibTime = now;
+          _deadReckoning.startCalibration();
         } else {
+          // GPS 正常稼働中 → 前回位置との差分で歩幅を学習（await で保存完了を保証）
+          await _updateStrideCalibration(gpsPos, position.accuracy, now);
           _currentLocation = gpsPos;
         }
         _currentLocationName = 'GPS Tracking';
@@ -256,11 +282,45 @@ class LocationProvider extends ChangeNotifier {
     debugPrint('✅ GPS tracking started');
   }
 
+  /// GPS 更新ごとに歩幅学習を実行する。
+  /// [newPos] 今回の GPS 座標, [accuracy] GPS 水平精度(m), [now] 計測時刻
+  Future<void> _updateStrideCalibration(
+    LatLng newPos,
+    double accuracy,
+    DateTime now,
+  ) async {
+    final last = _lastCalibPosition;
+    final lastTime = _lastCalibTime;
+
+    if (last != null && lastTime != null) {
+      final distM = Geolocator.distanceBetween(
+        last.latitude, last.longitude,
+        newPos.latitude, newPos.longitude,
+      );
+      final elapsedSecs =
+          now.difference(lastTime).inMilliseconds / 1000.0;
+      final steps = _deadReckoning.takeCalibStepSnapshot();
+
+      await _deadReckoning.updateStrideFromGps(
+        distanceM: distM,
+        steps: steps,
+        elapsedSecs: elapsedSecs,
+        gpsAccuracyM: accuracy,
+      );
+    }
+
+    _lastCalibPosition = newPos;
+    _lastCalibTime = now;
+  }
+
   /// リアルタイム位置追跡を停止
   void stopLocationTracking() {
     _positionStream?.cancel();
     _positionStream = null;
     _gpsTimeoutTimer?.cancel();
+    _deadReckoning.stopCalibration();
+    _lastCalibPosition = null;
+    _lastCalibTime = null;
     _isTracking = false;
     notifyListeners();
     debugPrint('⏹️ GPS tracking stopped');
@@ -284,6 +344,7 @@ class LocationProvider extends ChangeNotifier {
     _currentLocationName = name;
     notifyListeners();
   }
+
 
   /// 現在地をクリア
   void exitDemoMode() {

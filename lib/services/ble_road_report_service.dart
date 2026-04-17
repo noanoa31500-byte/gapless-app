@@ -113,6 +113,8 @@ class BleRoadReportService extends ChangeNotifier {
     required double lng,
     required double accuracyM,
     required bool passable,
+    bool isDrActive = false,
+    double drErrorM = 0.0,
   }) {
     final deviceId =
         DeviceIdService.instance.deviceId ?? 'unknown';
@@ -125,6 +127,8 @@ class BleRoadReportService extends ChangeNotifier {
       lng: lng,
       accuracyM: accuracyM,
       passable: passable,
+      isDrActive: isDrActive,
+      drErrorM: drErrorM,
     );
     _queue.add(report);
     scorer.addReport(report); // 自端末のスコアにも即時反映
@@ -139,6 +143,8 @@ class BleRoadReportService extends ChangeNotifier {
     required double accuracyM,
     required BleDataType dataType,
     String payload = '',
+    bool isDrActive = false,
+    double drErrorM = 0.0,
   }) async {
     final deviceId = DeviceIdService.instance.deviceId ?? 'unknown';
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -166,6 +172,8 @@ class BleRoadReportService extends ChangeNotifier {
         lng: lng,
         accuracyM: accuracyM,
         passable: dataType == BleDataType.passable,
+        isDrActive: isDrActive,
+        drErrorM: drErrorM,
       );
       _queue.add(report);
       scorer.addReport(report);

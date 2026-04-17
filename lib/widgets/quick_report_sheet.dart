@@ -27,7 +27,8 @@ import '../services/ble_road_report_service.dart';
 
 /// ナビ画面から呼ぶエントリポイント
 Future<void> showQuickReport(BuildContext context) async {
-  final loc = context.read<LocationProvider>().currentLocation;
+  final locationProv = context.read<LocationProvider>();
+  final loc = locationProv.currentLocation;
   if (loc == null) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(GapLessL10n.t('nav_no_location'))),
@@ -58,6 +59,8 @@ Future<void> showQuickReport(BuildContext context) async {
       lat: loc.latitude,
       lng: loc.longitude,
       photoFile: photo != null ? File(photo.path) : null,
+      isDrActive: locationProv.isDeadReckoning,
+      drErrorM: locationProv.deadReckoningErrorMeters,
     ),
   );
 }
@@ -68,11 +71,15 @@ class _QuickReportSheet extends StatefulWidget {
   final double lat;
   final double lng;
   final File? photoFile;
+  final bool isDrActive;
+  final double drErrorM;
 
   const _QuickReportSheet({
     required this.lat,
     required this.lng,
     this.photoFile,
+    this.isDrActive = false,
+    this.drErrorM = 0.0,
   });
 
   @override
@@ -99,6 +106,8 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
       accuracyM: 10.0,
       dataType: dataType,
       payload: payload,
+      isDrActive: widget.isDrActive,
+      drErrorM: widget.drErrorM,
     );
 
     if (mounted) {

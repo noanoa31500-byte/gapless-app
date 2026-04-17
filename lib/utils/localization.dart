@@ -405,6 +405,13 @@ class GapLessL10n {
 
       // Dead reckoning badge
       'dr_badge': 'GPS消失 - 推定位置使用中 (@steps歩)',
+      'dr_accuracy_low': '⚠ 精度低下 — 見える建物で現在地を確認してください',
+      'dr_fix_location': 'ここにいる',
+      'dr_tap_to_fix': '地図をタップして現在地を修正',
+      'dr_location_fixed': '現在地を修正しました',
+      'dr_uncertain_title': '現在地が不確かです',
+      'dr_uncertain_body': 'GPS信号が途絶えています。建物の外に出て、空が見える場所へ移動してください。',
+      'dr_shelter_list': '最寄りの避難所',
 
       // Navigation screen
       'nav_screen_title': '安全ルート案内',
@@ -970,6 +977,13 @@ class GapLessL10n {
 
       // Dead reckoning badge
       'dr_badge': 'GPS lost — Est. position (@steps steps)',
+      'dr_accuracy_low': '⚠ Accuracy low — verify position using visible landmarks',
+      'dr_fix_location': 'I am here',
+      'dr_tap_to_fix': 'Tap the map to correct your location',
+      'dr_location_fixed': 'Location corrected',
+      'dr_uncertain_title': 'Location unknown',
+      'dr_uncertain_body': 'GPS signal lost. Please go outside to an open area where you can see the sky.',
+      'dr_shelter_list': 'Nearest shelters',
 
       // Navigation screen
       'nav_screen_title': 'Safe Route',
@@ -1478,6 +1492,13 @@ class GapLessL10n {
 
       // Dead reckoning badge
       'dr_badge': 'GPS หาย — ตำแหน่งโดยประมาณ (@steps ก้าว)',
+      'dr_accuracy_low': '⚠ ความแม่นยำต่ำ — ตรวจสอบตำแหน่งด้วยสิ่งที่มองเห็น',
+      'dr_fix_location': 'ฉันอยู่ที่นี่',
+      'dr_tap_to_fix': 'แตะแผนที่เพื่อแก้ไขตำแหน่ง',
+      'dr_location_fixed': 'แก้ไขตำแหน่งแล้ว',
+      'dr_uncertain_title': 'ไม่ทราบตำแหน่ง',
+      'dr_uncertain_body': 'สัญญาณ GPS หาย กรุณาออกไปข้างนอกที่มองเห็นท้องฟ้า',
+      'dr_shelter_list': 'ที่พักพิงใกล้เคียง',
 
       // Navigation screen
       'nav_screen_title': 'นำทางปลอดภัย',
@@ -1895,6 +1916,13 @@ class GapLessL10n {
       'qr_danger_sub': '倒塌/火灾/洪水',
       'qr_reported': '"@label"已报告',
       'dr_badge': 'GPS丢失 — 估计位置（@steps步）',
+      'dr_accuracy_low': '⚠ 精度降低 — 请通过可见地标确认位置',
+      'dr_fix_location': '我在这里',
+      'dr_tap_to_fix': '点击地图修正当前位置',
+      'dr_location_fixed': '位置已修正',
+      'dr_uncertain_title': '位置不明',
+      'dr_uncertain_body': 'GPS信号中断。请前往室外可看到天空的地方。',
+      'dr_shelter_list': '最近避难所',
       'nav_screen_title': '安全路线',
       'nav_arrive_title': '已到达目的地',
       'nav_arrive_body': '您已安全到达避难所？\n确认后显示避难所仪表板。',
@@ -2305,6 +2333,13 @@ class GapLessL10n {
       'qr_danger_sub': '倒塌/火灾/洪水',
       'qr_reported': '"@label"已报告',
       'dr_badge': 'GPS遺失 — 估計位置（@steps步）',
+      'dr_accuracy_low': '⚠ 精度降低 — 請通過可見地標確認位置',
+      'dr_fix_location': '我在這裡',
+      'dr_tap_to_fix': '點擊地圖修正當前位置',
+      'dr_location_fixed': '位置已修正',
+      'dr_uncertain_title': '位置不明',
+      'dr_uncertain_body': 'GPS信號中斷。請前往室外可看到天空的地方。',
+      'dr_shelter_list': '最近避難所',
       'nav_screen_title': '安全路线',
       'nav_arrive_title': '已到达目的地',
       'nav_arrive_body': '您已安全到达避难所？\n确认后显示避难所仪表板。',
@@ -2708,6 +2743,13 @@ class GapLessL10n {
       'qr_danger_sub': '붕괴/화재/홍수',
       'qr_reported': '"@label" 신고됨',
       'dr_badge': 'GPS 소실 — 추정 위치（@steps걸음）',
+      'dr_accuracy_low': '⚠ 정확도 낮음 — 보이는 건물로 위치 확인하세요',
+      'dr_fix_location': '여기 있어요',
+      'dr_tap_to_fix': '지도를 탭하여 현재 위치 수정',
+      'dr_location_fixed': '위치가 수정되었습니다',
+      'dr_uncertain_title': '위치 불명',
+      'dr_uncertain_body': 'GPS 신호가 끊겼습니다. 하늘이 보이는 야외로 이동해 주세요.',
+      'dr_shelter_list': '가까운 대피소',
       'nav_screen_title': '안전 경로',
       'nav_arrive_title': '목적지 도착',
       'nav_arrive_body': '대피소에 안전하게 도착했나요？\n확인하면 대피소 대시보드를 표시합니다.',
@@ -4498,6 +4540,13 @@ class GapLessL10n {
       'qr_danger_sub': 'Sụp đổ / cháy / lũ lụt',
       'qr_reported': '"@label" đã được báo cáo',
       'dr_badge': 'Mất GPS — Vị trí ước tính (@steps bước)',
+      'dr_accuracy_low': '⚠ Độ chính xác thấp — xác nhận vị trí qua địa điểm nhìn thấy',
+      'dr_fix_location': 'Tôi ở đây',
+      'dr_tap_to_fix': 'Chạm vào bản đồ để sửa vị trí',
+      'dr_location_fixed': 'Đã sửa vị trí',
+      'dr_uncertain_title': 'Không xác định vị trí',
+      'dr_uncertain_body': 'Mất tín hiệu GPS. Hãy ra ngoài trời nơi nhìn thấy bầu trời.',
+      'dr_shelter_list': 'Nơi trú ẩn gần nhất',
       'nav_screen_title': 'Tuyến đường an toàn',
       'nav_arrive_title': 'Đã đến điểm đến',
       'nav_arrive_body': 'Bạn đã đến nơi trú ẩn an toàn chưa?\nXác nhận để mở bảng điều khiển nơi trú ẩn.',

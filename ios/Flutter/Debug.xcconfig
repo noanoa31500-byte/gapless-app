@@ -1,2 +1,12 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+
+// ── Debug ビルド高速化設定 ────────────────────────────────────────
+// ビルド中インデックス更新を無効化（最大の速度改善）
+COMPILER_INDEX_STORE_ENABLE = NO
+// dSYMファイル生成をスキップ（実機デバッグに不要）
+DEBUG_INFORMATION_FORMAT = dwarf
+// Swift差分コンパイルを有効化
+SWIFT_COMPILATION_MODE = incremental
+// Debug時はアーキテクチャを実機のみに絞る
+ONLY_ACTIVE_ARCH = YES

@@ -6,7 +6,7 @@ import 'dart:convert';
 //
 // 【BLE パケット仕様】
 //   コンパクトJSON形式（MTU 20〜180バイト想定）:
-//   {"i":"8ch","a":35.68,"o":139.75,"c":5.0,"t":1741000,"p":1,"g":"seg8ch"}
+//   {"i":"8ch","a":35.68,"o":139.75,"c":5.0,"t":1741000,"p":1,"g":"seg8ch","d":1,"e":45}
 //
 //   フィールド:
 //     i  : report ID（先頭8文字）
@@ -16,6 +16,8 @@ import 'dart:convert';
 //     t  : UNIXタイムスタンプ [秒]
 //     p  : 通行可 1 / 不可 0
 //     g  : セグメントID（緯度経度を3桁でグリッド化した識別子）
+//     d  : DR稼働中 1 / GPS正常 0（省略時=0）
+//     e  : DR推定誤差 [m]（省略時=0）
 //
 // ============================================================================
 
@@ -35,6 +37,12 @@ class PeerRoadReport {
   /// 位置精度（メートル）— GPS/CoreLocation の horizontalAccuracy
   final double accuracyM;
 
+  /// レポート時点でDRモード稼働中だったか
+  final bool isDrActive;
+
+  /// DRモード時の推定誤差半径（メートル）。GPS正常時は 0
+  final double drErrorM;
+
   /// 報告時刻（UNIXタイムスタンプ秒）
   final int timestamp;
 
@@ -51,6 +59,8 @@ class PeerRoadReport {
     required this.lat,
     required this.lng,
     required this.accuracyM,
+    this.isDrActive = false,
+    this.drErrorM = 0.0,
     required this.timestamp,
     required this.passable,
     required this.segmentId,
@@ -68,6 +78,8 @@ class PeerRoadReport {
     required double lng,
     required double accuracyM,
     required bool passable,
+    bool isDrActive = false,
+    double drErrorM = 0.0,
   }) {
     return PeerRoadReport(
       id: reportId.length > 8 ? reportId.substring(0, 8) : reportId,
@@ -75,6 +87,8 @@ class PeerRoadReport {
       lat: lat,
       lng: lng,
       accuracyM: accuracyM,
+      isDrActive: isDrActive,
+      drErrorM: drErrorM,
       timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       passable: passable,
       segmentId: _makeSegmentId(lat, lng),
@@ -95,6 +109,8 @@ class PeerRoadReport {
         't': timestamp,
         'p': passable ? 1 : 0,
         'g': segmentId,
+        if (isDrActive) 'd': 1,
+        if (drErrorM > 0) 'e': drErrorM.round(),
       });
 
   factory PeerRoadReport.fromCompactJson(Map<String, dynamic> j) =>
@@ -104,6 +120,8 @@ class PeerRoadReport {
         lat: (j['a'] as num).toDouble(),
         lng: (j['o'] as num).toDouble(),
         accuracyM: (j['c'] as num).toDouble(),
+        isDrActive: (j['d'] as int? ?? 0) == 1,
+        drErrorM: (j['e'] as num? ?? 0).toDouble(),
         timestamp: (j['t'] as num).toInt(),
         passable: (j['p'] as int) == 1,
         segmentId: j['g'] as String,
