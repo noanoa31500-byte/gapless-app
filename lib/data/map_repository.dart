@@ -18,68 +18,51 @@ import 'map_download_service.dart';
 // ダウンロード対象ファイルの定義
 // ────────────────────────────────────────
 class MapFile {
-  final String remoteUrl;   // GitHubのURL（gz圧縮済み or 生）
-  final String localName;   // 端末に保存するファイル名
-  final bool isGzipped;     // gzip圧縮されているか
+  /// プライマリURL（GitHub raw content）
+  final String remoteUrl;
+  /// フォールバックURL（jsDelivr CDN — GitHubミラー）
+  final String? fallbackUrl;
+  final String localName;
+  final bool isGzipped;
 
   const MapFile({
     required this.remoteUrl,
     required this.localName,
     required this.isGzipped,
+    this.fallbackUrl,
   });
+
+  /// 試行順の URL リスト（プライマリ → フォールバック）
+  List<String> get candidateUrls => [
+    remoteUrl,
+    if (fallbackUrl != null) fallbackUrl!,
+  ];
 }
 
 const _baseUrl = 'https://raw.githubusercontent.com/noanoa31500-byte/maps/main';
+// jsDelivr は GitHub リポジトリを自動ミラーする無料CDN
+const _cdnUrl = 'https://cdn.jsdelivr.net/gh/noanoa31500-byte/maps@main';
 
-const mapFiles = [
-  // 東京中心部（gz圧縮あり）
-  MapFile(
-    remoteUrl: '$_baseUrl/tokyo_center_roads.gplb.gz',
-    localName: 'tokyo_center_roads.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/tokyo_center_poi.gplb.gz',
-    localName: 'tokyo_center_poi.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/tokyo_center_hazard.gplh.gz',
-    localName: 'tokyo_center_hazard.gplh',
-    isGzipped: true,
-  ),
-  // 大崎（gz圧縮あり）
-  MapFile(
-    remoteUrl: '$_baseUrl/osaki_poi.gplb.gz',
-    localName: 'osaki_poi.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/osaki_roads.gplb.gz',
-    localName: 'osaki_roads.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/osaki_hazard.gplh.gz',
-    localName: 'osaki_hazard.gplh',
-    isGzipped: true,
-  ),
-  // タイ（gz圧縮あり）
-  MapFile(
-    remoteUrl: '$_baseUrl/thailand_poi.gplb.gz',
-    localName: 'thailand_poi.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/thailand_roads.gplb.gz',
-    localName: 'thailand_roads.gplb',
-    isGzipped: true,
-  ),
-  MapFile(
-    remoteUrl: '$_baseUrl/thailand_hazard.gplh.gz',
-    localName: 'thailand_hazard.gplh',
-    isGzipped: true,
-  ),
+MapFile _mf(String name, {bool isGzipped = true}) => MapFile(
+  remoteUrl: '$_baseUrl/$name',
+  fallbackUrl: '$_cdnUrl/$name',
+  localName: isGzipped && name.endsWith('.gz') ? name.substring(0, name.length - 3) : name,
+  isGzipped: isGzipped,
+);
+
+final mapFiles = [
+  // 東京中心部
+  _mf('tokyo_center_roads.gplb.gz'),
+  _mf('tokyo_center_poi.gplb.gz'),
+  _mf('tokyo_center_hazard.gplh.gz'),
+  // 大崎
+  _mf('osaki_poi.gplb.gz'),
+  _mf('osaki_roads.gplb.gz'),
+  _mf('osaki_hazard.gplh.gz'),
+  // タイ
+  _mf('thailand_poi.gplb.gz'),
+  _mf('thailand_roads.gplb.gz'),
+  _mf('thailand_hazard.gplh.gz'),
 ];
 
 // ────────────────────────────────────────
@@ -215,26 +198,41 @@ class MapRepository {
 
   // ────────────────────────────────────
   // 1ファイルをダウンロードして保存
+  // URL候補を順に試し、各URLを最大2回リトライする（指数バックオフ）
   // ────────────────────────────────────
   Future<void> _downloadFile(MapFile mapFile) async {
-    final response = await http
-        .get(Uri.parse(mapFile.remoteUrl))
-        .timeout(const Duration(seconds: 30));
+    const maxAttemptsPerUrl = 2;
 
-    if (response.statusCode != 200) {
-      throw Exception('HTTP ${response.statusCode}');
+    for (final url in mapFile.candidateUrls) {
+      for (int attempt = 0; attempt < maxAttemptsPerUrl; attempt++) {
+        try {
+          final response = await http
+              .get(Uri.parse(url))
+              .timeout(const Duration(seconds: 30));
+
+          if (response.statusCode == 404) break; // このURLは存在しない、次のURLへ
+          if (response.statusCode != 200) {
+            throw Exception('HTTP ${response.statusCode}');
+          }
+
+          final Uint8List bytes;
+          if (mapFile.isGzipped) {
+            bytes = Uint8List.fromList(gzip.decode(response.bodyBytes));
+          } else {
+            bytes = response.bodyBytes;
+          }
+
+          final path = await localPath(mapFile.localName);
+          await File(path).writeAsBytes(bytes);
+          return; // 成功
+        } catch (e) {
+          if (attempt < maxAttemptsPerUrl - 1) {
+            await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+          }
+        }
+      }
     }
-
-    // gz圧縮されている場合は展開してから保存
-    final Uint8List bytes;
-    if (mapFile.isGzipped) {
-      bytes = Uint8List.fromList(GZipCodec().decode(response.bodyBytes));
-    } else {
-      bytes = response.bodyBytes;
-    }
-
-    final path = await localPath(mapFile.localName);
-    await File(path).writeAsBytes(bytes);
+    throw Exception('${mapFile.localName}: 全URLからのダウンロードに失敗しました');
   }
 
   // ────────────────────────────────────

@@ -18,9 +18,10 @@ import '../models/peer_road_report.dart';
 //           ? weight(report.ageSeconds) : 0 ]
 //
 //   weight(age):
-//     0 〜 30 min    : 1.0
-//    30 〜 120 min   : 0.5
-//     120 min 以上   : 0 (除外)
+//     0 〜 30 min    : 1.0  (新鮮 — 赤/緑マーカー)
+//    30 〜 120 min   : 0.5  (やや古い — オレンジマーカー)
+//   120 〜 360 min   : 0.1  (古い — 黄マーカー、多数報告があれば表示継続)
+//     360 min 以上   : 0 (除外)
 //
 //   isConfirmedSafe(segmentId) = passableScore(segmentId) ≥ 3.0
 //
@@ -40,6 +41,9 @@ class SegmentScore {
   /// 代表レポートの表示用不透明度（最新レポートの値）
   final double displayOpacity;
 
+  /// 最新レポートの経過秒数（マーカー鮮度色分けに使用）
+  final int latestAgeSeconds;
+
   /// 安全確認済み（通行可ウェイト ≥ 3.0）
   bool get isConfirmedSafe => passableWeight >= 3.0;
 
@@ -51,6 +55,7 @@ class SegmentScore {
     required this.passableWeight,
     required this.impassableWeight,
     required this.displayOpacity,
+    this.latestAgeSeconds = 0,
   });
 
   @override
@@ -154,6 +159,7 @@ class RoadReportScorer extends ChangeNotifier {
       double passableWeight = 0.0;
       double impassableWeight = 0.0;
       double latestOpacity = 0.0;
+      int latestAge = 999999;
 
       for (final r in reports) {
         final w = _reportWeight(r.ageSeconds) * _drReliability(r);
@@ -165,6 +171,9 @@ class RoadReportScorer extends ChangeNotifier {
         if (r.displayOpacity > latestOpacity) {
           latestOpacity = r.displayOpacity;
         }
+        if (r.ageSeconds < latestAge) {
+          latestAge = r.ageSeconds;
+        }
       }
 
       result[segId] = SegmentScore(
@@ -172,6 +181,7 @@ class RoadReportScorer extends ChangeNotifier {
         passableWeight: passableWeight,
         impassableWeight: impassableWeight,
         displayOpacity: latestOpacity,
+        latestAgeSeconds: latestAge,
       );
     }
 
@@ -179,12 +189,14 @@ class RoadReportScorer extends ChangeNotifier {
   }
 
   /// 経過時間に基づくレポートのウェイト
-  ///   0 〜 30 分  : 1.0
-  ///  30 〜 120 分 : 0.5
+  ///   0 〜 30 分   : 1.0  (新鮮)
+  ///  30 〜 120 分  : 0.5  (やや古い)
+  /// 120 〜 360 分  : 0.1  (古い — 多数報告があれば表示継続)
   static double _reportWeight(int ageSeconds) {
     final minutes = ageSeconds / 60.0;
     if (minutes < 30) return 1.0;
     if (minutes < 120) return 0.5;
+    if (minutes < 360) return 0.1;
     return 0.0;
   }
 

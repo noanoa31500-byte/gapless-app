@@ -97,7 +97,9 @@ class RoadScoreCalculator {
         case BleDataType.danger:
           dangerW += w;
         case BleDataType.walk:
-          break; // 歩行記録はスコアに影響しない
+        case BleDataType.shelterStatus:
+        case BleDataType.sos:
+          break; // 歩行記録・避難所ステータス・SOSはスコアに影響しない
       }
     }
 

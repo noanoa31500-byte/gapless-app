@@ -20,13 +20,22 @@ import 'magnetic_declination_config.dart';
 //   GPS が復活したら LocationProvider が deactivate(gpsPos) を呼び、
 //   推定位置と GPS 位置を 80/20 で融合してから DR をリセットする。
 //
-// 【ステップ検出】
+// 【ステップ検出 (徒歩モード)】
 //
 //   加速度計の生ノルム |a| のピーク検出（立ち上がりエッジ）を使う。
 //   ノルム ≥ 11.5 m/s² かつ 350ms 以上の間隔 → 1歩とみなす。
 //   1歩ごとに strideLength × cos(heading) / dLat, sin(heading) / dLng を積算。
 //
+// 【速度積分 (自転車・車両モード)】
+//
+//   GPS消失直前の速度をそのまま引き継ぎ、200ms ごとに
+//   speed × dt × heading で位置を進める。速度は 0.2%/tick で緩やかに減衰。
+//   速度が 0.5 m/s 以下になったら積分を停止する。
+//
 // ============================================================================
+
+/// 移動モードの分類。GPS 速度から activate() 直前に決定する。
+enum MovementMode { walk, bicycle, vehicle }
 
 class DeadReckoningService extends ChangeNotifier {
   // ── 設定定数 ────────────────────────────────────────────────────────────
@@ -36,6 +45,18 @@ class DeadReckoningService extends ChangeNotifier {
   static const int _headingBufferSize = 7;       // ヘディング移動平均サンプル数
   /// 5分（300秒）を超えると精度低下警告
   static const int _accuracyWarningSecs = 300;
+
+  // ── 移動モード分類しきい値 ────────────────────────────────────────────────
+  /// この速度（m/s）以上 = 自転車判定（≈ 10.8 km/h）
+  static const double _bicycleThresholdMs = 3.0;
+  /// この速度（m/s）以上 = 車両判定（≈ 28.8 km/h）
+  static const double _vehicleThresholdMs = 8.0;
+  /// 速度積分タイマー間隔（ms）
+  static const int _velocityTickMs = 200;
+  /// タイマー1回ごとの速度減衰係数（5 Hz × 0.2% = ≈ 1%/s 減衰）
+  static const double _speedDecayPerTick = 0.998;
+  /// この速度以下は停止とみなして積分しない
+  static const double _minIntegrationSpeedMs = 0.5;
 
   // ── 歩幅学習（GPS稼働中のキャリブレーション）────────────────────────────
   /// SharedPreferences に保存するキー
@@ -69,6 +90,18 @@ class DeadReckoningService extends ChangeNotifier {
   /// GPS キャリブレーションで歩幅が一度でも更新されたら true（float比較回避）
   bool _strideHasBeenLearned = false;
 
+  // ── 移動モード状態 ─────────────────────────────────────────────────────
+  /// GPS稼働中に推定した移動モード
+  MovementMode _movementMode = MovementMode.walk;
+  /// GPS消失直前の速度（m/s）
+  double _lastGpsSpeedMs = 0.0;
+  /// 速度積分中の現在推定速度（m/s）— タイマーごとに減衰
+  double _currentSpeedMs = 0.0;
+  /// 速度積分による総移動距離（m）— 誤差モデルに使用
+  double _integratedDistanceM = 0.0;
+  /// 自転車・車両モード用の速度積分タイマー
+  Timer? _velocityTimer;
+
   // ── キャリブレーション状態 ─────────────────────────────────────────────
   /// GPS 稼働中のキャリブレーション歩数カウンター
   int _calibStepCount = 0;
@@ -82,6 +115,8 @@ class DeadReckoningService extends ChangeNotifier {
   bool get isActive => _isActive;
   LatLng? get estimatedPosition => _estimatedPosition;
   int get stepCount => _stepCount;
+  MovementMode get movementMode => _movementMode;
+  double get currentSpeedMs => _currentSpeedMs;
 
   /// DR 開始からの経過秒数
   int get elapsedSeconds {
@@ -89,11 +124,24 @@ class DeadReckoningService extends ChangeNotifier {
     return DateTime.now().difference(_activatedAt!).inSeconds;
   }
 
-  /// 推定誤差半径（メートル）
-  /// 歩幅誤差 15% × ステップ数 を線形モデルで算出。補正後の残留誤差を含む保守的推定。
+  /// 推定誤差半径（メートル）— モードごとに異なるモデルを使用
   double get estimatedErrorMeters {
-    if (_stepCount == 0) return 0;
-    return (_strideLengthM * 0.15 * _stepCount).clamp(5.0, 9999.0);
+    switch (_movementMode) {
+      case MovementMode.walk:
+        if (_stepCount == 0) return 0;
+        final n = _stepCount.toDouble();
+        final randomComponent = _strideLengthM * 0.12 * math.sqrt(n);
+        final systematicComponent = _strideLengthM * 0.04 * n;
+        return (5.0 + randomComponent + systematicComponent).clamp(5.0, 9999.0);
+      case MovementMode.bicycle:
+        // 100m到達 ≈ 3分45秒（15km/h 走行時）
+        return (10.0 + elapsedSeconds * 0.4 + _integratedDistanceM * 0.04)
+            .clamp(10.0, 9999.0);
+      case MovementMode.vehicle:
+        // 100m到達 ≈ 1分25秒（40km/h 走行時）
+        return (15.0 + elapsedSeconds * 1.0 + _integratedDistanceM * 0.06)
+            .clamp(15.0, 9999.0);
+    }
   }
 
   /// 5分以上経過または推定誤差 100m 超で精度低下とみなす
@@ -134,10 +182,16 @@ class DeadReckoningService extends ChangeNotifier {
       lastKnownPosition.latitude,
       lastKnownPosition.longitude,
     );
+    // 速度積分の初期値をリセット
+    _currentSpeedMs = _lastGpsSpeedMs;
+    _integratedDistanceM = 0.0;
     _startSensors();
+    // 自転車・車両モードは速度積分タイマーも起動
+    if (_movementMode != MovementMode.walk) _startVelocityIntegrator();
     notifyListeners();
     debugPrint(
-      'DeadReckoning: 開始 (起点: $lastKnownPosition, 偏角: ${_declinationDeg.toStringAsFixed(1)}°)',
+      'DeadReckoning: 開始 (起点: $lastKnownPosition, モード: $_movementMode, '
+      '速度: ${_currentSpeedMs.toStringAsFixed(1)}m/s, 偏角: ${_declinationDeg.toStringAsFixed(1)}°)',
     );
   }
 
@@ -149,10 +203,26 @@ class DeadReckoningService extends ChangeNotifier {
     _stepCount = 0;
     _activatedAt = null;
     _headingBuffer.clear();
+    _stopVelocityIntegrator();
+    _integratedDistanceM = 0.0;
+    _currentSpeedMs = 0.0;
     _stopSensors();
     notifyListeners();
     debugPrint('DeadReckoning: 終了 (融合位置: $fused)');
     return fused;
+  }
+
+  /// GPS稼働中に移動モードと速度を記録する（DR起動前のみ有効）
+  void setMovementContext(double speedMs) {
+    if (_isActive) return;
+    _lastGpsSpeedMs = speedMs.clamp(0.0, 100.0);
+    if (speedMs >= _vehicleThresholdMs) {
+      _movementMode = MovementMode.vehicle;
+    } else if (speedMs >= _bicycleThresholdMs) {
+      _movementMode = MovementMode.bicycle;
+    } else {
+      _movementMode = MovementMode.walk;
+    }
   }
 
   /// 歩幅を上書きする（設定画面から呼ぶ想定）
@@ -273,8 +343,49 @@ class DeadReckoningService extends ChangeNotifier {
   @override
   void dispose() {
     stopCalibration();
+    _stopVelocityIntegrator();
     _stopSensors();
     super.dispose();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 速度積分（自転車・車両モード）
+  // ---------------------------------------------------------------------------
+
+  void _startVelocityIntegrator() {
+    _velocityTimer?.cancel();
+    _velocityTimer = Timer.periodic(
+      const Duration(milliseconds: _velocityTickMs),
+      (_) => _integrateVelocityTick(),
+    );
+  }
+
+  void _stopVelocityIntegrator() {
+    _velocityTimer?.cancel();
+    _velocityTimer = null;
+  }
+
+  void _integrateVelocityTick() {
+    if (_estimatedPosition == null || !_compassReady) return;
+
+    _currentSpeedMs *= _speedDecayPerTick;
+    if (_currentSpeedMs < _minIntegrationSpeedMs) return;
+
+    const dtSecs = _velocityTickMs / 1000.0;
+    final distM = _currentSpeedMs * dtSecs;
+    _integratedDistanceM += distM;
+
+    final trueHeadingDeg = (_smoothedHeading() - _declinationDeg + 360) % 360;
+    final headingRad = trueHeadingDeg * math.pi / 180.0;
+
+    final lat = _estimatedPosition!.latitude;
+    final lng = _estimatedPosition!.longitude;
+    final dLat = (distM * math.cos(headingRad)) / 111320.0;
+    final dLng = (distM * math.sin(headingRad)) /
+        (111320.0 * math.cos(lat * math.pi / 180.0));
+
+    _estimatedPosition = LatLng(lat + dLat, lng + dLng);
+    notifyListeners();
   }
 
   // ---------------------------------------------------------------------------

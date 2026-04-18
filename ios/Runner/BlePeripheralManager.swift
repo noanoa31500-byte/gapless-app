@@ -41,7 +41,11 @@ class BlePeripheralManager: NSObject {
         instance.peripheralManager = CBPeripheralManager(
             delegate: instance,
             queue: DispatchQueue.main,
-            options: [CBPeripheralManagerOptionShowPowerAlertKey: true]
+            options: [
+                CBPeripheralManagerOptionShowPowerAlertKey: true,
+                // アプリがBLEイベントで再起動された際にペリフェラル状態を復元する
+                CBPeripheralManagerOptionRestoreIdentifierKey: "com.gapless.peripheral",
+            ]
         )
     }
 
@@ -107,6 +111,18 @@ extension BlePeripheralManager: CBPeripheralManagerDelegate {
         if peripheral.state == .poweredOn && wantsAdvertising {
             setupAndAdvertise()
         }
+    }
+
+    // iOS がアプリを終了→BLEイベントで再起動した際に呼ばれる
+    func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String: Any]) {
+        if let services = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService] {
+            for service in services where service.uuid == BlePeripheralManager.serviceUUID {
+                if let chars = service.characteristics as? [CBMutableCharacteristic] {
+                    txCharacteristic = chars.first { $0.uuid == BlePeripheralManager.txCharUUID }
+                }
+            }
+        }
+        print("BlePeripheral: 状態を復元しました (txChar: \(txCharacteristic != nil ? "あり" : "なし"))")
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {

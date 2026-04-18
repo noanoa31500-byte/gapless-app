@@ -5,35 +5,50 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 // ============================================================================
-// PowerManager — バッテリー監視 & 超省電力モード管理
+// PowerManager — バッテリー監視 & 多段階省電力モード管理
 // ============================================================================
 //
-// 【省電力モード移行条件】
-//   バッテリー残量 < 20%  →  PowerMode.saving
-//   バッテリー残量 ≥ 20%  →  PowerMode.normal
+// 【モード移行条件】
+//   残量 > 30%  : PowerMode.normal    — 通常動作
+//   残量 21-30% : PowerMode.reduced   — 抑制（タイル取得停止・BLE 60s）
+//   残量 11-20% : PowerMode.saving    — 省電力（GPS 5s・輝度最小・BLE 3分）
+//   残量  6-10% : PowerMode.ultra     — 超省電力（GPS 30s・地図非表示・BLE 5分）
+//   残量  ≤5%  : PowerMode.emergency  — 救命（GPS 60s・最小UI・BLE 10分）
 //
-// 【省電力モード時の変更内容】
-//   ① GPS取得間隔  : 1 秒 → 10 秒
-//   ② 画面輝度     : SystemChrome で最小値 (iOS: UIScreen.brightness)
-//   ③ BLEスキャン  : BleRoadReportService.setSavingMode(true) で頻度最小化
-//   ④ 画面背景色    : PowerManager.backgroundColor で完全な黒 (Colors.black) を提供
-//   ⑤ TTS読み上げ  : 重要な曲がり角の直前のみに制限
-//      → NavigationAnnouncer が isPowerSaving を参照して制御
+// 【各モードでの変更内容】
+//   GPS間隔  : 1s → 3s → 5s → 30s → 60s
+//   BLEスキャン: 30s → 60s → 3min → 5min → 10min
+//   画面背景色 : null → null → 黒 → 黒 → 黒
+//   地図表示   : true → true → true → false → false
+//   TTS      : フル → フル → 重要のみ → 重要のみ → 無効
 //
 // ============================================================================
 
-enum PowerMode { normal, saving }
+enum PowerMode { normal, reduced, saving, ultra, emergency }
 
 class PowerManager extends ChangeNotifier {
   static final PowerManager instance = PowerManager._();
   PowerManager._();
 
   // ── 閾値 ────────────────────────────────────────────────────
-  static const int _savingThresholdPercent = 20;
+  static const int _reducedThreshold  = 30;
+  static const int _savingThreshold   = 20;
+  static const int _ultraThreshold    = 10;
+  static const int _emergencyThreshold = 5;
 
   // GPS 間隔（秒）
-  static const int gpsIntervalNormalSec = 1;
-  static const int gpsIntervalSavingSec = 10;
+  static const int gpsIntervalNormalSec    = 1;
+  static const int gpsIntervalReducedSec   = 3;
+  static const int gpsIntervalSavingSec    = 5;
+  static const int gpsIntervalUltraSec     = 30;
+  static const int gpsIntervalEmergencySec = 60;
+
+  // BLE スキャン間隔
+  static const Duration bleScanNormal    = Duration(seconds: 30);
+  static const Duration bleScanReduced   = Duration(seconds: 60);
+  static const Duration bleScanSaving    = Duration(minutes: 3);
+  static const Duration bleScanUltra     = Duration(minutes: 5);
+  static const Duration bleScanEmergency = Duration(minutes: 10);
 
   // ── 状態 ──────────────────────────────────────────────────
   PowerMode _mode = PowerMode.normal;
@@ -43,16 +58,46 @@ class PowerManager extends ChangeNotifier {
   PowerMode get mode => _mode;
   int get batteryLevel => _batteryLevel;
   BatteryState get batteryState => _batteryState;
-  bool get isPowerSaving => _mode == PowerMode.saving;
+
+  /// 後方互換: saving 以上なら true
+  bool get isPowerSaving => _mode.index >= PowerMode.saving.index;
+
+  /// 地図レイヤーを表示すべきか（ultra/emergency では非表示でバッテリー節約）
+  bool get showMap => _mode.index < PowerMode.ultra.index;
+
+  // ナビゲーション中はGPS間隔を省電力でも維持する
+  bool _navigationActive = false;
+
+  void setNavigationActive(bool active) {
+    if (_navigationActive == active) return;
+    _navigationActive = active;
+    notifyListeners();
+  }
 
   /// 省電力モード時に UI 側へ通知する背景色
-  /// 通常: null（既存テーマに委ねる）、省電力: 完全な黒
   int? get backgroundColorValue =>
       isPowerSaving ? 0xFF000000 : null;
 
-  /// GPS 取得間隔（秒）
-  int get gpsIntervalSec =>
-      isPowerSaving ? gpsIntervalSavingSec : gpsIntervalNormalSec;
+  /// GPS 取得間隔（秒）— ナビ中は常に通常間隔を維持
+  int get gpsIntervalSec {
+    if (_navigationActive) return gpsIntervalNormalSec;
+    return switch (_mode) {
+      PowerMode.normal    => gpsIntervalNormalSec,
+      PowerMode.reduced   => gpsIntervalReducedSec,
+      PowerMode.saving    => gpsIntervalSavingSec,
+      PowerMode.ultra     => gpsIntervalUltraSec,
+      PowerMode.emergency => gpsIntervalEmergencySec,
+    };
+  }
+
+  /// BLE スキャン間隔
+  Duration get bleScanInterval => switch (_mode) {
+    PowerMode.normal    => bleScanNormal,
+    PowerMode.reduced   => bleScanReduced,
+    PowerMode.saving    => bleScanSaving,
+    PowerMode.ultra     => bleScanUltra,
+    PowerMode.emergency => bleScanEmergency,
+  };
 
   // ── 内部 ──────────────────────────────────────────────────
   final Battery _battery = Battery();
@@ -64,24 +109,18 @@ class PowerManager extends ChangeNotifier {
   // ライフサイクル
   // ---------------------------------------------------------------------------
 
-  /// 監視を開始する（アプリ起動時に呼ぶ）
   Future<void> start() async {
-    // 初回読み取り
     await _fetchLevel();
-
-    // バッテリー状態変化（充電開始/終了等）を購読
     _stateSub = _battery.onBatteryStateChanged.listen((state) {
       _batteryState = state;
       _fetchLevel();
     });
-
-    // 1分ごとに残量をポーリング
     _levelTimer = Timer.periodic(const Duration(minutes: 1), (_) {
       _fetchLevel();
     });
   }
 
-  /// 監視を停止する
+  @override
   void dispose() {
     _disposed = true;
     _stateSub?.cancel();
@@ -104,21 +143,29 @@ class PowerManager extends ChangeNotifier {
 
   void _updateMode() {
     if (_disposed) return;
-    final shouldSave = _batteryLevel < _savingThresholdPercent;
-    final newMode = shouldSave ? PowerMode.saving : PowerMode.normal;
-
+    final newMode = _classifyMode(_batteryLevel);
     if (newMode == _mode) return;
+
+    final prev = _mode;
     _mode = newMode;
 
-    if (_mode == PowerMode.saving) {
-      _applySavingSettings();
-    } else {
-      _restoreNormalSettings();
+    // 輝度制御: saving以上に入る/抜けるタイミングで操作
+    if (isPowerSaving && prev.index < PowerMode.saving.index) {
+      _applyBrightness(min: true);
+    } else if (!isPowerSaving) {
+      _applyBrightness(min: false);
     }
 
     notifyListeners();
-    debugPrint(
-        'PowerManager: モード変更 → $_mode (battery: $_batteryLevel%)');
+    debugPrint('PowerManager: モード変更 $prev → $_mode (battery: $_batteryLevel%)');
+  }
+
+  static PowerMode _classifyMode(int level) {
+    if (level <= _emergencyThreshold) return PowerMode.emergency;
+    if (level <= _ultraThreshold)     return PowerMode.ultra;
+    if (level <= _savingThreshold)    return PowerMode.saving;
+    if (level <= _reducedThreshold)   return PowerMode.reduced;
+    return PowerMode.normal;
   }
 
   // ---------------------------------------------------------------------------
@@ -127,40 +174,20 @@ class PowerManager extends ChangeNotifier {
 
   double? _savedBrightness;
 
-  void _applySavingSettings() {
-    if (Platform.isIOS) {
-      _saveBrightnessAndSetMinimum();
-    }
-  }
-
-  void _restoreNormalSettings() {
-    if (Platform.isIOS) {
-      _restoreBrightness();
-    }
-  }
-
-  Future<void> _saveBrightnessAndSetMinimum() async {
+  Future<void> _applyBrightness({required bool min}) async {
+    if (!Platform.isIOS) return;
+    const channel = MethodChannel('gapless/brightness');
     try {
-      // flutter/services の SystemChrome では輝度制御が限定的なため
-      // iOS では MethodChannel 経由で UIScreen.main.brightness を制御する
-      // （Info.plist の NSBrightnessUsageDescription が不要な範囲内）
-      const channel = MethodChannel('gapless/brightness');
-      final current =
-          await channel.invokeMethod<double>('getBrightness') ?? 0.5;
-      _savedBrightness = current;
-      await channel.invokeMethod('setBrightness', {'value': 0.05});
-    } catch (_) {
-      // MethodChannelが未実装の場合は無視（デグレードなし）
-    }
-  }
-
-  Future<void> _restoreBrightness() async {
-    if (_savedBrightness == null) return;
-    try {
-      const channel = MethodChannel('gapless/brightness');
-      await channel.invokeMethod(
-          'setBrightness', {'value': _savedBrightness});
-      _savedBrightness = null;
+      if (min) {
+        final current =
+            await channel.invokeMethod<double>('getBrightness') ?? 0.5;
+        _savedBrightness = current;
+        await channel.invokeMethod('setBrightness', {'value': 0.05});
+      } else {
+        if (_savedBrightness == null) return;
+        await channel.invokeMethod('setBrightness', {'value': _savedBrightness});
+        _savedBrightness = null;
+      }
     } catch (_) {}
   }
 }

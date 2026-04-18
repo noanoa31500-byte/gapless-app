@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../controllers/smart_compass_controller.dart';
 import '../providers/language_provider.dart';
@@ -48,9 +47,7 @@ class _SmartCompassWidgetState extends State<SmartCompassWidget>
     // ルート変更を監視
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final shelterProvider = context.read<ShelterProvider>();
-     if (shelterProvider.safestRoute != null && shelterProvider.roadGraph != null) {
-        _updateRoute(shelterProvider);
-      }
+      _updateRoute(shelterProvider);
     });
   }
 
@@ -63,17 +60,7 @@ class _SmartCompassWidgetState extends State<SmartCompassWidget>
 
   /// ルートを更新
   void _updateRoute(ShelterProvider shelterProvider) {
-    final routeNodeIds = shelterProvider.safestRoute;
-    final graph = shelterProvider.roadGraph;
-    
-    if (routeNodeIds == null || graph == null) return;
-    
-    // ノードIDから座標リストを作成
-    final routePoints = routeNodeIds
-        .map((id) => graph.nodes[id]?.position)
-        .whereType<LatLng>()
-        .toList();
-    
+    final routePoints = shelterProvider.getSafestRouteAsLatLng();
     if (routePoints.isNotEmpty) {
       _compassController.setRoute(routePoints);
     }
@@ -86,9 +73,7 @@ class _SmartCompassWidgetState extends State<SmartCompassWidget>
     final shelterProvider = context.watch<ShelterProvider>();
 
     // ルート更新チェック
-    if (shelterProvider.safestRoute != null && shelterProvider.roadGraph != null) {
-      _updateRoute(shelterProvider);
-    }
+    _updateRoute(shelterProvider);
 
     return Container(
       width: widget.size,

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tts/flutter_tts.dart';
@@ -59,10 +60,12 @@ class NavigationAnnouncer {
     await _tts.setSpeechRate(0.48);
     await _tts.setVolume(1.0);
     await _tts.setPitch(1.0);
-    await _tts.setIosAudioCategory(
-      IosTextToSpeechAudioCategory.ambient,
-      [IosTextToSpeechAudioCategoryOptions.mixWithOthers],
-    );
+    if (Platform.isIOS) {
+      await _tts.setIosAudioCategory(
+        IosTextToSpeechAudioCategory.ambient,
+        [IosTextToSpeechAudioCategoryOptions.mixWithOthers],
+      );
+    }
     _initialized = true;
     debugPrint('NavigationAnnouncer: 初期化完了 (言語: $_currentTtsLang)');
   }
@@ -187,6 +190,11 @@ class NavigationAnnouncer {
     await _speakForced(GapLessL10n.t('tts_backtrack'));
   }
 
+  /// 任意のテキストを強制読み上げ（SOS受信など緊急通知用）
+  Future<void> announceAlert(String text) async {
+    await _speakForced(text);
+  }
+
   // ---------------------------------------------------------------------------
   // 内部ヘルパー
   // ---------------------------------------------------------------------------
@@ -243,7 +251,7 @@ class NavigationAnnouncer {
         .replaceAll('@dist', '${m.round()}');
   }
 
-  Future<void> dispose() async {
-    await _tts.stop();
+  void dispose() {
+    _tts.stop();
   }
 }

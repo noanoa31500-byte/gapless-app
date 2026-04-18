@@ -7,13 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/shelter.dart';
 import '../data/poi_catalog.dart';
 import '../data/map_repository.dart';
-import '../data/road_parser.dart' hide RoadGraph;
-import '../services/binary_graph_loader.dart';
-import '../services/routing_engine.dart';
-import '../services/safest_route_engine.dart';
+import '../data/road_parser.dart';
 import 'region_mode_provider.dart'; // Used for AppRegion enum
 import '../services/risk_visualization_service.dart';
-import '../models/road_graph.dart';
+import '../services/ble_road_report_service.dart';
 
 /// 避難所データを管理するProvider
 class ShelterProvider with ChangeNotifier {
@@ -26,9 +23,6 @@ class ShelterProvider with ChangeNotifier {
   List<List<LatLng>> _hazardPolygons = [];
   List<Map<String, dynamic>> _hazardPoints = [];
   List<List<LatLng>> _roadPolylines = [];
-  RoadGraph? _roadGraph;
-  RoutingEngine? _routingEngine;
-  List<String>? _safestRoute;
   List<FloodCircleData> _floodRiskCircles = [];
   List<PowerRiskCircleData> _powerRiskCircles = [];
   
@@ -50,9 +44,9 @@ class ShelterProvider with ChangeNotifier {
   Map<String, CachedRouteData> _cachedRoutes = {}; // Key: type (shelter, hospital)
   final Map<String, CachedRouteData> _targetSpecificCache = {}; // Key: Shelter ID
 
+  static final _distance = Distance();
+
   // Internal State
-  bool _isCaching = false;
-  
   // Safe State
   bool _isSafeInShelter = false;
 
@@ -75,8 +69,6 @@ class ShelterProvider with ChangeNotifier {
   List<Map<String, dynamic>> get hazardPoints => _hazardPoints;
   List<List<LatLng>> get roadPolylines => _roadPolylines; // Updated Type
   
-  RoadGraph? get roadGraph => _roadGraph;
-  List<String>? get safestRoute => _safestRoute;
   List<FloodCircleData> get floodRiskCircles => _floodRiskCircles;
   List<PowerRiskCircleData> get powerRiskCircles => _powerRiskCircles;
   bool get isLoading => _isLoading;
@@ -131,15 +123,11 @@ class ShelterProvider with ChangeNotifier {
     }
   }
 
-  LatLng? _lastRouteUpdateLoc;
   /// 避難所データを読み込む
   Future<void> loadShelters() async {
-    final bool isFirstLoad = _shelters.isEmpty;
-    
-    if (isFirstLoad) {
-      _isLoading = true;
-      notifyListeners();
-    }
+    if (_isLoading) return;
+    _isLoading = true;
+    notifyListeners();
 
     try {
       List<Shelter> newShelters = [];
@@ -175,10 +163,7 @@ class ShelterProvider with ChangeNotifier {
       debugPrint('Error loading shelters: $e');
       _shelters = [];
     } finally {
-      if (isFirstLoad) {
-        _isLoading = false;
-      }
-      
+      // POIロード完了後にローディング解除・通知（途中で isLoading=false が見えないよう）
       if (_currentAppRegion == AppRegion.japan) {
         if (_currentRegion == 'jp_tokyo') {
           await _loadTokyoPoiGplb();
@@ -186,8 +171,7 @@ class ShelterProvider with ChangeNotifier {
           await _loadJapanPoiGplb();
         }
       }
-
-      
+      _isLoading = false;
       notifyListeners();
 
       // シェルターロード完了後に保存済みnavTargetを復元
@@ -200,11 +184,11 @@ class ShelterProvider with ChangeNotifier {
     try {
       final bytes = await MapRepository.instance.readBytes('osaki_poi.gplb');
       final grouped    = GplbPoiParser.parseAndGroup(bytes);
-      final shelters   = grouped[PoiCategory.shelter]!;
-      final hospitals  = grouped[PoiCategory.hospital]!;
-      final convStores = grouped[PoiCategory.convenience]!;
-      final supplies   = grouped[PoiCategory.supply]!;
-      final landmarks  = grouped[PoiCategory.landmark]!;
+      final shelters   = grouped[PoiCategory.shelter] ?? [];
+      final hospitals  = grouped[PoiCategory.hospital] ?? [];
+      final convStores = grouped[PoiCategory.convenience] ?? [];
+      final supplies   = grouped[PoiCategory.supply] ?? [];
+      final landmarks  = grouped[PoiCategory.landmark] ?? [];
 
       int added = 0;
       for (final feature in [...shelters, ...hospitals, ...convStores, ...supplies, ...landmarks]) {
@@ -246,11 +230,11 @@ class ShelterProvider with ChangeNotifier {
     try {
       final bytes = await MapRepository.instance.readBytes('tokyo_center_poi.gplb');
       final grouped    = GplbPoiParser.parseAndGroup(bytes);
-      final shelters   = grouped[PoiCategory.shelter]!;
-      final hospitals  = grouped[PoiCategory.hospital]!;
-      final convStores = grouped[PoiCategory.convenience]!;
-      final supplies   = grouped[PoiCategory.supply]!;
-      final landmarks  = grouped[PoiCategory.landmark]!;
+      final shelters   = grouped[PoiCategory.shelter] ?? [];
+      final hospitals  = grouped[PoiCategory.hospital] ?? [];
+      final convStores = grouped[PoiCategory.convenience] ?? [];
+      final supplies   = grouped[PoiCategory.supply] ?? [];
+      final landmarks  = grouped[PoiCategory.landmark] ?? [];
 
       int added = 0;
       for (final feature in [...shelters, ...hospitals, ...convStores, ...supplies, ...landmarks]) {
@@ -287,98 +271,13 @@ class ShelterProvider with ChangeNotifier {
     }
   }
 
-  Future<void> _executeBackgroundUpdate(LatLng currentLoc) async {
-    if (_roadGraph == null || _routingEngine == null) return;
-    if (_isCaching) return;
-    if (_isRoutingLoading) return;
-
-    _isCaching = true;
-    try {
-      if (kDebugMode) print('🔄 ShelterProvider: バックグラウンド候補検索中... (${currentLoc.latitude.toStringAsFixed(4)}, ${currentLoc.longitude.toStringAsFixed(4)})');
-
-      // ターゲットの種類ごとに計算
-      final targets = ['shelter', 'hospital', 'water', 'convenience'];
-      
-      for (var type in targets) {
-        // 直線距離で上位3件を取得（計算負荷軽減）
-        final candidates = _getTopNCandidates(type, currentLoc, 3);
-        
-        CachedRouteData? bestRoadRoute;
-        double minRoadDist = double.infinity;
-
-        for (var target in candidates) {
-          final startNode = _findNearestNode(currentLoc);
-          final goalNode = _findNearestNode(LatLng(target.lat, target.lng));
-          
-          if (startNode != null && goalNode != null) {
-            final route = _routingEngine!.findSafestPath(startNode, goalNode);
-            if (route.isNotEmpty) {
-              final dist = _calculateRouteDistance(route);
-              // より短いルートが見つかれば更新
-              if (dist < minRoadDist) {
-                minRoadDist = dist;
-                bestRoadRoute = CachedRouteData(
-                  route: route,
-                  target: target,
-                  distance: dist,
-                );
-              }
-            }
-          }
-        }
-
-        if (bestRoadRoute != null) {
-          _cachedRoutes[type] = bestRoadRoute;
-          if (kDebugMode) print('📦 Type [$type]: 最短の実道路ルートをキャッシュ (${bestRoadRoute.distance.toStringAsFixed(0)}m)');
-        }
-      }
-      
-      _lastRouteUpdateLoc = currentLoc;
-      notifyListeners();
-      
-    } catch (e) {
-      if (kDebugMode) print('❌ Background Cache Error: $e');
-    } finally {
-      _isCaching = false;
-    }
-  }
-
-  LatLng? _lastRecalcCheckLoc;
-  Timer? _recalcTimer;
-  static const double _moveThreshold = 5.0; // 5m移動
-  static const Duration _recalcDelay = Duration(milliseconds: 2500); // 2.5s停止で発火
-
   @override
   void dispose() {
-    _recalcTimer?.cancel();
     super.dispose();
   }
 
   /// バックグラウンドで避難経路を更新（移動・停止検知付き）
-  Future<void> updateBackgroundRoutes(LatLng currentLoc) async {
-    // 1. 初回または一定距離(5m)の移動をチェック
-    if (_lastRouteUpdateLoc == null || _lastRecalcCheckLoc == null) {
-      _lastRouteUpdateLoc = currentLoc;
-      _lastRecalcCheckLoc = currentLoc;
-      await _executeBackgroundUpdate(currentLoc);
-      return;
-    }
-
-    final distFromLastCheck = const Distance().as(LengthUnit.Meter, _lastRecalcCheckLoc!, currentLoc);
-    
-    // 5m以上移動していなければタイマーをリセットせず無視
-    if (distFromLastCheck < _moveThreshold) return;
-
-    // 2. 移動を検知したらタイマーを（再）セット (Debounce)
-    _lastRecalcCheckLoc = currentLoc;
-    _recalcTimer?.cancel();
-    _recalcTimer = Timer(_recalcDelay, () async {
-      // 2.5秒間移動（5m以上の変化）がなければ「停止した」とみなし再計算
-      if (kDebugMode) print('🛑 Stop Detected: 自動再計算を実行します');
-      _lastRouteUpdateLoc = currentLoc;
-      await _executeBackgroundUpdate(currentLoc);
-    });
-  }
+  Future<void> updateBackgroundRoutes(LatLng currentLoc) async {}
 
 
 
@@ -538,7 +437,7 @@ class ShelterProvider with ChangeNotifier {
             'Loaded ${_hazardPolygons.length} Japan hazard polygons from $hazardFile');
       }
     } catch (e) {
-      if (kDebugMode) print('Japan hazard load error ($hazardFile): $e');
+      if (kDebugMode) debugPrint('Japan hazard load error ($hazardFile): $e');
       _hazardPolygons = [];
     }
     notifyListeners();
@@ -589,122 +488,12 @@ class ShelterProvider with ChangeNotifier {
   /// Japan road graph is handled via gplb; this is a no-op stub.
   Future<void> buildRoadGraph() async {}
 
-  /// 最大安全ルートを計算
-  /// 
-  /// @param start 出発地点の座標
-  /// @param goal 目的地の座標
-  /// @param target (Optional) ターゲット避難所オブジェクト（キャッシュ用）
-  Future<void> calculateSafestRoute(LatLng start, LatLng goal, {Shelter? target}) async {
-    if (_roadGraph == null || _routingEngine == null) {
-      if (kDebugMode) print('⚠️ グラフが未構築です。先にbuildRoadGraph()を呼び出してください。');
-      return;
-    }
-    
-    _isRoutingLoading = true;
-    _safestRoute = null;
-    notifyListeners();
-    
-    try {
-      // 出発地点と目的地の最寄りノードを検索
-      final startNodeId = _findNearestNode(start);
-      final goalNodeId = _findNearestNode(goal);
-      
-      if (startNodeId == null || goalNodeId == null) {
-        if (kDebugMode) print('⚠️ ルート計算: 最寄りノードが見つかりません');
-        _isRoutingLoading = false;
-        notifyListeners();
-        return;
-      }
-      
-      if (kDebugMode) print('🚀 最大安全ルート計算中...');
-      
-      // Dijkstraで最大安全ルート探索
-      _safestRoute = _routingEngine!.findSafestPath(startNodeId, goalNodeId);
-      
-      if (_safestRoute != null && _safestRoute!.isNotEmpty) {
-        if (kDebugMode) {
-          debugPrint('✅ 安全ルート発見: ${_safestRoute!.length}ノード');
-        }
-        
-        // Cache the result if target is provided
-        if (target != null) {
-            final dist = _calculateRouteDistance(_safestRoute!);
-            _targetSpecificCache[target.id] = CachedRouteData(
-                route: _safestRoute!, 
-                target: target, 
-                distance: dist
-            );
-        }
-      } else {
-        if (kDebugMode) print('⚠️ ルートが見つかりませんでした');
-      }
-    } catch (e) {
-      if (kDebugMode) print('❌ ルート計算エラー: $e');
-    } finally {
-      _isRoutingLoading = false;
-      notifyListeners();
-    }
-  }
-
-  /// 最寄りのノードIDを検索
-  String? _findNearestNode(LatLng point) {
-    if (_roadGraph == null) return null;
-    
-    double minDist = double.infinity;
-    String? nearestNodeId;
-    
-    for (var node in _roadGraph!.nodes.values) {
-      const distance = Distance();
-      final dist = distance.as(LengthUnit.Meter, point, node.position);
-      
-      if (dist < minDist) {
-        minDist = dist;
-        nearestNodeId = node.id;
-      }
-    }
-    
-   // 500m以上離れていたらnull
-    if (minDist > 500) return null;
-    return nearestNodeId;
-  }
-
-
-     /// Get top N candidates by straight-line distance
-    List<Shelter> _getTopNCandidates(String type, LatLng loc, int n) {
-      final List<MapEntry<Shelter, double>> candidates = [];
-      const distanceCalc = Distance();
-      
-      for (var s in _shelters) {
-          bool match = s.type == type;
-          if (type == 'water' && (s.type == 'convenience' || s.type == 'store')) match = true;
-          if (type == 'convenience' && s.type == 'store') match = true;
-          if (type == 'hospital' && (s.type == 'hospital' || s.type == 'clinic')) match = true;
-          if (type == 'shelter' && (s.type == 'shelter' || s.type == 'school' || s.type == 'community_centre')) match = true;
-
-          if (match) {
-              final d = distanceCalc.as(LengthUnit.Meter, loc, LatLng(s.lat, s.lng));
-              candidates.add(MapEntry(s, d));
-          }
-      }
-      candidates.sort((a, b) => a.value.compareTo(b.value));
-      return candidates.take(n).map((e) => e.key).toList();
-    }
+  /// 最大安全ルートを計算 (SafetyRouteEngineに委譲 — このメソッドは廃止)
+  Future<void> calculateSafestRoute(LatLng start, LatLng goal, {Shelter? target}) async {}
   
   /// キャッシュされたルートでナビゲーションを開始
   /// 成功すればtrueを返す
-  bool startCachedNavigation(String type) {
-      if (_cachedRoutes.containsKey(type)) {
-        if (kDebugMode) print('⚡ Using cached route for $type');
-        final data = _cachedRoutes[type]!;
-        _safestRoute = data.route;
-        _navTarget = data.target;
-        _isNavigating = true;
-        _isRoutingLoading = false;
-        notifyListeners();
-        return true;
-      }
-      return false;
-  }
+  bool startCachedNavigation(String type) => false;
 
   /// キャッシュされたルートを取得（なければnull）
   List<String>? getCachedRoute(String type) {
@@ -714,23 +503,6 @@ class ShelterProvider with ChangeNotifier {
   /// キャッシュされたルートの距離を取得（なければnull）
   double? getCachedDistance(String type) {
       return _cachedRoutes[type]?.distance;
-  }
-
-  /// ルート（ノードIDリスト）の総距離を計算
-  double _calculateRouteDistance(List<String> route) {
-    if (route.length < 2 || _roadGraph == null) return 0.0;
-    
-    double total = 0.0;
-    const distanceCalc = Distance();
-    
-    for (int i = 0; i < route.length - 1; i++) {
-        final n1 = _roadGraph!.nodes[route[i]];
-        final n2 = _roadGraph!.nodes[route[i+1]];
-        if (n1 != null && n2 != null) {
-            total += distanceCalc.as(LengthUnit.Meter, n1.position, n2.position);
-        }
-    }
-    return total;
   }
 
   /// 特定のターゲットへのキャッシュ済みルート距離を取得（ID一致確認）
@@ -750,33 +522,20 @@ class ShelterProvider with ChangeNotifier {
       return null;
   }
 
-  /// 計算された安全ルートをクリア
-  void clearSafestRoute() {
-    _safestRoute = null;
-    notifyListeners();
-  }
-
   /// 指定したタイプの最寄り施設を検索
   /// [includeTypes]: 特定のタイプのみ検索したい場合に指定
   /// [officialOnly]: includeTypesがnullの場合に有効。trueなら公認避難所のみ(コンビニ除外)
   Shelter? getNearestShelter(LatLng userLocation, {
-    List<String>? includeTypes, 
+    List<String>? includeTypes,
     bool officialOnly = true
   }) {
-    // リリースビルドでもログを出力
-    debugPrint('🔍 getNearestShelter called:');
-    debugPrint('   Total shelters: ${_shelters.length}');
-    debugPrint('   includeTypes: $includeTypes');
-    debugPrint('   userLocation: ${userLocation.latitude}, ${userLocation.longitude}');
-    
-    if (_shelters.isEmpty) {
-      debugPrint('   ⚠️ _shelters is EMPTY!');
-      return null;
+    if (kDebugMode) {
+      debugPrint('🔍 getNearestShelter: ${_shelters.length} shelters, types=$includeTypes');
     }
+    if (_shelters.isEmpty) return null;
 
     Shelter? nearest;
     double minDistance = double.infinity;
-    const distance = Distance();
     int matchCount = 0;
 
     // 除外対象（officialOnly=trueの場合）
@@ -817,21 +576,20 @@ class ShelterProvider with ChangeNotifier {
 
       matchCount++;
 
-      final d = distance.as(LengthUnit.Meter, userLocation, LatLng(shelter.lat, shelter.lng));
+      final d = _distance.as(LengthUnit.Meter, userLocation, LatLng(shelter.lat, shelter.lng));
       if (d < minDistance) {
         minDistance = d;
         nearest = shelter;
       }
     }
 
-    // リリースビルドでもログを出力
-    debugPrint('   Matched: $matchCount items');
-    if (nearest != null) {
-      debugPrint('   ✅ Found: ${nearest.name} (${nearest.type}) at ${minDistance.toStringAsFixed(0)}m');
-    } else {
-      debugPrint('   ❌ No match found');
+    if (kDebugMode) {
+      if (nearest != null) {
+        debugPrint('   ✅ Found: ${nearest.name} (${nearest.type}) at ${minDistance.toStringAsFixed(0)}m');
+      } else {
+        debugPrint('   ❌ No match found (matched=$matchCount)');
+      }
     }
-
     return nearest;
   }
 
@@ -967,24 +725,6 @@ class ShelterProvider with ChangeNotifier {
     notifyListeners();
     unawaited(_persistNavTarget(shelter));
     
-    // 現在地がある場合は安全ルートを計算
-    if (currentLocation != null && _roadGraph != null && _routingEngine != null) {
-      final goalLatLng = LatLng(shelter.lat, shelter.lng);
-      
-      if (kDebugMode) {
-        debugPrint('🛡️ ハザード回避ルート計算開始...');
-        debugPrint('   出発: ${currentLocation.latitude}, ${currentLocation.longitude}');
-        debugPrint('   目的: ${shelter.name}');
-      }
-      
-      await calculateSafestRoute(currentLocation, goalLatLng);
-      
-      if (_safestRoute != null && _safestRoute!.isNotEmpty) {
-        if (kDebugMode) {
-          debugPrint('✅ 安全ルート計算完了: ${_safestRoute!.length}ポイント');
-        }
-      }
-    }
   }
   
   /// main.dart で計算されたルートを受け取り、地図更新を通知する
@@ -1000,20 +740,10 @@ class ShelterProvider with ChangeNotifier {
 
   /// 安全ルートをLatLngリストとして取得（コンパスナビゲーション用）
   List<LatLng> getSafestRouteAsLatLng() {
-    // 1. main.dart からのルートがあればそれを最優先で返す
     if (_externalRoute != null && _externalRoute!.isNotEmpty) {
       return _externalRoute!;
     }
-
-    // 2. なければ従来のグラフ計算ルートを返す
-    if (_safestRoute == null || _safestRoute!.isEmpty || _roadGraph == null) {
-      return [];
-    }
-    
-    return _safestRoute!
-        .map((nodeId) => _roadGraph!.nodes[nodeId]?.position)
-        .whereType<LatLng>()
-        .toList();
+    return [];
   }
   
   /// 避難所がハザードゾーン内にあるかチェック
@@ -1091,17 +821,18 @@ class ShelterProvider with ChangeNotifier {
     if (_shelters.isEmpty) return null;
 
     Shelter? nearest;
-    double minDistance = double.infinity;
+    double minCost = double.infinity;
 
     for (final shelter in _shelters) {
       final d = Geolocator.distanceBetween(
-        currentPos.latitude,
-        currentPos.longitude,
-        shelter.lat,
-        shelter.lng,
+        currentPos.latitude, currentPos.longitude,
+        shelter.lat, shelter.lng,
       );
-      if (d < minDistance) {
-        minDistance = d;
+      // ハザードゾーン内の避難所は実質的に到達困難 → コストを3倍に
+      final inHazard = _isInHazardZone(LatLng(shelter.lat, shelter.lng));
+      final cost = inHazard ? d * 3.0 : d;
+      if (cost < minCost) {
+        minCost = cost;
         nearest = shelter;
       }
     }
@@ -1140,8 +871,7 @@ class ShelterProvider with ChangeNotifier {
 
   /// オフラインチャット用の誘導メッセージを生成
   String generateOfflineResponse(Shelter target, LatLng currentPos) {
-    const distanceCalc = Distance();
-    final dist = distanceCalc.as(LengthUnit.Meter, currentPos, LatLng(target.lat, target.lng));
+    final dist = _distance.as(LengthUnit.Meter, currentPos, LatLng(target.lat, target.lng));
     final directionText = getBlindDirectionText(currentPos, LatLng(target.lat, target.lng));
 
     return '''
@@ -1156,113 +886,17 @@ class ShelterProvider with ChangeNotifier {
   void setSafeInShelter(bool value) {
     _isSafeInShelter = value;
     if (value) {
+      // 到着避難所をBLEで周囲へ伝播（_navTargetが判明している場合のみ）
+      if (_navTarget != null) {
+        BleRoadReportService.instance.enqueueShelterStatus(_navTarget!);
+      }
       _isNavigating = false;
       unawaited(_clearPersistedNavTarget());
     }
     notifyListeners();
   }
 
-  /// 現在向いている方向の道路リスクを取得する
-  /// 
-  /// @param currentLocation 現在地
-  /// @param heading 現在のヘディング（0-360）
-  /// @return {riskFactor: double, message: String, isSafe: bool}
-  Map<String, dynamic>? getRoadRiskInDirection(LatLng currentLocation, double heading) {
-    if (_roadGraph == null) return null;
-
-    // 1. 最寄りのノードを探す (50m以内)
-    final nearestNodeId = BinaryGraphLoader.findNearestNode(_roadGraph!, currentLocation, maxDistance: 50.0);
-    if (nearestNodeId == null) return null;
-
-    final nearestNode = _roadGraph!.nodes[nearestNodeId];
-    if (nearestNode == null) return null;
-
-    // 2. そのノードに接続するエッジを取得
-    final edges = _roadGraph!.getEdgesFromNode(nearestNodeId);
-    
-    // 3. ユーザーの向きと一致する道路（エッジ）を探す
-    // 許容誤差: +/- 20度（少し緩めに設定）
-    for (final edge in edges) {
-      final otherNodeId = _roadGraph!.getOtherNodeId(edge.id, nearestNodeId);
-      final otherNode = _roadGraph!.nodes[otherNodeId];
-      if (otherNode == null) continue;
-
-      // エッジの方位角を計算
-      final bearing = Geolocator.bearingBetween(
-        nearestNode.position.latitude,
-        nearestNode.position.longitude,
-        otherNode.position.latitude,
-        otherNode.position.longitude,
-      );
-
-      // 角度の差を計算（最短距離）
-      double diff = (bearing - heading).abs();
-      if (diff > 180) diff = 360 - diff;
-
-      // 30度以内なら「その道を見ている」と判定（緩和）
-      if (diff <= 30) {
-        // === Unified Risk Calculation using RoutingEngine logic ===
-        double riskFactor = 1.0;
-        String message = '';
-        bool isSafe = true;
-
-        if (_currentRegion.startsWith('th') && _routingEngine != null) {
-           // --- Thailand Mode (Flood/Power) ---
-           // Use RoutingEngine's sophisticated weight calculation
-           try {
-             final weight = _routingEngine!.calculateEdgeWeight(edge);
-             final baseWeight = edge.distance;
-             
-             // Cost Ratio (How much more expensive is this road compared to its length?)
-             double ratio = weight / baseWeight;
-             if (baseWeight == 0) ratio = 1.0; // Safety check
-
-             if (weight == double.infinity || ratio >= 5.0) {
-                // High Risk (Flood > 1.5m OR Power Danger)
-                message = 'DANGER: 深い浸水または感電リスク';
-                isSafe = false;
-                riskFactor = 5.0; // Max risk
-             } else if (ratio >= 2.0) {
-                message = 'WARNING: 浸水あり (注意して通行)';
-                isSafe = false;
-                riskFactor = ratio;
-             } else {
-                message = 'SAFE: 通行可能';
-                isSafe = true;
-                riskFactor = 1.0;
-             }
-           } catch (e) {
-             // Fallback
-             message = 'Unknown Risk';
-           }
-        } else {
-           // --- Japan Mode (Road Width) ---
-           // Existing logic using SurvivalRiskFactor
-           riskFactor = SurvivalRiskFactor.getFactorForHighwayType(edge.highwayType);
-           
-           if (riskFactor >= 5.0) {
-             message = '危険: 路地・細道 (回避推奨)';
-             isSafe = false;
-           } else if (riskFactor >= 1.2) {
-             message = '注意: 生活道路 (閉塞リスクあり)';
-             isSafe = false; // 警告対象
-           } else {
-             message = '安全: 大通り (推奨ルート)';
-             isSafe = true;
-           }
-        }
-
-        return {
-          'riskFactor': riskFactor,
-          'message': message,
-          'isSafe': isSafe,
-          'edgeId': edge.id,
-        };
-      }
-    }
-    
-    return null; // 該当する道路なし
-  }
+  Map<String, dynamic>? getRoadRiskInDirection(LatLng currentLocation, double heading) => null;
 }
 
 /// 地域避難所データモデル（共通）

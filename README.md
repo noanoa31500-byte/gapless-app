@@ -4,8 +4,9 @@
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.0+-02569B?logo=flutter)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?logo=dart)](https://dart.dev)
-[![Platform](https://img.shields.io/badge/Platform-iOS-000000?logo=apple)](https://developer.apple.com)
+[![Platform](https://img.shields.io/badge/Platform-iOS%20%7C%20Android-000000?logo=apple)](https://developer.apple.com)
 [![License](https://img.shields.io/badge/License-Educational-green)](LICENSE)
+[![Version](https://img.shields.io/badge/Version-5.0.0-blue)](pubspec.yaml)
 
 ---
 
@@ -19,121 +20,119 @@
 
 ## ⚡ なぜこれが革新的なのか
 
-### 1. 🧠 Offline AI Triage（オフライン判断システム）
+### 1. 📡 BLE メッシュ情報ネットワーク（インターネット不要のP2P通信）
 - **課題:** 災害時、通信インフラは最初に途絶する
-- **解決:** 端末内で怪我の重症度を5ステップで判断し、適切な施設（医療設備の有無）へ自動ルート変更
-- **技術:** ローカルルールベース判断システム + トリアージUI + 最近傍病院/避難所自動ナビ開始
-
-### 2. 📳 Panic UI（パニックモード）
-- **課題:** 災害時、画面を見る余裕はない
-- **解決:** ポケットに入れたまま、「振動パターン」と「音声」だけで避難可能
+- **解決:** Bluetooth Low Energy を使い、スマートフォン同士がメッシュ状に情報を中継。**インターネット不要で通行止め・SOS・避難所状況を伝播**
 - **技術:**
-  - **Haptic:** 振動パターンによる触覚フィードバック（iOS CoreHaptics）
-  - **Voice:** 「あと300m、北東」と音声で誘導（flutter_tts・15秒間隔・20mデバウンス）
-  - **Visual:** 危険度に応じたオーバーレイカラー（赤・橙・緑）
+  - `PeerRoadReport`: 通行可/不可/危険のBLEアドバタイズ送信（reportCount重み付き）
+  - `SosReport`: 長押し3秒で位置情報SOSビーコンを発信。受信端末が地図上に表示（1時間TTL）
+  - `ShelterStatusReport`: 避難所の在避難者情報をBLEで伝播（4時間TTL）
+  - カスタムGATT UUID + MTUチャンキングで安定転送
+  - SQLiteでローカルキャッシュし、TTL超過後に自動削除
 
-### 3. 🚨 Global Disaster Interrupt（強制割り込み）
-- **課題:** 平時の画面（設定やチャット）にいても、緊急地震速報などでパニックになると操作できない
-- **解決:** 災害モードが発動した瞬間、**アプリ内のどこにいても全履歴を消去してコンパス画面へ強制移動**
-- **実装:** `main.dart` レベルでの常時監視システム (`DisasterWatcher`) + heartbeat 3秒監視
+### 2. 🧭 オフライン自律ナビゲーション（GPS不要モード）
+- **課題:** 地下・建物内でGPS信号が失われ、位置が更新されない
+- **解決:** GPS沈黙3秒で自動起動する **Dead Reckoning**（自律推測航法）
+- **技術:**
+  - 加速度センサー（sensors_plus）で歩行を検出、磁力計方角×歩幅で位置積算
+  - GPS復帰時はGPS位置80%・DR推定20%の加重平均でジャンプなく統合
+  - フォールバック順位: GPS → DR推定 → 前回保存位置 → 東京デフォルト
+- **UI:** 画面上部にオレンジバッジ「GPS消失 - 推定位置使用中（N歩）」を常時表示
 
-### 4. 🧭 Reactive Navigation（即応型コンパス）
-- **課題:** 目的地を変更したくても、再検索や設定が面倒
-- **解決:**
-  - **Chat-to-Nav:** AIチャットで「ここに行く」を押すだけで即座に目的地ロック＆ナビ開始
-  - **Reactive UI:** 目的地が変わった瞬間、コンパスの針がリアルタイムに方角を指し示す
-  - **Quick Select:** 画面内チップで「水」「病院」「コンビニ」「避難所」を即切替
+### 3. 🚨 緊急シンプル画面（EmergencySimpleScreen）
+- **課題:** パニック時は複雑なUIを操作できない
+- **解決:** 3ゾーン構成の超シンプル緊急UI
+  - **Zone 1（赤）:** SOSビーコン送信ボタン（長押し3秒でBLE発信）
+  - **Zone 2（暗）:** 最寄り避難所への方位矢印＋距離
+  - **Zone 3（灰）:** 緊急アクションボタン4つ（電話・水・応急処置・TTS再読み上げ）
+- **ボリュームキーTTS:** 音量アップキー押下で現在の案内を再読み上げ（画面を見なくても操作可能）
 
-### 5. 📡 BLE Offline Sync（iPhone間オフライン同期）
-- **課題:** 通信断絶時、他のユーザーが報告した通行止め情報を受け取れない
-- **解決:** Bluetooth Low Energy (BLE) を使い、**インターネット不要でiPhone間がメッシュ状に情報を中継**
-- **仕組み:**
-  - 通行可/不可/危険の道路情報をBLEアドバタイズでブロードキャスト
-  - カスタムGATT UUID + MTU対応チャンキングで安定転送
-  - 受信側は自動収集・地図に反映。報告数が多いほど大きく表示（reportCount重み付け）
-  - SQLiteでローカルキャッシュし、TTL（24時間）で自動削除
-  - AppBar に接続Peer数・最終同期時刻をリアルタイム表示
+### 4. 🌐 気象庁オープンデータ連携（JMA公式フィード）
+- **課題:** 緊急地震速報・津波警報を公式情報源でリアルタイム確認したい
+- **解決:** 気象庁 Atom XML フィード（`eqvol_l.xml`）を60秒ごとポーリング
+- **仕様:**
+  - 緊急地震速報・津波警報のみを抽出・表示
+  - 発報から6時間以内を「有効」扱い（期限外は自動グレーアウト）
+  - オフライン時は最後に取得したデータをキャッシュ表示
+  - Pull-to-Refresh で手動更新も対応
+
+### 5. 🧠 全画面強制割り込み（DisasterWatcher）
+- **課題:** 設定や地図を見ているときに緊急地震速報が来ても操作できない
+- **解決:** `DisasterWatcher` が常時ネット死活を監視。3エンドポイント同時チェックで単一障害誤検知を防ぎ、**アプリ内のどこにいても全履歴を消去してコンパス画面へ強制遷移**
+- **実装:**
+  - 3秒ごとのハートビート（Google / Apple / GitHub 並列チェック）
+  - 3回連続失敗でのみ災害モード（ヒステリシス）
+  - 復帰時は2秒ディレイ後に自動通常モードへ帰還
 
 ### 6. 🦶 Dead Reckoning（GPS断絶時の自律推測航法）
-- **課題:** 地下や建物内ではGPS信号が失われ、位置が更新されない
-- **解決:** GPS沈黙3秒で自動起動。加速度センサーで歩行を検出し、コンパス方角×歩幅で位置を積算
-- **UI:** 画面上部にオレンジバッジ「GPS消失 - 推定位置使用中（N歩）」を常時表示
-- **GPS復帰:** GPS位置80%・DR推定20%の加重平均で融合し、ジャンプなく復帰
-- **フォールバック順位:** GPS → DeadReckoning推定位置 → SharedPreferences前回位置 → 東京デフォルト
+詳細は「オフライン自律ナビゲーション」を参照。
 
-### 7. 🎯 Risk Radar（360度危険度スキャン）
+### 7. 🎯 リスクレーダー（360度危険度スキャン）
 - **課題:** 自分の周囲どの方向が安全かわからない
 - **解決:** 360度レーダーが周囲の危険ゾーンをリアルタイムスキャン
 - **危険分類:**
-  - ⚡ **感電リスク** (Electrocution) — 冠水エリア＋電力インフラ交差
-  - 🌊 **深水リスク** (Deep Water) — 洪水浸水深マップ
-  - 🌀 **激流リスク** (Rapid Flow) — 流速危険エリア
+  - ⚡ **感電リスク** — 冠水エリア＋電力インフラ交差
+  - 🌊 **深水リスク** — 洪水浸水深マップ
+  - 🌀 **激流リスク** — 流速危険エリア
 - **技術:** `RiskRadarScanner` + `OfflineRiskScanner` + RadarScanResult 数値化
 
-### 8. 🤖 多言語AI防災Bot（全18言語対応）
-- **課題:** 外国人・インバウンド旅行者が、日本語の防災情報を読めない
-- **解決:** 避難所到着後、ユーザーの言語設定に応じて官公庁ガイドライン準拠の防災アドバイスを自動生成
-- **対応言語:** 日・英・中（簡/繁）・韓・泰・比・尼・緬・ヒンディー・ネパール・シンハラ・ベンガル・スペイン・ポルトガル・モンゴル・ウズベク
+### 8. 🩺 オフライントリアージ（5ステップ重症度判定）
+- **課題:** 災害時、負傷者が「どの施設へ行くべきか」判断できない
+- **解決:** 端末内で怪我の重症度を5ステップで判定し、適切な施設（医療設備の有無）へ自動ルート変更
+- **技術:** ローカルルールベース判断システム → 最近傍病院/避難所へ自動ナビ起動
+
+### 9. 🤖 多言語AIボット（全18言語対応）
+- **課題:** 外国人・インバウンド旅行者が日本語の防災情報を読めない
+- **解決:** ユーザーの言語設定に応じて官公庁ガイドライン準拠の防災アドバイスを自動生成
+- **対応言語:** 日・英・中（簡/繁）・韓・タイ・フィリピン語・インドネシア語・ミャンマー語・ヒンディー・ネパール語・シンハラ語・ベンガル語・スペイン語・ポルトガル語・モンゴル語・ウズベク語（全18言語）
 - **ガイド体系:** 内閣府・消防庁準拠 6項目 + AI拡張サポート 10項目
+- **多言語フォント:** NotoSans 10フォントファミリー内蔵（豆腐文字・文字化け根絶）
 
-### 9. 🗺️ 全国47都道府県タイルマップ
+### 10. 🗺️ 全国タイルマップ＋自動更新
 - **課題:** 事前にどの地域にいるかわからない
-- **解決:** 起動時・以降10分おきに現在地周辺3kmのタイルを自動取得し、ローカルストレージをバックグラウンドで常に最新に更新
+- **解決:** 起動時・以降10分おきに現在地周辺3kmのタイルを自動取得・ローカル保存
 - **仕組み:**
-  - `maps` リポジトリの `index.json` で全国タイルを管理
-  - 現在地から半径3km以内のタイルのみを選択的にダウンロード
+  - GitHub `maps` リポジトリの `index.json` で全国タイルを管理
+  - 現在地から半径3km以内のタイルのみを選択的にDL
   - 遠方キャッシュは自動削除（ストレージ節約）
-  - 旧/新ディレクトリ構造の両方を自動フォールバック取得
+  - jsDelivr CDN をフォールバックURLとして設定（GitHub 不通時も継続DL）
 
-### 10. 🌏 ハイパーローカライゼーション
-- **実装地域:** 日本全国47都道府県（宮城県大崎市を重点実装）
-- **言語:** 18言語対応（日・英・泰・中(簡/繁)・韓・比・尼・緬・ヒンディー・スペイン・ポルトガル・モンゴル・ウズベク・ネパール・シンハラ・ベンガル）
-- **フォント:** NotoSans 10言語内蔵（豆腐文字防止・オフライン完全対応）
-- **豆腐/文字化け防止:** `SafeText` ウィジェット + `safeStyle()` + 11フォントNotoSansフォールバックチェーン
-
----
-
-## 🎨 UI デザイン原則
-
-| 状態 | カラー | 意味 |
-|------|--------|------|
-| 通常・ホーム・地図 | 🟢 Forest Green `#2E7D32` | 安全・平常時 |
-| コンパスナビゲーション | 🔴 Deep Red `#C62828` | 緊急・避難行動中 |
-| 警告・アクセント | 🟠 Orange `#FF6F00` | 注意・ウェイポイント |
-
-**コンパス画面の設計思想:**
-- 戻るボタンは**存在しない** — 避難行動中に戻れない
-- 通信が回復したとき、スナックバーで「戻る」が初めて表示される
-- 物理バックスワイプも `PopScope` で無効化
+### 11. 🎨 Apple Design System テーマ
+- **通常モード:** iOS System Green（`#30D158`）ダークベース
+- **緊急モード:** iOS System Red（`#FF453A`）に自動切替
+- `EmergencyThemeNotifier`: 災害モード発動と同期してテーマを全画面即座に変更
+- Material Design 3 準拠のコンポーネントテーマ（StadiumBorderボタン・radius 8カード）
 
 ---
 
-## 🗺️ 画面構成（全15画面）
+## 🗺️ 画面構成（全17画面）
 
 ```
 起動フロー
-├─ SplashScreen        ロゴ・免責事項・初期ロード
-├─ MapDataLoadingScreen GitHub地図データダウンロード（進捗表示）
-├─ OnboardingScreen    初回体験・言語選択・位置情報許可
-└─ PermissionGateScreen 位置・モーション・Bluetooth権限取得
+├─ LoadingApp             フォントプリロード＆セキュリティ初期化
+├─ AppStartup             マップキャッシュ確認・遷移先振り分け
+├─ MapDataLoadingScreen   GitHub地図データDL（進捗バー表示）
+├─ OnboardingScreen       初回体験・言語選択・位置情報許可
+└─ PermissionGateScreen   位置・モーション・Bluetooth権限取得
 
 本体 (NavigationScreen)
-├─ HomeScreen          マップ・避難所マーカー・ハザード可視化
-│   └─ MapScreen       危険スポット追加・BLE同期表示
-├─ ChatScreen          官公庁6項目 + AI拡張10項目（2段階メニュー）
-│   └─ SurvivalGuideModal ガイド詳細モーダル
-└─ EmergencyCardPage   緊急IDカード（血液型・アレルギー・ニーズ）
+├─ HomeScreen             マップ・避難所マーカー・ハザード可視化
+│   └─ MapScreen          危険スポット追加・BLE同期表示
+├─ ChatScreen             官公庁6項目 + AI拡張10項目（2段階メニュー）
+├─ JmaFeedScreen          気象庁 緊急地震速報・津波警報 一覧
+└─ EmergencyCardPage      緊急IDカード（血液型・アレルギー・ニーズ）
 
 災害対応フロー
-├─ DisasterCompassScreen  コンパス避難ナビ（戻るボタンなし）
-├─ RiskRadarCompassScreen 360度危険スキャン
-├─ TriageScreen           5ステップ重症度判定→自動ナビ起動
-├─ ShelterDashboardScreen 避難所生活支援（到着後）
-└─ SurvivalGuideScreen    応急処置・災害行動・避難所生活（3タブ）
+├─ DisasterCompassScreen   コンパス避難ナビ（戻るボタンなし・PopScope）
+├─ EmergencySimpleScreen   超シンプル緊急UI（SOS / 方位 / 4アクション）
+├─ RiskRadarCompassScreen  360度危険スキャン
+├─ TriageScreen            5ステップ重症度判定→自動ナビ起動
+└─ ShelterDashboardScreen  避難所生活支援（到着後）
 
-設定
+設定・その他
 ├─ SettingsScreen      地域・言語・プロフィール・キャッシュ
 ├─ ProfileEditScreen   名前・血液型・国籍・アレルギー・ニーズ
+├─ SurvivalGuideScreen 応急処置・行動・避難所生活（3タブ）
 └─ TutorialScreen      操作説明（PageView形式）
 ```
 
@@ -141,120 +140,127 @@
 
 ## 🛠️ 技術スタック
 
-### Frontend (iOS Native)
-- **Flutter (Dart)**: iOS ネイティブ最適化
-- **Provider**: 状態管理（全画面同期）
-- **flutter_map**: OpenStreetMap統合（オフラインタイル対応）
-- **flutter_tts**: 音声ガイダンス（iOS AVFoundation）
-- **vibration**: ハプティックフィードバック
+### フレームワーク
+| 技術 | 用途 |
+|------|------|
+| Flutter (Dart) | iOS / Android クロスプラットフォーム |
+| Provider | 状態管理（全画面同期） |
+| flutter_map | OpenStreetMap 統合（オフラインタイル対応） |
+| Material Design 3 | Apple Design System 準拠テーマ |
 
 ### センサー & 位置情報
-- **geolocator**: GPS高精度取得（CoreLocation）2秒ポーリング・20m以上移動で再計算
-- **flutter_compass**: 磁力計コンパス（CoreMotion）+ カルマンフィルタ平滑化
-- **sensors_plus**: 加速度センサー（Dead Reckoning 歩行検出）
-- **磁気偏角補正**: 地域別パラメータによる真北計算
+| 技術 | 用途 |
+|------|------|
+| geolocator | GPS高精度取得（CoreLocation）|
+| flutter_compass | 磁力計コンパス + カルマンフィルタ平滑化 |
+| sensors_plus | 加速度センサー（Dead Reckoning 歩行検出）|
+| 磁気偏角補正 | 地域別パラメータによる真北計算 |
 
-### データ管理
-- **MapAutoLoader**: 起動時1回 + 10分ごとの自動タイル取得（シングルトン）
-- **MapCacheManager**: `{documents}/maps/{areaId}/{fileKey}.bin` ローカル保存
-- **MapDownloadService**: `index.json` + 候補URL自動フォールバック + gzip解凍 + 3回リトライ
-- **GPLB形式**: 独自バイナリ形式による高速道路グラフ読み込み（JSON比5〜10倍高速）
-- **sqflite**: BLE受信データのローカルDB管理
+### オフライン通信（BLE）
+| 技術 | 用途 |
+|------|------|
+| flutter_blue_plus | BLE Central/Peripheral 双方向通信 |
+| カスタム GATT UUID | 道路レポート・SOS・避難所状況の多種パケット |
+| sqflite | BLE受信データのローカルDB管理 |
 
-### オフライン通信
-- **flutter_blue_plus**: BLE Central/Peripheral 双方向通信（カスタムGATT UUID）
-- **connectivity_plus**: 通信回復検知（コンパス画面の帰還ゲート）
+### データ & ルーティング
+| 技術 | 用途 |
+|------|------|
+| GPLB（独自バイナリ） | 道路グラフ高速読込（JSON比5〜10倍）|
+| A* Isolate | 非同期経路計算（UIブロックなし）|
+| MapAutoLoader | 起動時1回 + 10分ごと自動タイル更新 |
+| MapCacheManager | `{documents}/maps/{areaId}/` ローカル保存 |
+| JmaAlertService | 気象庁Atom XMLフィード 60秒ポーリング |
 
-### ルーティング
-- **A\*経路計算**: Isolateベースで非同期実行（UIブロックなし）
-- **Safety Route Engine**: 道路幅優先ロジック
-- **WaypointMagnetManager**: ルート上の最近傍点吸着
+### 音声 & フィードバック
+| 技術 | 用途 |
+|------|------|
+| flutter_tts | 音声ナビ（AVFoundation / Android TTS）|
+| vibration | ハプティックフィードバック |
+| ボリュームキーTTS | 音量アップ = 案内文再読み上げ |
+
+### iOS ネイティブ拡張（Method Channel）
+| チャネル | 用途 |
+|---------|------|
+| `gapless/bg_task` | Background Task Extension |
+| `gapless/brightness` | 画面輝度制御 |
+| CBPeripheralManager | iOSネイティブBLEペリフェラル |
 
 ---
 
-## 🗺️ データ構成
+## 📊 BLE パケット仕様
+
+```
+PeerRoadReport  {"type":"r","v":"devId","a":lat,"o":lng,"s":0-2,"c":count,"t":ts}
+                s: 0=通行可 / 1=通行不可 / 2=危険
+                TTL: 24時間
+
+SosReport       {"type":"sos","v":"devId8","a":lat,"o":lng,"t":ts}
+                TTL: 1時間
+
+ShelterStatus   {"type":"sh","id":"shelId","a":lat,"o":lng,"st":0-1,"t":ts,"v":"devId"}
+                st: 1=在避難者あり
+                TTL: 4時間
+```
+
+---
+
+## 🗺️ マップデータ構成
 
 ```
 GitHub (noanoa31500-byte/maps リポジトリ)
 ├── index.json                     # 全国タイルインデックス（バージョン管理）
-├── tohoku/miyagi/osaki_*/         # 例: 東北→宮城→大崎市タイル
+├── kanto/tokyo/tokyo_center_*/
 │   ├── roads.gplb.gz              # 道路グラフ（バイナリ・gzip圧縮）
 │   ├── poi_hospital.gplb.gz       # 医療施設POI
 │   ├── poi_shelter.gplb.gz        # 避難所POI
-│   ├── poi_store.gplb.gz          # 店舗・コンビニPOI
-│   ├── poi_water.gplb.gz          # 給水所POI
-│   └── hazard.gplh.gz             # ハザードポリゴン
-└── kanto/tokyo/tokyo_center_*/    # 例: 関東→東京中心部タイル
+│   ├── hazard.gplh.gz             # ハザードポリゴン
+│   └── ...
+└── tohoku/miyagi/osaki_*/
     └── ...
 ```
 
-**タイル取得の仕組み:**
-1. アプリ起動時: `index.json` をGitHubから取得（ローカルキャッシュがあれば即利用 + バックグラウンドで最新に更新）
-2. 現在地から半径3km以内のタイルを特定
-3. 各タイルをダウンロードし、ローカルストレージを常に上書き更新
-4. 圏外の遠方タイルは自動削除
-5. 以降10分おきにバックグラウンドで繰り返す
-
-> **注意:** GISデータ・ハザードキャッシュはアプリ本体に含まれません。初回起動時または通信回復時にGitHubから自動取得されます。
+**フォールバック構成:**
+- プライマリ: `raw.githubusercontent.com/noanoa31500-byte/maps@main`
+- CDN: `cdn.jsdelivr.net/gh/noanoa31500-byte/maps@main`
+- 各URLを最大2回リトライ（指数バックオフ）
 
 ---
 
-## 🚀 セットアップ & 起動
+## 🚀 セットアップ
 
 ### 必要環境
 - Flutter 3.0+
-- Xcode 15+（iOS 実機 or シミュレーター）
-- iOS 14.0+
-- Apple Developer Program（実機ビルド時）
+- Xcode 15+（iOS）/ Android Studio（Android）
+- iOS 14.0+ / Android 8.0+
 
 ### 起動手順
 
 ```bash
 flutter pub get
 flutter run
-# または
-open ios/Runner.xcworkspace
 ```
 
 ### 初回起動時の動作
 1. 位置情報・コンパス・Bluetooth・モーションの権限リクエスト
 2. GitHubから現在地周辺の地図タイルを自動ダウンロード
-3. ホーム画面で現在地を自動検出
+3. 気象庁フィードの初回取得
+4. NavigationScreen へ遷移
 
 ---
 
-## 📊 主要機能一覧
+## ✅ 実装済み機能
 
-### ✅ 実装済み
-
-- [x] **全画面強制遷移**（DisasterWatcher — 災害モード発動でコンパス画面へ直行）
-- [x] **コンパス画面ロック**（PopScope + connectivity監視 — 通信回復まで離脱不可）
-- [x] **UI カラーシステム**（平常=緑 / 避難=赤 / 警告=橙）
-- [x] **360度危険度レーダー**（感電・深水・激流を方向別にスキャン）
-- [x] **5ステップトリアージ**（重症度判定 → 最近傍施設へ自動ナビ起動）
-- [x] **全18言語AI防災Bot**（官公庁6項目 + AI拡張10項目・全言語SafeText対応）
-- [x] **BLE iPhone間オフライン同期**（メッシュ中継 + reportCount重み表示）
-- [x] **デッドレコニング**（GPS沈黙3秒でAuto起動・加速度計+コンパスで位置推定・GPS復帰時80/20融合）
-- [x] **全国47都道府県タイルマップ**（MapAutoLoader + MapCacheManager + 10分自動更新）
-- [x] **mapsリポジトリ連携**（index.json + タイルID + gzip自動解凍 + フォールバックURL）
-- [x] **A\*経路計算**（Isolateベース非同期 / 道路幅優先Safety Route）
-- [x] **Chat-to-Nav**（AIチャット2段階メニュー → 即時ナビ開始）
-- [x] **リアクティブコンパス**（カルマンフィルタ平滑化・磁気偏角補正）
-- [x] **GPSロガー**（移動軌跡記録）
-- [x] **ハザードマップ可視化**（浸水・電力エリアのポリゴン表示）
-- [x] **避難所データベース**（タイプ別アイコン・最近傍検索）
-- [x] **18言語UI + 多言語フォント内蔵**（NotoSans 10言語・豆腐/文字化け根絶）
-- [x] **パニックモード**（振動・音声・20mデバウンス）
-- [x] **オフライン動作**（タイルデータ事前キャッシュ）
-- [x] **緊急IDカード**（血液型・アレルギー・ニーズ情報）
-- [x] **危険スポットクラウドソーシング**（BLE P2P共有 + reportCount重み付き地図表示）
-
-### 🚧 今後の拡張
-
-- [ ] AI怪我判断（カメラ画像認識）
-- [ ] AR避難所表示
-- [ ] Android対応
-- [ ] 自治体との公式データ連携API
+| カテゴリ | 機能 |
+|----------|------|
+| 🚨 緊急対応 | 全画面強制遷移（DisasterWatcher）、コンパス画面ロック（PopScope）、超シンプル緊急UI |
+| 📡 BLE | 道路レポートP2P同期、SOSビーコン（長押し3秒）、避難所状況伝播 |
+| 🧭 ナビ | Dead Reckoning、A*経路計算（Isolate）、音声ナビ（TTS 15秒間隔）、ボリュームキー対応 |
+| 🌐 情報 | JMA 緊急地震速報・津波警報（60秒ポーリング）、18言語AIボット |
+| 🗺️ 地図 | 全国タイル自動更新、ハザードマップ可視化、360度リスクレーダー |
+| 🩺 医療 | 5ステップトリアージ、最近傍病院/避難所自動ナビ |
+| 🎨 UI/UX | Apple Design System テーマ、緊急赤テーマ自動切替、NotoSans 10言語内蔵 |
+| 🔒 セキュリティ | デバイスUUID管理、encrypt + flutter_secure_storage |
 
 ---
 
@@ -262,54 +268,30 @@ open ios/Runner.xcworkspace
 
 ### Phase 1: 地域実証実験（現在）
 - **ターゲット:** 宮城県大崎市（人口13万人）
-- **協力:** 地元自治体、学校
-- **目的:** リアルな災害訓練でのフィードバック収集
+- **目的:** 実際の災害訓練でのフィードバック収集
 
 ### Phase 2: 全国展開
-- **ターゲット:** 全国47都道府県（インバウンド観光客・在日外国人含む）
-- **技術:** GPLBバイナリ＋タイルシステムにより、各地域のハザードマップを即座に統合
+- **ターゲット:** 全国47都道府県・在日外国人・インバウンド観光客
+- **技術:** GPLBタイルシステムにより各地域のデータを即座に統合
 
 ### Phase 3: オープンソース化
-- **公開範囲:** コアシステム
-- **ライセンス:** Apache 2.0
-
----
-
-## 🔧 品質管理
-
-全Dartファイルを対象としたランタイムバグ監査・豆腐/文字化け監査を実施済み：
-
-| カテゴリ | 内容 | 修正数 |
-|----------|------|--------|
-| async/await | `void` 関数内の `Future` 未await・`mounted` チェック漏れ | 4件 |
-| Timer | `cancel()` 後に `null` 未セットで再起動ループ | 1件 |
-| BLE | `StreamSubscription` 二重登録 | 1件 |
-| 翻訳 | 翻訳キー欠落（raw key 表示バグ） | 10件 |
-| ルーティング | `getTopNCandidates` 未ソートで非最近傍を返す | 1件 |
-| 描画性能 | `shouldRepaint` 常時 `true` によるGPU過負荷 | 2件 |
-| 豆腐文字 | `TextStyle` に `fontFamily` 未指定・SnackBar/Dialog内 `Text` のフォント漏れ | 20件超 |
-| 文字化け | `utf8.decode()` に `allowMalformed: true` 未設定 | 全箇所対応済み |
+- **公開範囲:** コアナビゲーション・BLE同期システム
+- **ライセンス:** Apache 2.0（予定）
 
 ---
 
 ## ⚠️ 免責事項
 
-このアプリは避難を**補助**するものであり、安全を完全に保証するものではありません。最終的な避難判断は、公式の避難指示に従い、ご自身の責任で行ってください。
+このアプリは避難を**補助**するものであり、安全を完全に保証するものではありません。最終的な避難判断は公式の避難指示に従い、ご自身の責任で行ってください。
 
 ---
 
 ## 👨‍💻 開発情報
 
-**プロジェクト:** GapLess
-**バージョン:** 5.0.0
-**開発:** 未踏ジュニア 2026
+**プロジェクト:** GapLess  
+**バージョン:** 5.0.0  
+**開発:** 未踏ジュニア 2026  
 **地図データ:** [noanoa31500-byte/maps](https://github.com/noanoa31500-byte/maps)
-
----
-
-## 📄 ライセンス
-
-このプロジェクトは教育目的で開発されています。商用利用・オープンソース化については、今後検討予定です。
 
 ---
 

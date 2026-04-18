@@ -8,8 +8,6 @@ import 'package:geolocator/geolocator.dart';
 import 'compass_logic.dart';
 import 'route_manager.dart';
 import 'feedback_controller.dart';
-import '../routing_engine.dart';
-import '../../models/road_graph.dart';
 import '../../models/shelter.dart';
 import '../../utils/localization.dart';
 
@@ -86,11 +84,6 @@ class GapLessNavigationEngine extends ChangeNotifier {
         if (kDebugMode) print('❌ GapLessNavigationEngine: 位置情報ストリームエラー: $e');
       }
     );
-  }
-
-  /// エンジン設定 (Graph/RoutingEngine注入)
-  void configure(RoutingEngine engine, RoadGraph graph) {
-    _routeManager.setEngine(engine, graph);
   }
 
   /// コンパスを強制再起動（パーミッション許可後にUIから呼ぶ）

@@ -38,6 +38,8 @@ class LocationProvider extends ChangeNotifier {
   bool get isDeadReckoningAccuracyLow => _deadReckoning.isAccuracyLow;
   double get learnedStrideLengthM => _deadReckoning.learnedStrideLengthM;
   bool get hasLearnedStride => _deadReckoning.hasLearnedStride;
+  MovementMode get deadReckoningMovementMode => _deadReckoning.movementMode;
+  double get deadReckoningCurrentSpeedMs => _deadReckoning.currentSpeedMs;
   DeadReckoningService get deadReckoningService => _deadReckoning;
 
   // Internal State
@@ -256,6 +258,10 @@ class LocationProvider extends ChangeNotifier {
         final gpsPos = LatLng(position.latitude, position.longitude);
         final now = position.timestamp;
 
+        // 移動モードと速度を記録（DR起動前のみ有効）
+        _deadReckoning.setMovementContext(
+            position.speed >= 0 ? position.speed : 0.0);
+
         if (_deadReckoning.isActive) {
           // DR モードから GPS 復帰 → 融合位置を使う
           _currentLocation = _deadReckoning.deactivate(gpsPos);
@@ -318,6 +324,11 @@ class LocationProvider extends ChangeNotifier {
     _positionStream?.cancel();
     _positionStream = null;
     _gpsTimeoutTimer?.cancel();
+    // DR リスナーを除去しないと追跡停止後も通知が届き続ける
+    if (_drListener != null) {
+      _deadReckoning.removeListener(_drListener!);
+      _drListener = null;
+    }
     _deadReckoning.stopCalibration();
     _lastCalibPosition = null;
     _lastCalibTime = null;
@@ -356,9 +367,14 @@ class LocationProvider extends ChangeNotifier {
   @override
   void dispose() {
     _gpsTimeoutTimer?.cancel();
-    if (_drListener != null) _deadReckoning.removeListener(_drListener!);
+    _gpsTimeoutTimer = null;
+    _positionStream?.cancel();
+    _positionStream = null;
+    if (_drListener != null) {
+      _deadReckoning.removeListener(_drListener!);
+      _drListener = null;
+    }
     _deadReckoning.dispose();
-    stopLocationTracking();
     super.dispose();
   }
 }

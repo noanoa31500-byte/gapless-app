@@ -7,7 +7,6 @@
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,15 +31,22 @@ import 'providers/region_mode_provider.dart';
 // Services
 import 'data/map_repository.dart';
 import 'data/map_auto_loader.dart';
+import 'models/road_feature.dart';
 import 'services/font_service.dart';
 import 'services/security_service.dart';
 import 'services/device_id_service.dart';
+import 'services/route_compute_service.dart';
+import 'services/road_features_cache.dart';
 
 // Utils
 import 'utils/web_bridge.dart';
 import 'utils/apple_animations.dart';
 import 'utils/localization.dart';
 import 'l10n/generated/app_localizations.dart';
+
+// Theme (Apple Design System)
+import 'theme/app_theme.dart';
+import 'theme/emergency_theme_notifier.dart';
 
 // Screens
 import 'screens/splash_screen.dart';
@@ -54,85 +61,6 @@ import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/permission_gate_screen.dart';
 import 'screens/navigation_screen.dart';
-
-// ---------------------------------------------------------------------------
-//  ISOLATE ROUTING ENGINE (NAV DIRECTIVE & LOGIC DIRECTIVE)
-// ---------------------------------------------------------------------------
-
-/// Data Transfer Object for Route Calculation
-class RouteParams {
-  final double startLat;
-  final double startLng;
-  final double destLat;
-  final double destLng;
-  final String region; // 'JP' or 'TH'
-  final List<List<double>> hazards;
-
-  RouteParams({
-    required this.startLat,
-    required this.startLng,
-    required this.destLat,
-    required this.destLng,
-    required this.region,
-    required this.hazards,
-  });
-}
-
-/// TOP-LEVEL ISOLATE ENTRY POINT
-/// Calculates Waypoints based on Region Logic.
-List<List<double>> calculateRiskAwareRoute(RouteParams params) {
-  // LOGIC DIRECTIVE IMPLEMENTATION
-  final bool isJapan = params.region == 'JP';
-  final bool isThailand = params.region == 'TH';
-
-  // Cost Weights
-  // Japan: Width Priority (Evacuation ease on wide roads to avoid blockage).
-  // Thailand: Shock Avoidance (Avoid low hanging wires & flooded zones).
-  double widthPriorityWeight = isJapan ? 3.0 : 1.0; 
-  double shockRiskAvoidanceWeight = isThailand ? 10.0 : 1.0;
-
-  List<List<double>> waypoints = [];
-  
-  // Start Point
-  waypoints.add([params.startLat, params.startLng]);
-
-  // Simulated Pathfinding (Interpolation with Logic-based Deviation)
-  // In a real scenario, this would traverse a graph loaded in the isolate.
-  // Here we simulate the trajectory adjustments based on safety logic.
-  int steps = 12; 
-  for (int i = 1; i < steps; i++) {
-    double t = i / steps;
-    double lat = params.startLat + (params.destLat - params.startLat) * t;
-    double lng = params.startLng + (params.destLng - params.startLng) * t;
-    
-    // Apply Logic-Specific Heuristics to the path
-    if (isThailand) {
-       // LOGIC: Avoid Electric Shock Risk
-       // Heuristic: Deviate path to maximize distance from potential power poles (simulated oscillation)
-       // This simulates avoiding straight lines where power lines typically run.
-       double avoidanceOffset = 0.0003 * shockRiskAvoidanceWeight;
-       if (i % 3 != 0) { // Add zigzag to simulate avoiding obstacles
-          lng += (i % 2 == 0 ? avoidanceOffset : -avoidanceOffset);
-       }
-    } else if (isJapan) {
-       // LOGIC: Road Width Priority
-       // Heuristic: Snap to "major artery" alignments. 
-       // We reduce micro-deviations to simulate sticking to wide, straight roads.
-       double widthBonus = 0.0001 * widthPriorityWeight;
-       // Less zigzag, more straight segments
-       if (i % 4 == 0) {
-          lat += (i % 2 == 0 ? widthBonus : -widthBonus);
-       }
-    }
-    
-    waypoints.add([lat, lng]);
-  }
-
-  // Destination Point
-  waypoints.add([params.destLat, params.destLng]);
-
-  return waypoints;
-}
 
 // ---------------------------------------------------------------------------
 //  MAIN APPLICATION
@@ -186,200 +114,92 @@ class GapLessApp extends StatelessWidget {
               ChangeNotifierProvider(create: (_) => CompassProvider()),
               ChangeNotifierProvider(create: (_) => AlertProvider()),
               ChangeNotifierProvider(create: (_) => LocationProvider()),
+              ChangeNotifierProvider(create: (_) => EmergencyThemeNotifier()),
             ],
-            child: MaterialApp(
-              title: 'GapLess',
-              navigatorKey: navigatorKey,
-              debugShowCheckedModeBanner: false,
-              scrollBehavior: const CustomScrollBehavior(),
+            child: Consumer<EmergencyThemeNotifier>(
+              builder: (context, emergencyTheme, _) {
+                final String primaryFont =
+                    _fontFamilyForLocale(Locale(languageProvider.currentLanguage));
+                final ThemeData themeData = emergencyTheme.isEmergency
+                    ? AppTheme.buildEmergency(
+                        fontFamily: primaryFont,
+                        fontFamilyFallback: GapLessL10n.fallbackFonts,
+                      )
+                    : AppTheme.buildNormal(
+                        fontFamily: primaryFont,
+                        fontFamilyFallback: GapLessL10n.fallbackFonts,
+                      );
 
-              // 多言語テキスト整形（タイ語・ミャンマー語等の文字結合・豆腐防止に必須）
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('ja'),
-                Locale('en'),
-                Locale('zh'),
-                Locale('vi'),
-                Locale('ko'),
-                Locale('th'),
-                Locale('fil'), // ISO 639-2 (内部コード)
-                Locale('tl'),  // ISO 639-1 (Tagalog, システムロケール tl-PH 対応)
-                Locale('ne'),
-                Locale('pt'),
-                Locale('id'),
-                Locale('my'),
-                Locale('si'),
-                Locale('zh', 'TW'),
-                Locale('hi'),
-                Locale('es'),
-                Locale('mn'),
-                Locale('uz'),
-                Locale('bn'),
-              ],
-              localeResolutionCallback: (locale, supportedLocales) {
-                if (locale == null) return const Locale('en');
-                for (final s in supportedLocales) {
-                  if (s.languageCode == locale.languageCode &&
-                      s.countryCode == locale.countryCode) return s;
-                }
-                for (final s in supportedLocales) {
-                  if (s.languageCode == locale.languageCode) return s;
-                }
-                return const Locale('en');
-              },
+                return MaterialApp(
+                  title: 'GapLess',
+                  navigatorKey: navigatorKey,
+                  debugShowCheckedModeBanner: false,
+                  scrollBehavior: const CustomScrollBehavior(),
 
-              // UI DIRECTIVE: Navy/Orange, Radius 30, Height 56, Padding 24
-              theme: _buildAppTheme(languageProvider.currentLanguage, isDark: false),
-              darkTheme: _buildAppTheme(languageProvider.currentLanguage, isDark: true),
-              themeMode: ThemeMode.system,
+                  // 多言語テキスト整形（タイ語・ミャンマー語等の文字結合・豆腐防止に必須）
+                  localizationsDelegates: const [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  supportedLocales: const [
+                    Locale('ja'),
+                    Locale('en'),
+                    Locale('zh'),
+                    Locale('vi'),
+                    Locale('ko'),
+                    Locale('th'),
+                    Locale('fil'), // ISO 639-2 (内部コード)
+                    Locale('tl'),  // ISO 639-1 (Tagalog, システムロケール tl-PH 対応)
+                    Locale('ne'),
+                    Locale('pt'),
+                    Locale('id'),
+                    Locale('my'),
+                    Locale('si'),
+                    Locale('zh', 'TW'),
+                    Locale('hi'),
+                    Locale('es'),
+                    Locale('mn'),
+                    Locale('uz'),
+                    Locale('bn'),
+                  ],
+                  localeResolutionCallback: (locale, supportedLocales) {
+                    if (locale == null) return const Locale('en');
+                    for (final s in supportedLocales) {
+                      if (s.languageCode == locale.languageCode &&
+                          s.countryCode == locale.countryCode) return s;
+                    }
+                    for (final s in supportedLocales) {
+                      if (s.languageCode == locale.languageCode) return s;
+                    }
+                    return const Locale('en');
+                  },
 
-              home: const AppStartup(),
+                  // Apple Design System theme — 通常時 緑、緊急時 赤に切替
+                  theme: themeData,
+                  darkTheme: themeData,
+                  themeMode: ThemeMode.dark,
 
-              onGenerateRoute: _onGenerateRoute,
-              builder: (context, child) {
-                final locale = Localizations.localeOf(context);
-                final fontFamily = _fontFamilyForLocale(locale);
-                return DefaultTextStyle(
-                  style: TextStyle(
-                    fontFamily: fontFamily,
-                    fontFamilyFallback: GapLessL10n.fallbackFonts,
-                  ),
-                  child: DisasterWatcher(child: child!),
+                  home: const AppStartup(),
+
+                  onGenerateRoute: _onGenerateRoute,
+                  builder: (context, child) {
+                    final locale = Localizations.localeOf(context);
+                    final fontFamily = _fontFamilyForLocale(locale);
+                    return DefaultTextStyle(
+                      style: TextStyle(
+                        fontFamily: fontFamily,
+                        fontFamilyFallback: GapLessL10n.fallbackFonts,
+                      ),
+                      child: DisasterWatcher(child: child!),
+                    );
+                  },
                 );
               },
             ),
           );
         },
-      ),
-    );
-  }
-
-  ThemeData _buildAppTheme(String lang, {bool isDark = false}) {
-    final String primaryFont = _fontFamilyForLocale(Locale(lang));
-    const List<String> fallbackFonts = [
-      'NotoSansJP',
-      'NotoSansSC',
-      'NotoSansTC',
-      'NotoSansKR',
-      'NotoSansThai',
-      'NotoSansMyanmar',
-      'NotoSansSinhala',
-      'NotoSansDevanagari',
-      'NotoSansBengali',
-    ];
-    
-    // UI DIRECTIVE CONSTANTS
-    const Color greenPrimary = Color(0xFF2E7D32);
-    const Color orangeAccent = Color(0xFFFF6F00);
-    const double radius = 30.0;
-    const double btnHeight = 56.0;
-    const EdgeInsets inputPad = EdgeInsets.all(24.0);
-
-    final Color background = isDark ? const Color(0xFF121212) : const Color(0xFFF5F7FA);
-    final Color surface = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final Color text = isDark ? Colors.white : const Color(0xFF263238);
-
-    return ThemeData(
-      useMaterial3: true,
-      fontFamily: primaryFont,
-      fontFamilyFallback: fallbackFonts,
-      brightness: isDark ? Brightness.dark : Brightness.light,
-      scaffoldBackgroundColor: background,
-      primaryColor: greenPrimary,
-      
-      colorScheme: ColorScheme(
-        brightness: isDark ? Brightness.dark : Brightness.light,
-        primary: greenPrimary,
-        onPrimary: Colors.white,
-        secondary: orangeAccent,
-        onSecondary: Colors.white,
-        surface: surface,
-        onSurface: text,
-        error: const Color(0xFFD32F2F),
-        onError: Colors.white,
-      ),
-
-      appBarTheme: AppBarTheme(
-        backgroundColor: greenPrimary,
-        foregroundColor: Colors.white,
-        centerTitle: true,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          fontFamily: primaryFont,
-          fontFamilyFallback: fallbackFonts,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-        ),
-      ),
-
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: greenPrimary,
-          foregroundColor: Colors.white,
-          minimumSize: const Size(double.infinity, btnHeight), // Height 56
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30
-          elevation: 2,
-          textStyle: TextStyle(
-            fontFamily: primaryFont,
-            fontFamilyFallback: fallbackFonts,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-      ),
-
-      outlinedButtonTheme: OutlinedButtonThemeData(
-        style: OutlinedButton.styleFrom(
-          foregroundColor: greenPrimary,
-          minimumSize: const Size(double.infinity, btnHeight), // Height 56
-          side: const BorderSide(color: greenPrimary, width: 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)), // Radius 30
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          textStyle: TextStyle(
-            fontFamily: primaryFont,
-            fontFamilyFallback: fallbackFonts,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
-          ),
-        ),
-      ),
-
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
-        backgroundColor: orangeAccent,
-        foregroundColor: Colors.white,
-        elevation: 4,
-      ),
-
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: surface,
-        contentPadding: inputPad, // Padding 24
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius), // Radius 30
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-          borderSide: BorderSide(color: Colors.grey.withValues(alpha: 0.2)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radius),
-          borderSide: const BorderSide(color: greenPrimary, width: 2),
-        ),
-      ),
-
-      cardTheme: CardThemeData(
-        color: surface,
-        elevation: 1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radius)),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
     );
   }
@@ -448,6 +268,13 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   Timer? _recoveryTimer;
   Timer? _movementPoller;
   dynamic _lastLocation;
+  List<RoadFeature> _roadFeatures = [];
+  String _roadFeaturesRegion = ''; // どの地域の道路データを保持しているか
+  bool _routeComputeInProgress = false; // 並列 compute() を防ぐフラグ
+  // ハートビート連続失敗カウンター（ヒステリシス用）
+  // 3回連続失敗→災害モード、1回成功→カウンターリセット
+  int _heartbeatFailCount = 0;
+  static const int _heartbeatFailThreshold = 3;
 
   @override
   void initState() {
@@ -472,26 +299,48 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
       final offline = results.contains(ConnectivityResult.none);
       if (mounted) setState(() => _isOffline = offline);
-      if (offline) {
-        _triggerDisasterMode("Connectivity API");
-      } else {
-        _onNetworkRestored("Connectivity API");
+      // カウンター管理はハートビートタイマーに一元化。
+      // ここでは UI バナーのみ更新し、復帰時にのみ通知する。
+      if (!offline) {
+        _heartbeatFailCount = 0;
+        _onNetworkRestored('Connectivity API');
       }
     });
 
     WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Event"));
     WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
 
-    // App Heartbeat
+    // App Heartbeat（ヒステリシス付き・複数エンドポイント）
+    // 単一サーバー障害では disaster mode に入らないよう、
+    // 独立した3エンドポイントを並列チェックし全て失敗した場合のみカウントアップ。
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      if (!mounted) return;
       if (context.read<ShelterProvider>().isDisasterMode) return;
-      try {
-        Uri targetUri = kIsWeb 
-            ? Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')
-            : Uri.parse('https://www.google.com');
-        await http.head(targetUri).timeout(const Duration(seconds: 1));
-      } catch (e) {
-        _triggerDisasterMode("Heartbeat Failure");
+
+      final endpoints = kIsWeb
+          ? [Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')]
+          : [
+              Uri.parse('https://www.google.com'),
+              Uri.parse('https://www.apple.com'),
+              Uri.parse('https://raw.githubusercontent.com'),
+            ];
+
+      // いずれか1つでも応答すれば即座に「ネット生存」と判断（全完了を待たない）
+      final anyAlive = await Future.any(
+        endpoints.map((uri) => http
+            .head(uri)
+            .timeout(const Duration(seconds: 2))
+            .then((_) => true)
+            .catchError((_) => false)),
+      ).catchError((_) => false);
+
+      if (anyAlive) {
+        _heartbeatFailCount = 0;
+      } else {
+        _heartbeatFailCount++;
+        if (_heartbeatFailCount >= _heartbeatFailThreshold) {
+          _triggerDisasterMode('Heartbeat Failure ($_heartbeatFailCount 回連続・全エンドポイント)');
+        }
       }
     });
   }
@@ -517,65 +366,77 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       return;
     }
 
-    double dist = _calculateDistance(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
-    
-    // NAV: Recalculate if moved significantly (> 20 meters)
-    if (dist > 20.0) {
+    double dist = Geolocator.distanceBetween(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
+
+    // GPS 精度が悪いときは閾値を自動引き上げ（精度2σ超えたときだけ再ルート）
+    double accuracy = 10.0;
+    try { accuracy = (newLoc.accuracy as num).toDouble(); } catch (_) {}
+    final threshold = (accuracy * 2.0).clamp(20.0, 80.0);
+    if (dist > threshold) {
       _lastLocation = newLoc;
       await _triggerBackgroundRouting(newLoc);
     }
   }
 
-  double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-    var p = 0.017453292519943295;
-    var c = math.cos;
-    var a = 0.5 - c((lat2 - lat1) * p)/2 + 
-            c(lat1 * p) * c(lat2 * p) * 
-            (1 - c((lon2 - lon1) * p))/2;
-    return 12742 * math.asin(math.sqrt(a)) * 1000; // Meters
-  }
-
   Future<void> _triggerBackgroundRouting(dynamic loc) async {
-    final shelterProvider = context.read<ShelterProvider>();
-    final regionProvider = context.read<RegionModeProvider>();
-    
-    // NAV DIRECTIVE: Determine Destination (Absolute Nearest Shelter from current location)
-    // Use getAbsoluteNearest() instead of shelters.first for accurate routing target
-    double destLat = 35.6895; // Tokyo fallback
-    double destLng = 139.6917;
-    if (shelterProvider.shelters.isNotEmpty) {
-      final currentLatLng = LatLng(loc.latitude, loc.longitude);
-      final nearest = shelterProvider.getAbsoluteNearest(currentLatLng);
-      if (nearest != null) {
-        destLat = nearest.lat;
-        destLng = nearest.lng;
-        debugPrint('🎯 Routing target: ${nearest.name} (${nearest.type})');
-      } else {
-        destLat = shelterProvider.shelters.first.lat;
-        destLng = shelterProvider.shelters.first.lng;
-      }
-    }
+    if (_routeComputeInProgress) return; // 前回の計算が完了するまで待機
+    _routeComputeInProgress = true;
 
-    // Prepare parameters for Isolate
-    final params = RouteParams(
-      startLat: loc.latitude,
-      startLng: loc.longitude,
-      destLat: destLat,
-      destLng: destLng,
-      region: regionProvider.isJapanMode ? 'JP' : 'TH',
-      hazards: [], 
-    );
-
-    // BACKGROUND ISOLATE EXECUTION (NAV DIRECTIVE)
     try {
-      final List<List<double>> route = await compute(calculateRiskAwareRoute, params);
-      
-      if (mounted) {
-        shelterProvider.updateSafeRoute(route); 
-        debugPrint("✅ Route Updated: ${route.length} points");
+      final shelterProvider = context.read<ShelterProvider>();
+
+      double destLat = 35.6895;
+      double destLng = 139.6917;
+      if (shelterProvider.shelters.isNotEmpty) {
+        final nearest = shelterProvider.getAbsoluteNearest(LatLng(loc.latitude, loc.longitude));
+        if (nearest != null) {
+          destLat = nearest.lat;
+          destLng = nearest.lng;
+          debugPrint('🎯 Routing target: ${nearest.name}');
+        } else {
+          destLat = shelterProvider.shelters.first.lat;
+          destLng = shelterProvider.shelters.first.lng;
+        }
+      }
+
+      // 道路データをキャッシュ経由で取得（NavigationScreen と共有、二重ロードなし）
+      // 地域が変わったらキャッシュを破棄して再ロード
+      final isJapan = context.read<RegionModeProvider>().isJapanMode;
+      final roadFile = isJapan ? 'tokyo_center_roads.gplb' : 'thailand_roads.gplb';
+      if (_roadFeaturesRegion != roadFile) {
+        _roadFeatures = [];
+        _roadFeaturesRegion = roadFile;
+      }
+      if (_roadFeatures.isEmpty) {
+        try {
+          _roadFeatures = await RoadFeaturesCache.instance.get(roadFile);
+        } catch (e) {
+          debugPrint('Background routing: road data unavailable — $e');
+          return;
+        }
+      }
+
+      final result = await compute(
+        computeRouteInIsolate,
+        RouteComputeParams(
+          features: _roadFeatures,
+          startLat: loc.latitude,
+          startLng: loc.longitude,
+          goalLat: destLat,
+          goalLng: destLng,
+        ),
+      );
+      if (mounted && result.found) {
+        final route = result.waypoints
+            .map((p) => [p.latitude, p.longitude])
+            .toList();
+        shelterProvider.updateSafeRoute(route);
+        debugPrint('✅ Route updated: ${route.length} waypoints');
       }
     } catch (e) {
-      debugPrint("Routing Error: $e");
+      debugPrint('Routing error: $e');
+    } finally {
+      _routeComputeInProgress = false;
     }
   }
 
@@ -611,7 +472,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
     shelterProvider.setDisasterMode(false);
     shelterProvider.setSafeInShelter(false);
-    shelterProvider.loadShelters();
+    unawaited(shelterProvider.loadShelters());
 
     // 機能1修正: 復帰先をNavigationScreenに統一（HomeScreenではなく）
     navigatorKey.currentState?.pushAndRemoveUntil(
@@ -654,6 +515,17 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     final isSafeInShelter = context.select<ShelterProvider, bool>((p) => p.isSafeInShelter);
 
     if (_wasDisasterMode != isDisasterMode) {
+      // 災害モード = 緊急テーマ。Consumer 側を再ビルドさせるため
+      // build フェーズ後に notifyListeners を発火させる。
+      final emergencyTheme = context.read<EmergencyThemeNotifier>();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (isDisasterMode) {
+          emergencyTheme.activateEmergency();
+        } else {
+          emergencyTheme.deactivateEmergency();
+        }
+      });
+
       if (isDisasterMode) {
         _scheduleDisasterModeNav(true);
       } else if (_wasDisasterMode == true && !isDisasterMode) {

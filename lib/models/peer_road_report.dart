@@ -46,6 +46,9 @@ class PeerRoadReport {
   /// 報告時刻（UNIXタイムスタンプ秒）
   final int timestamp;
 
+  /// メッシュリレーホップ数（0=発信元, max=3で中継停止）
+  final int hops;
+
   /// 通行可否（true = 通れる、false = 通れない）
   final bool passable;
 
@@ -64,6 +67,7 @@ class PeerRoadReport {
     required this.timestamp,
     required this.passable,
     required this.segmentId,
+    this.hops = 0,
   });
 
   // ---------------------------------------------------------------------------
@@ -111,6 +115,7 @@ class PeerRoadReport {
         'g': segmentId,
         if (isDrActive) 'd': 1,
         if (drErrorM > 0) 'e': drErrorM.round(),
+        if (hops > 0) 'h': hops,
       });
 
   factory PeerRoadReport.fromCompactJson(Map<String, dynamic> j) =>
@@ -125,6 +130,22 @@ class PeerRoadReport {
         timestamp: (j['t'] as num).toInt(),
         passable: (j['p'] as int) == 1,
         segmentId: j['g'] as String,
+        hops: (j['h'] as int? ?? 0),
+      );
+
+  /// 中継送信用: ホップ数をインクリメントしたコピーを返す
+  PeerRoadReport withNextHop() => PeerRoadReport(
+        id: id,
+        deviceId: deviceId,
+        lat: lat,
+        lng: lng,
+        accuracyM: accuracyM,
+        isDrActive: isDrActive,
+        drErrorM: drErrorM,
+        timestamp: timestamp,
+        passable: passable,
+        segmentId: segmentId,
+        hops: hops + 1,
       );
 
   factory PeerRoadReport.fromCompactJsonString(String s) =>
@@ -140,18 +161,21 @@ class PeerRoadReport {
       (DateTime.now().millisecondsSinceEpoch ~/ 1000) - timestamp;
 
   /// 表示用不透明度（時間減衰）
-  ///   0 〜 30 分  → 1.0 〜 0.5（線形）
-  ///  30 〜 120 分 → 0.5 〜 0.0（線形）
-  /// 120 分以上   → 0.0（除外）
+  ///   0 〜 30 分   → 1.0 〜 0.5（線形）
+  ///  30 〜 120 分  → 0.5 〜 0.15（線形）
+  /// 120 〜 360 分  → 0.15（フラット — 古い確認済み報告を薄く表示）
+  /// 360 分以上    → 0.0（除外）
   double get displayOpacity {
     final minutes = ageSeconds / 60.0;
-    if (minutes >= 120) return 0.0;
-    if (minutes >= 30) return 0.5 * (1.0 - (minutes - 30) / 90.0);
+    if (minutes >= 360) return 0.0;
+    if (minutes >= 120) return 0.15;
+    // 30→120 分: 0.5 → 0.15 に線形減衰（境界で連続）
+    if (minutes >= 30) return 0.5 - 0.35 * (minutes - 30) / 90.0;
     return 1.0 - (minutes / 30.0) * 0.5;
   }
 
-  /// 表示から除外すべきか（2時間経過）
-  bool get isExpired => ageSeconds >= 120 * 60;
+  /// 表示から除外すべきか（6時間経過 — 多数報告の古い情報も保持）
+  bool get isExpired => ageSeconds >= 360 * 60;
 
   // ---------------------------------------------------------------------------
   // ユーティリティ

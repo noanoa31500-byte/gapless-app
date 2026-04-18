@@ -23,7 +23,9 @@ enum BleDataType {
   walk(1),
   passable(2),
   blocked(3),
-  danger(4);
+  danger(4),
+  shelterStatus(5),
+  sos(6);
 
   final int value;
   const BleDataType(this.value);

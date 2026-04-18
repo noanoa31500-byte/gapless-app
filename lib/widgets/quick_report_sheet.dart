@@ -25,7 +25,48 @@ import '../services/ble_road_report_service.dart';
 //
 // ============================================================================
 
-/// ナビ画面から呼ぶエントリポイント
+/// ───────────────────────────────────────────────────────────────────────────
+/// 1タップ即時報告（カメラなし・シートなし）
+///
+/// 被災中に立ち止まれない場面向け。ボタン1つで現在地の状態を即送信する。
+/// [dataType] に BleDataType.passable / blocked / danger を渡す。
+/// ───────────────────────────────────────────────────────────────────────────
+Future<void> sendInstantReport(BuildContext context, BleDataType dataType) async {
+  final locationProv = context.read<LocationProvider>();
+  final loc = locationProv.currentLocation;
+  if (loc == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(GapLessL10n.t('nav_no_location'))),
+    );
+    return;
+  }
+
+  await BleRoadReportService.instance.enqueueFullReport(
+    lat: loc.latitude,
+    lng: loc.longitude,
+    accuracyM: 10.0,
+    dataType: dataType,
+    isDrActive: locationProv.isDeadReckoning,
+    drErrorM: locationProv.deadReckoningErrorMeters,
+  );
+
+  if (context.mounted) {
+    final label = dataType == BleDataType.passable
+        ? GapLessL10n.t('qr_passable')
+        : dataType == BleDataType.blocked
+            ? GapLessL10n.t('qr_blocked')
+            : GapLessL10n.t('qr_danger');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(GapLessL10n.t('qr_reported').replaceAll('@label', label)),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+}
+
+/// ナビ画面から呼ぶエントリポイント（カメラ付き詳細報告）
 Future<void> showQuickReport(BuildContext context) async {
   final locationProv = context.read<LocationProvider>();
   final loc = locationProv.currentLocation;
@@ -93,12 +134,8 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
     if (_submitting) return;
     setState(() => _submitting = true);
 
-    // 写真パスを payload に含める（BLE帯域節約：パスだけ送って本体は端末ローカル）
-    final payloadMap = <String, dynamic>{
-      'manual': true,
-      if (widget.photoFile != null) 'photo': widget.photoFile!.path,
-    };
-    final payload = jsonEncode(payloadMap);
+    // photo は他端末では参照不能なため BLE ペイロードには含めない（端末ローカル保存のみ）
+    final payload = jsonEncode({'manual': true});
 
     await BleRoadReportService.instance.enqueueFullReport(
       lat: widget.lat,
@@ -240,7 +277,7 @@ class _ReportButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Material(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
@@ -273,7 +310,7 @@ class _ReportButton extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, color: color.withOpacity(0.6), size: 16),
+                Icon(Icons.arrow_forward_ios, color: color.withValues(alpha: 0.6), size: 16),
               ],
             ),
           ),
