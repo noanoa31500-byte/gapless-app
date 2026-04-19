@@ -111,6 +111,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
       backgroundColor: AppleColors.safetyGreen,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_rounded),
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         onPressed: () {
           context.read<ShelterProvider>().setSafeInShelter(false);
           // 元の画面(NavigationScreen)に戻る

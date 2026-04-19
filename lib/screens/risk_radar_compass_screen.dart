@@ -183,6 +183,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
         children: [
           IconButton(
             icon: const Icon(Icons.close, color: Colors.white),
+            tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
             onPressed: () => Navigator.pop(context),
           ),
           Expanded(

@@ -11,9 +11,12 @@ import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../utils/localization.dart';
 import '../providers/region_mode_provider.dart';
+import '../services/pinned_http_client.dart';
 import 'area_data.dart';
 import 'map_cache_manager.dart';
 import 'map_download_service.dart';
+
+final http.Client _pinnedClient = createPinnedClient();
 
 // ────────────────────────────────────────
 // ダウンロード対象ファイルの定義
@@ -209,7 +212,7 @@ class MapRepository {
     for (final url in mapFile.candidateUrls) {
       for (int attempt = 0; attempt < maxAttemptsPerUrl; attempt++) {
         try {
-          final response = await http
+          final response = await _pinnedClient
               .get(Uri.parse(url))
               .timeout(const Duration(seconds: 30));
 

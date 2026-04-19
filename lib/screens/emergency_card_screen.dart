@@ -31,6 +31,7 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.close, color: Colors.white),
+          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -61,6 +62,7 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
               SafeText(GapLessL10n.t('header_emergency_gear'), style: safeStyle(size: 14, isBold: true, color: const Color(0xFFB71C1C))),
               IconButton(
                 icon: const Icon(Icons.edit, size: 20, color: Color(0xFFB71C1C)),
+                tooltip: GapLessL10n.t('label_edit'),
                 onPressed: () => _showEditDialog(context),
               ),
             ],
@@ -135,6 +137,7 @@ class _EmergencyCardPageState extends State<EmergencyCardPage> {
                           style: safeStyle(size: 20, isBold: true)),
                         IconButton(
                           icon: const Icon(Icons.close),
+                          tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                           onPressed: () => Navigator.pop(context),
                         ),
                       ],

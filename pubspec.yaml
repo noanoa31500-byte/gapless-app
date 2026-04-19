@@ -27,6 +27,7 @@ dependencies:
   encrypt: ^5.0.3
   flutter_secure_storage: ^9.0.0
   crypto: ^3.0.3
+  cryptography: ^2.7.0
   # BLE通信 (iPhone間オフライン同期)
   flutter_blue_plus: ^1.32.12
   # ローカルファイル保存 (gplbキャッシュ)

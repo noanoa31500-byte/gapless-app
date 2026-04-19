@@ -7,6 +7,8 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:latlong2/latlong.dart';
 import 'dart:collection';
 import 'device_id_service.dart';
+import 'identity_keystore.dart';
+import 'trusted_shelter_keyset.dart';
 import 'power_manager.dart';
 import 'road_report_scorer.dart';
 import '../ble/ble_packet.dart';
@@ -111,11 +113,12 @@ class BleRoadReportService extends ChangeNotifier {
 
   /// テスト専用: SOS 受信処理の入口。
   @visibleForTesting
-  void debugIngestSos(Map<String, dynamic> json) => _ingestSos(json);
+  Future<void> debugIngestSos(Map<String, dynamic> json) => _ingestSos(json);
 
   /// テスト専用: シェルター受信処理の入口。
   @visibleForTesting
-  void debugIngestShelter(Map<String, dynamic> json) => _ingestShelter(json);
+  Future<void> debugIngestShelter(Map<String, dynamic> json) =>
+      _ingestShelter(json);
 
   /// シェルター位置を更新（ShelterProvider から呼ぶ）。
   void setKnownShelters(Iterable<Shelter> shelters) {
@@ -293,17 +296,30 @@ class BleRoadReportService extends ChangeNotifier {
     }
   }
 
-  /// SOSビーコンをキューに積む（長押しボタンから呼ぶ）
-  void enqueueSos({required double lat, required double lng}) {
+  /// SOSビーコンをキューに積む（長押しボタンから呼ぶ）。
+  /// IdentityKeystore が初期化済みなら Ed25519 署名を付与する (v2 wire)。
+  Future<void> enqueueSos({required double lat, required double lng}) async {
     if (!BlePacket.isValidGeo(lat, lng)) {
       _logDrop('local_sos_invalid_geo');
       return;
     }
-    final report =
-        SosReport.create(deviceId: _outgoingBleId(), lat: lat, lng: lng);
+    SosReport report;
+    try {
+      await IdentityKeystore.instance.ensureInitialized();
+      final ks = IdentityKeystore.instance;
+      report = SosReport.create(deviceId: ks.deviceId, lat: lat, lng: lng);
+      final sig = await ks.sign(report.canonicalBytes());
+      report = report.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
+    } catch (e) {
+      // 鍵生成不可 (e.g. テスト環境) → 無署名 v1 にフォールバック
+      debugPrint('BleRoadReportService: SOS sign failed ($e), falling back to v1');
+      report = SosReport.create(
+          deviceId: _outgoingBleId(), lat: lat, lng: lng);
+    }
     _sosQueue.add(report);
     if (!kReleaseMode) {
-      debugPrint('BleRoadReportService: SOS enqueued @ ${_redactGeo(lat, lng)}');
+      debugPrint('BleRoadReportService: SOS enqueued @ ${_redactGeo(lat, lng)} '
+          '(signed=${report.isSigned})');
     }
   }
 
@@ -530,7 +546,7 @@ class BleRoadReportService extends ChangeNotifier {
   // 受信処理
   // ---------------------------------------------------------------------------
 
-  void _handleReceivedBytes(List<int> bytes) {
+  Future<void> _handleReceivedBytes(List<int> bytes) async {
     if (bytes.isEmpty) return;
 
     // payload長 ≤ 256バイト（仕様）。1パケット内に複数行が入る前提なので
@@ -575,9 +591,9 @@ class BleRoadReportService extends ChangeNotifier {
       final type = json['type'] as String?;
       try {
         if (type == 'sos') {
-          _ingestSos(json);
+          await _ingestSos(json);
         } else if (type == 'sh') {
-          _ingestShelter(json);
+          await _ingestShelter(json);
         } else if (type == 'tr') {
           _ingestTrack(json);
         } else {
@@ -642,7 +658,7 @@ class BleRoadReportService extends ChangeNotifier {
     return true;
   }
 
-  void _ingestSos(Map<String, dynamic> json) {
+  Future<void> _ingestSos(Map<String, dynamic> json) async {
     final sos = SosReport.fromJson(json); // throws FormatException
     final reason = BlePacket.validateFields(
       lat: sos.lat,
@@ -656,6 +672,27 @@ class BleRoadReportService extends ChangeNotifier {
     if (sos.isExpired) {
       _logDrop('sos_expired');
       return;
+    }
+
+    // 署名検証 (v2 wire)。pk/sig が揃っていれば必須化、無ければ v1 として通す
+    // (将来的に enforce モードへ移行予定)。
+    if (sos.isSigned) {
+      final expectedDeviceId =
+          IdentityKeystore.deviceIdFromPublicKey(sos.publicKey!);
+      if (expectedDeviceId != sos.deviceId) {
+        _logDrop('sos_devid_mismatch',
+            'expected=$expectedDeviceId got=${sos.deviceId}');
+        return;
+      }
+      final ok = await IdentityKeystore.verify(
+        message: sos.canonicalBytes(),
+        signatureBytes: sos.signature!,
+        publicKeyBytes: sos.publicKey!,
+      );
+      if (!ok) {
+        _logDrop('sos_sig_invalid');
+        return;
+      }
     }
 
     // 偽SOSスパム抑止 (1): 同 deviceId & 60秒未満
@@ -719,7 +756,7 @@ class BleRoadReportService extends ChangeNotifier {
     }
   }
 
-  void _ingestShelter(Map<String, dynamic> json) {
+  Future<void> _ingestShelter(Map<String, dynamic> json) async {
     final sr = ShelterStatusReport.fromJson(json); // throws FormatException
     final reason = BlePacket.validateFields(
       lat: sr.lat,
@@ -734,6 +771,21 @@ class BleRoadReportService extends ChangeNotifier {
       _logDrop('shelter_expired');
       return;
     }
+
+    // 署名検証 (v2 wire): kid/sig が揃っていれば信頼鍵セットで検証。
+    // advisory モードでは未知 kid / 検証失敗もログのみで受理。
+    if (sr.isSigned) {
+      final ok = await TrustedShelterKeyset.verifyReport(
+        keyId: sr.keyId!,
+        signature: sr.signature!,
+        canonicalBytes: sr.canonicalBytes(),
+      );
+      if (!ok) {
+        _logDrop('shelter_sig_invalid', 'kid=${sr.keyId}');
+        return;
+      }
+    }
+
     // 距離検証: 報告者がそのシェルター近傍 (≤500m) からの送信であることを要求。
     // 既知のシェルター ID のみ受理する（未知IDの自由な追加を防ぐ）。
     final knownLoc = _knownShelterLocations[sr.shelterId];

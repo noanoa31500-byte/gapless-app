@@ -73,6 +73,18 @@ class GplbUnsupportedVersionException implements Exception {
       'GplbUnsupportedVersionException(version=$version, max=$maxSupported)';
 }
 
+/// v2 以降のファイルで CRC32 footer が一致しない場合の例外。
+/// 通信途中での破損または改ざんを検出します。
+class GplbCrcMismatchException implements Exception {
+  final int expected;
+  final int actual;
+  GplbCrcMismatchException(this.expected, this.actual);
+  @override
+  String toString() =>
+      'GplbCrcMismatchException(expected=0x${expected.toRadixString(16)}, '
+      'actual=0x${actual.toRadixString(16)})';
+}
+
 /// gplbバイナリファイルのパーサー
 class GplbParser {
   static const _magic = [0x47, 0x50, 0x4C, 0x42]; // "GPLB"
@@ -81,7 +93,10 @@ class GplbParser {
 
   /// 当パーサが解釈できる最大スキーマバージョン。
   /// これより大きい version のファイルは安全に reject し、再ダウンロードを促す。
-  static const int kMaxSupportedVersion = 1;
+  ///
+  /// v1: CRC なし（既存ファイル）
+  /// v2: 末尾 4 バイトに CRC32 (IEEE 802.3, big-endian) を付与。検証で改ざん/転送破損を検出。
+  static const int kMaxSupportedVersion = 2;
 
   // ---------------------------------------------------------------------------
   // Public API
@@ -100,22 +115,48 @@ class GplbParser {
     if (version > kMaxSupportedVersion) {
       throw GplbUnsupportedVersionException(version, kMaxSupportedVersion);
     }
-    final sectionCount = reader.readUint8();
+
+    // v2+: 末尾 4 バイトの CRC32 を検証してから本体パース。
+    // 不一致 → 通信破損 or 改ざんとして拒否。
+    Uint8List bodyBytes = bytes;
+    if (version >= 2) {
+      if (bytes.length < 10) {
+        throw const FormatException('GPLB v2: too short to contain CRC footer');
+      }
+      final expectedCrc = (bytes[bytes.length - 4] << 24) |
+          (bytes[bytes.length - 3] << 16) |
+          (bytes[bytes.length - 2] << 8) |
+          bytes[bytes.length - 1];
+      bodyBytes = Uint8List.sublistView(bytes, 0, bytes.length - 4);
+      final actualCrc = _crc32(bodyBytes);
+      if (actualCrc != expectedCrc) {
+        throw GplbCrcMismatchException(expectedCrc, actualCrc);
+      }
+    }
+    // 以降は CRC を除いた範囲をパースする (sectionCount 取得済みオフセットを再計算)。
+    final body = _ByteReader(bodyBytes)
+      ..skip(5); // magic(4) + version(1) は既に検証済み
+    final sectionCount = body.readUint8();
+    return _parseSections(body, sectionCount, version);
+  }
+
+  static GplbData _parseSections(_ByteReader body, int sectionCount,
+      int version) {
 
     final roads = <RoadFeature>[];
     final pois = <PoiFeature>[];
 
     for (int s = 0; s < sectionCount; s++) {
-      if (reader.isEof) break;
+      if (body.isEof) break;
 
-      final sectionType = reader.readUint8();
-      final recordCount = reader.readUint32();
+      final sectionType = body.readUint8();
+      final recordCount = body.readUint32();
 
       switch (sectionType) {
         case _sectionRoads:
-          roads.addAll(_parseRoads(reader, recordCount));
+          roads.addAll(_parseRoads(body, recordCount));
         case _sectionPois:
-          pois.addAll(_parsePois(reader, recordCount));
+          pois.addAll(_parsePois(body, recordCount));
         default:
           // 未知セクション: スキップできないためパース失敗として扱う
           debugPrint(
@@ -139,6 +180,22 @@ class GplbParser {
   // ---------------------------------------------------------------------------
 
   static GplbData _parseInIsolate(Uint8List bytes) => parse(bytes);
+
+  @visibleForTesting
+  static int debugCrc32(Uint8List bytes) => _crc32(bytes);
+
+  // CRC32 IEEE 802.3 (reversed polynomial 0xEDB88320) — matches zlib/PNG.
+  static int _crc32(Uint8List bytes) {
+    var crc = 0xFFFFFFFF;
+    for (final b in bytes) {
+      var x = (crc ^ b) & 0xFF;
+      for (int i = 0; i < 8; i++) {
+        x = (x & 1) != 0 ? (0xEDB88320 ^ (x >> 1)) : (x >> 1);
+      }
+      crc = ((crc >> 8) ^ x) & 0xFFFFFFFF;
+    }
+    return (crc ^ 0xFFFFFFFF) & 0xFFFFFFFF;
+  }
 
   static void _checkMagic(_ByteReader r) {
     for (int i = 0; i < _magic.length; i++) {
@@ -229,6 +286,11 @@ class _ByteReader {
   bool get isEof => _offset >= _data.lengthInBytes;
 
   int get remaining => _data.lengthInBytes - _offset;
+
+  void skip(int n) {
+    _check(n);
+    _offset += n;
+  }
 
   int readUint8() {
     _check(1);

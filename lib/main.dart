@@ -38,6 +38,7 @@ import 'services/secure_pii_storage.dart';
 import 'services/jma_alert_service.dart';
 import 'di/service_locator.dart';
 import 'services/device_id_service.dart';
+import 'services/identity_keystore.dart';
 import 'services/route_compute_service.dart';
 import 'services/road_features_cache.dart';
 
@@ -78,6 +79,12 @@ void main() {
     // 🆔 デバイスUUID初期化（重複評価防止・プライバシー設計）
     // アプリ起動直後にlocalStorageからUUIDを取得 or 生成して保存
     await DeviceIdService.instance.init();
+
+    // 🔐 端末固有 Ed25519 鍵ペア初期化 (BLE SOS の署名に使用)。
+    // 失敗しても起動は続行 (鍵なし = v1 wire fallback)。
+    unawaited(IdentityKeystore.instance.ensureInitialized().catchError((e) {
+      debugPrint('IdentityKeystore init failed: $e — falling back to unsigned BLE');
+    }));
     
     // System UI Config
     SystemChrome.setSystemUIOverlayStyle(

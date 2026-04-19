@@ -403,6 +403,7 @@ class _MapScreenState extends State<MapScreen> {
                     ])),
                     IconButton(
                       icon: Icon(Icons.close_rounded, color: Colors.grey[400]),
+                      tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                       onPressed: () => setState(() => _tappedPoint = null),
                     ),
                   ]),

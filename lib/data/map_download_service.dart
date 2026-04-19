@@ -7,8 +7,11 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../services/pinned_http_client.dart';
 import 'map_cache_manager.dart';
 import 'map_tile_index.dart';
+
+final http.Client _pinnedClient = createPinnedClient();
 
 class MapDownloadService {
   static const _indexUrl =
@@ -35,7 +38,7 @@ class MapDownloadService {
     for (int attempt = 0; attempt < _retryCount; attempt++) {
       try {
         final response =
-            await http.get(Uri.parse(_indexUrl)).timeout(_timeout);
+            await _pinnedClient.get(Uri.parse(_indexUrl)).timeout(_timeout);
         if (response.statusCode == 200) {
           final json = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true))
               as Map<String, dynamic>;
@@ -77,7 +80,7 @@ class MapDownloadService {
     for (int attempt = 0; attempt < _retryCount; attempt++) {
       try {
         final response =
-            await http.get(Uri.parse(url)).timeout(_timeout);
+            await _pinnedClient.get(Uri.parse(url)).timeout(_timeout);
         if (response.statusCode == 200) {
           // gzip か否かは Content-Encoding または URL の拡張子で判断
           final bytes = response.bodyBytes;
