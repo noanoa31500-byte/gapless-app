@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/road_feature.dart';
@@ -62,11 +63,25 @@ class GplbData {
       'GplbData(v$version, roads=${roads.length}, pois=${pois.length})';
 }
 
+/// 未対応の GPLB バージョンを検出した場合の例外
+class GplbUnsupportedVersionException implements Exception {
+  final int version;
+  final int maxSupported;
+  GplbUnsupportedVersionException(this.version, this.maxSupported);
+  @override
+  String toString() =>
+      'GplbUnsupportedVersionException(version=$version, max=$maxSupported)';
+}
+
 /// gplbバイナリファイルのパーサー
 class GplbParser {
   static const _magic = [0x47, 0x50, 0x4C, 0x42]; // "GPLB"
   static const _sectionRoads = 0x01;
   static const _sectionPois = 0x02;
+
+  /// 当パーサが解釈できる最大スキーマバージョン。
+  /// これより大きい version のファイルは安全に reject し、再ダウンロードを促す。
+  static const int kMaxSupportedVersion = 1;
 
   // ---------------------------------------------------------------------------
   // Public API
@@ -82,6 +97,9 @@ class GplbParser {
     _checkMagic(reader);
 
     final version = reader.readUint8();
+    if (version > kMaxSupportedVersion) {
+      throw GplbUnsupportedVersionException(version, kMaxSupportedVersion);
+    }
     final sectionCount = reader.readUint8();
 
     final roads = <RoadFeature>[];
@@ -240,9 +258,9 @@ class _ByteReader {
 
   String readUtf8(int length) {
     _check(length);
-    final bytes = Uint8List.view(_data.buffer, _offset, length);
+    final bytes = Uint8List.view(_data.buffer, _offset + _data.offsetInBytes, length);
     _offset += length;
-    return String.fromCharCodes(bytes);
+    return utf8.decode(bytes, allowMalformed: true);
   }
 
   void _check(int needed) {

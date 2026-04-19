@@ -52,12 +52,17 @@ class SosReport {
         't': timestamp,
       });
 
-  factory SosReport.fromJson(Map<String, dynamic> j) => SosReport(
-        deviceId: j['v'] as String? ?? '',
-        lat: (j['a'] as num).toDouble(),
-        lng: (j['o'] as num).toDouble(),
-        timestamp: (j['t'] as num).toInt(),
-      );
+  factory SosReport.fromJson(Map<String, dynamic> j) {
+    if (j['a'] is! num || j['o'] is! num || j['t'] is! num) {
+      throw const FormatException('SosReport: a/o/t must be numeric');
+    }
+    return SosReport(
+      deviceId: j['v'] as String? ?? '',
+      lat: (j['a'] as num).toDouble(),
+      lng: (j['o'] as num).toDouble(),
+      timestamp: (j['t'] as num).toInt(),
+    );
+  }
 
   int get ageSeconds =>
       (DateTime.now().millisecondsSinceEpoch ~/ 1000) - timestamp;

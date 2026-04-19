@@ -27,11 +27,38 @@ migrate_working_dir/
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
 /build/
 /coverage/
+
+# Auto-generated Flutter iOS files (should never be committed)
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+ios/Flutter/DevTeam.xcconfig
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks/
+
+# Auto-generated Android files
+android/.gradle/
+android/local.properties
+android/key.properties
+android/app/upload-keystore.jks
+**/android/captures/
+
+# Secrets / signing / API keys
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+.env
+.env.*
+google-services.json
+GoogleService-Info.plist
+firebase_app_qr.png
 
 # Symbolication related
 app.*.symbols

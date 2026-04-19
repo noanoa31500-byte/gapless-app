@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../utils/accessibility.dart';
 
 /// ============================================================================
 /// SmartCompass - ロケーション非依存型コンパスウィジェット
@@ -162,7 +163,13 @@ class _SmartCompassState extends State<SmartCompass>
   Widget build(BuildContext context) {
     final state = _evaluateState();
     final stateColor = _getStateColor(state);
-    
+    final reduce = AppleAccessibility.reduceMotion(context);
+    if (reduce && _pulseController.isAnimating) {
+      _pulseController.stop();
+    } else if (!reduce && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    }
+
     return AnimatedBuilder(
       animation: _pulseAnimation,
       builder: (context, child) {

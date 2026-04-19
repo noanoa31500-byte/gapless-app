@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:collection';
 import 'device_id_service.dart';
 import 'power_manager.dart';
 import 'road_report_scorer.dart';
@@ -30,6 +31,14 @@ import 'gps_logger.dart';
 //   setSavingMode(true) → スキャン間隔を 30 秒 → 3 分に延長
 //
 // ============================================================================
+
+/// 偽SOSスパム検出のために送信元の最終位置を保持
+class _SosOriginRecord {
+  final double lat;
+  final double lng;
+  final int timestamp; // sec
+  const _SosOriginRecord(this.lat, this.lng, this.timestamp);
+}
 
 class BleRoadReportService extends ChangeNotifier {
   static final BleRoadReportService instance = BleRoadReportService._();
@@ -81,6 +90,40 @@ class BleRoadReportService extends ChangeNotifier {
   /// 受信した避難所ステータス (shelterId → report)
   final Map<String, ShelterStatusReport> _shelterStatuses = {};
 
+  /// シェルター位置の参照テーブル（ID → 座標）。距離検証で使用。
+  /// ShelterProvider#loadShelters 完了時に setKnownShelters() で投入する。
+  final Map<String, LatLng> _knownShelterLocations = {};
+
+  /// 「報告者がそのシェルターから半径 [m] 以内にいた」と要求する閾値。
+  /// なりすまし「満員」報告をフィルタ。
+  static const double _shelterReportMaxDistanceM = 500.0;
+
+  /// テスト専用: 内部状態を初期化する。
+  @visibleForTesting
+  void debugReset() {
+    _receivedSos.clear();
+    _receivedSosCount = 0;
+    _shelterStatuses.clear();
+    _knownShelterLocations.clear();
+    _sosCellLastTs.clear();
+    _sosOriginByDevice.clear();
+  }
+
+  /// テスト専用: SOS 受信処理の入口。
+  @visibleForTesting
+  void debugIngestSos(Map<String, dynamic> json) => _ingestSos(json);
+
+  /// テスト専用: シェルター受信処理の入口。
+  @visibleForTesting
+  void debugIngestShelter(Map<String, dynamic> json) => _ingestShelter(json);
+
+  /// シェルター位置を更新（ShelterProvider から呼ぶ）。
+  void setKnownShelters(Iterable<Shelter> shelters) {
+    _knownShelterLocations
+      ..clear()
+      ..addEntries(shelters.map((s) => MapEntry(s.id, LatLng(s.lat, s.lng))));
+  }
+
   /// スコアリングエンジン
   final RoadReportScorer scorer = RoadReportScorer();
 
@@ -108,8 +151,29 @@ class BleRoadReportService extends ChangeNotifier {
   /// iOS バックグラウンドタスク延長用チャンネル（Android では未使用）
   static const _bgTaskChannel = MethodChannel('gapless/bg_task');
 
-  static String _truncateId(String id) =>
-      id.length > 8 ? id.substring(0, 8) : id;
+  /// BLE発信に使う短命ローテーションID（1時間ごとに変わる）
+  String _outgoingBleId() => DeviceIdService.instance.ephemeralBleId;
+
+  /// 偽SOSスパム対策用 LRU: deviceId → (lat, lng, timestamp)
+  /// 同 deviceId が 1分以内に 10km 超移動した場合は drop。
+  final LinkedHashMap<String, _SosOriginRecord> _sosOriginByDevice =
+      LinkedHashMap<String, _SosOriginRecord>();
+  static const double _maxSosJumpMetersPerMinute = 10000.0;
+
+  /// 100m グリッドキー → 直近 SOS 受信時刻（UNIX秒）
+  /// deviceId ローテートでスパムする攻撃をフィルタするため。
+  final LinkedHashMap<String, int> _sosCellLastTs = LinkedHashMap<String, int>();
+  static const int _maxSosCells = 1024;
+
+  /// 受信PII最小化: lat/lng は小数2桁(≈1km)に丸めてログ出力
+  String _redactGeo(double lat, double lng) =>
+      '${lat.toStringAsFixed(2)}/${lng.toStringAsFixed(2)}';
+
+  void _logDrop(String reason, [String? detail]) {
+    if (kReleaseMode) return;
+    debugPrint('BleRoadReportService: drop[$reason]'
+        '${detail != null ? ' $detail' : ''}');
+  }
 
   // ---------------------------------------------------------------------------
   // ライフサイクル
@@ -183,14 +247,13 @@ class BleRoadReportService extends ChangeNotifier {
 
   /// 自端末が避難所に到着したことをキューに積む（BLEすれ違い時に周囲へ伝播）
   void enqueueShelterStatus(Shelter shelter, {bool isOccupied = true}) {
-    final deviceId = DeviceIdService.instance.deviceId ?? 'unknown';
     final report = ShelterStatusReport(
       shelterId: shelter.id,
       lat: shelter.lat,
       lng: shelter.lng,
       isOccupied: isOccupied,
       timestamp: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      deviceId: _truncateId(deviceId),
+      deviceId: _outgoingBleId(),
     );
     _shelterQueue.add(report);
     _shelterStatuses[shelter.id] = report;
@@ -210,13 +273,11 @@ class BleRoadReportService extends ChangeNotifier {
     bool isDrActive = false,
     double drErrorM = 0.0,
   }) {
-    final deviceId =
-        DeviceIdService.instance.deviceId ?? 'unknown';
     final reportId =
         DateTime.now().millisecondsSinceEpoch.toRadixString(16);
     final report = PeerRoadReport.create(
       reportId: reportId,
-      deviceId: deviceId,
+      deviceId: _outgoingBleId(),
       lat: lat,
       lng: lng,
       accuracyM: accuracyM,
@@ -226,15 +287,24 @@ class BleRoadReportService extends ChangeNotifier {
     );
     _queue.add(report);
     scorer.addReport(report); // 自端末のスコアにも即時反映
-    debugPrint('BleRoadReportService: enqueued $report');
+    if (!kReleaseMode) {
+      debugPrint('BleRoadReportService: enqueued report '
+          '(seg=${report.segmentId}, status=${report.status})');
+    }
   }
 
   /// SOSビーコンをキューに積む（長押しボタンから呼ぶ）
   void enqueueSos({required double lat, required double lng}) {
-    final deviceId = DeviceIdService.instance.deviceId ?? 'unknown';
-    final report = SosReport.create(deviceId: deviceId, lat: lat, lng: lng);
+    if (!BlePacket.isValidGeo(lat, lng)) {
+      _logDrop('local_sos_invalid_geo');
+      return;
+    }
+    final report =
+        SosReport.create(deviceId: _outgoingBleId(), lat: lat, lng: lng);
     _sosQueue.add(report);
-    debugPrint('BleRoadReportService: SOS enqueued @ $lat/$lng');
+    if (!kReleaseMode) {
+      debugPrint('BleRoadReportService: SOS enqueued @ ${_redactGeo(lat, lng)}');
+    }
   }
 
   /// 受信済みSOSのうち期限切れを除去
@@ -253,11 +323,11 @@ class BleRoadReportService extends ChangeNotifier {
     bool isDrActive = false,
     double drErrorM = 0.0,
   }) async {
-    final deviceId = DeviceIdService.instance.deviceId ?? 'unknown';
+    final deviceId = _outgoingBleId();
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     final packet = BlePacket(
-      senderDeviceId: deviceId,
+      senderDeviceId: DeviceIdService.instance.deviceId ?? deviceId,
       timestamp: now,
       lat: lat,
       lng: lng,
@@ -286,7 +356,10 @@ class BleRoadReportService extends ChangeNotifier {
       scorer.addReport(report);
     }
 
-    debugPrint('BleRoadReportService: enqueueFullReport $dataType @ $lat/$lng');
+    if (!kReleaseMode) {
+      debugPrint('BleRoadReportService: enqueueFullReport $dataType @ '
+          '${_redactGeo(lat, lng)}');
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -415,9 +488,8 @@ class BleRoadReportService extends ChangeNotifier {
         ? decimated.sublist(decimated.length - maxPts)
         : decimated;
 
-    final deviceId = DeviceIdService.instance.deviceId ?? 'unknown';
     _pendingTrack = GpsTrackSnapshot(
-      deviceId: _truncateId(deviceId),
+      deviceId: _outgoingBleId(),
       timestamp: recent.last.timestamp,
       points: recent
           .map((e) => GpsPoint(e.lat, e.lng, e.timestamp))
@@ -460,86 +532,243 @@ class BleRoadReportService extends ChangeNotifier {
 
   void _handleReceivedBytes(List<int> bytes) {
     if (bytes.isEmpty) return;
+
+    // payload長 ≤ 256バイト（仕様）。1パケット内に複数行が入る前提なので
+    // 全体としては数KBもありうるが、明らかな巨大データはここで切る。
+    if (bytes.length > 8 * 1024) {
+      _logDrop('packet_too_large', 'len=${bytes.length}');
+      return;
+    }
+
+    final String decoded;
     try {
-      final lines = utf8.decode(bytes, allowMalformed: true).split('\n');
-      final reports = <PeerRoadReport>[];
-
-      for (final line in lines) {
-        final trimmed = line.trim();
-        if (trimmed.isEmpty) continue;
-        try {
-          final json = jsonDecode(trimmed) as Map<String, dynamic>;
-          final type = json['type'] as String?;
-          if (type == 'sos') {
-            // SOSビーコン
-            final sos = SosReport.fromJson(json);
-            if (!sos.isExpired) {
-              final alreadyKnown = _receivedSos.any((r) =>
-                  r.deviceId == sos.deviceId &&
-                  (r.timestamp - sos.timestamp).abs() < 60);
-              if (!alreadyKnown && _receivedSos.length < _maxReceivedSos) {
-                _receivedSos.add(sos);
-                _receivedSosCount++;
-                debugPrint('BleRoadReportService: SOS 受信 ${sos.deviceId} @ ${sos.lat}/${sos.lng}');
-              }
-            }
-          } else if (type == 'sh') {
-            // 避難所ステータスレポート
-            final sr = ShelterStatusReport.fromJson(json);
-            if (!sr.isExpired &&
-                (_shelterStatuses.containsKey(sr.shelterId) ||
-                    _shelterStatuses.length < _maxShelterStatuses)) {
-              _shelterStatuses[sr.shelterId] = sr;
-            }
-          } else if (type == 'tr') {
-            // GPS軌跡スナップショット
-            final snap = GpsTrackSnapshot.fromJson(json);
-            // 既存ピアの更新は常に許可、新規ピアはキャップ内のみ
-            if (!snap.isExpired && snap.points.length >= 2 &&
-                (_peerTracks.containsKey(snap.deviceId) ||
-                    _peerTracks.length < _maxPeerTracks)) {
-              _peerTracks[snap.deviceId] = snap;
-            }
-          } else {
-            // 道路通行可否レポート
-            final report = PeerRoadReport.fromCompactJson(json);
-            if (!report.isExpired) reports.add(report);
-          }
-        } catch (e) {
-          debugPrint('BleRoadReportService: パース失敗 "$trimmed": $e');
-        }
-      }
-
-      if (reports.isNotEmpty) {
-        scorer.addReports(reports);
-        _receivedCount += reports.length;
-        // 再起動後も利用できるよう DB に永続化（重複はDBの UNIQUE 制約で無視）
-        final myDeviceId = DeviceIdService.instance.deviceId ?? '';
-        for (final r in reports) {
-          final packet = BlePacket(
-            senderDeviceId: r.deviceId,
-            timestamp: r.timestamp,
-            lat: r.lat,
-            lng: r.lng,
-            accuracyMeters: r.accuracyM,
-            dataType: r.passable ? BleDataType.passable : BleDataType.blocked,
-            payload: '',
-          );
-          BleRepository.instance.insert(packet).catchError((_) {});
-
-          // メッシュリレー: 自端末以外の報告かつホップ上限未満なら次ピアへ中継
-          final myId8 = _truncateId(myDeviceId);
-          if (r.deviceId != myId8 && r.hops < _maxRelayHops &&
-              _relayQueue.length < _maxRelayQueue) {
-            _relayQueue.add(r.withNextHop());
-          }
-        }
-        debugPrint(
-            'BleRoadReportService: ${reports.length}件 受信, 合計=$_receivedCount, リレーキュー=${_relayQueue.length}');
-      }
-      notifyListeners();
+      decoded = utf8.decode(bytes, allowMalformed: true);
     } catch (e) {
-      debugPrint('BleRoadReportService: 受信処理エラー $e');
+      _logDrop('utf8_decode_failed', '$e');
+      return;
+    }
+
+    final lines = decoded.split('\n');
+    final reports = <PeerRoadReport>[];
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (trimmed.isEmpty) continue;
+      if (trimmed.length > BlePacket.maxPayloadBytes * 4) {
+        _logDrop('line_too_large', 'len=${trimmed.length}');
+        continue;
+      }
+
+      Map<String, dynamic> json;
+      try {
+        final raw = jsonDecode(trimmed);
+        if (raw is! Map<String, dynamic>) {
+          _logDrop('not_json_object');
+          continue;
+        }
+        json = raw;
+      } catch (e) {
+        _logDrop('json_parse_failed', '$e');
+        continue;
+      }
+
+      final type = json['type'] as String?;
+      try {
+        if (type == 'sos') {
+          _ingestSos(json);
+        } else if (type == 'sh') {
+          _ingestShelter(json);
+        } else if (type == 'tr') {
+          _ingestTrack(json);
+        } else {
+          // README仕様: type=="r" が道路レポート。type欠落も後方互換で受ける。
+          final report = PeerRoadReport.fromCompactJson(json);
+          if (!_validateRoadReport(report)) continue;
+          reports.add(report);
+        }
+      } on FormatException catch (e) {
+        _logDrop('schema_violation', '${type ?? "?"}: ${e.message}');
+      } catch (e) {
+        _logDrop('ingest_error', '${type ?? "?"}: $e');
+      }
+    }
+
+    if (reports.isNotEmpty) {
+      scorer.addReports(reports);
+      _receivedCount += reports.length;
+      final myId8 = _outgoingBleId();
+      for (final r in reports) {
+        final packet = BlePacket(
+          senderDeviceId: r.deviceId,
+          timestamp: r.timestamp,
+          lat: r.lat,
+          lng: r.lng,
+          accuracyMeters: r.accuracyM,
+          dataType: r.passable ? BleDataType.passable : BleDataType.blocked,
+          payload: '',
+        );
+        BleRepository.instance.insert(packet).catchError((_) {});
+
+        if (r.deviceId != myId8 &&
+            r.hops < _maxRelayHops &&
+            _relayQueue.length < _maxRelayQueue) {
+          _relayQueue.add(r.withNextHop());
+        }
+      }
+      if (!kReleaseMode) {
+        debugPrint('BleRoadReportService: ${reports.length}件 受信, '
+            '合計=$_receivedCount, リレー=${_relayQueue.length}');
+      }
+    }
+    notifyListeners();
+  }
+
+  // ── 受信検証ヘルパー ────────────────────────────────────────────────
+
+  bool _validateRoadReport(PeerRoadReport r) {
+    final reason = BlePacket.validateFields(
+      lat: r.lat,
+      lng: r.lng,
+      timestamp: r.timestamp,
+    );
+    if (reason != null) {
+      _logDrop('road_$reason');
+      return false;
+    }
+    if (r.isExpired) {
+      _logDrop('road_expired');
+      return false;
+    }
+    return true;
+  }
+
+  void _ingestSos(Map<String, dynamic> json) {
+    final sos = SosReport.fromJson(json); // throws FormatException
+    final reason = BlePacket.validateFields(
+      lat: sos.lat,
+      lng: sos.lng,
+      timestamp: sos.timestamp,
+    );
+    if (reason != null) {
+      _logDrop('sos_$reason');
+      return;
+    }
+    if (sos.isExpired) {
+      _logDrop('sos_expired');
+      return;
+    }
+
+    // 偽SOSスパム抑止 (1): 同 deviceId & 60秒未満
+    final alreadyKnown = _receivedSos.any((r) =>
+        r.deviceId == sos.deviceId &&
+        (r.timestamp - sos.timestamp).abs() < 60);
+    if (alreadyKnown) {
+      _logDrop('sos_dup_recent');
+      return;
+    }
+
+    // 偽SOSスパム抑止 (1.5): 同一 100m グリッドからの複数 SOS は 5分間に1件まで
+    // (deviceId をローテートするスパム攻撃をフィルタ。
+    //  100m は約 lat/lng 0.001 度。)
+    final cellKey =
+        '${(sos.lat * 1000).round()}_${(sos.lng * 1000).round()}';
+    final lastCellTs = _sosCellLastTs[cellKey];
+    if (lastCellTs != null && (sos.timestamp - lastCellTs).abs() < 300) {
+      _logDrop('sos_cell_rate_limited');
+      return;
+    }
+    _sosCellLastTs[cellKey] = sos.timestamp;
+    if (_sosCellLastTs.length > _maxSosCells) {
+      _sosCellLastTs.remove(_sosCellLastTs.keys.first);
+    }
+
+    // 偽SOSスパム抑止 (2): 1分以内に 10km 以上の異常飛躍
+    final prev = _sosOriginByDevice[sos.deviceId];
+    if (prev != null) {
+      final dtSec = (sos.timestamp - prev.timestamp).abs();
+      if (dtSec < 60) {
+        final dist = const Distance()
+            .as(LengthUnit.Meter, LatLng(prev.lat, prev.lng),
+                LatLng(sos.lat, sos.lng));
+        // 1分未満で10km超 → 物理的にありえない移動 = 偽装の可能性大
+        if (dist > _maxSosJumpMetersPerMinute) {
+          _logDrop('sos_impossible_jump', 'dist=${dist.toStringAsFixed(0)}m');
+          return;
+        }
+      }
+    }
+
+    // LRU evict (最古を捨てる)
+    while (_receivedSos.length >= _maxReceivedSos) {
+      _receivedSos.removeAt(0);
+    }
+
+    _receivedSos.add(sos);
+    _receivedSosCount++;
+
+    // 送信元位置記録もLRU化
+    if (_sosOriginByDevice.length >= _maxReceivedSos) {
+      _sosOriginByDevice.remove(_sosOriginByDevice.keys.first);
+    }
+    _sosOriginByDevice[sos.deviceId] =
+        _SosOriginRecord(sos.lat, sos.lng, sos.timestamp);
+
+    if (!kReleaseMode) {
+      debugPrint('BleRoadReportService: SOS 受信 ${sos.deviceId} @ '
+          '${_redactGeo(sos.lat, sos.lng)}');
+    }
+  }
+
+  void _ingestShelter(Map<String, dynamic> json) {
+    final sr = ShelterStatusReport.fromJson(json); // throws FormatException
+    final reason = BlePacket.validateFields(
+      lat: sr.lat,
+      lng: sr.lng,
+      timestamp: sr.timestamp,
+    );
+    if (reason != null) {
+      _logDrop('shelter_$reason');
+      return;
+    }
+    if (sr.isExpired) {
+      _logDrop('shelter_expired');
+      return;
+    }
+    // 距離検証: 報告者がそのシェルター近傍 (≤500m) からの送信であることを要求。
+    // 既知のシェルター ID のみ受理する（未知IDの自由な追加を防ぐ）。
+    final knownLoc = _knownShelterLocations[sr.shelterId];
+    if (knownLoc == null) {
+      _logDrop('shelter_unknown_id');
+      return;
+    }
+    final distM = const Distance().as(
+      LengthUnit.Meter,
+      knownLoc,
+      LatLng(sr.lat, sr.lng),
+    );
+    if (distM > _shelterReportMaxDistanceM) {
+      _logDrop('shelter_too_far_${distM.round()}m');
+      return;
+    }
+    if (_shelterStatuses.containsKey(sr.shelterId) ||
+        _shelterStatuses.length < _maxShelterStatuses) {
+      _shelterStatuses[sr.shelterId] = sr;
+    } else {
+      _logDrop('shelter_capacity');
+    }
+  }
+
+  void _ingestTrack(Map<String, dynamic> json) {
+    final snap = GpsTrackSnapshot.fromJson(json);
+    if (snap.isExpired || snap.points.length < 2) {
+      _logDrop('track_invalid');
+      return;
+    }
+    if (_peerTracks.containsKey(snap.deviceId) ||
+        _peerTracks.length < _maxPeerTracks) {
+      _peerTracks[snap.deviceId] = snap;
+    } else {
+      _logDrop('track_capacity');
     }
   }
 }

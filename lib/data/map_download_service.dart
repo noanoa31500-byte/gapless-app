@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'map_cache_manager.dart';
 import 'map_tile_index.dart';
 
 class MapDownloadService {
@@ -53,16 +54,26 @@ class MapDownloadService {
   // ────────────────────────────────────
   // candidateUrls を先頭から試してダウンロード・gzip 解凍
   // 全 URL 失敗時は null を返す
+  // [areaId] [fileKey] が指定されると、gzip 解凍失敗時に
+  // 該当キャッシュファイルを削除して起動毎の再DLループを防ぐ
   // ────────────────────────────────────
-  Future<Uint8List?> downloadFile(List<String> candidateUrls) async {
+  Future<Uint8List?> downloadFile(
+    List<String> candidateUrls, {
+    String? areaId,
+    String? fileKey,
+  }) async {
     for (final url in candidateUrls) {
-      final data = await _tryDownload(url);
+      final data = await _tryDownload(url, areaId: areaId, fileKey: fileKey);
       if (data != null) return data;
     }
     return null;
   }
 
-  Future<Uint8List?> _tryDownload(String url) async {
+  Future<Uint8List?> _tryDownload(
+    String url, {
+    String? areaId,
+    String? fileKey,
+  }) async {
     for (int attempt = 0; attempt < _retryCount; attempt++) {
       try {
         final response =
@@ -71,7 +82,21 @@ class MapDownloadService {
           // gzip か否かは Content-Encoding または URL の拡張子で判断
           final bytes = response.bodyBytes;
           if (url.endsWith('.gz')) {
-            return Uint8List.fromList(GZipCodec().decode(bytes));
+            try {
+              return Uint8List.fromList(GZipCodec().decode(bytes));
+            } catch (gzipErr) {
+              // GZip 破損: 部分DL済みキャッシュも削除して再DLループを断ち切る
+              // ignore: avoid_print
+              print('⚠️ MapDownloadService: GZip decode failed for $url — '
+                  'purging cache file ($gzipErr)');
+              if (areaId != null && fileKey != null) {
+                try {
+                  await MapCacheManager().deleteCacheFile(areaId, fileKey);
+                } catch (_) {/* best effort */}
+              }
+              // この URL は壊れていると判断して諦める（次の候補 URL を試す）
+              return null;
+            }
           }
           return bytes;
         }
@@ -103,7 +128,7 @@ class MapDownloadService {
     for (final key in orderedKeys) {
       final urls = entry.candidateUrls(key);
       if (urls.isEmpty) continue;
-      final data = await downloadFile(urls);
+      final data = await downloadFile(urls, areaId: entry.id, fileKey: key);
       if (data != null) {
         result[key] = data;
       }

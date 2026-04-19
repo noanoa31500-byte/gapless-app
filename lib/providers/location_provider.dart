@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/dead_reckoning_service.dart';
+import '../services/secure_pii_storage.dart';
 
 class LocationProvider extends ChangeNotifier {
   LatLng? _currentLocation;
@@ -12,6 +13,24 @@ class LocationProvider extends ChangeNotifier {
   bool _isLoadingLocation = false;
   bool _isWaitingForFreshGPS = false;
   StreamSubscription<Position>? _positionStream;
+
+  /// GPS入力検証 — 不正値受信件数（ヘルスチェック用）
+  int _rejectedFixCount = 0;
+  int get rejectedFixCount => _rejectedFixCount;
+
+  /// 座標の妥当性検証。
+  /// - lat ∈ [-90,90], lng ∈ [-180,180]
+  /// - NaN/Infinity 排除
+  /// - (0,0) 排除（赤道アフリカ沖の不正値）
+  /// - accuracy NaN/負 排除
+  static bool isValidFix(double lat, double lng, double accuracy) {
+    if (!lat.isFinite || !lng.isFinite) return false;
+    if (lat < -90.0 || lat > 90.0) return false;
+    if (lng < -180.0 || lng > 180.0) return false;
+    if (lat == 0.0 && lng == 0.0) return false;
+    if (!accuracy.isFinite || accuracy < 0.0) return false;
+    return true;
+  }
 
   // デッドレコニング
   final _deadReckoning = DeadReckoningService();
@@ -95,14 +114,22 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: Duration(seconds: timeoutSeconds),
       );
-      
+
+      // GPS入力検証 — 不正値は採用拒否し、最後の有効値を保持
+      if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+        _rejectedFixCount++;
+        debugPrint('⚠️ Invalid GPS fix rejected (waitForFreshGPS): '
+            'lat=${position.latitude}, lng=${position.longitude}, acc=${position.accuracy}');
+        _isWaitingForFreshGPS = false;
+        notifyListeners();
+        return false;
+      }
+
       _currentLocation = LatLng(position.latitude, position.longitude);
       _currentLocationName = 'GPS Location';
 
-      // 保存
+      await SecurePiiStorage.setLastLatLng(position.latitude, position.longitude);
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble('last_lat', position.latitude);
-      await prefs.setDouble('last_lng', position.longitude);
       await prefs.setString('last_loc_time', DateTime.now().toIso8601String());
 
       _isWaitingForFreshGPS = false;
@@ -119,11 +146,15 @@ class LocationProvider extends ChangeNotifier {
   /// 最後に保存された位置情報を読み込む
   Future<void> loadLastKnownLocation() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final lat = prefs.getDouble('last_lat');
-      final lng = prefs.getDouble('last_lng');
+      final lat = await SecurePiiStorage.getLastLat();
+      final lng = await SecurePiiStorage.getLastLng();
 
       if (lat != null && lng != null) {
+        if (!isValidFix(lat, lng, 0.0)) {
+          debugPrint('⚠️ Stored last-known location invalid, skipped: ($lat, $lng)');
+          await SecurePiiStorage.clearLastLatLng();
+          return;
+        }
         _currentLocation = LatLng(lat, lng);
         _currentLocationName = 'Last Known Location';
         notifyListeners();
@@ -177,16 +208,25 @@ class LocationProvider extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10), // Add timeout
       );
-      
+
+      // GPS入力検証 — 不正値は採用拒否
+      if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+        _rejectedFixCount++;
+        _lastPermissionStatus = LocationPermission.whileInUse;
+        _isLoadingLocation = false;
+        notifyListeners();
+        debugPrint('⚠️ Invalid GPS fix rejected (getCurrentGPSLocation): '
+            'lat=${position.latitude}, lng=${position.longitude}, acc=${position.accuracy}');
+        return false;
+      }
+
       _lastPermissionStatus = LocationPermission.whileInUse; // Assumed success
 
       _currentLocation = LatLng(position.latitude, position.longitude);
       
-      // 位置情報を永続化 (オフライン起動用)
       try {
+        await SecurePiiStorage.setLastLatLng(position.latitude, position.longitude);
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setDouble('last_lat', position.latitude);
-        await prefs.setDouble('last_lng', position.longitude);
         await prefs.setString('last_loc_time', DateTime.now().toIso8601String());
       } catch (e) {
         debugPrint('⚠️ 位置情報の保存に失敗: $e');
@@ -253,6 +293,14 @@ class LocationProvider extends ChangeNotifier {
       locationSettings: locationSettings,
     ).listen(
       (Position position) async {
+        // GPS入力検証 — 不正値は採用拒否し、最後の有効値を保持
+        if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+          _rejectedFixCount++;
+          debugPrint('⚠️ Invalid GPS fix rejected (stream): '
+              'lat=${position.latitude}, lng=${position.longitude}, acc=${position.accuracy}');
+          return;
+        }
+
         _resetGpsTimeoutTimer();
 
         final gpsPos = LatLng(position.latitude, position.longitude);

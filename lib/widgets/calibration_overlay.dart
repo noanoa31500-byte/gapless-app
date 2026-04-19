@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 
 // ============================================================================
@@ -72,6 +73,14 @@ class _CalibrationOverlayState extends State<CalibrationOverlay>
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // rebuild on language change
     if (!widget.visible) return const SizedBox.shrink();
+    final reduce = AppleAccessibility.reduceMotion(context);
+    for (final c in [_figureEightCtrl, _pulseCtrl]) {
+      if (reduce && c.isAnimating) {
+        c.stop();
+      } else if (!reduce && !c.isAnimating) {
+        c.repeat(reverse: c == _pulseCtrl);
+      }
+    }
 
     return AnimatedOpacity(
       opacity: widget.visible ? 1.0 : 0.0,

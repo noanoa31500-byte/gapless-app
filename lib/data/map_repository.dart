@@ -10,6 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../utils/localization.dart';
+import '../providers/region_mode_provider.dart';
 import 'area_data.dart';
 import 'map_cache_manager.dart';
 import 'map_download_service.dart';
@@ -50,20 +51,22 @@ MapFile _mf(String name, {bool isGzipped = true}) => MapFile(
   isGzipped: isGzipped,
 );
 
-final mapFiles = [
-  // 東京中心部
-  _mf('tokyo_center_roads.gplb.gz'),
-  _mf('tokyo_center_poi.gplb.gz'),
-  _mf('tokyo_center_hazard.gplh.gz'),
-  // 大崎
-  _mf('osaki_poi.gplb.gz'),
-  _mf('osaki_roads.gplb.gz'),
-  _mf('osaki_hazard.gplh.gz'),
-  // タイ
-  _mf('thailand_poi.gplb.gz'),
-  _mf('thailand_roads.gplb.gz'),
-  _mf('thailand_hazard.gplh.gz'),
-];
+/// 地域レジストリからマップファイル一覧を組み立てる
+/// 旧コードはハードコードされた `tokyo_center_*` / `osaki_*` / `thailand_*` を
+/// 列挙していたが、Region.gplbAssetPath 経由で動的に生成し、
+/// 新地域追加時もこのリストを編集不要にする。
+List<MapFile> _buildMapFiles() {
+  final files = <MapFile>[];
+  for (final region in RegionRegistry.all) {
+    final p = region.gplbAssetPath;
+    files.add(_mf('${p}_roads.gplb.gz'));
+    files.add(_mf('${p}_poi.gplb.gz'));
+    files.add(_mf('${p}_hazard.gplh.gz'));
+  }
+  return files;
+}
+
+final mapFiles = _buildMapFiles();
 
 // ────────────────────────────────────────
 // ダウンロード進捗の通知

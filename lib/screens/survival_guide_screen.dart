@@ -41,7 +41,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
     return Scaffold(
       appBar: AppBar(
         title: SafeText(
-          _getTitle(lang),
+          GapLessL10n.t('sg_title'),
           style: emergencyTextStyle(size: 20, isBold: true),
         ),
         backgroundColor: Colors.white,
@@ -56,15 +56,15 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
           tabs: [
             Tab(
               icon: const Icon(Icons.healing),
-              text: _getTabFirstAid(lang),
+              text: GapLessL10n.t('sg_tab_first_aid'),
             ),
             Tab(
               icon: const Icon(Icons.warning_amber),
-              text: _getTabDisaster(lang),
+              text: GapLessL10n.t('sg_tab_disaster'),
             ),
             Tab(
               icon: const Icon(Icons.home_work),
-              text: _getTabShelterLife(lang),
+              text: GapLessL10n.t('sg_tab_shelter_life'),
             ),
           ],
         ),
@@ -78,50 +78,6 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         ],
       ),
     );
-  }
-
-  String _getTitle(String lang) {
-    switch (lang) {
-      case 'ja':
-        return 'サバイバルガイド';
-      case 'th':
-        return 'คู่มือเอาตัวรอด';
-      default:
-        return 'Survival Guide';
-    }
-  }
-
-  String _getTabFirstAid(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '応急処置';
-      case 'th':
-        return 'ปฐมพยาบาล';
-      default:
-        return 'First Aid';
-    }
-  }
-
-  String _getTabDisaster(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '災害別行動';
-      case 'th':
-        return 'ภัยพิบัติ';
-      default:
-        return 'Disasters';
-    }
-  }
-
-  String _getTabShelterLife(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '避難所生活';
-      case 'th':
-        return 'ชีวิตในศูนย์พักพิง';
-      default:
-        return 'Shelter Life';
-    }
   }
 
   /// 応急処置タブ
@@ -184,7 +140,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: SafeText(
-                              _getUrgentLabel(lang),
+                              GapLessL10n.t('sg_urgent'),
                               style: emergencyTextStyle(
                                   size: 10, color: Colors.white, isBold: true),
                             ),
@@ -211,17 +167,6 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         ),
       ),
     );
-  }
-
-  String _getUrgentLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '緊急';
-      case 'th':
-        return 'ฉุกเฉิน';
-      default:
-        return 'URGENT';
-    }
   }
 
   /// 応急処置詳細モーダル
@@ -285,7 +230,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                               ),
                               if (item.isLifeThreatening)
                                 SafeText(
-                                  _getLifeThreateningLabel(lang),
+                                  GapLessL10n.t('sg_life_threatening'),
                                   style: emergencyTextStyle(
                                       size: 12, color: item.color),
                                 ),
@@ -381,8 +326,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                                     child: Chip(
                                       avatar: const Icon(Icons.timer, size: 16),
                                       label: SafeText(
-                                        _formatDuration(
-                                            step.durationSeconds!, lang),
+                                        _formatDuration(step.durationSeconds!),
                                         style: emergencyTextStyle(size: 12),
                                       ),
                                       backgroundColor: Colors.blue[50],
@@ -415,7 +359,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                       ),
                     ),
                     child: SafeText(
-                      _getCloseLabel(lang),
+                      GapLessL10n.t('sg_close_btn'),
                       style:
                           emergencyTextStyle(color: Colors.white, isBold: true),
                     ),
@@ -429,49 +373,12 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
     );
   }
 
-  String _getLifeThreateningLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '⚠️ 命に関わる緊急事態';
-      case 'th':
-        return '⚠️ เหตุฉุกเฉินที่คุกคามชีวิต';
-      default:
-        return '⚠️ Life-threatening emergency';
-    }
-  }
-
-  String _formatDuration(int seconds, String lang) {
+  String _formatDuration(int seconds) {
     if (seconds >= 60) {
       final minutes = seconds ~/ 60;
-      switch (lang) {
-        case 'ja':
-          return '$minutes分以上';
-        case 'th':
-          return '$minutes+ นาที';
-        default:
-          return '$minutes+ min';
-      }
-    } else {
-      switch (lang) {
-        case 'ja':
-          return '$seconds秒';
-        case 'th':
-          return '$seconds วินาที';
-        default:
-          return '$seconds sec';
-      }
+      return GapLessL10n.tParams('sg_minutes_plus', {'n': '$minutes'});
     }
-  }
-
-  String _getCloseLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '閉じる';
-      case 'th':
-        return 'ปิด';
-      default:
-        return 'Close';
-    }
+    return GapLessL10n.tParams('sg_seconds_only', {'n': '$seconds'});
   }
 
   /// 災害別行動タブ
@@ -664,7 +571,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                       ),
                     ),
                     child: SafeText(
-                      _getCloseLabel(lang),
+                      GapLessL10n.t('sg_close_btn'),
                       style:
                           emergencyTextStyle(color: Colors.white, isBold: true),
                     ),
@@ -694,12 +601,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
       children: [
         // Official Guides Section
         _buildSectionTitle(
-          lang == 'ja' ? '📋 公式ガイドライン' 
-              : lang == 'th' ? '📋 คู่มือทางการ' 
-              : '📋 Official Guidelines',
-          lang == 'ja' ? '政府・公的機関の推奨事項'
-              : lang == 'th' ? 'คำแนะนำจากหน่วยงานราชการ'
-              : 'Recommendations from government agencies',
+          GapLessL10n.t('sg_official_title'),
+          GapLessL10n.t('sg_official_desc'),
         ),
         const SizedBox(height: 12),
         ...officialGuides.map((item) => _buildShelterGuideCard(item, lang)),
@@ -708,12 +611,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         
         // AI Support Guides Section
         _buildSectionTitle(
-          lang == 'ja' ? '🤖 AIサポートガイド'
-              : lang == 'th' ? '🤖 คู่มือจาก AI'
-              : '🤖 AI Support Guides',
-          lang == 'ja' ? '避難所生活のヒント・アドバイス'
-              : lang == 'th' ? 'เคล็ดลับสำหรับชีวิตในศูนย์พักพิง'
-              : 'Tips and advice for shelter life',
+          GapLessL10n.t('sg_ai_title'),
+          GapLessL10n.t('sg_ai_desc'),
         ),
         const SizedBox(height: 12),
         ...aiSupportGuides.map((item) => _buildShelterGuideCard(item, lang)),
@@ -904,7 +803,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                       if (steps != null && steps.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         SafeText(
-                          _getStepsLabel(lang),
+                          GapLessL10n.t('sg_steps_btn'),
                           style: emergencyTextStyle(size: 14, isBold: true, color: Colors.grey),
                         ),
                         const SizedBox(height: 16),
@@ -959,7 +858,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                       const SizedBox(height: 24),
                       ExpansionTile(
                         title: SafeText(
-                          _getMultiLangLabel(lang),
+                          GapLessL10n.t('sg_multilang'),
                           style: emergencyTextStyle(size: 14, color: Colors.grey),
                         ),
                         children: [
@@ -989,7 +888,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                       ),
                     ),
                     child: SafeText(
-                      _getCloseLabel(lang),
+                      GapLessL10n.t('sg_close_btn'),
                       style: emergencyTextStyle(color: Colors.white, isBold: true),
                     ),
                   ),
@@ -1000,28 +899,6 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         );
       },
     );
-  }
-  
-  String _getStepsLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '📝 手順';
-      case 'th':
-        return '📝 ขั้นตอน';
-      default:
-        return '📝 Steps';
-    }
-  }
-  
-  String _getMultiLangLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '🌐 多言語で見る';
-      case 'th':
-        return '🌐 ดูในภาษาอื่น';
-      default:
-        return '🌐 View in other languages';
-    }
   }
   
   Widget _buildLangRow(String label, String text) {

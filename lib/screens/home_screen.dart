@@ -36,6 +36,7 @@ import 'chat_screen.dart';
 import 'emergency_card_screen.dart';
 
 // Utils
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 import '../widgets/dead_reckoning_badge.dart';
 import '../ble/ble_packet.dart';
@@ -68,10 +69,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   // ── ハザードオーバーレイ ON/OFF ─────────────────────────────────────────────
   bool _showFloodOverlay  = true;
-  bool _showPowerOverlay  = true;
 
   // ── 危険エリア在圏警告 ──────────────────────────────────────────────────────
-  // 0=安全, 1=ハザードポリゴン内, 2=洪水リスク近傍, 3=感電リスク近傍
+  // 0=安全, 1=ハザードポリゴン内, 2=洪水リスク近傍
   int _dangerLevel = 0;
   Timer? _hazardCheckTimer;
 
@@ -126,8 +126,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       level = 1;
     } else if (shelter.isNearFloodRisk(loc)) {
       level = 2;
-    } else if (shelter.isNearPowerRisk(loc)) {
-      level = 3;
     }
 
     if (level != _dangerLevel) {
@@ -138,10 +136,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     // Watch Providers
-    final locationProvider = context.watch<LocationProvider>();
+    // 高頻度通知の LocationProvider は必要フィールド (currentLocation) のみ購読し、
+    // GPS が同一座標の間は再描画しない。LatLng が == を実装しているため動作する。
+    final currentLocation =
+        context.select<LocationProvider, LatLng?>((p) => p.currentLocation);
     final shelterProvider = context.watch<ShelterProvider>();
-    final regionProvider = context.watch<RegionModeProvider>();
-    context.watch<LanguageProvider>();
+    // RegionModeProvider は isJapanMode のみ参照しているのでそれだけ購読。
+    final isJapanMode =
+        context.select<RegionModeProvider, bool>((p) => p.isJapanMode);
+    final reduceMotion = AppleAccessibility.reduceMotion(context);
+    if (reduceMotion && _pulseController.isAnimating) {
+      _pulseController.stop();
+    } else if (!reduceMotion && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    }
+    // 言語フィールドのみ購読（単一文字列が変わったときだけ再描画）
+    context.select<LanguageProvider, String>((p) => p.currentLanguage);
     
     // Region change detection for map centering
     if (_lastRegion != shelterProvider.currentRegion) {
@@ -153,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 
     // Auto Zoom Logic
-    _handleAutoZoom(locationProvider, shelterProvider);
+    _handleAutoZoom(currentLocation, shelterProvider);
 
     // Loading State
     if (shelterProvider.isLoading) {
@@ -198,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           // ---------------------------------------------------------
           // LAYER 1: MAP VIEW
           // ---------------------------------------------------------
-          _buildMapLayer(locationProvider, shelterProvider, regionProvider),
+          _buildMapLayer(currentLocation, shelterProvider),
 
           // ---------------------------------------------------------
           // LAYER 2: UI OVERLAY (Navy/Orange, Radius 30, Padding 24)
@@ -209,12 +219,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Column(
                 children: [
                   // Top Bar
-                  _buildTopBar(regionProvider),
-                  
+                  _buildTopBar(),
+
                   const Spacer(),
-                  
+
                   // Logic Indicator (Directive 3)
-                  _buildLogicIndicator(regionProvider),
+                  _buildLogicIndicator(isJapanMode),
                   const SizedBox(height: 16),
 
                   // Bottom Action Bar
@@ -265,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               children: [
                 _buildFab(
                   icon: Icons.my_location_rounded,
-                  onPressed: () => _centerMap(locationProvider),
+                  onPressed: () => _centerMap(context.read<LocationProvider>()),
                   color: Colors.white,
                   iconColor: _greenPrimary,
                 ),
@@ -279,7 +289,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 const SizedBox(height: 16),
                 _buildFab(
                   icon: Icons.report_rounded,
-                  onPressed: () => _showDangerReportDialog(locationProvider),
+                  onPressed: () =>
+                      _showDangerReportDialog(context.read<LocationProvider>()),
                   color: const Color(0xFFE53935),
                   iconColor: Colors.white,
                 ),
@@ -296,9 +307,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // ---------------------------------------------------------------------------
 
   Widget _buildMapLayer(
-    LocationProvider locProv, 
+    LatLng? currentLocation,
     ShelterProvider shelterProv,
-    RegionModeProvider regionProv,
   ) {
     const initialCenter = LatLng(38.3591, 140.9405); // 大崎市中心
 
@@ -355,19 +365,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             )).toList(),
           ),
 
-        // 5. Power Risk Circles (Thailand) — トグルで表示/非表示
-        if (_showPowerOverlay && shelterProv.powerRiskCircles.isNotEmpty)
-          CircleLayer(
-            circles: shelterProv.powerRiskCircles.map((data) => CircleMarker(
-              point: data.position,
-              radius: 20.0,
-              useRadiusInMeter: true,
-              color: Colors.amber.withValues(alpha: 0.4),
-              borderColor: Colors.amber.withValues(alpha: 0.8),
-              borderStrokeWidth: 2.0,
-            )).toList(),
-          ),
-
         // 6. DIRECTIVE 2: WAYPOINT NAVIGATION ROUTE (List<LatLng>)
         if (shelterProv.getSafestRouteAsLatLng().isNotEmpty)
           PolylineLayer(
@@ -411,11 +408,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         ),
 
         // 8. Current Location (Pulsing)
-        if (locProv.currentLocation != null)
+        if (currentLocation != null)
           MarkerLayer(
             markers: [
               Marker(
-                point: locProv.currentLocation!,
+                point: currentLocation,
                 width: 60,
                 height: 60,
                 child: AnimatedBuilder(
@@ -617,14 +614,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           activeColor: const Color(0xFF388E3C),
           onTap: () => setState(() => _showFloodOverlay = !_showFloodOverlay),
         ),
-        const SizedBox(height: 8),
-        _buildToggleChip(
-          icon: Icons.electric_bolt_rounded,
-          label: GapLessL10n.t('overlay_power'),
-          active: _showPowerOverlay,
-          activeColor: const Color(0xFFE65100),
-          onTap: () => setState(() => _showPowerOverlay = !_showPowerOverlay),
-        ),
       ],
     );
   }
@@ -666,7 +655,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTopBar(RegionModeProvider regionProv) {
+  Widget _buildTopBar() {
     return Row(
       children: [
         // App Title Card
@@ -720,8 +709,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   // --- DIRECTIVE 3: LOGIC INDICATOR ---
-  Widget _buildLogicIndicator(RegionModeProvider regionProv) {
-    final isJapan = regionProv.isJapanMode;
+  Widget _buildLogicIndicator(bool isJapan) {
     // Display specific logic based on region
     final text = isJapan 
         ? "LOGIC: Road Width Priority (Blockage Avoidance)" 
@@ -894,10 +882,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _handleAutoZoom(LocationProvider loc, ShelterProvider shelter) {
+  void _handleAutoZoom(LatLng? loc, ShelterProvider shelter) {
     if (_initialZoomDone || shelter.isLoading) return;
 
-    LatLng? effectiveLocation = loc.currentLocation;
+    LatLng? effectiveLocation = loc;
 
     if (effectiveLocation != null && effectiveLocation.latitude == 0 && effectiveLocation.longitude == 0) {
       effectiveLocation = null;

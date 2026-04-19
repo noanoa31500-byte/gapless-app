@@ -34,6 +34,9 @@ import 'data/map_auto_loader.dart';
 import 'models/road_feature.dart';
 import 'services/font_service.dart';
 import 'services/security_service.dart';
+import 'services/secure_pii_storage.dart';
+import 'services/jma_alert_service.dart';
+import 'di/service_locator.dart';
 import 'services/device_id_service.dart';
 import 'services/route_compute_service.dart';
 import 'services/road_features_cache.dart';
@@ -90,6 +93,9 @@ void main() {
       FlutterError.presentError(details);
       debugPrint('Flutter Error: ${details.exception}');
     };
+
+    unawaited(SecurePiiStorage.migrateFromPrefsIfNeeded());
+    unawaited(setupServiceLocator());
 
     runApp(const LoadingApp());
   }, (error, stack) {
@@ -187,12 +193,22 @@ class GapLessApp extends StatelessWidget {
                   builder: (context, child) {
                     final locale = Localizations.localeOf(context);
                     final fontFamily = _fontFamilyForLocale(locale);
-                    return DefaultTextStyle(
-                      style: TextStyle(
-                        fontFamily: fontFamily,
-                        fontFamilyFallback: GapLessL10n.fallbackFonts,
+                    final mq = MediaQuery.of(context);
+                    // OS 設定の文字拡大を [1.0, 2.0] にクランプ。
+                    // 緊急 UI のレイアウト破綻を防ぎつつ、視覚配慮ユーザの拡大要求に応える。
+                    final clampedScaler = mq.textScaler.clamp(
+                      minScaleFactor: 1.0,
+                      maxScaleFactor: 2.0,
+                    );
+                    return MediaQuery(
+                      data: mq.copyWith(textScaler: clampedScaler),
+                      child: DefaultTextStyle(
+                        style: TextStyle(
+                          fontFamily: fontFamily,
+                          fontFamilyFallback: GapLessL10n.fallbackFonts,
+                        ),
+                        child: DisasterWatcher(child: child!),
                       ),
-                      child: DisasterWatcher(child: child!),
                     );
                   },
                 );
@@ -257,7 +273,8 @@ class DisasterWatcher extends StatefulWidget {
   State<DisasterWatcher> createState() => _DisasterWatcherState();
 }
 
-class _DisasterWatcherState extends State<DisasterWatcher> {
+class _DisasterWatcherState extends State<DisasterWatcher>
+    with WidgetsBindingObserver {
   bool? _wasDisasterMode;
   bool? _wasSafeInShelter;
   bool _isOffline = false; // オフライン状態フラグ（バナー表示制御）
@@ -276,9 +293,26 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
   int _heartbeatFailCount = 0;
   static const int _heartbeatFailThreshold = 3;
 
+  // ハートビート再入防止: 前回 HTTP 完了前の重複実行をスキップ
+  bool _heartbeatBusy = false;
+
+  // バックグラウンド時はハートビートを止める（iOS 30秒制限対策）
+  AppLifecycleState _appLifecycle = AppLifecycleState.resumed;
+
+  // ナビゲーション フラッピング防止クールダウン（直近遷移時刻）
+  DateTime? _lastNavTransitionAt;
+  static const Duration _navCooldown = Duration(seconds: 5);
+
+  // 災害モード状態スナップショット用キー
+  static const String _kDisasterActiveKey = 'disaster_mode_active';
+  static const String _kDisasterStartedAtKey = 'disaster_mode_started_at';
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    // 災害モードスナップショットを起動時に復元（kill -9 復旧）
+    _restoreDisasterSnapshot();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<LocationProvider>().initLocation();
       _startRiskMonitoring();
@@ -307,42 +341,126 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
       }
     });
 
-    WebBridgeInterface.listenForOfflineEvent(() => _triggerDisasterMode("JS Event"));
+    WebBridgeInterface.listenForOfflineEvent(
+        () => _triggerDisasterMode("JS Event", forceManual: true));
     WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
 
     // App Heartbeat（ヒステリシス付き・複数エンドポイント）
     // 単一サーバー障害では disaster mode に入らないよう、
     // 独立した3エンドポイントを並列チェックし全て失敗した場合のみカウントアップ。
+    // - 再入防止 (_heartbeatBusy): 前回 HTTP 完了前に次が走るのを抑止
+    // - lifecycle ガード: paused/inactive 中は実行しない（iOS 30秒制限対策）
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
       if (!mounted) return;
+      if (_heartbeatBusy) return;
+      if (_appLifecycle != AppLifecycleState.resumed) return;
       if (context.read<ShelterProvider>().isDisasterMode) return;
 
-      final endpoints = kIsWeb
-          ? [Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')]
-          : [
-              Uri.parse('https://www.google.com'),
-              Uri.parse('https://www.apple.com'),
-              Uri.parse('https://raw.githubusercontent.com'),
-            ];
-
-      // いずれか1つでも応答すれば即座に「ネット生存」と判断（全完了を待たない）
-      final anyAlive = await Future.any(
-        endpoints.map((uri) => http
-            .head(uri)
-            .timeout(const Duration(seconds: 2))
-            .then((_) => true)
-            .catchError((_) => false)),
-      ).catchError((_) => false);
-
-      if (anyAlive) {
-        _heartbeatFailCount = 0;
-      } else {
-        _heartbeatFailCount++;
-        if (_heartbeatFailCount >= _heartbeatFailThreshold) {
-          _triggerDisasterMode('Heartbeat Failure ($_heartbeatFailCount 回連続・全エンドポイント)');
+      _heartbeatBusy = true;
+      try {
+        final alive = await _probeNetwork();
+        if (alive) {
+          _heartbeatFailCount = 0;
+        } else {
+          _heartbeatFailCount++;
+          if (_heartbeatFailCount >= _heartbeatFailThreshold) {
+            _triggerDisasterMode(
+                'Heartbeat Failure ($_heartbeatFailCount 回連続・全エンドポイント)');
+          }
         }
+      } finally {
+        _heartbeatBusy = false;
       }
     });
+  }
+
+  /// Captive Portal 対応のネットワーク生存確認。
+  /// HTTP 200 を信用せず generate_204 の **204 No Content** を期待する。
+  /// （Captive Portal は任意の URL に対し 200 + ログインHTML を返すため）
+  Future<bool> _probeNetwork() async {
+    final endpoints = kIsWeb
+        ? [Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')]
+        : [
+            Uri.parse('https://clients3.google.com/generate_204'),
+            Uri.parse('https://www.google.com/generate_204'),
+            Uri.parse('https://connectivitycheck.gstatic.com/generate_204'),
+          ];
+
+    bool isAlive(http.Response r) {
+      if (kIsWeb) return r.statusCode >= 200 && r.statusCode < 400;
+      // Captive Portal 検出: 204 のみを「素のネット」と判定。
+      // 200 が返って中身があれば Captive Portal によるリダイレクトとみなす。
+      if (r.statusCode == 204) return true;
+      if (r.statusCode == 200 && r.bodyBytes.isEmpty) return true;
+      return false;
+    }
+
+    try {
+      return await Future.any(
+        endpoints.map((uri) => http
+            .get(uri)
+            .timeout(const Duration(seconds: 2))
+            .then(isAlive)
+            .catchError((_) => false)),
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
+  // ---- AppLifecycle ハンドリング ----
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    _appLifecycle = state;
+    // 復帰時は一度カウンターをリセットして偽陽性を避ける
+    if (state == AppLifecycleState.resumed) {
+      _heartbeatFailCount = 0;
+    }
+  }
+
+  // ---- 災害モード スナップショット (kill -9 復旧) ----
+  Future<void> _restoreDisasterSnapshot() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final active = prefs.getBool(_kDisasterActiveKey) ?? false;
+      if (!active) return;
+      final startedAtMs = prefs.getInt(_kDisasterStartedAtKey) ?? 0;
+      final age = DateTime.now().millisecondsSinceEpoch - startedAtMs;
+      // 30分以内なら自動復帰、それ以上は古いと判定して破棄
+      if (age < 0 || age > 30 * 60 * 1000) {
+        await prefs.remove(_kDisasterActiveKey);
+        await prefs.remove(_kDisasterStartedAtKey);
+        return;
+      }
+      if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        context.read<ShelterProvider>().setDisasterMode(true);
+        navigatorKey.currentState?.pushNamedAndRemoveUntil(
+          '/compass',
+          (route) => false,
+        );
+      });
+    } catch (e) {
+      debugPrint('disaster snapshot restore error: $e');
+    }
+  }
+
+  Future<void> _persistDisasterSnapshot(bool active) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (active) {
+        await prefs.setBool(_kDisasterActiveKey, true);
+        await prefs.setInt(
+            _kDisasterStartedAtKey, DateTime.now().millisecondsSinceEpoch);
+      } else {
+        await prefs.remove(_kDisasterActiveKey);
+        await prefs.remove(_kDisasterStartedAtKey);
+      }
+    } catch (e) {
+      debugPrint('disaster snapshot persist error: $e');
+    }
   }
 
   void _startRiskMonitoring() {
@@ -440,14 +558,28 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     }
   }
 
-  void _triggerDisasterMode(String reason) {
-    if (mounted) {
-      final provider = context.read<ShelterProvider>();
-      if (!provider.isDisasterMode) {
-        debugPrint('⚠️ Offline detected ($reason). Triggering Disaster Mode.');
-        provider.setDisasterMode(true);
+  /// 災害モード自動発火は「ネット断」だけでは行わない（偽災害トリガ防止）。
+  /// 多要素 AND: ネット断 + 独立な災害シグナル (JMA 警報 / ユーザー手動)。
+  /// JS Event 等の手動経路は forceManual=true で AND をバイパス可能。
+  void _triggerDisasterMode(String reason, {bool forceManual = false}) {
+    if (!mounted) return;
+    final provider = context.read<ShelterProvider>();
+    if (provider.isDisasterMode) return;
+
+    if (!forceManual) {
+      final hasJmaAlert = JmaAlertService.instance.hasActiveAlert;
+      if (!hasJmaAlert) {
+        debugPrint('⚠️ Disaster trigger gated: net down ($reason) but no '
+            'corroborating JMA alert. Skipping auto-fire.');
+        return;
       }
+      debugPrint('⚠️ Disaster trigger AND-confirmed: $reason + JMA alert.');
+    } else {
+      debugPrint('⚠️ Disaster trigger (manual override): $reason');
     }
+
+    provider.setDisasterMode(true);
+    unawaited(_persistDisasterSnapshot(true));
   }
 
   void _onNetworkRestored(String reason) {
@@ -473,6 +605,16 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     shelterProvider.setDisasterMode(false);
     shelterProvider.setSafeInShelter(false);
     unawaited(shelterProvider.loadShelters());
+    unawaited(_persistDisasterSnapshot(false));
+
+    // フラッピング画面破壊ループ防止: 直近5秒以内の遷移はスキップ
+    final now = DateTime.now();
+    if (_lastNavTransitionAt != null &&
+        now.difference(_lastNavTransitionAt!) < _navCooldown) {
+      debugPrint('⏱️ Nav cooldown: skip pushAndRemoveUntil (recovery)');
+      return;
+    }
+    _lastNavTransitionAt = now;
 
     // 機能1修正: 復帰先をNavigationScreenに統一（HomeScreenではなく）
     navigatorKey.currentState?.pushAndRemoveUntil(
@@ -483,6 +625,7 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _mapLoaderSubscription?.cancel();
     MapAutoLoader.instance.stop();
     _connectivitySubscription?.cancel();
@@ -499,6 +642,14 @@ class _DisasterWatcherState extends State<DisasterWatcher> {
     _disasterModeDebounce?.cancel();
     _disasterModeDebounce = Timer(const Duration(milliseconds: 1500), () {
       if (!mounted) return;
+      // フラッピング画面破壊ループ防止: 直近5秒以内の遷移はスキップ
+      final now = DateTime.now();
+      if (_lastNavTransitionAt != null &&
+          now.difference(_lastNavTransitionAt!) < _navCooldown) {
+        debugPrint('⏱️ Nav cooldown: skip ${toDisaster ? "compass" : "home"} transition');
+        return;
+      }
+      _lastNavTransitionAt = now;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (toDisaster) {
           navigatorKey.currentState?.pushReplacementNamed('/compass');
@@ -628,12 +779,33 @@ class _AppStartupState extends State<AppStartup> {
     if (!mounted) return;
 
     if (!isOnboardingCompleted) {
+      // 中間ステート (onboarding_step) を読み出して再開可能にする
+      // — OnboardingScreen 側は SharedPreferences の 'onboarding_step' を参照する想定
       Navigator.pushReplacementNamed(context, '/onboarding');
       return;
     }
 
     // パーミッション取得済みなら NavigationScreen へ直行
     final prefs = await SharedPreferences.getInstance();
+
+    // 災害モードスナップショット: 起動時 30分以内なら自動でコンパス画面へ
+    final disasterActive = prefs.getBool('disaster_mode_active') ?? false;
+    final disasterStartedAt = prefs.getInt('disaster_mode_started_at') ?? 0;
+    final disasterAgeMs =
+        DateTime.now().millisecondsSinceEpoch - disasterStartedAt;
+    if (disasterActive && disasterAgeMs >= 0 && disasterAgeMs <= 30 * 60 * 1000) {
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DisasterCompassScreen()),
+      );
+      return;
+    } else if (disasterActive) {
+      // 古いスナップショットは破棄
+      await prefs.remove('disaster_mode_active');
+      await prefs.remove('disaster_mode_started_at');
+    }
+
     final permissionsGranted = prefs.getBool('permissions_granted') ?? false;
     if (!mounted) return;
 

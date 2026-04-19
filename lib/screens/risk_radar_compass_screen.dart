@@ -28,10 +28,9 @@ import 'shelter_dashboard_screen.dart';
 /// 
 /// 【なぜこの機能が洪水時に有効なのか】
 /// 
-/// 1. **感電死は「見えない死」**
-///    - タイの洪水では、水没した電線からの感電死が深刻
-///    - 濁った水中では電線が見えない
-///    - 電力インフラの位置から危険方向を事前警告
+/// 1. **激流は突然来る**
+///    - 浸水時は流速が予測困難
+///    - 浸水シミュレーションデータから流速の速い方向を警告
 /// 
 /// 2. **激流は突然来る**
 ///    - 膝上（0.5m以上）の水深では大人でも流される
@@ -39,7 +38,7 @@ import 'shelter_dashboard_screen.dart';
 /// 
 /// 3. **パニック時の認知負荷軽減**
 ///    - 地図を読む余裕がない災害時
-///    - 色だけで判断できるUI（黄色=感電、青=浸水、緑=安全）
+///    - 色だけで判断できるUI（青=浸水、紫=激流、緑=安全）
 /// 
 /// 4. **360度全方位の危険把握**
 ///    - 地図アプリでは前方しか見えない
@@ -140,9 +139,9 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
   @override
   Widget build(BuildContext context) {
-    context.watch<LanguageProvider>(); // 言語変更時に再描画
-    final shelterProvider = context.watch<ShelterProvider>();
-    final region = shelterProvider.currentRegion;
+    // Selector化: 言語と currentRegion のみ購読し、ShelterProvider 全体の変更で再描画されないようにする
+    context.select<LanguageProvider, String>((p) => p.currentLanguage);
+    final region = context.select<ShelterProvider, String>((p) => p.currentRegion);
     final themeColor = _getThemeColor();
 
     return Scaffold(
@@ -341,18 +340,15 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
   }
 
   String _getDangerSummary() {
-    final electro = _scanResult!.dangerZones
-        .where((z) => z.type == RiskType.electrocution).length;
     final flood = _scanResult!.dangerZones
         .where((z) => z.type == RiskType.deepWater).length;
     final rapid = _scanResult!.dangerZones
         .where((z) => z.type == RiskType.rapidFlow).length;
-    
+
     final parts = <String>[];
-    if (electro > 0) parts.add('⚡$electro');
     if (flood > 0) parts.add('🌊$flood');
-    if (rapid > 0) parts.add('💨$rapid');
-    
+    if (rapid > 0) parts.add('🌀$rapid');
+
     return parts.join(' ');
   }
 
@@ -522,11 +518,9 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildLegendItem('⚡', Colors.yellow, _getLegendText('shock')),
-          const SizedBox(width: 16),
           _buildLegendItem('🌊', Colors.blue, _getLegendText('flood')),
           const SizedBox(width: 16),
-          _buildLegendItem('💨', Colors.purple, _getLegendText('rapid')),
+          _buildLegendItem('🌀', Colors.purple, _getLegendText('rapid')),
           const SizedBox(width: 16),
           _buildLegendItem('✅', Colors.green, _getLegendText('safe')),
         ],
@@ -547,7 +541,6 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
   String _getLegendText(String key) {
     const texts = {
-      'shock': {'ja': '感電', 'en': 'Shock', 'th': 'ไฟฟ้า'},
       'flood': {'ja': '浸水', 'en': 'Flood', 'th': 'น้ำท่วม'},
       'rapid': {'ja': '激流', 'en': 'Rapid', 'th': 'น้ำไหลเชี่ยว'},
       'safe': {'ja': '安全', 'en': 'Safe', 'th': 'ปลอดภัย'},

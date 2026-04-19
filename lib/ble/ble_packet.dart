@@ -104,8 +104,40 @@ class BlePacket {
 
   // ── デシリアライズ ────────────────────────────────────────────────────────
 
+  /// 受信時バリデーション共通ヘルパー
+  /// - lat ∈ [-90, 90], lng ∈ [-180, 180]、有限値のみ
+  /// - timestamp が現在時刻 ±24h 以内
+  /// - payload長 ≤ 256 バイト
+  static bool isValidGeo(double lat, double lng) {
+    if (!lat.isFinite || !lng.isFinite) return false;
+    if (lat < -90.0 || lat > 90.0) return false;
+    if (lng < -180.0 || lng > 180.0) return false;
+    return true;
+  }
+
+  static bool isValidTimestamp(int tsSeconds, {int toleranceSeconds = 24 * 3600}) {
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    return (tsSeconds - now).abs() <= toleranceSeconds;
+  }
+
+  static const int maxPayloadBytes = 256;
+
+  /// 軽量バリデーション。失敗理由を返す（null = OK）。
+  static String? validateFields({
+    required double lat,
+    required double lng,
+    required int timestamp,
+    int payloadByteLength = 0,
+  }) {
+    if (!isValidGeo(lat, lng)) return 'invalid_geo';
+    if (!isValidTimestamp(timestamp)) return 'invalid_timestamp';
+    if (payloadByteLength > maxPayloadBytes) return 'payload_too_large';
+    return null;
+  }
+
   static BlePacket? fromBytes(Uint8List bytes) {
     if (bytes.length < _headerSize) return null;
+    if (bytes.length > _headerSize + maxPayloadBytes) return null;
     final buf = ByteData.sublistView(bytes);
     int off = 0;
 
@@ -133,11 +165,21 @@ class BlePacket {
     final payloadStr =
         payloadLen > 0 ? utf8.decode(bytes.sublist(off, off + payloadLen), allowMalformed: true) : '';
 
+    final lat = latI / 1e6;
+    final lng = lngI / 1e6;
+    if (validateFields(
+            lat: lat,
+            lng: lng,
+            timestamp: ts,
+            payloadByteLength: payloadLen) !=
+        null) {
+      return null;
+    }
     return BlePacket(
       senderDeviceId: _bytesToUuid(idBytes),
       timestamp: ts,
-      lat: latI / 1e6,
-      lng: lngI / 1e6,
+      lat: lat,
+      lng: lng,
       accuracyMeters: accRaw / 10.0,
       dataType: BleDataType.fromValue(dataTypeVal),
       payload: payloadStr,

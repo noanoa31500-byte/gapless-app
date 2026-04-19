@@ -22,7 +22,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String _currentRegion = 'Japan';
-  bool _demoHazardMode = false;
 
   // 機能2: GPLB キャッシュ状態
   bool _isCached = false;
@@ -58,7 +57,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     if (!mounted) return;
     setState(() {
       _currentRegion = prefs.getString('target_region') ?? 'Japan';
-      _demoHazardMode = prefs.getBool('demo_hazard_mode') ?? false;
     });
   }
 
@@ -161,28 +159,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  /// デモハザードモードを切り替え
-  Future<void> _toggleDemoHazardMode(bool value) async {
-    setState(() => _demoHazardMode = value);
-    
-    // Providerの状態を即座に更新 -> DisasterWatcherが検知して遷移
-    if (mounted) {
-      context.read<ShelterProvider>().setDisasterMode(value);
-    }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('demo_hazard_mode', value);
-    
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SafeText(value ? GapLessL10n.t('demo_hazard') : GapLessL10n.t('status_safe')),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
   /// キャッシュをクリア
   ///
   /// 注意: ユーザープロファイル(user_profile_data)・オンボーディング完了フラグ・
@@ -193,7 +169,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // 削除するキー: アプリ設定・デモ・GPLB関連のみ（ユーザーデータは保持）
     for (final key in const [
       'target_region',
-      'demo_hazard_mode',
       'gplb_version',
       'gplb_etag',
       'current_language',
@@ -211,7 +186,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // デフォルトに戻す
     setState(() {
       _currentRegion = 'Japan';
-      _demoHazardMode = false;
     });
 
     await GapLessL10n.setLanguage('en');
@@ -316,21 +290,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           // ListTile( ... )
           
           const SizedBox(height: 24),
-          
-          // Section 2: Demo Simulation
-          _buildSectionHeader(GapLessL10n.t('set_demo')),
-          
-          SwitchListTile(
-            secondary: const Icon(Icons.warning, color: Colors.orange),
-            title: Text(GapLessL10n.t('demo_hazard')),
-            subtitle: Text(GapLessL10n.t('demo_hazard_desc')),
-            value: _demoHazardMode,
-            onChanged: _toggleDemoHazardMode,
-            activeThumbColor: const Color(0xFFE53935),
-          ),
-          
-          const Divider(),
-          
+
           ListTile(
             leading: const Icon(Icons.cleaning_services, color: Color(0xFFE53935)),
             title: Text(GapLessL10n.t('clear_cache')),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../services/risk_radar_scanner.dart';
 import '../services/offline_risk_scanner.dart';
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 
 /// ============================================================================
@@ -15,7 +16,7 @@ import '../utils/localization.dart';
 /// という直感的なUIを提供します。
 /// 
 /// 【色コード】
-/// - 黄色 ⚡ = 感電危険（送電線、電力設備）
+/// - 紫色 🌀 = 激流危険
 /// - 青色 🌊 = 浸水危険（水深0.5m以上）
 /// - 紫色 💨 = 激流危険（流速が速い）
 /// - 緑色 ✅ = 安全方向（推奨進行方向）
@@ -117,10 +118,20 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
 
   @override
   Widget build(BuildContext context) {
-    context.watch<LanguageProvider>(); // rebuild on language change
+    // Selectorで language の文字列のみ購読 — Provider 全体ではなく単一フィールドだけ監視
+    context.select<LanguageProvider, String>((p) => p.currentLanguage);
+    final reduce = AppleAccessibility.reduceMotion(context);
+    for (final c in [_pulseController, _sweepController, _arrowBlinkController]) {
+      if (reduce && c.isAnimating) {
+        c.stop();
+      } else if (!reduce && !c.isAnimating) {
+        c.repeat(reverse: c != _sweepController);
+      }
+    }
     return GestureDetector(
       onTap: widget.onTap,
-      child: SizedBox(
+      child: RepaintBoundary(
+        child: SizedBox(
         width: widget.size,
         height: widget.size,
         child: AnimatedBuilder(
@@ -164,6 +175,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
           },
         ),
       ),
+      ),
     );
   }
 
@@ -173,10 +185,12 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
 
   /// 背景とグリッド
   Widget _buildBackground() {
-    return CustomPaint(
-      size: Size(widget.size, widget.size),
-      painter: _RadarBackgroundPainter(
-        riskLevel: widget.scanResult?.overallRiskLevel ?? 0.0,
+    return RepaintBoundary(
+      child: CustomPaint(
+        size: Size(widget.size, widget.size),
+        painter: _RadarBackgroundPainter(
+          riskLevel: widget.scanResult?.overallRiskLevel ?? 0.0,
+        ),
       ),
     );
   }
@@ -528,17 +542,13 @@ class _DangerZonesPainter extends CustomPainter {
     String icon;
     
     switch (zone.type) {
-      case RiskType.electrocution:
-        baseColor = Colors.yellow;
-        icon = '⚡';
-        break;
       case RiskType.deepWater:
         baseColor = Colors.blue;
         icon = '🌊';
         break;
       case RiskType.rapidFlow:
         baseColor = Colors.purple;
-        icon = '💨';
+        icon = '🌀';
         break;
     }
     
@@ -800,7 +810,8 @@ class RiskRadarCompassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<LanguageProvider>(); // rebuild on language change
+    // 言語フィールドのみ購読（Provider全体ではなく単一文字列のみ監視）
+    context.select<LanguageProvider, String>((p) => p.currentLanguage);
     return Card(
       color: Colors.grey.shade900,
       elevation: 8,
@@ -918,9 +929,9 @@ class RiskRadarCompassCard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildLegendItem('⚡', Colors.yellow, _getLegendText('shock')),
-        const SizedBox(width: 16),
         _buildLegendItem('🌊', Colors.blue, _getLegendText('flood')),
+        const SizedBox(width: 16),
+        _buildLegendItem('🌀', Colors.purple, _getLegendText('rapid')),
         const SizedBox(width: 16),
         _buildLegendItem('✅', Colors.green, _getLegendText('safe')),
       ],
@@ -943,8 +954,8 @@ class RiskRadarCompassCard extends StatelessWidget {
 
   String _getLegendText(String key) {
     switch (key) {
-      case 'shock': return GapLessL10n.t('risk_shock');
       case 'flood': return GapLessL10n.t('risk_flood');
+      case 'rapid': return GapLessL10n.t('risk_rapid');
       case 'safe':  return GapLessL10n.t('risk_safe');
       default:      return key;
     }
@@ -994,12 +1005,10 @@ class RiskRadarCompassCard extends StatelessWidget {
 
   String _getZoneIcon(RiskType type) {
     switch (type) {
-      case RiskType.electrocution:
-        return '⚡';
       case RiskType.deepWater:
         return '🌊';
       case RiskType.rapidFlow:
-        return '💨';
+        return '🌀';
     }
   }
 

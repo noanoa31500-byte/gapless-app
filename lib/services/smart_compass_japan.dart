@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:vibration/vibration.dart';
+import '../utils/localization.dart';
 
 /// ============================================================================
 /// SmartCompassJapan - 日本版スマートコンパス（地震・倒壊リスク回避モード）
@@ -75,107 +76,26 @@ class ClockNavigationResult {
     required this.declinationCorrection,
   });
 
-  /// 日本語での方向指示
-  String get japaneseDirection {
+  /// クロック方向のローカライズキー
+  String get _directionL10nKey {
     switch (clockDirection) {
-      case ClockDirection.twelve:
-        return 'そのまま真っすぐ';
-      case ClockDirection.one:
-        return '1時の方向（右斜め前）';
-      case ClockDirection.two:
-        return '2時の方向（右前）';
-      case ClockDirection.three:
-        return '右を向いて';
-      case ClockDirection.four:
-        return '4時の方向（右後ろ）';
-      case ClockDirection.five:
-        return '5時の方向';
-      case ClockDirection.six:
-        return 'Uターンしてください';
-      case ClockDirection.seven:
-        return '7時の方向';
-      case ClockDirection.eight:
-        return '8時の方向（左後ろ）';
-      case ClockDirection.nine:
-        return '左を向いて';
-      case ClockDirection.ten:
-        return '10時の方向（左前）';
-      case ClockDirection.eleven:
-        return '11時の方向（左斜め前）';
+      case ClockDirection.twelve: return 'compass_dir_12';
+      case ClockDirection.one: return 'compass_dir_1';
+      case ClockDirection.two: return 'compass_dir_2';
+      case ClockDirection.three: return 'compass_dir_3';
+      case ClockDirection.four: return 'compass_dir_4';
+      case ClockDirection.five: return 'compass_dir_5';
+      case ClockDirection.six: return 'compass_dir_6';
+      case ClockDirection.seven: return 'compass_dir_7';
+      case ClockDirection.eight: return 'compass_dir_8';
+      case ClockDirection.nine: return 'compass_dir_9';
+      case ClockDirection.ten: return 'compass_dir_10';
+      case ClockDirection.eleven: return 'compass_dir_11';
     }
   }
 
-  /// 英語での方向指示
-  String get englishDirection {
-    switch (clockDirection) {
-      case ClockDirection.twelve:
-        return 'Go straight ahead';
-      case ClockDirection.one:
-        return '1 o\'clock (slight right)';
-      case ClockDirection.two:
-        return '2 o\'clock (right front)';
-      case ClockDirection.three:
-        return 'Turn right';
-      case ClockDirection.four:
-        return '4 o\'clock';
-      case ClockDirection.five:
-        return '5 o\'clock';
-      case ClockDirection.six:
-        return 'Turn around';
-      case ClockDirection.seven:
-        return '7 o\'clock';
-      case ClockDirection.eight:
-        return '8 o\'clock (left rear)';
-      case ClockDirection.nine:
-        return 'Turn left';
-      case ClockDirection.ten:
-        return '10 o\'clock (left front)';
-      case ClockDirection.eleven:
-        return '11 o\'clock (slight left)';
-    }
-  }
-
-  /// タイ語での方向指示
-  String get thaiDirection {
-    switch (clockDirection) {
-      case ClockDirection.twelve:
-        return 'ตรงไปเลย';
-      case ClockDirection.one:
-        return '1 นาฬิกา (เฉียงขวา)';
-      case ClockDirection.two:
-        return '2 นาฬิกา (ขวาหน้า)';
-      case ClockDirection.three:
-        return 'เลี้ยวขวา';
-      case ClockDirection.four:
-        return '4 นาฬิกา';
-      case ClockDirection.five:
-        return '5 นาฬิกา';
-      case ClockDirection.six:
-        return 'กลับหลัง';
-      case ClockDirection.seven:
-        return '7 นาฬิกา';
-      case ClockDirection.eight:
-        return '8 นาฬิกา (ซ้ายหลัง)';
-      case ClockDirection.nine:
-        return 'เลี้ยวซ้าย';
-      case ClockDirection.ten:
-        return '10 นาฬิกา (ซ้ายหน้า)';
-      case ClockDirection.eleven:
-        return '11 นาฬิกา (เฉียงซ้าย)';
-    }
-  }
-
-  /// 言語に応じた方向指示を取得
-  String getDirection(String lang) {
-    switch (lang) {
-      case 'ja':
-        return japaneseDirection;
-      case 'th':
-        return thaiDirection;
-      default:
-        return englishDirection;
-    }
-  }
+  /// 言語に応じた方向指示を取得 (GapLessL10n.t() ベース、18言語対応)
+  String getDirection(String lang) => GapLessL10n.t(_directionL10nKey);
 
   /// 短い方向指示（UI表示用）
   String get shortDirection {
@@ -212,9 +132,11 @@ class ClockNavigationResult {
 }
 
 /// ============================================================================
-/// SmartCompassJapan - メインクラス
+/// SmartCompass - メインクラス（地域非依存・偏角は地域名で設定）
 /// ============================================================================
-class SmartCompassJapan with ChangeNotifier {
+/// 旧名: SmartCompassJapan。地域汎用化のため改名。
+/// 既存 import の互換性確保のため、ファイル末尾に typedef を残す。
+class SmartCompass with ChangeNotifier {
   /// ============================================================================
   /// 磁気偏角設定（日本各地）
   /// ============================================================================
@@ -503,52 +425,20 @@ class SmartCompassJapan with ChangeNotifier {
     required String lang,
   }) {
     final direction = result.getDirection(lang);
-    final distance = _formatDistance(result.distanceToTarget, lang);
-
-    if (result.isOnTarget) {
-      switch (lang) {
-        case 'ja':
-          return '✓ $direction\n$distance';
-        case 'th':
-          return '✓ $direction\n$distance';
-        default:
-          return '✓ $direction\n$distance';
-      }
-    } else {
-      return '$direction\n$distance';
-    }
+    final distance = _formatDistance(result.distanceToTarget);
+    final prefix = result.isOnTarget ? '✓ ' : '';
+    return '$prefix$direction\n$distance';
   }
 
-  String _formatDistance(double meters, String lang) {
+  String _formatDistance(double meters) {
     if (meters < 100) {
-      switch (lang) {
-        case 'ja':
-          return 'あと ${meters.toStringAsFixed(0)}m';
-        case 'th':
-          return 'อีก ${meters.toStringAsFixed(0)} ม.';
-        default:
-          return '${meters.toStringAsFixed(0)}m left';
-      }
+      return GapLessL10n.tParams('compass_distance_m_left', {'n': meters.toStringAsFixed(0)});
     } else if (meters < 1000) {
       final rounded = (meters / 10).round() * 10;
-      switch (lang) {
-        case 'ja':
-          return 'あと ${rounded}m';
-        case 'th':
-          return 'อีก $rounded ม.';
-        default:
-          return '${rounded}m left';
-      }
+      return GapLessL10n.tParams('compass_distance_m_left', {'n': '$rounded'});
     } else {
       final km = (meters / 1000).toStringAsFixed(1);
-      switch (lang) {
-        case 'ja':
-          return 'あと ${km}km';
-        case 'th':
-          return 'อีก $km กม.';
-        default:
-          return '${km}km left';
-      }
+      return GapLessL10n.tParams('compass_distance_km_left', {'n': km});
     }
   }
 
@@ -558,7 +448,7 @@ class SmartCompassJapan with ChangeNotifier {
     
     debugPrint('''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🧭 SmartCompassJapan Debug
+🧭 SmartCompass Debug
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 True Bearing: ${result.trueBearing.toStringAsFixed(1)}°
 📱 Device Heading: ${result.deviceHeading.toStringAsFixed(1)}°
@@ -570,4 +460,11 @@ class SmartCompassJapan with ChangeNotifier {
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ''');
   }
+
+  /// デバッグ情報取得用のラベル（旧コード互換）
+  String get debugLabel => 'SmartCompass';
 }
+
+/// 旧クラス名互換 (Deprecated, use SmartCompass)
+@Deprecated('Use SmartCompass — region is now configured via setRegion()')
+typedef SmartCompassJapan = SmartCompass;

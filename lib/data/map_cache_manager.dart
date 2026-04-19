@@ -48,6 +48,20 @@ class MapCacheManager {
     return file.exists();
   }
 
+  /// 単一キャッシュファイルを削除する。
+  /// gzip 解凍失敗（破損ダウンロード）後の cleanup に使う。
+  /// ファイルが無くてもエラーにしない。
+  Future<void> deleteCacheFile(String areaId, String fileKey) async {
+    try {
+      final file = await _dataFile(areaId, fileKey);
+      if (await file.exists()) {
+        await file.delete();
+      }
+    } catch (_) {
+      // best effort — 削除失敗は致命的ではない
+    }
+  }
+
   // ────────────────────────────────────
   // index.json キャッシュ
   // パス: {documents}/maps/index.json

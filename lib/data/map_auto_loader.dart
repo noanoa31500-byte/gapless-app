@@ -7,11 +7,12 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'map_tile_index.dart';
 import 'map_download_service.dart';
 import 'map_cache_manager.dart';
 import '../services/dead_reckoning_service.dart';
+import '../services/secure_pii_storage.dart';
+import '../providers/region_mode_provider.dart';
 
 // ────────────────────────────────────────
 // イベント型
@@ -32,9 +33,10 @@ class MapAutoLoader {
   static const _updateInterval = Duration(minutes: 10);
   static const _radiusKm = 3.0;
 
-  // 東京デフォルト座標
-  static const _defaultLat = 35.6762;
-  static const _defaultLng = 139.6503;
+  /// デフォルト座標は Region レジストリ から取得（地域汎用化）
+  /// 旧 35.6762/139.6503 (東京) のハードコードを排除
+  static double get _defaultLat => RegionRegistry.japan.defaultCenter.latitude;
+  static double get _defaultLng => RegionRegistry.japan.defaultCenter.longitude;
 
   static final MapAutoLoader instance = MapAutoLoader._();
   MapAutoLoader._();
@@ -155,15 +157,11 @@ class MapAutoLoader {
       final dr = _deadReckoning;
       if (dr != null && dr.isActive) {
         final fused = dr.deactivate(LatLng(pos.latitude, pos.longitude));
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setDouble('last_lat', fused.latitude);
-        await prefs.setDouble('last_lng', fused.longitude);
+        await SecurePiiStorage.setLastLatLng(fused.latitude, fused.longitude);
         return (fused.latitude, fused.longitude);
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble('last_lat', pos.latitude);
-      await prefs.setDouble('last_lng', pos.longitude);
+      await SecurePiiStorage.setLastLatLng(pos.latitude, pos.longitude);
       return (pos.latitude, pos.longitude);
     } catch (_) {
       return _fallbackLocation();
@@ -182,11 +180,10 @@ class MapAutoLoader {
       }
     }
 
-    // 2. SharedPreferencesから前回位置を復元し、DRを起動
+    // 2. SecurePiiStorageから前回位置を復元し、DRを起動
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final lat = prefs.getDouble('last_lat');
-      final lng = prefs.getDouble('last_lng');
+      final lat = await SecurePiiStorage.getLastLat();
+      final lng = await SecurePiiStorage.getLastLng();
       if (lat != null && lng != null) {
         if (dr != null && !dr.isActive) {
           dr.activate(LatLng(lat, lng));
@@ -195,7 +192,7 @@ class MapAutoLoader {
       }
     } catch (_) {}
 
-    // 3. 東京デフォルト（前回位置不明 → DR起動しない。デフォルト座標は地図表示の初期値のみに使う）
+    // 3. 地域レジストリのデフォルト座標（前回位置不明 → DR起動しない。地図表示の初期値のみに使う）
     return (_defaultLat, _defaultLng);
   }
 }

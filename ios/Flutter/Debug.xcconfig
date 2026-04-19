@@ -1,5 +1,6 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+#include? "DevTeam.xcconfig"
 
 // ── Debug ビルド高速化設定 ────────────────────────────────────────
 // ビルド中インデックス更新を無効化（最大の速度改善）

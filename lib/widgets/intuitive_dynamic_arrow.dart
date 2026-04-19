@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import '../utils/accessibility.dart';
 
 /// 超直感的ナビゲーション矢印
 /// 
@@ -57,6 +58,12 @@ class _IntuitiveDynamicArrowState extends State<IntuitiveDynamicArrow>
 
   @override
   Widget build(BuildContext context) {
+    final reduce = AppleAccessibility.reduceMotion(context);
+    if (reduce && _pulseController.isAnimating) {
+      _pulseController.stop();
+    } else if (!reduce && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    }
     return AnimatedBuilder(
       animation: _pulseController,
       builder: (context, child) {
@@ -66,7 +73,7 @@ class _IntuitiveDynamicArrowState extends State<IntuitiveDynamicArrow>
             angleDifference: widget.angleDifference,
             guideColor: widget.guideColor,
             glowIntensity: widget.glowIntensity,
-            pulseValue: _pulseController.value,
+            pulseValue: reduce ? 0.5 : _pulseController.value,
           ),
         );
       },

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 import '../utils/apple_design_system.dart';
 import '../widgets/survival_guide_modal.dart';
@@ -52,6 +53,12 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
+    final reduce = AppleAccessibility.reduceMotion(context);
+    if (reduce && _pulseController.isAnimating) {
+      _pulseController.stop();
+    } else if (!reduce && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    }
     return Scaffold(
       backgroundColor: AppleColors.systemBackground,
       body: CustomScrollView(

@@ -42,8 +42,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
-    final lang = GapLessL10n.lang;
-    final pages = _getTutorialPages(lang);
+    final pages = _getTutorialPages();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -58,7 +57,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                 child: TextButton(
                   onPressed: _completeTutorial,
                   child: SafeText(
-                    _getSkipLabel(lang),
+                    GapLessL10n.t('tutorial_skip'),
                     style: emergencyTextStyle(color: Colors.grey),
                   ),
                 ),
@@ -121,7 +120,7 @@ class _TutorialScreenState extends State<TutorialScreen> {
                                 );
                               },
                               icon: const Icon(Icons.arrow_back),
-                              label: SafeText(_getBackLabel(lang)),
+                              label: SafeText(GapLessL10n.t('tutorial_back')),
                             )
                           : const SizedBox(width: 100),
 
@@ -148,8 +147,8 @@ class _TutorialScreenState extends State<TutorialScreen> {
                         ),
                         child: SafeText(
                           _currentPage < pages.length - 1
-                              ? _getNextLabel(lang)
-                              : _getStartLabel(lang),
+                              ? GapLessL10n.t('tutorial_next')
+                              : GapLessL10n.t('tutorial_start'),
                           style: emergencyTextStyle(
                               color: Colors.white, isBold: true),
                         ),
@@ -211,134 +210,43 @@ class _TutorialScreenState extends State<TutorialScreen> {
     widget.onComplete();
   }
 
-  String _getSkipLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return 'スキップ';
-      case 'th':
-        return 'ข้าม';
-      default:
-        return 'Skip';
-    }
-  }
-
-  String _getBackLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '戻る';
-      case 'th':
-        return 'กลับ';
-      default:
-        return 'Back';
-    }
-  }
-
-  String _getNextLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return '次へ';
-      case 'th':
-        return 'ถัดไป';
-      default:
-        return 'Next';
-    }
-  }
-
-  String _getStartLabel(String lang) {
-    switch (lang) {
-      case 'ja':
-        return 'はじめる';
-      case 'th':
-        return 'เริ่มต้น';
-      default:
-        return 'Get Started';
-    }
-  }
-
-  List<TutorialPage> _getTutorialPages(String lang) {
+  List<TutorialPage> _getTutorialPages() {
     return [
-      // Page 1: Welcome
       TutorialPage(
         icon: Icons.shield,
         color: const Color(0xFFE53935),
-        title: lang == 'ja'
-            ? 'GapLessへようこそ'
-            : (lang == 'th' ? 'ยินดีต้อนรับสู่ GapLess' : 'Welcome to GapLess'),
-        description: lang == 'ja'
-            ? '災害時にあなたを安全な場所へ導く、オフライン対応の防災ナビゲーションアプリです。'
-            : (lang == 'th'
-                ? 'แอปนำทางป้องกันภัยพิบัติแบบออฟไลน์ที่จะนำทางคุณไปยังที่ปลอดภัย'
-                : 'An offline disaster navigation app that guides you to safety.'),
+        title: GapLessL10n.t('tutorial_welcome_title'),
+        description: GapLessL10n.t('tutorial_welcome_desc'),
       ),
-
-      // Page 2: Compass
       TutorialPage(
         icon: Icons.navigation,
         color: Colors.blue,
-        title: lang == 'ja'
-            ? 'コンパスで避難'
-            : (lang == 'th' ? 'นำทางด้วยเข็มทิศ' : 'Navigate with Compass'),
-        description: lang == 'ja'
-            ? '災害モードでは、大きな矢印が避難所の方向を指します。画面を見ながら、矢印の方向へ進んでください。'
-            : (lang == 'th'
-                ? 'ในโหมดภัยพิบัติ ลูกศรใหญ่จะชี้ไปยังที่พักพิง เดินตามทิศทางของลูกศร'
-                : 'In disaster mode, a large arrow points to shelter. Follow the arrow direction.'),
+        title: GapLessL10n.t('tutorial_compass_title'),
+        description: GapLessL10n.t('tutorial_compass_desc'),
       ),
-
-      // Page 3: Voice Guidance
       TutorialPage(
         icon: Icons.record_voice_over,
         color: Colors.green,
-        title: lang == 'ja'
-            ? '音声ガイダンス'
-            : (lang == 'th' ? 'คำแนะนำด้วยเสียง' : 'Voice Guidance'),
-        description: lang == 'ja'
-            ? '方向と距離を音声でお知らせします。パニック時でも、聞くだけで避難できます。'
-            : (lang == 'th'
-                ? 'บอกทิศทางและระยะทางด้วยเสียง แม้ตกใจก็สามารถอพยพได้'
-                : 'Direction and distance are announced by voice. Even in panic, just listen to evacuate.'),
+        title: GapLessL10n.t('tutorial_voice_title'),
+        description: GapLessL10n.t('tutorial_voice_desc'),
       ),
-
-      // Page 4: First Aid
       TutorialPage(
         icon: Icons.healing,
         color: Colors.orange,
-        title: lang == 'ja'
-            ? '応急処置ガイド'
-            : (lang == 'th' ? 'คู่มือปฐมพยาบาล' : 'First Aid Guide'),
-        description: lang == 'ja'
-            ? '止血・心肺蘇生などの応急処置を、ステップバイステップで確認できます。オフラインでも使えます。'
-            : (lang == 'th'
-                ? 'ดูการปฐมพยาบาลเช่น หยุดเลือด CPR แบบขั้นตอน ใช้ได้แม้ออฟไลน์'
-                : 'Check first aid like bleeding control and CPR step by step. Works offline.'),
+        title: GapLessL10n.t('tutorial_first_aid_title'),
+        description: GapLessL10n.t('tutorial_first_aid_desc'),
       ),
-
-      // Page 5: Emergency Card
       TutorialPage(
         icon: Icons.contact_emergency,
         color: Colors.purple,
-        title: lang == 'ja'
-            ? 'Emergency Gear'
-            : (lang == 'th' ? 'อุปกรณ์ฉุกเฉิน' : 'Emergency Gear'),
-        description: lang == 'ja'
-            ? '名前・血液型・アレルギーを登録しておくと、緊急時にスタッフに見せることができます。'
-            : (lang == 'th'
-                ? 'ลงทะเบียนชื่อ กรุ๊ปเลือด ภูมิแพ้ เพื่อแสดงให้เจ้าหน้าที่ในกรณีฉุกเฉิน'
-                : 'Register name, blood type, and allergies to show staff in emergency.'),
+        title: GapLessL10n.t('tutorial_emergency_gear_title'),
+        description: GapLessL10n.t('tutorial_emergency_gear_desc'),
       ),
-
-      // Page 6: Ready
       TutorialPage(
         icon: Icons.check_circle,
         color: const Color(0xFF43A047),
-        title: lang == 'ja'
-            ? '準備完了！'
-            : (lang == 'th' ? 'พร้อมแล้ว!' : 'You\'re Ready!'),
-        description: lang == 'ja'
-            ? 'いざという時、GapLessがあなたを守ります。まずは設定画面でプロフィールを登録しましょう。'
-            : (lang == 'th'
-                ? 'GapLess จะปกป้องคุณเมื่อเกิดเหตุ เริ่มต้นด้วยการลงทะเบียนโปรไฟล์'
-                : 'GapLess will protect you. Start by registering your profile in settings.'),
+        title: GapLessL10n.t('tutorial_ready_title'),
+        description: GapLessL10n.t('tutorial_ready_desc'),
       ),
     ];
   }

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 import 'ble_packet.dart';
+import '../constants/cache_ttl.dart';
 
 // ============================================================================
 // BleRepository — BlePacket の永続化（sqflite）
@@ -46,7 +47,9 @@ class BleRepository {
   BleRepository._();
 
   static const String _tableName = 'ble_reports';
-  static const Duration _maxAge = Duration(hours: 2);
+
+  /// dataType ごとの最大保持期間（仕様: CacheTtl）
+  static Duration _maxAgeFor(BleDataType type) => CacheTtl.forBleDataType(type);
 
   Database? _db;
 
@@ -118,7 +121,7 @@ class BleRepository {
         conflictAlgorithm: ConflictAlgorithm.ignore, // 重複は無視
       );
     } catch (e) {
-      debugPrint('BleRepository: 書き込みエラー $e');
+      if (!kReleaseMode) debugPrint('BleRepository: 書き込みエラー $e');
     }
   }
 
@@ -134,8 +137,9 @@ class BleRepository {
     required double radiusMeters,
   }) async {
     final db = await _database;
+    // queryNearby は道路レポート用 — 最長 TTL (24h) を採用
     final cutoff = DateTime.now()
-            .subtract(_maxAge)
+            .subtract(CacheTtl.roadReport)
             .millisecondsSinceEpoch ~/
         1000;
 
@@ -182,17 +186,20 @@ class BleRepository {
 
   Future<void> _cleanup() async {
     final db = await _database;
-    final cutoff = DateTime.now()
-            .subtract(_maxAge)
-            .millisecondsSinceEpoch ~/
-        1000;
-    final deleted = await db.delete(
-      _tableName,
-      where: 'received_at < ?',
-      whereArgs: [cutoff],
-    );
-    if (deleted > 0) {
-      debugPrint('BleRepository: $deleted 件の古いデータを削除');
+    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    int totalDeleted = 0;
+    for (final type in BleDataType.values) {
+      final cutoff = nowSec - _maxAgeFor(type).inSeconds;
+      final deleted = await db.delete(
+        _tableName,
+        where: 'data_type = ? AND received_at < ?',
+        whereArgs: [type.value, cutoff],
+      );
+      totalDeleted += deleted;
+    }
+    if (totalDeleted > 0 && !kReleaseMode) {
+      debugPrint('BleRepository: $totalDeleted 件の古いデータを削除');
     }
   }
 

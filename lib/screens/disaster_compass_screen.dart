@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -47,9 +49,12 @@ class DisasterCompassScreen extends StatefulWidget {
 
 class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   // --- DIRECTIVE 1: UI CONSTANTS ---
-  static const Color _redPrimary = Color(0xFFC62828);
+  // Apple規定 #FF453A (emergencyRedDark) に準拠
+  static const Color _redPrimary = Color(0xFFFF453A);
   static const Color _orangeAccent = Color(0xFFFF6F00);
   static const Color _bgWhite = Color(0xFFF5F7FA);
+  static const MethodChannel _brightnessCh = MethodChannel('gapless/brightness');
+  double? _savedBrightness;
 
   static const double _btnHeight = 56.0;
   static const double _btnRadius = 30.0;
@@ -65,6 +70,27 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     super.initState();
     _initNavigation();
     _initConnectivityMonitor();
+    _maximizeBrightness();
+  }
+
+  Future<void> _maximizeBrightness() async {
+    if (!Platform.isIOS && !Platform.isAndroid) return;
+    try {
+      final cur = await _brightnessCh.invokeMethod<double>('getBrightness');
+      _savedBrightness = cur ?? 0.5;
+      await _brightnessCh.invokeMethod('setBrightness', {'value': 1.0});
+    } catch (_) {
+      // silent fallback
+    }
+  }
+
+  Future<void> _restoreBrightness() async {
+    if (_savedBrightness == null) return;
+    try {
+      await _brightnessCh
+          .invokeMethod('setBrightness', {'value': _savedBrightness});
+    } catch (_) {}
+    _savedBrightness = null;
   }
 
   void _initNavigation() {
@@ -135,7 +161,43 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   void dispose() {
     _voiceTimer?.cancel();
     _connectivitySub?.cancel();
+    _restoreBrightness();
     super.dispose();
+  }
+
+  // ---------------------------------------------------------------------------
+  // 災害モード復帰: AppBar右上「⚠誤検知?ホームへ」3秒長押しで戻る
+  // ---------------------------------------------------------------------------
+  double _exitHoldProgress = 0.0;
+  Timer? _exitHoldTimer;
+  DateTime? _exitHoldStart;
+
+  void _onExitHoldStart() {
+    _exitHoldStart = DateTime.now();
+    _exitHoldTimer?.cancel();
+    _exitHoldTimer =
+        Timer.periodic(const Duration(milliseconds: 30), (t) {
+      if (!mounted || _exitHoldStart == null) {
+        t.cancel();
+        return;
+      }
+      final ms = DateTime.now().difference(_exitHoldStart!).inMilliseconds;
+      final p = (ms / 3000.0).clamp(0.0, 1.0);
+      setState(() => _exitHoldProgress = p);
+      if (p >= 1.0) {
+        t.cancel();
+        HapticService.destinationSet();
+        _showSnackBar(
+            GapLessL10n.t('disaster_mode_exit_done'), Colors.green.shade700);
+        Navigator.of(context).maybePop();
+      }
+    });
+  }
+
+  void _onExitHoldEnd() {
+    _exitHoldTimer?.cancel();
+    _exitHoldStart = null;
+    if (mounted) setState(() => _exitHoldProgress = 0.0);
   }
 
   void _speakNavigationUpdate() {
@@ -250,7 +312,48 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(width: 48), // placeholder to keep title centered
+        // 「⚠誤検知?ホームへ」常設エスケープボタン (3秒長押しガード)
+        Semantics(
+          button: true,
+          label: GapLessL10n.t('disaster_mode_exit'),
+          hint: GapLessL10n.t('disaster_mode_exit_confirm'),
+          child: GestureDetector(
+            onLongPressStart: (_) => _onExitHoldStart(),
+            onLongPressEnd: (_) => _onExitHoldEnd(),
+            onLongPressCancel: _onExitHoldEnd,
+            onTap: () => _showSnackBar(
+                GapLessL10n.t('disaster_mode_exit_confirm'), _orangeAccent),
+            child: Container(
+              width: 56,
+              height: 48,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: _orangeAccent, width: 1.5),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (_exitHoldProgress > 0)
+                    SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: CircularProgressIndicator(
+                        value: _exitHoldProgress,
+                        strokeWidth: 3,
+                        valueColor:
+                            const AlwaysStoppedAnimation(_orangeAccent),
+                        backgroundColor: Colors.transparent,
+                      ),
+                    ),
+                  const Icon(Icons.warning_amber_rounded,
+                      color: _orangeAccent, size: 24),
+                ],
+              ),
+            ),
+          ),
+        ),
         Column(
           children: [
             const Text(
@@ -385,15 +488,20 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                             letterSpacing: 1.2,
                           ),
                         ),
-                        Text(
-                          target.name,
-                          style: const TextStyle(
-                            color: _redPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                        Semantics(
+                          label: 'Destination ${target.name}',
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              target.name,
+                              style: GapLessL10n.safeStyle(const TextStyle(
+                                color: _redPrimary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              )),
+                            ),
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -443,27 +551,30 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   Widget _buildDetailItem(String label, String value, {bool isHighlight = false}) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
+    return Semantics(
+      label: '$label $value',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: GapLessL10n.safeStyle(TextStyle(
+              color: Colors.grey[700],
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            )),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: isHighlight ? _orangeAccent : _redPrimary,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: GapLessL10n.safeStyle(TextStyle(
+              color: isHighlight ? _orangeAccent : _redPrimary,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            )),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -525,11 +636,17 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                 ),
               ),
             
-            SmartCompass(
-              heading: compassProv.trueHeading ?? compassProv.heading ?? 0.0,
-              safeBearing: safeBearing,
-              dangerBearings: const [],
-              size: 290,
+            Semantics(
+              label: safeBearing != null
+                  ? 'Compass, target bearing ${safeBearing.round()} degrees'
+                  : 'Compass',
+              liveRegion: true,
+              child: SmartCompass(
+                heading: compassProv.trueHeading ?? compassProv.heading ?? 0.0,
+                safeBearing: safeBearing,
+                dangerBearings: const [],
+                size: 290,
+              ),
             ),
 
             // iOS: flutter_compassがCoreMotionを通じて自動的に権限要求する

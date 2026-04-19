@@ -12,26 +12,27 @@ import 'offline_risk_scanner.dart';
 /// を実現するための高度なリスク検知・ルート補正エンジン
 /// 
 /// 【なぜこの機能が、泥水で視界が悪い洪水時に有効なのか】
-/// 
-/// ## 1. 感電死は「見えない死」
-/// タイの洪水では、水没した電柱・電線からの漏電による感電死が深刻です。
-/// 濁った水の中では、電線が沈んでいることを目視で確認することは不可能です。
-/// 本機能は、OSMデータから抽出した電力インフラの位置情報を活用し、
-/// 「近づいてはいけない方向」を事前に警告します。
-/// 
-/// ## 2. 激流は突然来る
+///
+/// ## 1. 激流は突然来る
 /// 洪水時、川や排水溝からの水流は予測困難です。
 /// 特に膝上（0.5m以上）の水深がある場所では、大人でも流される危険があります。
 /// 浸水シミュレーションデータを使い、「深くなる方向」を避けることで
 /// 巻き込まれるリスクを低減します。
-/// 
+///
+/// ## 2. 深水（冠水）は移動不能
+/// 1m を超える冠水は徒歩での横断が困難で、ドアも開かなくなります。
+/// 水深データから「行き止まり方向」を事前に提示します。
+///
 /// ## 3. パニック時の認知負荷軽減
 /// 災害時、人は複雑な判断ができません。
 /// 地図を読んで「どの道が安全か」を判断する余裕はありません。
 /// 本機能は「色だけで判断できるUI」を提供します:
-/// - 黄色 = 感電危険（雷マーク⚡）
-/// - 青色 = 激流危険（波マーク🌊）
+/// - 🌊 青色 = 深水危険（冠水マーク）
+/// - 🌀 紺色 = 激流危険（流れマーク）
 /// - 緑色 = 安全方向（矢印✅）
+///
+/// ※ ⚡感電リスクは廃止（リスク判定が困難・誤検知が多いため）。
+///   応急処置データには感電対応を残しています（first_aid_data.dart）。
 /// 
 /// ## 4. 360度全方位の危険を一目で把握
 /// 地図アプリでは「前方」しか見えませんが、
@@ -180,10 +181,6 @@ class RadarScanResult {
     required this.dangerCoveragePercent,
   });
 
-  /// 感電リスクゾーンのみ取得
-  List<DangerZone> get electrocutionZones =>
-      dangerZones.where((z) => z.type == RiskType.electrocution).toList();
-
   /// 浸水リスクゾーンのみ取得
   List<DangerZone> get deepWaterZones =>
       dangerZones.where((z) => z.type == RiskType.deepWater).toList();
@@ -284,8 +281,6 @@ class RiskRadarScanner {
   /// リスクタイプの名前を取得
   String _getRiskTypeName(RiskType type) {
     switch (type) {
-      case RiskType.electrocution:
-        return '送電線/電力設備';
       case RiskType.deepWater:
         return '深水域';
       case RiskType.rapidFlow:
@@ -386,12 +381,10 @@ class RiskRadarScanner {
   /// リスクタイプの短い名前
   String _getRiskTypeNameShort(RiskType type) {
     switch (type) {
-      case RiskType.electrocution:
-        return '⚡感電危険';
       case RiskType.deepWater:
         return '🌊深水';
       case RiskType.rapidFlow:
-        return '💨激流';
+        return '🌀激流';
     }
   }
 
@@ -519,11 +512,11 @@ class RiskRadarScanner {
 ⚠️ Overall Risk: ${(result.overallRiskLevel * 100).toStringAsFixed(0)}%
 🔴 Danger Coverage: ${result.dangerCoveragePercent.toStringAsFixed(1)}%
 
-⚡ Electrocution Zones: ${result.electrocutionZones.length}
-${result.electrocutionZones.map((z) => '   ${z.startBearing.toInt()}°-${z.endBearing.toInt()}° (${z.distance.toInt()}m)').join('\n')}
-
 🌊 Deep Water Zones: ${result.deepWaterZones.length}
 ${result.deepWaterZones.map((z) => '   ${z.startBearing.toInt()}°-${z.endBearing.toInt()}° (${z.details})').join('\n')}
+
+🌀 Rapid Flow Zones: ${result.rapidFlowZones.length}
+${result.rapidFlowZones.map((z) => '   ${z.startBearing.toInt()}°-${z.endBearing.toInt()}° (${z.details})').join('\n')}
 
 ${result.safetyGuidance != null ? '''
 🧭 Safety Guidance:

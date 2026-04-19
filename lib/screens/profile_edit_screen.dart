@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../services/secure_pii_storage.dart';
 import '../utils/styles.dart';
 import '../utils/localization.dart';
 import '../providers/language_provider.dart';
@@ -55,29 +55,28 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
   }
 
   Future<void> _loadSavedData() async {
-    final prefs = await SharedPreferences.getInstance();
+    final name = await SecurePiiStorage.getName() ?? '';
+    final blood = await SecurePiiStorage.getBlood() ?? '';
+    final allergies = await SecurePiiStorage.getAllergies();
+    final needs = await SecurePiiStorage.getNeeds();
     if (!mounted) return;
     setState(() {
-      _nameController.text = prefs.getString('user_name') ?? '';
-      _bloodController.text = prefs.getString('user_blood') ?? '';
-      
-      // リスト形式で保存されている前提（またはカンマ区切り）
-      final savedAllergies = prefs.getStringList('user_allergies') ?? [];
-      _selectedAllergies.clear();
-      _selectedAllergies.addAll(savedAllergies);
-
-      final savedSpecialNeeds = prefs.getStringList('user_special_needs') ?? [];
-      _selectedSpecialNeeds.clear();
-      _selectedSpecialNeeds.addAll(savedSpecialNeeds);
+      _nameController.text = name;
+      _bloodController.text = blood;
+      _selectedAllergies
+        ..clear()
+        ..addAll(allergies);
+      _selectedSpecialNeeds
+        ..clear()
+        ..addAll(needs);
     });
   }
 
   Future<void> _saveData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('user_name', _nameController.text);
-    await prefs.setString('user_blood', _bloodController.text);
-    await prefs.setStringList('user_allergies', _selectedAllergies);
-    await prefs.setStringList('user_special_needs', _selectedSpecialNeeds);
+    await SecurePiiStorage.setName(_nameController.text);
+    await SecurePiiStorage.setBlood(_bloodController.text);
+    await SecurePiiStorage.setAllergies(_selectedAllergies);
+    await SecurePiiStorage.setNeeds(_selectedSpecialNeeds);
     
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

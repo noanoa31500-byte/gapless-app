@@ -41,7 +41,12 @@ class DeadReckoningService extends ChangeNotifier {
   // ── 設定定数 ────────────────────────────────────────────────────────────
   static const double defaultStrideLengthM = 0.75;
   static const double _stepThreshold = 11.5;    // m/s² (raw accel magnitude)
+  /// ステップ判定の上限ガード — 自由落下/衝撃/落下事故等の異常値を除外
+  /// 通常歩行は 12〜18 m/s² 程度。50 を超える加速度は端末の物理衝撃とみなす。
+  static const double _stepUpperBound = 50.0;
   static const double _stepCooldownMs = 350.0;  // 最小ステップ間隔
+  /// センサー停止検出のしきい値（5秒間コールバック無し→停止判定）
+  static const Duration _sensorStallThreshold = Duration(seconds: 5);
   static const int _headingBufferSize = 7;       // ヘディング移動平均サンプル数
   /// 5分（300秒）を超えると精度低下警告
   static const int _accuracyWarningSecs = 300;
@@ -112,16 +117,28 @@ class DeadReckoningService extends ChangeNotifier {
   /// キャリブレーション用直前ステップ時刻
   DateTime _lastCalibStepTime = DateTime.fromMillisecondsSinceEpoch(0);
 
+  // ── センサー停止検出 ─────────────────────────────────────────────────────
+  /// 加速度センサーから最後にコールバックが届いた時刻
+  DateTime? _lastAccelEventAt;
+  /// センサー停止状態フラグ（UI へ通知）
+  bool _sensorStalled = false;
+  /// 停止検出用 watchdog タイマー
+  Timer? _sensorWatchdog;
+
+  /// センサー停止状態（5秒間コールバック無し）— UI 表示用
+  bool get isSensorStalled => _sensorStalled;
+
   bool get isActive => _isActive;
   LatLng? get estimatedPosition => _estimatedPosition;
   int get stepCount => _stepCount;
   MovementMode get movementMode => _movementMode;
   double get currentSpeedMs => _currentSpeedMs;
 
-  /// DR 開始からの経過秒数
+  /// DR 開始からの経過秒数（システム時計逆行ガード付き）
   int get elapsedSeconds {
     if (_activatedAt == null) return 0;
-    return DateTime.now().difference(_activatedAt!).inSeconds;
+    final secs = DateTime.now().difference(_activatedAt!).inSeconds;
+    return secs < 0 ? 0 : secs; // 時計逆行クランプ
   }
 
   /// 推定誤差半径（メートル）— モードごとに異なるモデルを使用
@@ -329,6 +346,11 @@ class DeadReckoningService extends ChangeNotifier {
     final mag = math.sqrt(
       event.x * event.x + event.y * event.y + event.z * event.z,
     );
+    // 上限ガード — 衝撃/落下を歩数として誤計上しない
+    if (mag > _stepUpperBound) {
+      _lastCalibMagnitude = mag;
+      return;
+    }
     if (mag >= _stepThreshold && _lastCalibMagnitude < _stepThreshold) {
       final now = DateTime.now();
       final ms = now.difference(_lastCalibStepTime).inMilliseconds.toDouble();
@@ -394,6 +416,8 @@ class DeadReckoningService extends ChangeNotifier {
 
   void _startSensors() {
     // 加速度計（重力込みの生値）
+    _lastAccelEventAt = DateTime.now();
+    _sensorStalled = false;
     _accelSub = accelerometerEventStream().listen(
       _onAccelerometer,
       onError: (Object e) {
@@ -401,6 +425,19 @@ class DeadReckoningService extends ChangeNotifier {
       },
       cancelOnError: false,
     );
+
+    // センサー停止検出 watchdog（1秒ごとに最終受信時刻をチェック）
+    _sensorWatchdog?.cancel();
+    _sensorWatchdog = Timer.periodic(const Duration(seconds: 1), (_) {
+      final last = _lastAccelEventAt;
+      if (last == null) return;
+      final age = DateTime.now().difference(last);
+      if (age >= _sensorStallThreshold && !_sensorStalled) {
+        _sensorStalled = true;
+        debugPrint('⚠️ DeadReckoning: センサー停止検出 (${age.inSeconds}s 無応答)');
+        notifyListeners();
+      }
+    });
 
     // コンパス（FlutterCompass は broadcast stream なので重複購読 OK）
     _compassSub = FlutterCompass.events?.listen(
@@ -417,6 +454,13 @@ class DeadReckoningService extends ChangeNotifier {
     _accelSub = null;
     _compassSub?.cancel();
     _compassSub = null;
+    _sensorWatchdog?.cancel();
+    _sensorWatchdog = null;
+    _lastAccelEventAt = null;
+    if (_sensorStalled) {
+      _sensorStalled = false;
+      // notify は呼ばない（dispose 系経路でも安全）
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -424,9 +468,23 @@ class DeadReckoningService extends ChangeNotifier {
   // ---------------------------------------------------------------------------
 
   void _onAccelerometer(AccelerometerEvent event) {
+    // センサー稼働確認（停止検出用）
+    _lastAccelEventAt = DateTime.now();
+    if (_sensorStalled) {
+      _sensorStalled = false;
+      notifyListeners();
+    }
+
     final magnitude = math.sqrt(
       event.x * event.x + event.y * event.y + event.z * event.z,
     );
+
+    // 上限ガード — 自由落下/衝撃などの異常値はステップとして登録しない
+    // ただし _lastMagnitude は更新する（次サンプルとの比較が破綻するのを防ぐ）
+    if (magnitude > _stepUpperBound) {
+      _lastMagnitude = magnitude;
+      return;
+    }
 
     // 立ち上がりエッジ検出：前サンプルが閾値以下 → 現サンプルが閾値以上
     final isRisingEdge =

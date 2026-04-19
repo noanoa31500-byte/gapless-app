@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 import '../utils/apple_design_system.dart';
 import '../providers/location_provider.dart';
@@ -80,6 +81,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
+    if (AppleAccessibility.reduceMotion(context) && _animController.value < 1.0) {
+      _animController.value = 1.0;
+    }
     return Scaffold(
       backgroundColor: AppleColors.systemBackground,
       body: SafeArea(
@@ -142,7 +146,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
           // Title
           Text(
-            'Select Language',
+            GapLessL10n.t('onb_select_language_title'),
             style: AppleTypography.largeTitle.copyWith(
               color: AppleColors.label,
             ),
@@ -720,107 +724,28 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   // ============================================
-  // ローカライズヘルパー
+  // ローカライズヘルパー (GapLessL10n.t() ベース)
   // ============================================
-  String _getNextText() {
-    switch (_selectedLanguage) {
-      case 'ja': return 'はじめる';
-      case 'th': return 'เริ่มต้น'; // Changed from 'ถัดไป' (Next) to 'Start' equivalent for consistency
-      default: return 'Start'; // Changed from 'Next'
-    }
-  }
-
-  String _getLocationTitle(String lang) {
-    switch (lang) {
-      case 'ja': return '位置情報を許可';
-      case 'th': return 'อนุญาตตำแหน่ง';
-      default: return 'Allow Location';
-    }
-  }
-
-  String _getLocationDescription(String lang) {
-    switch (lang) {
-      case 'ja': return '避難所への正確なナビゲーションのため、\n位置情報の許可が必要です。';
-      case 'th': return 'จำเป็นต้องใช้ตำแหน่งสำหรับการนำทาง\nไปยังที่พักพิงอย่างแม่นยำ';
-      default: return 'Location permission is needed for\naccurate navigation to shelters.';
-    }
-  }
-
-  String _getAllowLocationText(String lang) {
-    switch (lang) {
-      case 'ja': return '位置情報を許可する';
-      case 'th': return 'อนุญาตตำแหน่ง';
-      default: return 'Allow Location';
-    }
-  }
-
-  String _getPermissionGrantedText(String lang) {
-    switch (lang) {
-      case 'ja': return '位置情報が許可されました';
-      case 'th': return 'อนุญาตตำแหน่งแล้ว';
-      default: return 'Location permitted';
-    }
-  }
-
-  String _getSkipText(String lang) {
-    switch (lang) {
-      case 'ja': return 'あとで設定する';
-      case 'th': return 'ข้ามไปก่อน';
-      default: return 'Set up later';
-    }
-  }
-
-  String _getLoadingSubtitle(String lang) {
-    switch (lang) {
-      case 'ja': return 'オフライン防災ナビゲーション';
-      case 'th': return 'นำทางป้องกันภัยพิบัติแบบออฟไลน์';
-      default: return 'Offline Disaster Navigation';
-    }
-  }
-
-  String _getLocationServiceDisabledText(String lang) {
-    switch (lang) {
-      case 'ja': return '位置情報サービスが無効です';
-      case 'th': return 'บริการตำแหน่งถูกปิด';
-      default: return 'Location services are disabled';
-    }
-  }
-
-  String _getLocationDeniedText(String lang) {
-    switch (lang) {
-      case 'ja': return '位置情報が拒否されました';
-      case 'th': return 'การเข้าถึงตำแหน่งถูกปฏิเสธ';
-      default: return 'Location permission denied';
-    }
-  }
+  String _getNextText() => GapLessL10n.t('tutorial_start');
+  String _getLocationTitle(String lang) => GapLessL10n.t('onb_location_title');
+  String _getLocationDescription(String lang) => GapLessL10n.t('onb_location_desc');
+  String _getAllowLocationText(String lang) => GapLessL10n.t('onb_allow_location');
+  String _getPermissionGrantedText(String lang) => GapLessL10n.t('onb_perm_granted');
+  String _getSkipText(String lang) => GapLessL10n.t('onb_set_later');
+  String _getLoadingSubtitle(String lang) => GapLessL10n.t('onb_loading_subtitle');
+  String _getLocationServiceDisabledText(String lang) => GapLessL10n.t('onb_loc_service_disabled');
+  String _getLocationDeniedText(String lang) => GapLessL10n.t('onb_loc_denied');
 
   String _getLoadingMessage(String lang, String step) {
-    final messages = {
-      'ja': {
-        'shelters': '避難所データを読み込み中...',
-        'hazard': 'ハザードマップを読み込み中...',
-        'roads': '道路データを読み込み中...',
-        'locating': '現在地を捕捉中 (最大10秒)...',
-        'graph': '最短の避難路を計算中...',
-        'complete': '準備完了！データ: 最新',
-      },
-      'en': {
-        'shelters': 'Loading shelter data...',
-        'hazard': 'Loading hazard maps...',
-        'roads': 'Loading road data...',
-        'graph': 'Preparing route calculation...',
-        'complete': 'Ready!',
-      },
-      'th': {
-        'shelters': 'กำลังโหลดข้อมูลที่พักพิง...',
-        'hazard': 'กำลังโหลดแผนที่อันตราย...',
-        'roads': 'กำลังโหลดข้อมูลถนน...',
-        'graph': 'กำลังเตรียมการคำนวณเส้นทาง...',
-        'complete': 'พร้อมแล้ว!',
-      },
-    };
-    
-    return messages[lang]?[step] ?? messages['en']![step]!;
+    switch (step) {
+      case 'shelters': return GapLessL10n.t('onb_load_shelters');
+      case 'hazard': return GapLessL10n.t('onb_load_hazard');
+      case 'roads': return GapLessL10n.t('onb_load_roads');
+      case 'locating': return GapLessL10n.t('onb_load_locating');
+      case 'graph': return GapLessL10n.t('onb_load_graph');
+      case 'complete': return GapLessL10n.t('onb_load_complete');
+      default: return '';
+    }
   }
 
   List<_TutorialPageData> _getTutorialPages(String lang) {
@@ -828,57 +753,32 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       _TutorialPageData(
         icon: Icons.shield_rounded,
         color: AppleColors.dangerRed,
-        title: lang == 'ja' ? 'GapLessへようこそ'
-            : (lang == 'th' ? 'ยินดีต้อนรับสู่ GapLess' : 'Welcome to GapLess'),
-        description: lang == 'ja'
-            ? '災害時にあなたを安全な場所へ導く、オフライン対応の防災ナビゲーションアプリです。'
-            : (lang == 'th'
-                ? 'แอปนำทางป้องกันภัยพิบัติแบบออฟไลน์ที่จะนำทางคุณไปยังที่ปลอดภัย'
-                : 'An offline disaster navigation app that guides you to safety.'),
+        title: GapLessL10n.t('tutorial_welcome_title'),
+        description: GapLessL10n.t('tutorial_welcome_desc'),
       ),
       _TutorialPageData(
         icon: Icons.navigation_rounded,
         color: AppleColors.actionBlue,
-        title: lang == 'ja' ? 'コンパスで避難'
-            : (lang == 'th' ? 'นำทางด้วยเข็มทิศ' : 'Navigate with Compass'),
-        description: lang == 'ja'
-            ? '災害モードでは、大きな矢印が避難所の方向を指します。矢印の方向へ進んでください。'
-            : (lang == 'th'
-                ? 'ในโหมดภัยพิบัติ ลูกศรใหญ่จะชี้ไปยังที่พักพิง เดินตามทิศทางของลูกศร'
-                : 'In disaster mode, a large arrow points to shelter. Follow the arrow.'),
+        title: GapLessL10n.t('tutorial_compass_title'),
+        description: GapLessL10n.t('tutorial_compass_desc'),
       ),
       _TutorialPageData(
         icon: Icons.record_voice_over_rounded,
         color: AppleColors.safetyGreen,
-        title: lang == 'ja' ? '音声ガイダンス'
-            : (lang == 'th' ? 'คำแนะนำด้วยเสียง' : 'Voice Guidance'),
-        description: lang == 'ja'
-            ? '方向と距離を音声でお知らせします。パニック時でも、聞くだけで避難できます。'
-            : (lang == 'th'
-                ? 'บอกทิศทางและระยะทางด้วยเสียง แม้ตกใจก็สามารถอพยพได้'
-                : 'Direction and distance are announced by voice. Just listen to evacuate.'),
+        title: GapLessL10n.t('tutorial_voice_title'),
+        description: GapLessL10n.t('tutorial_voice_desc'),
       ),
       _TutorialPageData(
         icon: Icons.healing_rounded,
         color: AppleColors.warningOrange,
-        title: lang == 'ja' ? '応急処置ガイド'
-            : (lang == 'th' ? 'คู่มือปฐมพยาบาล' : 'First Aid Guide'),
-        description: lang == 'ja'
-            ? '止血・心肺蘇生などの応急処置を確認できます。オフラインでも使えます。'
-            : (lang == 'th'
-                ? 'ดูการปฐมพยาบาลเช่น หยุดเลือด CPR ใช้ได้แม้ออฟไลน์'
-                : 'Check first aid like bleeding control and CPR. Works offline.'),
+        title: GapLessL10n.t('tutorial_first_aid_title'),
+        description: GapLessL10n.t('tutorial_first_aid_desc'),
       ),
       _TutorialPageData(
         icon: Icons.check_circle_rounded,
         color: AppleColors.safetyGreen,
-        title: lang == 'ja' ? '準備完了！'
-            : (lang == 'th' ? 'พร้อมแล้ว!' : 'You\'re Ready!'),
-        description: lang == 'ja'
-            ? 'いざという時、GapLessがあなたを守ります。'
-            : (lang == 'th'
-                ? 'GapLess จะปกป้องคุณเมื่อเกิดเหตุ'
-                : 'GapLess will protect you when disaster strikes.'),
+        title: GapLessL10n.t('tutorial_ready_title'),
+        description: GapLessL10n.t('tutorial_ready_desc'),
       ),
     ];
   }
@@ -927,7 +827,7 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
             child: TextButton(
               onPressed: widget.onSkip,
               child: Text(
-                widget.lang == 'ja' ? 'スキップ' : (widget.lang == 'th' ? 'ข้าม' : 'Skip'),
+                GapLessL10n.t('tutorial_skip'),
                 style: AppleTypography.body.copyWith(
                   color: AppleColors.secondaryLabel,
                 ),
@@ -996,7 +896,7 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
                         const Icon(Icons.arrow_back_ios_rounded, size: 16),
                         const SizedBox(width: 4),
                         Text(
-                          widget.lang == 'ja' ? '戻る' : (widget.lang == 'th' ? 'กลับ' : 'Back'),
+                          GapLessL10n.t('tutorial_back'),
                           style: AppleTypography.body.copyWith(
                             color: AppleColors.actionBlue,
                           ),
@@ -1046,8 +946,8 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
                     child: Center(
                       child: Text(
                         _currentPage < widget.pages.length - 1
-                            ? (widget.lang == 'ja' ? '次へ' : (widget.lang == 'th' ? 'ถัดไป' : 'Next'))
-                            : (widget.lang == 'ja' ? 'はじめる' : (widget.lang == 'th' ? 'เริ่มต้น' : 'Start')),
+                            ? GapLessL10n.t('tutorial_next')
+                            : GapLessL10n.t('tutorial_start'),
                         style: AppleTypography.headline.copyWith(
                           color: Colors.white,
                           fontSize: 18,

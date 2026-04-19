@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'accessibility.dart';
 import 'apple_design_system.dart';
 
 /// ============================================================================
@@ -261,6 +262,16 @@ class _AppleSkeletonLoaderState extends State<AppleSkeletonLoader>
 
   @override
   Widget build(BuildContext context) {
+    if (AppleAccessibility.reduceMotion(context)) {
+      return Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+          color: AppleColors.separator,
+        ),
+      );
+    }
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
@@ -350,6 +361,9 @@ class _AppleFadeInState extends State<AppleFadeIn>
 
   @override
   Widget build(BuildContext context) {
+    if (AppleAccessibility.reduceMotion(context)) {
+      return widget.child;
+    }
     return FadeTransition(
       opacity: _fadeAnimation,
       child: SlideTransition(
@@ -407,6 +421,9 @@ class _AppleScaleInState extends State<AppleScaleIn>
 
   @override
   Widget build(BuildContext context) {
+    if (AppleAccessibility.reduceMotion(context)) {
+      return widget.child;
+    }
     return ScaleTransition(
       scale: _scaleAnimation,
       child: FadeTransition(

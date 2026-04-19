@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/language_provider.dart';
 import '../services/offline_risk_scanner.dart';
+import '../utils/accessibility.dart';
 import '../utils/localization.dart';
 
 /// ============================================================================
@@ -20,14 +21,13 @@ import '../utils/localization.dart';
 ///    見えません。本機能は、予測データを使って「見えない危険」を
 ///    レーダーのように可視化します。
 /// 
-/// 2. **感電死は「見えない死」**
-///    水没した電柱・電線からの漏電は目視できません。
-///    タイでは洪水時の感電死が深刻な問題です。
-///    電力設備の位置データから危険方向を事前に警告します。
+/// 2. **激流は突然来る**
+///    濁流の中で流速の速い方向は予測困難です。
+///    浸水シミュレーションデータから、流れの速い方向を警告します。
 /// 
 /// 3. **パニック時の認知負荷軽減**
 ///    災害時、人は複雑な判断ができません。
-///    「黄色=感電」「青=深水」「緑=安全」という
+///    「青=深水」「紫=激流」「緑=安全」という
 ///    色だけで判断できるUIにしています。
 /// 
 /// 4. **360度全方位の危険を一目で把握**
@@ -121,12 +121,14 @@ class RadarCompassOverlay extends StatelessWidget {
 
   /// リスクレーダー（危険ゾーンの扇形）
   Widget _buildRiskRadar() {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _RiskRadarPainter(
-        riskZones: scanResult!.riskZones,
-        deviceHeading: deviceHeading,
-        pulseValue: pulseAnimation?.value ?? 1.0,
+    return RepaintBoundary(
+      child: CustomPaint(
+        size: Size(size, size),
+        painter: _RiskRadarPainter(
+          riskZones: scanResult!.riskZones,
+          deviceHeading: deviceHeading,
+          pulseValue: pulseAnimation?.value ?? 1.0,
+        ),
       ),
     );
   }
@@ -346,17 +348,13 @@ class _RiskRadarPainter extends CustomPainter {
     String icon;
     
     switch (zone.type) {
-      case RiskType.electrocution:
-        baseColor = Colors.yellow;
-        icon = '⚡';
-        break;
       case RiskType.deepWater:
         baseColor = Colors.blue;
         icon = '🌊';
         break;
       case RiskType.rapidFlow:
         baseColor = Colors.purple;
-        icon = '💨';
+        icon = '🌀';
         break;
     }
     
@@ -482,7 +480,14 @@ class _RadarCompassCardState extends State<RadarCompassCard>
 
   @override
   Widget build(BuildContext context) {
-    context.watch<LanguageProvider>();
+    // 言語フィールドのみ購読
+    context.select<LanguageProvider, String>((p) => p.currentLanguage);
+    final reduce = AppleAccessibility.reduceMotion(context);
+    if (reduce && _pulseController.isAnimating) {
+      _pulseController.stop();
+    } else if (!reduce && !_pulseController.isAnimating) {
+      _pulseController.repeat(reverse: true);
+    }
     return GestureDetector(
       onTap: widget.onTap,
       child: Card(
@@ -579,9 +584,9 @@ class _RadarCompassCardState extends State<RadarCompassCard>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildLegendItem('⚡', Colors.yellow, GapLessL10n.t('overlay_power')),
-        const SizedBox(width: 24),
         _buildLegendItem('🌊', Colors.blue, GapLessL10n.t('overlay_flood')),
+        const SizedBox(width: 24),
+        _buildLegendItem('🌀', Colors.purple, GapLessL10n.t('overlay_rapid')),
         const SizedBox(width: 24),
         _buildLegendItem('➤', Colors.green, GapLessL10n.t('overlay_safe')),
       ],

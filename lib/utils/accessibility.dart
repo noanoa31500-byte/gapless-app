@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'apple_design_system.dart';
 
 /// ============================================================================
@@ -49,6 +50,25 @@ class AppleAccessibility {
     final ratio = calculateContrastRatio(foreground, background);
     return isLargeText ? ratio >= 3.0 : ratio >= 4.5;
   }
+
+  // ============================================
+  // Reduce Motion (前庭障害・モーション過敏配慮)
+  // ============================================
+
+  /// OS の「視差効果を減らす」設定が有効か
+  static bool reduceMotion(BuildContext context) =>
+      MediaQuery.disableAnimationsOf(context);
+
+  /// reduce-motion ON のときは Duration.zero、OFF のときは [normal] を返す。
+  /// AnimationController の duration パラメータに直接渡せる。
+  static Duration motionDuration(BuildContext context, Duration normal) =>
+      reduceMotion(context) ? Duration.zero : normal;
+
+  /// reduce-motion ON のときは [reduced]（既定 0）、OFF のときは [normal] を返す。
+  /// 視覚エフェクト用の数値（pulse 振幅など）に。
+  static double motionAmount(BuildContext context, double normal,
+          {double reduced = 0.0}) =>
+      reduceMotion(context) ? reduced : normal;
 }
 
 /// ============================================================================
@@ -338,6 +358,118 @@ extension AccessibilityExtension on BuildContext {
   
   /// 太字テキストモードかどうか
   bool get boldText => MediaQuery.boldTextOf(this);
+}
+
+/// ============================================================================
+/// 緊急画面用「長押しで実行」ボタン (3秒ホールドガード付き)
+/// - ダブルタップで armed 状態にしてから長押しで実行
+/// - 1秒/2秒/3秒で段階的ハプティック
+/// ============================================================================
+
+class GuardedHoldButton extends StatefulWidget {
+  final VoidCallback onConfirmed;
+  final Widget Function(BuildContext, double progress, bool armed) builder;
+  final Duration holdDuration;
+  final String? semanticLabel;
+  final String? semanticHint;
+
+  const GuardedHoldButton({
+    super.key,
+    required this.onConfirmed,
+    required this.builder,
+    this.holdDuration = const Duration(seconds: 3),
+    this.semanticLabel,
+    this.semanticHint,
+  });
+
+  @override
+  State<GuardedHoldButton> createState() => _GuardedHoldButtonState();
+}
+
+class _GuardedHoldButtonState extends State<GuardedHoldButton> {
+  bool _armed = false;
+  DateTime? _firstTapAt;
+  double _progress = 0.0;
+  // ignore: unused_field
+  // Timer-like: we use a periodic ticker via Stream from Future.delayed.
+  // Implementation kept lightweight to avoid importing dart:async here.
+  bool _holding = false;
+  int _hapticStage = 0;
+
+  void _onTap() {
+    final now = DateTime.now();
+    if (_firstTapAt != null &&
+        now.difference(_firstTapAt!) < const Duration(milliseconds: 600)) {
+      setState(() => _armed = true);
+    }
+    _firstTapAt = now;
+  }
+
+  Future<void> _tick() async {
+    final start = DateTime.now();
+    while (_holding && mounted) {
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      if (!_holding || !mounted) break;
+      final elapsed = DateTime.now().difference(start).inMilliseconds;
+      final p = (elapsed / widget.holdDuration.inMilliseconds).clamp(0.0, 1.0);
+      // Staged haptics
+      if (_hapticStage < 1 && elapsed >= 1000) {
+        _hapticStage = 1;
+        HapticFeedback.lightImpact();
+      } else if (_hapticStage < 2 && elapsed >= 2000) {
+        _hapticStage = 2;
+        HapticFeedback.mediumImpact();
+      }
+      setState(() => _progress = p);
+      if (p >= 1.0) {
+        HapticFeedback.heavyImpact();
+        _holding = false;
+        widget.onConfirmed();
+        if (mounted) {
+          setState(() {
+            _armed = false;
+            _progress = 0.0;
+            _hapticStage = 0;
+          });
+        }
+        return;
+      }
+    }
+    if (mounted) {
+      setState(() {
+        _progress = 0.0;
+        _hapticStage = 0;
+      });
+    }
+  }
+
+  void _onPressStart() {
+    if (!_armed) return;
+    _holding = true;
+    _hapticStage = 0;
+    _tick();
+  }
+
+  void _onPressEnd() {
+    _holding = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: widget.semanticLabel,
+      hint: widget.semanticHint,
+      button: true,
+      child: GestureDetector(
+        onTap: _onTap,
+        onLongPressStart: (_) => _onPressStart(),
+        onLongPressEnd: (_) => _onPressEnd(),
+        onLongPressCancel: _onPressEnd,
+        onTapCancel: _onPressEnd,
+        child: widget.builder(context, _progress, _armed),
+      ),
+    );
+  }
 }
 
 /// ============================================================================

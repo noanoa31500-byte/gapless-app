@@ -91,6 +91,12 @@ class RouteResult {
 }
 
 /// 安全優先A*経路計算エンジン
+///
+/// 【統合済み機能】 (旧 RoutingEngine / SafestRouteEngine / SafeNavigationService より統合)
+/// - 道幅ベースのコスト (元: SafetyRouteEngine)
+/// - ハザードポリゴン絶対回避 (元: RoutingEngine)
+/// - BLE スコア補正 (元: RoutingEngine)
+/// - 地震時間減衰係数 (元: SafestRouteEngine)
 class SafetyRouteEngine {
   // ノードマップ: id → _Node
   final Map<String, _Node> _nodes = {};
@@ -101,6 +107,16 @@ class SafetyRouteEngine {
 
   static const int _snapPrecision = 5; // 小数点以下5桁
 
+  /// ハザードポリゴン (絶対回避エリア) — 中心点が内側のエッジは無効化
+  List<List<LatLng>> hazardPolygons = const [];
+
+  /// BLE スコアルックアップ (中点 → 0.0〜1.0)
+  ///   <=0.0: 通行不可  / <=0.3: ×3.0 / >=1.0: ×0.8 / その他: 補正なし
+  double Function(LatLng midpoint)? bleScoreLookup;
+
+  /// 地震発生時刻 (時間減衰係数の計算に使用)
+  DateTime? earthquakeTime;
+
   /// RoadFeatureリストからグラフを構築する
   ///
   /// [features] gplbパーサーが返したRoadFeatureのリスト
@@ -108,6 +124,8 @@ class SafetyRouteEngine {
   void buildGraph(List<RoadFeature> features, {UserProfile profile = UserProfile.standard}) {
     _nodes.clear();
     _snapIndex.clear();
+
+    final timeDecay = _calculateTimeDecayFactor();
 
     for (final feature in features) {
       if (feature.geometry.length < 2) continue;
@@ -122,7 +140,19 @@ class SafetyRouteEngine {
 
         final segmentGeom = [fromPos, toPos];
         final dist = _distanceM(fromPos, toPos);
-        final cost = dist * _widthFactor(feature) * _profileFactor(feature, profile);
+
+        // ハザードポリゴン内のエッジは絶対回避（infinityコスト = エッジ未追加）
+        final mid = LatLng(
+          (fromPos.latitude + toPos.latitude) / 2,
+          (fromPos.longitude + toPos.longitude) / 2,
+        );
+        if (_isPointInAnyHazardPolygon(mid)) {
+          continue;
+        }
+
+        var cost = dist * _widthFactor(feature) * _profileFactor(feature, profile) * timeDecay;
+        cost = _applyBleScore(cost, mid);
+        if (!cost.isFinite || cost <= 0) continue; // BLE absolute block
 
         fromNode.edges.add(_Edge(toNode, cost, segmentGeom));
         if (!feature.isOneWay) {
@@ -333,6 +363,61 @@ class SafetyRouteEngine {
 
   /// A* のヒューリスティック：直線距離
   double _heuristic(LatLng a, LatLng b) => _distanceM(a, b);
+
+  // ---------------------------------------------------------------------------
+  // 統合機能ヘルパー (旧 RoutingEngine / SafestRouteEngine より)
+  // ---------------------------------------------------------------------------
+
+  /// 地震からの経過時間に基づく減衰係数
+  /// (元: SafestRouteEngine._calculateTimeDecayFactor)
+  double _calculateTimeDecayFactor() {
+    if (earthquakeTime == null) return 1.0;
+    final hours = DateTime.now().difference(earthquakeTime!).inHours;
+    if (hours < 6) return 1.5;
+    if (hours < 24) return 1.2;
+    if (hours < 72) return 1.0;
+    return 0.8;
+  }
+
+  /// BLE スコアによるコスト補正
+  /// (元: RoutingEngine._applyBleScore)
+  double _applyBleScore(double baseCost, LatLng midpoint) {
+    if (bleScoreLookup == null) return baseCost;
+    final score = bleScoreLookup!(midpoint);
+    if (score <= 0.0) return double.infinity;
+    if (score <= 0.3) return baseCost * 3.0;
+    if (score >= 1.0) return baseCost * 0.8;
+    return baseCost;
+  }
+
+  /// 任意の点がハザードポリゴンに含まれるか判定
+  bool _isPointInAnyHazardPolygon(LatLng point) {
+    if (hazardPolygons.isEmpty) return false;
+    for (final poly in hazardPolygons) {
+      if (_isPointInPolygon(point, poly)) return true;
+    }
+    return false;
+  }
+
+  /// Ray-casting アルゴリズム
+  bool _isPointInPolygon(LatLng point, List<LatLng> polygon) {
+    if (polygon.length < 3) return false;
+    bool inside = false;
+    int j = polygon.length - 1;
+    for (int i = 0; i < polygon.length; i++) {
+      if (((polygon[i].latitude > point.latitude) !=
+              (polygon[j].latitude > point.latitude)) &&
+          (point.longitude <
+              (polygon[j].longitude - polygon[i].longitude) *
+                      (point.latitude - polygon[i].latitude) /
+                      (polygon[j].latitude - polygon[i].latitude) +
+                  polygon[i].longitude)) {
+        inside = !inside;
+      }
+      j = i;
+    }
+    return inside;
+  }
 }
 
 // ============================================================================

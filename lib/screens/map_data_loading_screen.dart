@@ -112,7 +112,7 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -294,6 +294,15 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        // ダウンロード失敗でも既存データで起動できるようスキップを許可
+        TextButton(
+          onPressed: _navigateNext,
+          child: Text(
+            GapLessL10n.t('map_download_skip'),
+            style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
           ),
         ),
       ],

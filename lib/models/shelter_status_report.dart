@@ -51,13 +51,17 @@ class ShelterStatusReport {
         'v': deviceId,
       });
 
-  factory ShelterStatusReport.fromJson(Map<String, dynamic> j) =>
-      ShelterStatusReport(
-        shelterId: (j['id'] as String?) ?? '',
-        lat: (j['a'] as num).toDouble(),
-        lng: (j['o'] as num).toDouble(),
-        isOccupied: (j['st'] as int? ?? 0) == 1,
-        timestamp: (j['t'] as num).toInt(),
-        deviceId: j['v'] as String? ?? '',
-      );
+  factory ShelterStatusReport.fromJson(Map<String, dynamic> j) {
+    if (j['a'] is! num || j['o'] is! num || j['t'] is! num) {
+      throw const FormatException('ShelterStatusReport: a/o/t must be numeric');
+    }
+    return ShelterStatusReport(
+      shelterId: (j['id'] as String?) ?? '',
+      lat: (j['a'] as num).toDouble(),
+      lng: (j['o'] as num).toDouble(),
+      isOccupied: (j['st'] is num ? (j['st'] as num).toInt() : 0) == 1,
+      timestamp: (j['t'] as num).toInt(),
+      deviceId: j['v'] as String? ?? '',
+    );
+  }
 }
