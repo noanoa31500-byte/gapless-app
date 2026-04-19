@@ -32,6 +32,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+/build
+/build.nosync/
 /coverage/
 
 # Auto-generated Flutter iOS files (should never be committed)
