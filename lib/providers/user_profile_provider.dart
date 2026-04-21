@@ -9,8 +9,12 @@ class UserProfile {
   String bloodType;
   String birthDate;
   String medications;
+  String emergencyContact;
+  String emergencyPhone;
   List<String> allergies;
   List<String> needs;
+  List<String> conditions;
+  List<String> languages;
 
   UserProfile({
     this.name = '',
@@ -18,8 +22,12 @@ class UserProfile {
     this.bloodType = '',
     this.birthDate = '',
     this.medications = '',
+    this.emergencyContact = '',
+    this.emergencyPhone = '',
     this.allergies = const [],
     this.needs = const [],
+    this.conditions = const [],
+    this.languages = const [],
   });
 
   Map<String, dynamic> toJson() => {
@@ -28,8 +36,12 @@ class UserProfile {
     'bloodType': bloodType,
     'birthDate': birthDate,
     'medications': medications,
+    'emergencyContact': emergencyContact,
+    'emergencyPhone': emergencyPhone,
     'allergies': allergies,
     'needs': needs,
+    'conditions': conditions,
+    'languages': languages,
   };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -39,8 +51,12 @@ class UserProfile {
       bloodType: json['bloodType'] ?? '',
       birthDate: json['birthDate'] ?? '',
       medications: json['medications'] ?? '',
+      emergencyContact: json['emergencyContact'] ?? '',
+      emergencyPhone: json['emergencyPhone'] ?? '',
       allergies: List<String>.from(json['allergies'] ?? []),
       needs: List<String>.from(json['needs'] ?? []),
+      conditions: List<String>.from(json['conditions'] ?? []),
+      languages: List<String>.from(json['languages'] ?? []),
     );
   }
 }

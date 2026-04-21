@@ -131,11 +131,6 @@ class AlertProvider with ChangeNotifier {
     await _speak(_getLocalizedMessage('safe_area'));
   }
   
-  /// 感電危険エリア警告
-  Future<void> warnElectricalHazard() async {
-    await _speakWithCooldown(_getLocalizedMessage('electrical_hazard'));
-  }
-  
   /// 深水エリア警告
   Future<void> warnDeepWater(double depth) async {
     final depthText = depth.toStringAsFixed(1);
@@ -265,7 +260,6 @@ class AlertProvider with ChangeNotifier {
       case 'hazard_warning':     return GapLessL10n.t('tts_hazard_warning');
       case 'safe_area':          return GapLessL10n.t('tts_safe_area');
       case 'arrival':            return GapLessL10n.t('tts_arrived');
-      case 'electrical_hazard':  return GapLessL10n.t('tts_electrical_hazard');
       case 'deep_water':         return GapLessL10n.t('tts_deep_water');
       case 'fast_current':       return GapLessL10n.t('tts_fast_current');
       case 'off_course':         return GapLessL10n.t('tts_off_course');

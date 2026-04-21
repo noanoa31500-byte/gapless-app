@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
+import 'dart:ui' show ImageFilter;
+import '../services/connectivity_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show HapticFeedback;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
@@ -24,6 +28,7 @@ import '../screens/chat_screen.dart';
 import '../services/jma_alert_service.dart';
 import '../ble/ble_packet.dart';
 import '../services/ble_road_report_service.dart';
+import '../ble/ble_peripheral_channel.dart';
 import '../services/fallback_mode_controller.dart';
 import '../data/map_auto_loader.dart';
 import '../services/road_features_cache.dart';
@@ -60,8 +65,8 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
-  static const Color _greenPrimary = Color(0xFF2E7D32);
-  static const Color _orangeAccent = Color(0xFFFF6F00);
+  static const Color _greenPrimary = Color(0xFF00C896);
+  static const Color _orangeAccent = Color(0xFFFF6B35);
 
   // ── サービス ──────────────────────────────────────────────────────────────
   final _fallback = FallbackModeController();
@@ -75,6 +80,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
   StreamSubscription<bool>? _calibrationSub;
   StreamSubscription<DivergenceWarning>? _divergenceSub;
   StreamSubscription<MapLoadEvent>? _mapLoadSub;
+  StreamSubscription<bool>? _connectivitySub;
+
+  // ── 通信断絶検知 ──────────────────────────────────────────────────────────
+  bool _isFullyOffline = false;
+  Timer? _offlineTimer;
 
   // ── 状態 ─────────────────────────────────────────────────────────────────
   List<RoadFeature> _roadFeatures = [];
@@ -118,8 +128,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Future<void> _bootServices() async {
     try {
-      final isJapan = context.read<RegionModeProvider>().isJapanMode;
-      final roadFile = isJapan ? 'tokyo_center_roads.gplb' : 'thailand_roads.gplb';
+      final region = context.read<RegionModeProvider>().region;
+      final roadFile = '${region.gplbAssetPath}_roads.gplb';
 
       // OS キャッシュから前回位置を即取得（失敗してもブロックしない）
       final lastPos = await Geolocator.getLastKnownPosition();
@@ -171,6 +181,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     GpsLogger.instance.addListener(_onGpsUpdate);
     _fallback.addListener(_onFallbackChanged);
+
+    // 通信断絶検知: WiFi+モバイル両方なしが30秒続いたら緊急バッジ表示
+    _connectivitySub = ConnectivityService.onConnectivityChanged.listen(_onConnectivityChanged);
 
     if (mounted) context.read<LocationProvider>().startLocationTracking();
 
@@ -278,14 +291,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
     if (entry == null) return;
     _fallback.updatePosition(entry.latLng);
 
-    // 自分でルートを持っていない場合はバックグラウンドA*の結果をフォールバック表示
-    if (_route.isEmpty && _destination == null && mounted) {
-      final bgRoute = context.read<ShelterProvider>().getSafestRouteAsLatLng();
-      if (bgRoute.isNotEmpty) {
-        setState(() => _route = bgRoute);
-      }
-    }
-
     // 機能5: 現在地 30m 以内の狭道（幅 ≤ 2m）を検索して TTS 警告
     _checkNarrowRoadAhead(entry.latLng);
 
@@ -325,7 +330,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     if (minDist > 50.0) {
       _lastRerouteTime = DateTime.now();
-      _showSnack('ルートを外れました。再計算します…');
+      _showSnack(GapLessL10n.t('nav_off_route_recalc'));
       _calculateRoute();
     }
   }
@@ -395,7 +400,35 @@ class _NavigationScreenState extends State<NavigationScreen> {
     _trackRefreshTimer?.cancel();
     _sosPressTimer?.cancel();
     _mapLoadSub?.cancel();
+    _connectivitySub?.cancel();
+    _offlineTimer?.cancel();
     super.dispose();
+  }
+
+  // ── 通信断絶検知 ──────────────────────────────────────────────────────────
+
+  void _onConnectivityChanged(bool connected) {
+    if (!mounted) return;
+    final fullyOffline = !connected;
+
+    if (fullyOffline && !_isFullyOffline) {
+      // 断絶開始: 30秒後にバッジ表示 & disasterMode時は自動遷移
+      _offlineTimer?.cancel();
+      _offlineTimer = Timer(const Duration(seconds: 30), () {
+        if (!mounted) return;
+        setState(() => _isFullyOffline = true);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const EmergencySimpleScreen()),
+        );
+      });
+    } else if (!fullyOffline && _isFullyOffline) {
+      // 復帰
+      _offlineTimer?.cancel();
+      setState(() => _isFullyOffline = false);
+    } else if (!fullyOffline) {
+      _offlineTimer?.cancel();
+    }
   }
 
   // ── タイル更新後の道路データ再取得 ────────────────────────────────────────
@@ -404,8 +437,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     final loc = context.read<LocationProvider>().currentLocation;
     if (loc == null || !mounted) return;
 
-    final isJapan = context.read<RegionModeProvider>().isJapanMode;
-    final roadFile = isJapan ? 'tokyo_center_roads.gplb' : 'thailand_roads.gplb';
+    final region = context.read<RegionModeProvider>().region;
+    final roadFile = '${region.gplbAssetPath}_roads.gplb';
 
     RoadFeaturesCache.instance.invalidateTiles();
     final updated = await RoadFeaturesCache.instance
@@ -423,14 +456,30 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Future<void> _calculateRoute() async {
     final dest = _destination;
-    if (dest == null || _roadFeatures.isEmpty || !mounted) return;
+    if (dest == null || !mounted) return;
 
     final currentLoc = context.read<LocationProvider>().currentLocation;
     if (currentLoc == null) return;
 
     setState(() => _isCalculatingRoute = true);
 
-    // 機能4: プロファイルに基づいてパラメータを設定
+    // オンライン時はOSRM（実際の道路沿い）、オフライン時はA*フォールバック
+    List<LatLng>? osrmRoute = await _fetchOsrmRoute(currentLoc, dest);
+    if (osrmRoute != null && mounted) {
+      setState(() {
+        _route = osrmRoute;
+        _isCalculatingRoute = false;
+      });
+      PowerManager.instance.setNavigationActive(true);
+      return;
+    }
+
+    // A* フォールバック（オフライン）
+    if (_roadFeatures.isEmpty) {
+      if (mounted) setState(() => _isCalculatingRoute = false);
+      return;
+    }
+
     final bool requiresFlat = _accessProfile == _AccessProfile.wheelchair;
     final bool isElderly = _accessProfile == _AccessProfile.elderly;
     final double speed = _accessProfile == _AccessProfile.wheelchair
@@ -454,26 +503,39 @@ class _NavigationScreenState extends State<NavigationScreen> {
         ),
       ).timeout(const Duration(seconds: 15));
       if (mounted) {
+        // 2点のみ（直線フォールバック）は表示しない
+        final pts = result.waypoints;
         setState(() {
-          _route = result.waypoints;
+          _route = pts.length > 2 ? pts : [];
           _isCalculatingRoute = false;
         });
-        // ルート確定 → ナビ中はGPS間隔を省電力でも維持
-        PowerManager.instance.setNavigationActive(result.waypoints.isNotEmpty);
+        PowerManager.instance.setNavigationActive(pts.length > 2);
       }
     } catch (e) {
       debugPrint('Route calculation failed: $e');
-      if (mounted) {
-        setState(() => _isCalculatingRoute = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(GapLessL10n.t('route_calc_failed')),
-            backgroundColor: Colors.orange[800],
-            behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
+      if (mounted) setState(() => _isCalculatingRoute = false);
+    }
+  }
+
+  /// OSRM 徒歩ルート取得（オンライン専用）。失敗時は null を返す。
+  Future<List<LatLng>?> _fetchOsrmRoute(LatLng start, LatLng goal) async {
+    try {
+      final uri = Uri.parse(
+        'https://router.project-osrm.org/route/v1/walking/'
+        '${start.longitude},${start.latitude};'
+        '${goal.longitude},${goal.latitude}'
+        '?overview=full&geometries=geojson',
+      );
+      final res = await http.get(uri).timeout(const Duration(seconds: 8));
+      if (res.statusCode != 200) return null;
+      final body = jsonDecode(res.body) as Map<String, dynamic>;
+      if (body['code'] != 'Ok') return null;
+      final coords = (body['routes'][0]['geometry']['coordinates'] as List)
+          .map((c) => LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
+          .toList();
+      return coords.length >= 2 ? coords : null;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -520,6 +582,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
   }
 
   // 機能5: 到着 → 安全確認ダイアログ → ShelterDashboard遷移
+  void _stopNavigation() {
+    PowerManager.instance.setNavigationActive(false);
+    setState(() {
+      _route = [];
+      _destination = null;
+      _destinationName = null;
+    });
+  }
+
   void _onArrived() {
     _announcer.announceWaypointPassed(0, 1, 0);
     PowerManager.instance.setNavigationActive(false); // ナビ終了 → GPS間隔を省電力設定に戻す
@@ -559,7 +630,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF388E3C),
+              backgroundColor: _greenPrimary,
               foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
@@ -711,7 +782,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               final inFallback = _fallback.isInFallback;
               return Column(
                 children: [
-                  _NavStatusBar(ble: _ble, locationProv: locationProv),
                   Expanded(
                     child: AnimatedSwitcher(
                       duration: const Duration(milliseconds: 400),
@@ -728,7 +798,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
               );
             },
           ),
-          floatingActionButton: _buildFabGroup(),
         );
       },
     );
@@ -738,35 +807,104 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      backgroundColor: _greenPrimary,
-      foregroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
+      foregroundColor: const Color(0xFF1A1A2E),
+      elevation: 0,
+      surfaceTintColor: Colors.transparent,
+      flexibleSpace: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.88),
+              border: Border(
+                bottom: BorderSide(
+                    color: Colors.black.withValues(alpha: 0.07), width: 0.5),
+              ),
+            ),
+          ),
+        ),
+      ),
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(GapLessL10n.t('nav_screen_title'),
-              style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.bold, fontSize: 16))),
+              style: GapLessL10n.safeStyle(const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                  color: Color(0xFF1A1A2E),
+                  letterSpacing: 0.2))),
           if (_destinationName != null)
             Text(
               _destinationName!,
-              style: GapLessL10n.safeStyle(const TextStyle(fontSize: 11, color: Colors.white70)),
+              style: GapLessL10n.safeStyle(const TextStyle(
+                  fontSize: 11,
+                  color: Color(0xFF6B7280),
+                  letterSpacing: 0.1)),
             ),
         ],
       ),
       actions: [
-        // 機能4: アクセシビリティアイコン
-        IconButton(
-          onPressed: _showAccessProfileDialog,
-          tooltip: GapLessL10n.t('nav_profile_title'),
-          icon: Icon(
-            _accessProfile == _AccessProfile.wheelchair
-                ? Icons.accessible
-                : _accessProfile == _AccessProfile.elderly
-                    ? Icons.elderly
-                    : Icons.directions_walk,
-            color: _accessProfile != _AccessProfile.standard
-                ? _orangeAccent
-                : Colors.white,
-          ),
+        // GPS + BLE status chips (replaces NavStatusBar)
+        Consumer<LocationProvider>(
+          builder: (_, locationProv, __) {
+            final hasGps = locationProv.currentLocation != null;
+            return _AppBarChip(
+              icon: hasGps ? Icons.gps_fixed : Icons.gps_off,
+              color: hasGps ? _greenPrimary : const Color(0xFFEF4444),
+            );
+          },
+        ),
+        ListenableBuilder(
+          listenable: _ble,
+          builder: (_, __) {
+            final running = _ble.isRunning;
+            final count = _ble.receivedCount;
+            final ex = _ble.exchangeCount;
+            final hit = _ble.scanHitCount;
+            String? label;
+            if (running) {
+              if (count > 0) label = '$count';
+              else if (ex > 0) label = '~$ex';
+              else if (hit > 0) label = '?$hit';
+            }
+            return GestureDetector(
+              onTap: () async {
+                final periph = await BlePeripheralChannel.instance.getStatus();
+                if (!context.mounted) return;
+                showDialog<void>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('BLE診断'),
+                    content: SingleChildScrollView(
+                      child: Text(
+                        '[Central]\n'
+                        'running=$running\n'
+                        'scanHit=$hit\n'
+                        'exchange=$ex\n'
+                        'received=$count\n'
+                        'lastDiag: ${_ble.lastDiag}\n\n'
+                        '[Peripheral native]\n'
+                        '${periph?.entries.map((e) => "${e.key}=${e.value}").join("\n") ?? "null"}',
+                        style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                      ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
+              child: _AppBarChip(
+                icon: running ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+                label: label,
+                color: running ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+              ),
+            );
+          },
         ),
         // 電池表示
         ListenableBuilder(
@@ -781,15 +919,16 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 children: [
                   Icon(
                     saving ? Icons.battery_alert : Icons.battery_full,
-                    color: saving ? _orangeAccent : Colors.white,
-                    size: 20,
+                    color: saving ? _orangeAccent : const Color(0xFF6B7280),
+                    size: 18,
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: 3),
                   Text(
                     '$level%',
                     style: TextStyle(
-                        color: saving ? _orangeAccent : Colors.white,
-                        fontSize: 13),
+                        color: saving ? _orangeAccent : const Color(0xFF6B7280),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600),
                   ),
                 ],
               ),
@@ -825,7 +964,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           children: [
             TileLayer(
-              urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+              urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+              subdomains: const ['a', 'b', 'c', 'd'],
               userAgentPackageName: 'com.example.gapless',
             ),
             // 機能4: GPS軌跡（薄い紫ライン）
@@ -858,8 +998,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 polylines: [
                   Polyline(
                     points: _route,
-                    color: _greenPrimary,
-                    strokeWidth: 4,
+                    color: Color(0xFF00C896),
+                    strokeWidth: 5.5,
                   ),
                 ],
               ),
@@ -911,11 +1051,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
             right: 0,
             child: Center(
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                 decoration: BoxDecoration(
-                  color: _greenPrimary,
-                  borderRadius: BorderRadius.circular(30),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF00C896), Color(0xFF00A87A)],
+                  ),
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF00C896).withOpacity(0.4),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -928,7 +1076,11 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(GapLessL10n.t('nav_calculating'),
-                        style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontSize: 14))),
+                        style: GapLessL10n.safeStyle(const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.3))),
                   ],
                 ),
               ),
@@ -939,13 +1091,37 @@ class _NavigationScreenState extends State<NavigationScreen> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: TurnByTurnPanel(
-              route: _route,
-              currentPosition: currentLoc,
-              headingDeg: _headingDeg,
-              onArrived: _onArrived,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFF8F9FE),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Color(0x14000000),
+                    blurRadius: 20,
+                    offset: Offset(0, -6),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                child: TurnByTurnPanel(
+                  route: _route,
+                  currentPosition: currentLoc,
+                  headingDeg: _headingDeg,
+                  onArrived: _onArrived,
+                  onStop: _stopNavigation,
+                  destinationName: _destinationName,
+                ),
+              ),
             ),
           ),
+        // FABグループ（パネルの上に浮かせる）
+        Positioned(
+          bottom: 116,
+          right: 16,
+          child: _buildFabGroup(),
+        ),
       ],
     );
   }
@@ -989,10 +1165,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
         icon = isStale ? Icons.access_time : Icons.block;
       } else if (isSafe) {
         baseColor = ageMin < 30
-            ? const Color(0xFF388E3C)
+            ? const Color(0xFF00C896)
             : ageMin < 120
-                ? const Color(0xFF2E7D32)
-                : const Color(0xFF2E5E30);
+                ? const Color(0xFF00A87A)
+                : const Color(0xFF007A58);
         icon = isStale ? Icons.access_time : Icons.check_circle;
       } else {
         baseColor = ageMin < 30
@@ -1051,9 +1227,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isTarget ? _orangeAccent : _greenPrimary,
-                  border: Border.all(color: Colors.white, width: 2),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+                  border: Border.all(color: Colors.white, width: 2.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isTarget ? _orangeAccent : _greenPrimary).withOpacity(0.45),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
                   ],
                 ),
                 child: Icon(
@@ -1127,73 +1307,124 @@ class _NavigationScreenState extends State<NavigationScreen> {
     return markers;
   }
 
-  // 機能3: BottomNavigationBar（タブ1〜3はNavigator.pushで独立画面として開く）
+  // 機能3: BottomNavigationBar
+  // 平時: ナビ/緊急カード/公式情報/AIチャット/設定 の5タブ
+  // 電波断絶30秒後のみ: 緊急操作タブが追加表示される
   Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      currentIndex: 0, // 地図タブが常にアクティブ（他タブはpushで開く）
+    final jmaIcon = ListenableBuilder(
+      listenable: JmaAlertService.instance,
+      builder: (_, __) {
+        final hasAlert = JmaAlertService.instance.hasActiveAlert;
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(Icons.campaign, color: hasAlert ? const Color(0xFFB71C1C) : null),
+            if (hasAlert)
+              Positioned(
+                right: -4,
+                top: -4,
+                child: Container(
+                  width: 10,
+                  height: 10,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFB71C1C),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+
+    // 平時の5タブ構成
+    final normalItems = <BottomNavigationBarItem>[
+      BottomNavigationBarItem(icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
+      BottomNavigationBarItem(icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
+      BottomNavigationBarItem(icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
+      BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: GapLessL10n.t('nav_tab_chat')),
+      BottomNavigationBarItem(icon: const Icon(Icons.settings), label: GapLessL10n.t('nav_tab_settings')),
+    ];
+
+    void normalTap(int i) {
+      if (i == 0) return;
+      final screens = <Widget>[
+        const EmergencyCardScreen(),
+        const JmaFeedScreen(),
+        const ChatScreen(),
+        const SettingsScreen(),
+      ];
+      Navigator.push(context, MaterialPageRoute(builder: (_) => screens[i - 1]));
+    }
+
+    Widget _glassNav({
+      required List<BottomNavigationBarItem> items,
+      required void Function(int) onTap,
+    }) {
+      return ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Color(0xD9FFFFFF),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x18000000),
+                  blurRadius: 20,
+                  offset: Offset(0, -4),
+                ),
+              ],
+            ),
+            child: BottomNavigationBar(
+              currentIndex: 0,
+              onTap: onTap,
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: _greenPrimary,
+              unselectedItemColor: const Color(0xFF9E9E9E),
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              selectedLabelStyle: const TextStyle(
+                  fontWeight: FontWeight.w600, fontSize: 11, letterSpacing: 0.3),
+              unselectedLabelStyle: const TextStyle(fontSize: 11),
+              items: items,
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (!_isFullyOffline) {
+      return _glassNav(items: normalItems, onTap: normalTap);
+    }
+
+    // 電波断絶時: 緊急操作タブを3番目に挿入した6タブ構成
+    final emergencyItems = <BottomNavigationBarItem>[
+      BottomNavigationBarItem(icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
+      BottomNavigationBarItem(icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
+      BottomNavigationBarItem(icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
+      BottomNavigationBarItem(
+        icon: _OfflinePulseBadge(child: const Icon(Icons.crisis_alert, color: Color(0xFFB71C1C))),
+        label: GapLessL10n.t('emergency_screen_title'),
+      ),
+      BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: GapLessL10n.t('nav_tab_chat')),
+      BottomNavigationBarItem(icon: const Icon(Icons.settings), label: GapLessL10n.t('nav_tab_settings')),
+    ];
+
+    return _glassNav(
+      items: emergencyItems,
       onTap: (i) {
         if (i == 0) return;
-        final destinations = [
-          null, // 0: 地図（何もしない）
+        final screens = <Widget>[
           const EmergencyCardScreen(),
           const JmaFeedScreen(),
-          const EmergencySimpleScreen(),
+          const EmergencySimpleScreen(), // index 3: 緊急操作
           const ChatScreen(),
           const SettingsScreen(),
         ];
-        if (i == 2) JmaAlertService.instance.startPolling();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => destinations[i]!),
-        );
+        Navigator.push(context, MaterialPageRoute(builder: (_) => screens[i - 1]));
       },
-      type: BottomNavigationBarType.fixed,
-      selectedItemColor: _greenPrimary,
-      unselectedItemColor: Colors.grey,
-      backgroundColor: Theme.of(context).bottomAppBarTheme.color ?? Theme.of(context).scaffoldBackgroundColor,
-      elevation: 8,
-      items: [
-        BottomNavigationBarItem(icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
-        BottomNavigationBarItem(icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
-        BottomNavigationBarItem(
-          icon: ListenableBuilder(
-            listenable: JmaAlertService.instance,
-            builder: (_, __) {
-              final hasAlert = JmaAlertService.instance.hasActiveAlert;
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Icon(Icons.campaign,
-                      color: hasAlert ? const Color(0xFFB71C1C) : null),
-                  if (hasAlert)
-                    Positioned(
-                      right: -4,
-                      top: -4,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFB71C1C),
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-          label: GapLessL10n.t('nav_tab_feed'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.crisis_alert, color: Color(0xFFB71C1C)),
-          label: GapLessL10n.t('emergency_screen_title'),
-        ),
-        BottomNavigationBarItem(
-          icon: const Icon(Icons.chat_bubble_outline),
-          label: GapLessL10n.t('nav_tab_chat'),
-        ),
-        BottomNavigationBarItem(icon: const Icon(Icons.settings), label: GapLessL10n.t('nav_tab_settings')),
-      ],
     );
   }
 
@@ -1211,10 +1442,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
         currentLoc.latitude, currentLoc.longitude,
         _destination!.latitude, _destination!.longitude,
       );
-      // 方位角（度）: 北=0、時計回り
-      final dLat = _destination!.latitude - currentLoc.latitude;
-      final dLng = _destination!.longitude - currentLoc.longitude;
-      bearingDeg = (math.atan2(dLng, dLat) * 180 / math.pi + 360) % 360;
+      // 方位角（度）: 北=0、時計回り。
+      // Geolocator.bearingBetween は球面三角法で cos(lat) 補正済み。
+      // 自前 atan2(dLng, dLat) は緯度35°で最大18°ズレるので使わない。
+      bearingDeg = (Geolocator.bearingBetween(
+                currentLoc.latitude, currentLoc.longitude,
+                _destination!.latitude, _destination!.longitude,
+              ) +
+              360) %
+          360;
     }
 
     final loc = context.read<LocationProvider>();
@@ -1314,9 +1550,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
         currentLoc.latitude, currentLoc.longitude,
         _destination!.latitude, _destination!.longitude,
       );
-      final dLat = _destination!.latitude - currentLoc.latitude;
-      final dLng = _destination!.longitude - currentLoc.longitude;
-      bearingDeg = (math.atan2(dLng, dLat) * 180 / math.pi + 360) % 360;
+      bearingDeg = (Geolocator.bearingBetween(
+                currentLoc.latitude, currentLoc.longitude,
+                _destination!.latitude, _destination!.longitude,
+              ) +
+              360) %
+          360;
     }
 
     return Container(
@@ -1554,138 +1793,87 @@ class _NavigationScreenState extends State<NavigationScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        // SOSビーコン（長押し3秒で送信）
-        GestureDetector(
-          onTapDown: (_) => _onSosPressStart(),
-          onTapUp: (_) => _onSosPressEnd(),
-          onTapCancel: _onSosPressEnd,
-          child: FloatingActionButton.small(
-            heroTag: 'sos',
-            onPressed: () => _showSnack(GapLessL10n.t('sos_hold_hint')),
-            backgroundColor: const Color(0xFFB71C1C),
-            foregroundColor: Colors.white,
-            tooltip: GapLessL10n.t('sos_hold_hint'),
-            child: const Icon(Icons.sos),
-          ),
+        // 上段: SOS + 報告（横並び）
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 報告まとめFAB
+            FloatingActionButton.small(
+              heroTag: 'report',
+              onPressed: _showReportMenu,
+              backgroundColor: const Color(0xFFFF6F00),
+              foregroundColor: Colors.white,
+              tooltip: GapLessL10n.t('nav_tooltip_report'),
+              child: const Icon(Icons.campaign),
+            ),
+            const SizedBox(width: 8),
+            // SOSビーコン（長押し3秒で送信）
+            GestureDetector(
+              onTapDown: (_) => _onSosPressStart(),
+              onTapUp: (_) => _onSosPressEnd(),
+              onTapCancel: _onSosPressEnd,
+              child: FloatingActionButton.small(
+                heroTag: 'sos',
+                onPressed: () => _showSnack(GapLessL10n.t('sos_hold_hint')),
+                backgroundColor: const Color(0xFFB71C1C),
+                foregroundColor: Colors.white,
+                tooltip: GapLessL10n.t('sos_hold_hint'),
+                child: const Icon(Icons.sos),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        // 報告まとめFAB（旧5個 → 1個に集約）
-        FloatingActionButton.small(
-          heroTag: 'report',
-          onPressed: _showReportMenu,
-          backgroundColor: const Color(0xFFFF6F00),
-          foregroundColor: Colors.white,
-          tooltip: GapLessL10n.t('nav_tooltip_report'),
-          child: const Icon(Icons.campaign),
-        ),
-        const SizedBox(height: 8),
-        // 機能1: 最寄り避難所ルーティングボタン
-        FloatingActionButton.extended(
-          heroTag: 'shelter',
-          onPressed: _navigateToNearestShelter,
-          backgroundColor: _orangeAccent,
-          foregroundColor: Colors.white,
-          icon: const Icon(Icons.emergency_share),
-          label: Text(GapLessL10n.t('nav_nearest_shelter'),
-              style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.bold))),
-        ),
-        const SizedBox(height: 8),
-        // 現在地ボタン
-        FloatingActionButton(
-          heroTag: 'location',
-          onPressed: _moveToCurrentLocation,
-          backgroundColor: _greenPrimary,
-          foregroundColor: Colors.white,
-          child: const Icon(Icons.my_location),
+        const SizedBox(height: 10),
+        // 下段: 最寄り避難所（アイコンのみ） + 現在地（横並び）
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FloatingActionButton.small(
+              heroTag: 'shelter',
+              onPressed: _navigateToNearestShelter,
+              backgroundColor: _orangeAccent,
+              foregroundColor: Colors.white,
+              tooltip: GapLessL10n.t('nav_nearest_shelter'),
+              child: const Icon(Icons.emergency_share),
+            ),
+            const SizedBox(width: 8),
+            FloatingActionButton.small(
+              heroTag: 'location',
+              onPressed: _moveToCurrentLocation,
+              backgroundColor: _greenPrimary,
+              foregroundColor: Colors.white,
+              child: const Icon(Icons.my_location),
+            ),
+          ],
         ),
       ],
     );
   }
 }
 
-// ============================================================================
-// 機能5: ナビステータスバー
-// ============================================================================
-
-class _NavStatusBar extends StatelessWidget {
-  final BleRoadReportService ble;
-  final LocationProvider locationProv;
-
-  const _NavStatusBar({required this.ble, required this.locationProv});
-
-  @override
-  Widget build(BuildContext context) {
-    final bleRunning = ble.isRunning;
-    final bleCount = ble.receivedCount;
-    final hasLocation = locationProv.currentLocation != null;
-    final isTracking = locationProv.isTracking;
-
-    return ListenableBuilder(
-      listenable: PowerManager.instance,
-      builder: (_, __) {
-        final saving = PowerManager.instance.isPowerSaving;
-        return Container(
-          color: saving
-              ? const Color(0xFF4A0000)
-              : const Color(0xFF2E7D32).withValues(alpha: 0.9),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-          child: Row(
-            children: [
-              _StatusChip(
-                icon: hasLocation
-                    ? (isTracking ? Icons.gps_fixed : Icons.gps_not_fixed)
-                    : Icons.gps_off,
-                label: hasLocation ? 'GPS' : GapLessL10n.t('gps_none'),
-                color: hasLocation ? Colors.greenAccent : Colors.redAccent,
-              ),
-              const SizedBox(width: 12),
-              _StatusChip(
-                icon: bleRunning ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
-                label: bleRunning ? 'BLE($bleCount)' : GapLessL10n.t('ble_off'),
-                color: bleRunning ? Colors.lightBlueAccent : Colors.grey,
-              ),
-              const Spacer(),
-              if (saving)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.power_settings_new,
-                        color: Color(0xFFFF6F00), size: 14),
-                    const SizedBox(width: 4),
-                    Text(GapLessL10n.t('power_saving'),
-                        style: GapLessL10n.safeStyle(const TextStyle(
-                            color: Color(0xFFFF6F00),
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold))),
-                  ],
-                ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
+class _AppBarChip extends StatelessWidget {
   final IconData icon;
-  final String label;
   final Color color;
+  final String? label;
 
-  const _StatusChip(
-      {required this.icon, required this.label, required this.color});
+  const _AppBarChip({required this.icon, required this.color, this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: color, size: 13),
-        const SizedBox(width: 4),
-        Text(label,
-            style: GapLessL10n.safeStyle(TextStyle(
-                color: color, fontSize: 11, fontWeight: FontWeight.w600))),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: color, size: 16),
+          if (label != null) ...[
+            const SizedBox(width: 2),
+            Text(label!,
+                style: TextStyle(
+                    color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -1739,7 +1927,7 @@ class _RoadReportSheet extends StatelessWidget {
                   icon: const Icon(Icons.check_circle_outline),
                   label: Text(GapLessL10n.t('report_passable')),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF388E3C),
+                    backgroundColor: const Color(0xFF00C896),
                     foregroundColor: Colors.white,
                     minimumSize: const Size(0, 56),
                     shape: RoundedRectangleBorder(
@@ -1797,20 +1985,78 @@ class _ProfileOption extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(icon,
-          color: selected ? const Color(0xFF2E7D32) : Colors.grey),
+          color: selected ? const Color(0xFF00C896) : Colors.grey),
       title: Text(label,
           style: GapLessL10n.safeStyle(TextStyle(
               fontWeight:
                   selected ? FontWeight.bold : FontWeight.normal,
-              color: selected ? const Color(0xFF2E7D32) : null))),
+              color: selected ? const Color(0xFF00C896) : null))),
       subtitle: Text(subtitle, style: GapLessL10n.safeStyle(const TextStyle(fontSize: 12))),
       trailing: selected
-          ? const Icon(Icons.check_circle, color: Color(0xFF2E7D32))
+          ? const Icon(Icons.check_circle, color: Color(0xFF00C896))
           : null,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       tileColor:
-          selected ? const Color(0xFF2E7D32).withValues(alpha: 0.08) : null,
+          selected ? const Color(0xFF00C896).withValues(alpha: 0.08) : null,
       onTap: onTap,
+    );
+  }
+}
+
+// ============================================================================
+// 通信断絶バッジ: 電波なし30秒後に緊急操作タブアイコンに重ねて点滅表示
+// ============================================================================
+class _OfflinePulseBadge extends StatefulWidget {
+  final Widget child;
+  const _OfflinePulseBadge({required this.child});
+
+  @override
+  State<_OfflinePulseBadge> createState() => _OfflinePulseBadgeState();
+}
+
+class _OfflinePulseBadgeState extends State<_OfflinePulseBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(begin: 0.3, end: 1.0).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        widget.child,
+        Positioned(
+          right: -4,
+          top: -4,
+          child: FadeTransition(
+            opacity: _anim,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: const BoxDecoration(
+                color: Color(0xFFB71C1C),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

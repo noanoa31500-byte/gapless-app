@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'dart:ui';
 import 'dart:io' show Platform;
-import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/connectivity_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -32,9 +33,7 @@ import 'shelter_dashboard_screen.dart';
 /// 2. NAV: Visualizes Waypoint-based navigation (List of LatLng).
 ///        Shows "WAYPOINT MODE" when following a calculated safe route.
 ///
-/// 3. LOGIC: Explicitly displays the active safety logic based on region.
-///        Japan = Road Width Priority (Blockage Avoidance).
-///        Thailand = Avoid Electric Shock Risk (Flood + Power Infra).
+/// 3. LOGIC: Road Width Priority (Blockage Avoidance).
 ///
 /// 【iOS最適化】
 /// - compass_permission_service (Web JS API) を削除
@@ -48,22 +47,23 @@ class DisasterCompassScreen extends StatefulWidget {
 }
 
 class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
-  // --- DIRECTIVE 1: UI CONSTANTS ---
-  // Apple規定 #FF453A (emergencyRedDark) に準拠
-  static const Color _redPrimary = Color(0xFFFF453A);
-  static const Color _orangeAccent = Color(0xFFFF6F00);
-  static const Color _bgWhite = Color(0xFFF5F7FA);
+  // --- DESIGN SYSTEM COLORS ---
+  static const Color _emerald = Color(0xFF00C896);
+  static const Color _amber = Color(0xFFFF6B35);
+  static const Color _darkBg = Color(0xFF0A0A1A);
+  static const Color _cardDarker = Color(0xFF1A1A38);
+
   static const MethodChannel _brightnessCh = MethodChannel('gapless/brightness');
   double? _savedBrightness;
 
   static const double _btnHeight = 56.0;
-  static const double _btnRadius = 30.0;
-  static const double _cardRadius = 30.0;
+  static const double _btnRadius = 28.0;
+  static const double _cardRadius = 20.0;
   static const double _screenPadding = 24.0;
 
   Timer? _voiceTimer;
   double? _lastSpokenDistance;
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
+  StreamSubscription<bool>? _connectivitySub;
 
   @override
   void initState() {
@@ -95,19 +95,13 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
   void _initNavigation() {
     // Start periodic voice guidance
-    _voiceTimer = Timer.periodic(const Duration(seconds: 15), (_) {
+    _voiceTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       _speakNavigationUpdate();
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _tryStartAutoNavigation();
       _speakNavigationUpdate();
-      
-      // Ensure background route calculation is active
-      final locProvider = context.read<LocationProvider>();
-      if (locProvider.currentLocation != null) {
-        context.read<ShelterProvider>().updateBackgroundRoutes(locProvider.currentLocation!);
-      }
     });
   }
 
@@ -129,17 +123,17 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   void _initConnectivityMonitor() {
-    _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
+    _connectivitySub = ConnectivityService.onConnectivityChanged.listen((connected) {
       if (!mounted) return;
-      final hasNetwork = results.any((r) => r != ConnectivityResult.none);
+      final hasNetwork = connected;
       if (hasNetwork) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text(
-              '📶 通信が回復しました。ホームに戻れます。',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            content: Text(
+              GapLessL10n.t('connectivity_restored'),
+              style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-            backgroundColor: const Color(0xFF2E7D32),
+            backgroundColor: _emerald,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             margin: const EdgeInsets.all(24),
@@ -219,8 +213,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       // Directive 2: Waypoint Navigation distance
       distance = compassProvider.remainingDistance;
     } else {
-      final cachedDist = shelterProvider.getDistanceToTargetIfCached(target);
-      distance = cachedDist ?? -1.0;
+      distance = Geolocator.distanceBetween(
+        currentLocation.latitude, currentLocation.longitude,
+        target.lat, target.lng,
+      );
     }
 
     if (distance < 0) return;
@@ -264,44 +260,56 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-      backgroundColor: _bgWhite,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. Header Area (Padding 12 top to preserve compass space)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(_screenPadding, 12, _screenPadding, 12),
-              child: _buildHeader(region),
-            ),
+      backgroundColor: _darkBg,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.3),
+            radius: 1.2,
+            colors: [
+              Color(0xFF0D0D2B),
+              Color(0xFF0A0A1A),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // 1. Header Area
+              Padding(
+                padding: const EdgeInsets.fromLTRB(_screenPadding, 12, _screenPadding, 12),
+                child: _buildHeader(region),
+              ),
 
-            // 2. Destination Info Card (Directive 1: Radius 30)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
-              child: _buildDestinationCard(),
-            ),
+              // 2. Destination Info Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+                child: _buildDestinationCard(),
+              ),
 
-            // 3. Main Compass Visualization
-            Expanded(
-              child: _buildCompassCenter(),
-            ),
+              // 3. Main Compass Visualization
+              Expanded(
+                child: _buildCompassCenter(),
+              ),
 
-            // 4. Logic Indicator (Directive 3: Explicit Logic Display)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
-              child: _buildLogicIndicator(region),
-            ),
-            
-            const SizedBox(height: 16),
+              // 4. Logic Indicator
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
+                child: _buildLogicIndicator(region),
+              ),
 
-            // 5. Quick Select Chips
-            _buildQuickSelectChips(),
+              const SizedBox(height: 16),
 
-            // 6. Arrival Button (Directive 1: Height 56, Radius 30)
-            Padding(
-              padding: const EdgeInsets.all(_screenPadding),
-              child: _buildArrivalButton(),
-            ),
-          ],
+              // 5. Quick Select Chips
+              _buildQuickSelectChips(),
+
+              // 6. Arrival Button
+              Padding(
+                padding: const EdgeInsets.all(_screenPadding),
+                child: _buildArrivalButton(),
+              ),
+            ],
+          ),
         ),
       ),
       ),
@@ -322,34 +330,49 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             onLongPressEnd: (_) => _onExitHoldEnd(),
             onLongPressCancel: _onExitHoldEnd,
             onTap: () => _showSnackBar(
-                GapLessL10n.t('disaster_mode_exit_confirm'), _orangeAccent),
-            child: Container(
-              width: 56,
-              height: 48,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: _orangeAccent, width: 1.5),
-              ),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (_exitHoldProgress > 0)
-                    SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: CircularProgressIndicator(
-                        value: _exitHoldProgress,
-                        strokeWidth: 3,
-                        valueColor:
-                            const AlwaysStoppedAnimation(_orangeAccent),
-                        backgroundColor: Colors.transparent,
-                      ),
+                GapLessL10n.t('disaster_mode_exit_confirm'), _amber),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  width: 56,
+                  height: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _amber.withValues(alpha: 0.6),
+                      width: 1.5,
                     ),
-                  const Icon(Icons.warning_amber_rounded,
-                      color: _orangeAccent, size: 24),
-                ],
+                    boxShadow: [
+                      BoxShadow(
+                        color: _amber.withValues(alpha: 0.25),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      if (_exitHoldProgress > 0)
+                        SizedBox(
+                          width: 36,
+                          height: 36,
+                          child: CircularProgressIndicator(
+                            value: _exitHoldProgress,
+                            strokeWidth: 3,
+                            valueColor: const AlwaysStoppedAnimation(_amber),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        ),
+                      const Icon(Icons.warning_amber_rounded,
+                          color: _amber, size: 24),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
@@ -359,25 +382,36 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             const Text(
               "SAFE NAV",
               style: TextStyle(
-                color: _redPrimary,
+                color: _emerald,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
+                letterSpacing: 2.0,
               ),
             ),
             const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: _redPrimary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                region == AppRegion.japan ? "🇯🇵 MIYAGI" : "🇹🇭 SATUN",
-                style: const TextStyle(
-                  color: _redPrimary,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _emerald.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: _emerald.withValues(alpha: 0.3),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Text(
+                    "🇯🇵 TOKYO",
+                    style: TextStyle(
+                      color: _emerald,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -395,23 +429,32 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   Widget _buildCircleButton({required IconData icon, required VoidCallback onPressed, bool active = false}) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+    return ClipOval(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.08),
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: (active ? _emerald : _amber).withValues(alpha: 0.4),
+              width: 1.5,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: (active ? _emerald : _amber).withValues(alpha: 0.2),
+                blurRadius: 12,
+                spreadRadius: 0,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: active ? _orangeAccent : _redPrimary),
-        onPressed: onPressed,
+          child: IconButton(
+            icon: Icon(icon, color: active ? _emerald : _amber),
+            onPressed: onPressed,
+          ),
+        ),
       ),
     );
   }
@@ -435,90 +478,103 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         if (compassProv.isSafeNavigating) {
           distance = compassProv.remainingDistance;
         } else {
-          final cachedDist = shelterProv.getDistanceToTargetIfCached(target);
-          if (cachedDist != null) {
-            distance = cachedDist;
-          } else {
-            distance = const Distance().as(LengthUnit.Meter, loc, LatLng(target.lat, target.lng));
-          }
+          distance = const Distance().as(LengthUnit.Meter, loc, LatLng(target.lat, target.lng));
         }
 
-        final distStr = distance < 0 
-            ? "--" 
-            : distance < 1000 
-                ? "${distance.toStringAsFixed(0)}m" 
+        final distStr = distance < 0
+            ? "--"
+            : distance < 1000
+                ? "${distance.toStringAsFixed(0)}m"
                 : "${(distance / 1000).toStringAsFixed(1)}km";
 
-        return Container(
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(_cardRadius), // Directive 1
-            boxShadow: [
-              BoxShadow(
-                color: _redPrimary.withValues(alpha: 0.08),
-                blurRadius: 16,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: _orangeAccent.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Icon(Icons.flag_rounded, color: _orangeAccent, size: 32),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(_cardRadius),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(_cardRadius),
+                border: Border.all(
+                  color: _emerald.withValues(alpha: 0.25),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: _emerald.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "DESTINATION",
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _amber.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _amber.withValues(alpha: 0.3),
+                            width: 1,
                           ),
                         ),
-                        Semantics(
-                          label: 'Destination ${target.name}',
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              target.name,
-                              style: GapLessL10n.safeStyle(const TextStyle(
-                                color: _redPrimary,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              )),
+                        child: const Icon(Icons.flag_rounded, color: _amber, size: 28),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "DESTINATION",
+                              style: TextStyle(
+                                color: _emerald.withValues(alpha: 0.7),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.5,
+                              ),
                             ),
-                          ),
+                            Semantics(
+                              label: 'Destination ${target.name}',
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  target.name,
+                                  style: GapLessL10n.safeStyle(const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.3,
+                                  )),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(
+                      height: 1,
+                      color: Colors.white.withValues(alpha: 0.1),
                     ),
+                  ),
+                  // DISTANCEのみ表示（MODE/ETAを削除してコンパスのスペースを確保）
+                  Row(
+                    children: [
+                      _buildDetailItem("DISTANCE", distStr),
+                    ],
                   ),
                 ],
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Divider(height: 1),
-              ),
-              // DISTANCEのみ表示（MODE/ETAを削除してコンパスのスペースを確保）
-              Row(
-                children: [
-                  _buildDetailItem("DISTANCE", distStr),
-                ],
-              ),
-            ],
+            ),
           ),
         );
       },
@@ -526,26 +582,35 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   Widget _buildStatusCard(String title, IconData icon) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_cardRadius),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.grey, size: 28),
-          const SizedBox(width: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_cardRadius),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(_cardRadius),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+              width: 1,
             ),
           ),
-        ],
+          child: Row(
+            children: [
+              Icon(icon, color: Colors.white.withValues(alpha: 0.4), size: 28),
+              const SizedBox(width: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withValues(alpha: 0.5),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -559,18 +624,20 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           Text(
             label,
             style: GapLessL10n.safeStyle(TextStyle(
-              color: Colors.grey[700],
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+              color: Colors.white.withValues(alpha: 0.5),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.2,
             )),
           ),
           const SizedBox(height: 4),
           Text(
             value,
             style: GapLessL10n.safeStyle(TextStyle(
-              color: isHighlight ? _orangeAccent : _redPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+              color: isHighlight ? _amber : _emerald,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3,
             )),
           ),
         ],
@@ -585,9 +652,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         final loc = locProv.currentLocation;
 
         double? safeBearing;
-        
-        const targetGeoRegion = GeoRegion.jpOsaki;
-        
+
+        const targetGeoRegion = GeoRegion.jpTokyo;
+
         // Sync GeoRegion if changed
         if (compassProv.currentGeoRegion.code != targetGeoRegion.code) {
           Future.microtask(() => compassProv.setGeoRegion(targetGeoRegion));
@@ -603,26 +670,35 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           );
         }
 
-        // Color overlay indicating risk or on-track status
+        // Color overlay indicating on-track status
         Color? overlayColor;
-        if (loc != null) {
+        if (loc != null && safeBearing != null) {
           final heading = compassProv.trueHeading ?? 0.0;
-          final riskInfo = shelterProv.getRoadRiskInDirection(loc, heading);
-          
-          if (riskInfo != null && riskInfo['isSafe'] == false) {
-            overlayColor = Colors.red.withValues(alpha: 0.1);
-          } else if (safeBearing != null) {
-            double diff = (safeBearing - heading).abs();
-            if (diff > 180) diff = 360 - diff;
-            if (diff < 30) {
-              overlayColor = Colors.green.withValues(alpha: 0.05);
-            }
+          double diff = (safeBearing - heading).abs();
+          if (diff > 180) diff = 360 - diff;
+          if (diff < 30) {
+            overlayColor = _emerald.withValues(alpha: 0.06);
           }
         }
 
         return Stack(
           alignment: Alignment.center,
           children: [
+            // Outer radial glow ring
+            Container(
+              width: 320,
+              height: 320,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    _emerald.withValues(alpha: 0.04),
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+
             if (overlayColor != null)
               Container(
                 width: 280,
@@ -631,11 +707,35 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                   shape: BoxShape.circle,
                   color: overlayColor,
                   boxShadow: [
-                    BoxShadow(color: overlayColor, blurRadius: 60, spreadRadius: 20)
+                    BoxShadow(
+                      color: _emerald.withValues(alpha: 0.15),
+                      blurRadius: 60,
+                      spreadRadius: 20,
+                    )
                   ],
                 ),
               ),
-            
+
+            // Compass ring glow border
+            Container(
+              width: 296,
+              height: 296,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: _emerald.withValues(alpha: 0.18),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: _emerald.withValues(alpha: 0.12),
+                    blurRadius: 24,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+            ),
+
             Semantics(
               label: safeBearing != null
                   ? 'Compass, target bearing ${safeBearing.round()} degrees'
@@ -662,19 +762,39 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   /// iOSネイティブ: センサー取得待機インジケーター
   /// flutter_compassがCoreMotion経由でデータを取得するまで表示
   Widget _buildSensorWaitingIndicator() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      decoration: BoxDecoration(
-        color: _redPrimary.withValues(alpha: 0.75),
-        borderRadius: BorderRadius.circular(16),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _emerald.withValues(alpha: 0.3),
+              width: 1,
+            ),
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                color: _emerald,
+                strokeWidth: 2,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(GapLessL10n.t('sensor_loading'),
+              style: GapLessL10n.safeStyle(TextStyle(
+                color: Colors.white.withValues(alpha: 0.9),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ))),
+          ]),
+        ),
       ),
-      child: Row(mainAxisSize: MainAxisSize.min, children: [
-        const SizedBox(width: 14, height: 14,
-          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
-        const SizedBox(width: 10),
-        Text(GapLessL10n.t('sensor_loading'),
-          style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontSize: 13))),
-      ]),
     );
   }
 
@@ -683,56 +803,68 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     final isJapan = region == AppRegion.japan;
     final icon = isJapan ? Icons.add_road : Icons.flash_off;
     final title = isJapan ? "JAPAN LOGIC ACTIVE" : "THAI LOGIC ACTIVE";
-    final desc = isJapan 
-        ? "Priority: Road Width (Blockage Avoidance)" 
+    final desc = isJapan
+        ? "Priority: Road Width (Blockage Avoidance)"
         : "Priority: Avoid Electric Shock & Flood";
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: _redPrimary.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _redPrimary.withValues(alpha: 0.1)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: _redPrimary.withValues(alpha: 0.2)),
-            ),
-            child: Icon(icon, color: _redPrimary, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: _redPrimary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-                Text(
-                  desc,
-                  style: TextStyle(
-                    color: _redPrimary.withValues(alpha: 0.8),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.06),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _emerald.withValues(alpha: 0.2),
+              width: 1,
             ),
           ),
-        ],
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _emerald.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: _emerald.withValues(alpha: 0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(icon, color: _emerald, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: GapLessL10n.safeStyle(TextStyle(
+                        color: _emerald,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.2,
+                      )),
+                    ),
+                    Text(
+                      desc,
+                      style: GapLessL10n.safeStyle(TextStyle(
+                        color: Colors.white.withValues(alpha: 0.6),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      )),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -758,68 +890,91 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   Widget _buildQuickChip(IconData icon, String label, String type) {
     return GestureDetector(
       onTap: () => _findAndStartNavigation(type, typeLabel: label),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 18, color: _redPrimary),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: const TextStyle(
-                color: _redPrimary,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.07),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: _emerald.withValues(alpha: 0.25),
+                width: 1,
               ),
+              boxShadow: [
+                BoxShadow(
+                  color: _emerald.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
+            child: Row(
+              children: [
+                Icon(icon, size: 18, color: _emerald),
+                const SizedBox(width: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
-  // --- DIRECTIVE 1: ARRIVAL BUTTON (Height 56, Radius 30) ---
+  // --- DIRECTIVE 1: ARRIVAL BUTTON (Height 56, Radius 28) ---
   Widget _buildArrivalButton() {
     return SizedBox(
       width: double.infinity,
       height: _btnHeight,
-      child: ElevatedButton(
-        onPressed: () => _confirmArrival(),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _redPrimary,
-          foregroundColor: Colors.white,
-          elevation: 4,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_btnRadius),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.check_circle_outline),
-            const SizedBox(width: 12),
-            Text(
-              GapLessL10n.t('btn_arrived_label'),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.0,
-              ),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(_btnRadius),
+          boxShadow: [
+            BoxShadow(
+              color: _emerald.withValues(alpha: 0.35),
+              blurRadius: 20,
+              spreadRadius: 0,
+              offset: const Offset(0, 6),
             ),
           ],
+        ),
+        child: ElevatedButton(
+          onPressed: () => _confirmArrival(),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _emerald,
+            foregroundColor: Colors.white,
+            elevation: 0,
+            padding: EdgeInsets.zero,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(_btnRadius),
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.check_circle_outline, size: 22),
+              const SizedBox(width: 12),
+              Text(
+                GapLessL10n.t('btn_arrived_label'),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -831,27 +986,15 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     final userLoc = locationProvider.currentLocation;
 
     if (userLoc == null) {
-      _showSnackBar(GapLessL10n.t('bot_loc_error'), _orangeAccent);
+      _showSnackBar(GapLessL10n.t('bot_loc_error'), _amber);
       return;
     }
 
-    // Try cached route first
-    if (shelterProvider.startCachedNavigation(type)) {
-      final nearest = shelterProvider.navTarget!;
-      final safeRoute = shelterProvider.getSafestRouteAsLatLng();
-      if (safeRoute.isNotEmpty) {
-        context.read<CompassProvider>().startRouteNavigation(safeRoute);
-        HapticService.destinationSet();
-        _showSnackBar("Navigating to ${nearest.name}", _redPrimary);
-        return;
-      }
-    }
-
     List<String> types = [type];
-    
+
     // Find nearest
     final nearest = shelterProvider.getNearestShelter(userLoc, includeTypes: types);
-    
+
     if (nearest != null) {
       // Start fresh calculation
       await shelterProvider.startNavigation(nearest, currentLocation: userLoc);
@@ -863,7 +1006,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       }
 
       HapticService.destinationSet();
-      _showSnackBar("Route Calculated: ${nearest.name}", _redPrimary);
+      _showSnackBar("Route Calculated: ${nearest.name}", _emerald);
     } else {
       _showSnackBar("No facility found nearby", Colors.grey);
     }
@@ -887,29 +1030,52 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: _cardDarker,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(GapLessL10n.t('dialog_safety_title'),
-            style: GapLessL10n.safeStyle(const TextStyle(color: _redPrimary, fontWeight: FontWeight.bold))),
+            style: GapLessL10n.safeStyle(const TextStyle(
+              color: _emerald,
+              fontWeight: FontWeight.w700,
+            ))),
         content: Text(GapLessL10n.t('dialog_safety_desc'),
-            style: GapLessL10n.safeStyle(const TextStyle())),
+            style: GapLessL10n.safeStyle(TextStyle(
+              color: Colors.white.withValues(alpha: 0.8),
+            ))),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(GapLessL10n.t('btn_cancel'), style: GapLessL10n.safeStyle(const TextStyle(color: Colors.grey))),
+            child: Text(GapLessL10n.t('btn_cancel'),
+              style: GapLessL10n.safeStyle(TextStyle(
+                color: Colors.white.withValues(alpha: 0.5),
+              ))),
           ),
-          ElevatedButton(
-            onPressed: () {
-              HapticService.arrivedAtDestination();
-              Navigator.pop(ctx);
-              context.read<ShelterProvider>().setSafeInShelter(true);
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ShelterDashboardScreen()));
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: _redPrimary,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: _emerald.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                ),
+              ],
             ),
-            child: Text(GapLessL10n.t('btn_yes_arrived'), style: GapLessL10n.safeStyle(const TextStyle())),
+            child: ElevatedButton(
+              onPressed: () {
+                HapticService.arrivedAtDestination();
+                Navigator.pop(ctx);
+                context.read<ShelterProvider>().setSafeInShelter(true);
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ShelterDashboardScreen()));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _emerald,
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              child: Text(GapLessL10n.t('btn_yes_arrived'),
+                style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.w700))),
+            ),
           ),
         ],
       ),

@@ -26,8 +26,8 @@ class SmartCompass extends StatefulWidget {
   final List<double> dangerBearings;
   
   /// 磁気偏角（磁北と真北のズレ）
-  /// - 日本（大崎）: 約 -8.5° (西偏)
-  /// - タイ（サトゥン）: 約 -0.6° (ほぼゼロ)
+  /// - 日本（東京）: 約 -7.5° (西偏)
+  /// - 日本（大阪）: 約 -7.0° (西偏)
   /// 計算式: trueHeading = heading + magneticDeclination
   final double magneticDeclination;
   
@@ -304,7 +304,13 @@ class _SmartCompassState extends State<SmartCompass>
                 style: TextStyle(
                   fontSize: isNorth ? 24 : 18,
                   fontWeight: FontWeight.bold,
-                  color: isNorth ? accentColor : Colors.white.withValues(alpha: 0.7), // グレーから白系へ（視認性向上）
+                  color: isNorth ? accentColor : Colors.white.withValues(alpha: 0.7),
+                  fontFamily: 'NotoSansJP',
+                  fontFamilyFallback: const [
+                    'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
+                    'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
+                    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                  ],
                 ),
               ),
             ),
@@ -447,19 +453,11 @@ class _NeedlePainter extends CustomPainter {
 /// 使用例
 /// ============================================================================
 /// 
-/// // 日本モード（大崎市）
+/// // 日本モード（東京）
 /// SmartCompass(
 ///   heading: sensorHeading,
 ///   safeBearing: 45.0,  // 避難所は北東
 ///   dangerBearings: [120.0, 200.0],  // ブロック塀の方角
 ///   magneticDeclination: -8.5,  // 日本の磁気偏角
-/// )
-/// 
-/// // タイモード（サトゥン）
-/// SmartCompass(
-///   heading: sensorHeading,
-///   safeBearing: 180.0,  // 避難所は南
-///   dangerBearings: [90.0],  // 浸水エリアの方角
-///   magneticDeclination: -0.6,  // タイの磁気偏角
 /// )
 /// ============================================================================

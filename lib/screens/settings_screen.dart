@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/localization.dart';
-import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/language_provider.dart';
-import '../providers/user_profile_provider.dart';
 import '../providers/alert_provider.dart';
 import '../data/map_repository.dart';
 import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
 import 'tutorial_screen.dart';
+
+// Design system constants
+const _kEmerald      = Color(0xFF00C896);
+const _kAmber        = Color(0xFFFF6B35);
+const _kDark         = Color(0xFF1A1A2E);
+const _kSurface      = Color(0xFFF8F9FE);
+const _kCardBg       = Colors.white;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -21,43 +26,26 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _currentRegion = 'Japan';
-
   // 機能2: GPLB キャッシュ状態
   bool _isCached = false;
   int _cacheBytes = 0;
   bool _isRefreshing = false;
-
-  // バグ修正: TextEditingController をライフサイクル管理して毎ビルドでの生成・リークを防ぐ
-  late final TextEditingController _nameCtrl;
-  late final TextEditingController _nationalityCtrl;
-  late final TextEditingController _bloodCtrl;
 
   @override
   void initState() {
     super.initState();
     _loadSettings();
     _loadCacheStatus();
-    _nameCtrl = TextEditingController();
-    _nationalityCtrl = TextEditingController();
-    _bloodCtrl = TextEditingController();
   }
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
-    _nationalityCtrl.dispose();
-    _bloodCtrl.dispose();
     super.dispose();
   }
 
   /// 設定を読み込む
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!mounted) return;
-    setState(() {
-      _currentRegion = prefs.getString('target_region') ?? 'Japan';
-    });
+    // 設定ロードのフック (現状は地域固定のため何もしない)
   }
 
   /// 機能2: GPLBキャッシュの状態を読み込む
@@ -66,8 +54,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final cached = await repo.isAllDataReady();
     int totalBytes = 0;
     if (cached) {
-      for (final f in mapFiles) {
-        final path = await repo.localPath(f.localName);
+      for (final name in const [
+        'current_roads.gplb',
+        'current_poi.gplb',
+        'current_hazard.gplh',
+      ]) {
+        final path = await repo.localPath(name);
         try {
           totalBytes += await File(path).length();
         } catch (_) {}
@@ -91,7 +83,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(GapLessL10n.t('settings_map_updated')),
-            backgroundColor: const Color(0xFF388E3C),
+            backgroundColor: _kEmerald,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            margin: const EdgeInsets.all(16),
           ),
         );
       }
@@ -100,7 +95,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(GapLessL10n.t('settings_update_failed').replaceAll('@error', '$e')),
-            backgroundColor: Colors.red,
+            backgroundColor: _kAmber,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            margin: const EdgeInsets.all(16),
           ),
         );
       }
@@ -109,51 +107,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  /// 地域を変更
-  /// 注意: 地域と言語は独立して管理される。地域を変更しても言語は自動変更しない。
-  Future<void> _changeRegion(String region) async {
-    setState(() => _currentRegion = region);
-    
-    // SharedPreferencesに保存
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('target_region', region);
-    
-    // データを再読み込み
-    if (mounted) {
-      final provider = context.read<ShelterProvider>();
-      provider.setRegion(region);
-      
-      // 地域と言語は独立 - 地域を変えても言語は変更しない
-      // ユーザーが選択した言語で、どの地域のデータも表示される
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: SafeText('${GapLessL10n.t('set_region')}: $region'),
-          duration: const Duration(seconds: 1),
-        ),
-      );
-    }
-  }
-
   /// 言語を変更
   Future<void> _changeLanguage(String lang) async {
     await GapLessL10n.setLanguage(lang);
-    
+
     // LanguageProviderを更新して全画面を再描画
     if (mounted) {
       final languageProvider = context.read<LanguageProvider>();
       languageProvider.setLanguage(lang);
-      
+
       // TTS言語も更新
       final alertProvider = context.read<AlertProvider>();
       alertProvider.onLanguageChanged();
-      
+
       setState(() {});
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: SafeText('Language: ${GapLessL10n.currentLanguageName}'),
           duration: const Duration(seconds: 1),
+          backgroundColor: _kDark,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          margin: const EdgeInsets.all(16),
         ),
       );
     }
@@ -184,10 +160,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
 
     // デフォルトに戻す
-    setState(() {
-      _currentRegion = 'Japan';
-    });
-
     await GapLessL10n.setLanguage('en');
 
     // キャッシュUIを更新
@@ -198,6 +170,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         SnackBar(
           content: SafeText(GapLessL10n.t('clear_cache')),
           duration: const Duration(seconds: 2),
+          backgroundColor: _kDark,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          margin: const EdgeInsets.all(16),
         ),
       );
     }
@@ -207,245 +183,308 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
+      backgroundColor: _kSurface,
       appBar: AppBar(
-        title: SafeText(GapLessL10n.t('set_region')),
+        elevation: 0,
+        backgroundColor: _kDark,
+        foregroundColor: Colors.white,
+        title: Text(
+          GapLessL10n.t('set_region'),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.3,
+          ),
+        ),
       ),
       body: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
-// ...
-          
-          // Section 0: Emergency Gear (New)
-          _buildSectionHeader(GapLessL10n.t('header_emergency_gear')),
-          _buildProfileEditor(context),
-          
-          const Divider(),
-
           // Section 1: Localization
           _buildSectionHeader(GapLessL10n.t('set_region')),
-          
-          // 地域選択
-          ListTile(
-            leading: const Icon(Icons.public, color: Color(0xFFE53935)),
-            title: Text(GapLessL10n.t('set_region')),
-            subtitle: Text(_currentRegion == 'Japan'
-                ? GapLessL10n.t('region_miyagi')
-                : GapLessL10n.t('region_satun')),
-            trailing: DropdownButton<String>(
-              value: _currentRegion,
-              items: const [
-                DropdownMenuItem(value: 'Japan', child: Text('🇯🇵')),
-                DropdownMenuItem(value: 'Thailand', child: Text('🇹🇭')),
-              ],
-              onChanged: (value) {
-                if (value != null) _changeRegion(value);
-              },
+          _buildSettingsCard([
+            // 地域選択 (現在は日本のみ)
+            _buildSettingsRow(
+              icon: Icons.public_rounded,
+              iconColor: _kAmber,
+              title: GapLessL10n.t('set_region'),
+              subtitle: GapLessL10n.t('region_japan_tokyo'),
+              trailing: const Text('🇯🇵', style: TextStyle(fontSize: 22)),
             ),
-          ),
-          
-          const Divider(),
-          
-          // 言語選択
-          ListTile(
-            leading: const Icon(Icons.language, color: Color(0xFFE53935)),
-            title: Text(GapLessL10n.t('set_lang')),
-            subtitle: Text(GapLessL10n.currentLanguageName),
-            trailing: DropdownButton<String>(
-              value: GapLessL10n.lang,
-              items: GapLessL10n.availableLanguages.map((lang) {
-                final flag = GapLessL10n.flagForLanguage(lang);
-                final name = GapLessL10n.nameForLanguage(lang);
-                return DropdownMenuItem(
-                  value: lang,
-                  child: Text('$flag $name'),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) _changeLanguage(value);
-              },
-            ),
-          ),
-          
-          const Divider(),
-          
-          // チュートリアルを見る
-          ListTile(
-            leading: const Icon(Icons.school, color: Color(0xFF43A047)),
-            title: Text(_getTutorialLabel()),
-            subtitle: Text(_getTutorialDescription()),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => TutorialScreen(
-                    onComplete: () => Navigator.pop(context),
-                  ),
+            _buildDivider(),
+            // 言語選択
+            _buildSettingsRow(
+              icon: Icons.language_rounded,
+              iconColor: _kEmerald,
+              title: GapLessL10n.t('set_lang'),
+              subtitle: GapLessL10n.currentLanguageName,
+              trailing: DropdownButton<String>(
+                value: GapLessL10n.lang,
+                underline: const SizedBox(),
+                icon: const Icon(Icons.expand_more_rounded, color: _kEmerald),
+                style: const TextStyle(
+                  color: _kDark,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
                 ),
-              );
-            },
-          ),
-          
-          // 言語選択画面を表示 (DELETED)
-          // ListTile( ... )
-          
+                items: GapLessL10n.availableLanguages.map((lang) {
+                  final flag = GapLessL10n.flagForLanguage(lang);
+                  final name = GapLessL10n.nameForLanguage(lang);
+                  return DropdownMenuItem(
+                    value: lang,
+                    child: Text('$flag $name'),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) _changeLanguage(value);
+                },
+              ),
+            ),
+            _buildDivider(),
+            // チュートリアルを見る
+            _buildSettingsRow(
+              icon: Icons.school_rounded,
+              iconColor: const Color(0xFF5B9CF6),
+              title: _getTutorialLabel(),
+              subtitle: _getTutorialDescription(),
+              trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFBDBDBD)),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TutorialScreen(
+                      onComplete: () => Navigator.pop(context),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ]),
+
           const SizedBox(height: 24),
 
-          ListTile(
-            leading: const Icon(Icons.cleaning_services, color: Color(0xFFE53935)),
-            title: Text(GapLessL10n.t('clear_cache')),
-            subtitle: Text(GapLessL10n.t('msg_reset_desc')),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: Text(GapLessL10n.t('clear_cache')),
-                  content: const Text('Are you sure?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: Text(GapLessL10n.t('btn_cancel')),
+          _buildSettingsCard([
+            _buildSettingsRow(
+              icon: Icons.cleaning_services_rounded,
+              iconColor: _kAmber,
+              title: GapLessL10n.t('clear_cache'),
+              subtitle: GapLessL10n.t('msg_reset_desc'),
+              trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFBDBDBD)),
+              onTap: () async {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: Text(GapLessL10n.t('btn_clear')),
+                    title: Text(
+                      GapLessL10n.t('clear_cache'),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: _kDark,
+                      ),
+                    ),
+                    content: Text(GapLessL10n.t('label_are_you_sure')),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: Text(
+                          GapLessL10n.t('btn_cancel'),
+                          style: TextStyle(color: _kDark.withOpacity(0.5)),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: Text(
+                          GapLessL10n.t('btn_clear'),
+                          style: const TextStyle(
+                            color: _kAmber,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirm == true) {
+                  await _clearCache();
+                }
+              },
+            ),
+          ]),
+
+          const SizedBox(height: 24),
+
+          // 機能2: GPLBオフライン地図データ管理
+          _buildSectionHeader(GapLessL10n.t('section_offline_map')),
+          _buildSettingsCard([
+            _buildSettingsRow(
+              icon: _isCached ? Icons.map_rounded : Icons.map_outlined,
+              iconColor: _isCached ? _kEmerald : const Color(0xFFBDBDBD),
+              title: _isCached ? '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_cached")}' : '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_not_cached")}',
+              subtitle: _isCached
+                  ? GapLessL10n.tParams('map_data_size', {'size': (_cacheBytes / 1024).toStringAsFixed(0)})
+                  : GapLessL10n.t('map_data_download_needed'),
+              trailing: _isRefreshing
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                        valueColor: AlwaysStoppedAnimation<Color>(_kEmerald),
+                      ),
+                    )
+                  : GestureDetector(
+                      onTap: _refreshGplbCache,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: _kEmerald.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.refresh_rounded, color: _kEmerald, size: 20),
+                      ),
+                    ),
+            ),
+            if (_isCached) ...[
+              _buildDivider(),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle_rounded, color: _kEmerald, size: 16),
+                    const SizedBox(width: 8),
+                    SafeText(
+                      GapLessL10n.t('offline_nav_ok'),
+                      style: safeStyle(size: 13, color: _kEmerald),
                     ),
                   ],
                 ),
-              );
-              
-              if (confirm == true) {
-                await _clearCache();
-              }
-            },
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // 機能2: GPLBオフライン地図データ管理
-          _buildSectionHeader('オフライン地図データ'),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Column(
-              children: [
-                ListTile(
-                  leading: Icon(
-                    _isCached ? Icons.map : Icons.map_outlined,
-                    color: _isCached ? const Color(0xFF388E3C) : Colors.grey,
-                  ),
-                  title: Text(_isCached ? '地図データ: キャッシュ済み' : '地図データ: 未ダウンロード'),
-                  subtitle: Text(
-                    _isCached
-                        ? 'サイズ: ${(_cacheBytes / 1024).toStringAsFixed(0)} KB'
-                        : 'オフライン使用にはダウンロードが必要です',
-                  ),
-                  trailing: _isRefreshing
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.refresh),
-                          tooltip: '地図データを更新',
-                          onPressed: _refreshGplbCache,
-                        ),
-                ),
-                if (_isCached)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.check_circle, color: Color(0xFF388E3C), size: 16),
-                        const SizedBox(width: 8),
-                        SafeText(
-                          GapLessL10n.t('offline_nav_ok'),
-                          style: safeStyle(size: 13, color: const Color(0xFF388E3C)),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          ]),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
           // GPS位置情報セクション
           _buildSectionHeader(GapLessL10n.t('settings_gps')),
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Consumer<LocationProvider>(
+          _buildSettingsCard([
+            Consumer<LocationProvider>(
               builder: (context, locationProvider, _) {
                 return Column(
                   children: [
                     // GPS追跡スイッチ
-                    SwitchListTile(
-                      title: SafeText(
-                        GapLessL10n.t('lbl_gps_tracking'),
-                        style: emergencyTextStyle(isBold: true),
-                      ),
-                      subtitle: SafeText(
-                        locationProvider.isTracking
-                            ? GapLessL10n.t('status_tracking_on')
-                            : GapLessL10n.t('status_tracking_off'),
-                      ),
-                      value: locationProvider.isTracking,
-                      onChanged: (value) async {
-                        if (value) {
-                          await locationProvider.startLocationTracking();
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: SafeText(
-                                GapLessL10n.t('msg_tracking_start'),
-                              ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: _kEmerald.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                          );
-                        } else {
-                          locationProvider.stopLocationTracking();
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: SafeText(
-                                  GapLessL10n.t('msg_tracking_stop'),
+                            child: const Icon(Icons.gps_fixed_rounded, color: _kEmerald, size: 22),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SafeText(
+                                  GapLessL10n.t('lbl_gps_tracking'),
+                                  style: emergencyTextStyle(isBold: true),
                                 ),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    ),
-                    const Divider(height: 1),
-                    // 現在位置情報表示
-                    ListTile(
-                      leading: const Icon(Icons.location_on),
-                      title: SafeText(
-                        GapLessL10n.t('lbl_current_location'),
+                                SafeText(
+                                  locationProvider.isTracking
+                                      ? GapLessL10n.t('status_tracking_on')
+                                      : GapLessL10n.t('status_tracking_off'),
+                                  style: emergencyTextStyle(size: 13, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Switch(
+                            value: locationProvider.isTracking,
+                            activeColor: _kEmerald,
+                            onChanged: (value) async {
+                              if (value) {
+                                await locationProvider.startLocationTracking();
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: SafeText(GapLessL10n.t('msg_tracking_start')),
+                                    backgroundColor: _kDark,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14)),
+                                    margin: const EdgeInsets.all(16),
+                                  ),
+                                );
+                              } else {
+                                locationProvider.stopLocationTracking();
+                                if (mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: SafeText(GapLessL10n.t('msg_tracking_stop')),
+                                      backgroundColor: _kDark,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(14)),
+                                      margin: const EdgeInsets.all(16),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      subtitle: locationProvider.currentLocation != null
+                    ),
+                    _buildDivider(),
+                    // 現在位置情報表示
+                    _buildSettingsRow(
+                      icon: Icons.location_on_rounded,
+                      iconColor: _kAmber,
+                      title: GapLessL10n.t('lbl_current_location'),
+                      subtitleWidget: locationProvider.currentLocation != null
                           ? SafeText(
                               '${locationProvider.currentLocationName}\n'
                               '${locationProvider.currentLocation!.latitude.toStringAsFixed(6)}, '
                               '${locationProvider.currentLocation!.longitude.toStringAsFixed(6)}',
+                              style: emergencyTextStyle(size: 12, color: Colors.grey),
                             )
                           : SafeText(
                               GapLessL10n.t('lbl_no_location'),
+                              style: emergencyTextStyle(size: 13, color: Colors.grey),
                             ),
                       trailing: locationProvider.currentLocation != null
-                          ? IconButton(
-                              icon: const Icon(Icons.clear),
-                              onPressed: () {
+                          ? GestureDetector(
+                              onTap: () {
                                 locationProvider.exitDemoMode();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: SafeText(
-                                      GapLessL10n.t('msg_location_cleared'),
-                                    ),
+                                    content: SafeText(GapLessL10n.t('msg_location_cleared')),
+                                    backgroundColor: _kDark,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(14)),
+                                    margin: const EdgeInsets.all(16),
                                   ),
                                 );
                               },
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.clear_rounded, color: Colors.red, size: 18),
+                              ),
                             )
                           : null,
                     ),
@@ -453,185 +492,151 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
-          ),
-          
+          ]),
+
           const SizedBox(height: 24),
-          
+
           // Section 3: About
           _buildSectionHeader(GapLessL10n.t('set_about')),
-          
-          ListTile(
-            leading: const Icon(Icons.info, color: Color(0xFF43A047)),
-            title: Text('${GapLessL10n.t('app_version')} 1.0.0'),
-            subtitle: Text(GapLessL10n.t('label_gapless_project')),
-          ),
+          _buildSettingsCard([
+            _buildSettingsRow(
+              icon: Icons.info_rounded,
+              iconColor: _kEmerald,
+              title: '${GapLessL10n.t('app_version')} 1.0.0',
+              subtitle: GapLessL10n.t('label_gapless_project'),
+            ),
+            _buildDivider(),
+            _buildSettingsRow(
+              icon: Icons.developer_mode_rounded,
+              iconColor: const Color(0xFF5B9CF6),
+              title: GapLessL10n.t('app_credit'),
+              subtitle: GapLessL10n.t('label_developed_for'),
+            ),
+          ]),
 
-          ListTile(
-            leading: const Icon(Icons.developer_mode, color: Color(0xFF43A047)),
-            title: Text(GapLessL10n.t('app_credit')),
-            subtitle: Text(GapLessL10n.t('label_developed_for')),
-          ),
-          
-          const SizedBox(height: 32),
+          const SizedBox(height: 48),
         ],
       ),
     );
   }
 
-  Widget _buildProfileEditor(BuildContext context) {
-    final profileProvider = context.watch<UserProfileProvider>();
-    final profile = profileProvider.profile;
+  // -----------------------------------------------------------------------
+  // Design helpers
+  // -----------------------------------------------------------------------
 
-    // コントローラーのテキストをプロファイルと同期（フォーカスがない場合のみ）
-    if (!_nameCtrl.value.composing.isValid || _nameCtrl.text.isEmpty) {
-      if (_nameCtrl.text != profile.name) {
-        _nameCtrl.value = TextEditingValue(
-          text: profile.name,
-          selection: TextSelection.collapsed(offset: profile.name.length),
-        );
-      }
-    }
-    if (_nationalityCtrl.text != profile.nationality && !_nationalityCtrl.value.composing.isValid) {
-      _nationalityCtrl.value = TextEditingValue(
-        text: profile.nationality,
-        selection: TextSelection.collapsed(offset: profile.nationality.length),
-      );
-    }
-    if (_bloodCtrl.text != profile.bloodType && !_bloodCtrl.value.composing.isValid) {
-      _bloodCtrl.value = TextEditingValue(
-        text: profile.bloodType,
-        selection: TextSelection.collapsed(offset: profile.bloodType.length),
-      );
-    }
-
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            // Name
-            TextField(
-              decoration: InputDecoration(labelText: GapLessL10n.t('label_name'), hintText: GapLessL10n.t('hint_name')),
-              controller: _nameCtrl,
-              onChanged: (val) {
-                profile.name = val;
-                profileProvider.saveProfile(profile);
-              },
-            ),
-            const SizedBox(height: 12),
-            // Nation & Blood
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(labelText: GapLessL10n.t('label_nation')),
-                    controller: _nationalityCtrl,
-                    onChanged: (val) {
-                      profile.nationality = val;
-                      profileProvider.saveProfile(profile);
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(labelText: GapLessL10n.t('label_blood')),
-                    controller: _bloodCtrl,
-                    onChanged: (val) {
-                      profile.bloodType = val;
-                      profileProvider.saveProfile(profile);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            
-            // Medical / Allergies
-              Align(
-                alignment: Alignment.centerLeft,
-                child: SafeText(GapLessL10n.t('label_allergies'), style: emergencyTextStyle(isBold: true, color: Colors.grey)),
-              ),
-            Wrap(
-              spacing: 8,
-              children: ['Eggs', 'Peanuts', 'Milk', 'Seafood', 'Wheat'].map((allergy) {
-                final isSelected = profile.allergies.contains(allergy);
-                
-                // Map allergy ID to localization key
-                String label = allergy;
-                if (allergy == 'Eggs') label = GapLessL10n.t('allergy_eggs');
-                else if (allergy == 'Peanuts') label = GapLessL10n.t('allergy_peanuts');
-                else if (allergy == 'Milk') label = GapLessL10n.t('allergy_milk');
-                else if (allergy == 'Seafood') label = GapLessL10n.t('allergy_seafood');
-                else if (allergy == 'Wheat') label = GapLessL10n.t('allergy_wheat');
-
-                return FilterChip(
-                  label: Text(label),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) {
-                      profile.allergies.add(allergy);
-                    } else {
-                      profile.allergies.remove(allergy);
-                    }
-                    profileProvider.saveProfile(profile);
-                  },
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 16),
-            
-            // Needs
-             Align(
-              alignment: Alignment.centerLeft,
-              child: SafeText(GapLessL10n.t('label_needs'), style: emergencyTextStyle(isBold: true, color: Colors.grey)),
-            ),
-             Wrap(
-              spacing: 8,
-              children: ['Wheelchair', 'Visual Impairment', 'Hearing Impairment', 'Pregnancy', 'Infant', 'Halal'].map((need) {
-                final isSelected = profile.needs.contains(need);
-                
-                // Map need ID to localization key
-                String label = need;
-                if (need == 'Wheelchair') label = GapLessL10n.t('need_wheelchair');
-                else if (need == 'Visual Impairment') label = GapLessL10n.t('need_visual');
-                else if (need == 'Hearing Impairment') label = GapLessL10n.t('need_hearing');
-                else if (need == 'Pregnancy') label = GapLessL10n.t('need_pregnancy');
-                else if (need == 'Infant') label = GapLessL10n.t('need_infant');
-                else if (need == 'Halal') label = GapLessL10n.t('need_halal');
-
-                return FilterChip(
-                  label: Text(label),
-                  selected: isSelected,
-                  onSelected: (selected) {
-                    if (selected) {
-                      profile.needs.add(need);
-                    } else {
-                      profile.needs.remove(need);
-                    }
-                    profileProvider.saveProfile(profile);
-                  },
-                );
-              }).toList(),
-            ),
-          ],
+  /// Section header: small caps emerald label
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      child: Text(
+        title.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: _kEmerald,
+          letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  /// セクションヘッダーを構築 (Existing Method)
-  Widget _buildSectionHeader(String title) {
+  /// Rounded card that wraps a group of settings rows
+  Widget _buildSettingsCard(List<Widget> children) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      child: SafeText(
-        title,
-        style: emergencyTextStyle(
-          size: 14,
-          isBold: true,
-          color: const Color(0xFF6B7280),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: _kCardBg,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.07),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        children: children,
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      thickness: 1,
+      indent: 70,
+      endIndent: 0,
+      color: _kDark.withOpacity(0.06),
+    );
+  }
+
+  /// A single settings row with icon badge, title, optional subtitle and trailing
+  Widget _buildSettingsRow({
+    required IconData icon,
+    required Color iconColor,
+    required String title,
+    String? subtitle,
+    Widget? subtitleWidget,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              // Icon badge
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 22),
+              ),
+              const SizedBox(width: 14),
+              // Texts
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: _kDark,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                    if (subtitleWidget != null) ...[
+                      const SizedBox(height: 2),
+                      subtitleWidget,
+                    ] else if (subtitle != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: _kDark.withOpacity(0.45),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              if (trailing != null) ...[
+                const SizedBox(width: 8),
+                trailing,
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -660,8 +665,4 @@ class _SettingsScreenState extends State<SettingsScreen> {
         return 'Learn how to use the app';
     }
   }
-
-
-
-
 }

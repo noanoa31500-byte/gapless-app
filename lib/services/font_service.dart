@@ -42,6 +42,9 @@ class FontService {
         // Bengali (eager load to prevent tofu)
         _loadFont('NotoSansBengali',      'assets/fonts/NotoSansBengali-Regular.ttf'),
         _loadFont('NotoSansBengali',      'assets/fonts/NotoSansBengali-Bold.ttf',      weight: FontWeight.bold),
+        // Arabic (eager load to prevent tofu — needed for العربية chip label)
+        _loadFont('NotoSansArabic',       'assets/fonts/NotoSansArabic-Regular.ttf'),
+        _loadFont('NotoSansArabic',       'assets/fonts/NotoSansArabic-Bold.ttf',       weight: FontWeight.bold),
       ]);
       _loaded = true;
       debugPrint('--- [FontService] All fonts loaded successfully ---');

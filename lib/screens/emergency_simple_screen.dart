@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 import '../providers/location_provider.dart';
 import '../providers/shelter_provider.dart';
 import '../services/ble_road_report_service.dart';
@@ -15,6 +13,7 @@ import '../services/power_manager.dart';
 import '../theme/app_colors.dart';
 import '../utils/accessibility.dart';
 import '../utils/localization.dart';
+import 'risk_radar_compass_screen.dart';
 
 // ============================================================================
 // EmergencySimpleScreen — 災害時緊急操作UI
@@ -263,40 +262,6 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
   }
 
   // ---------------------------------------------------------------------------
-  // 緊急電話: 地域別番号で実発信
-  // ---------------------------------------------------------------------------
-
-  Future<void> _callEmergency() async {
-    final lang = GapLessL10n.lang;
-    String number;
-    switch (lang) {
-      case 'th':
-        number = '191'; // タイ警察
-        break;
-      case 'en':
-      case 'es':
-      case 'pt':
-        number = '911'; // 米国/英語圏既定
-        break;
-      default:
-        number = '119'; // 日本: 救急・消防
-    }
-    final uri = Uri.parse('tel:$number');
-    HapticFeedback.heavyImpact();
-    _announcer.announceAlert(GapLessL10n.t('emergency_call_a11y'));
-    try {
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      } else {
-        _announcer
-            .announceAlert(GapLessL10n.t('emergency_call_instruction'));
-      }
-    } catch (_) {
-      _announcer.announceAlert(GapLessL10n.t('emergency_call_instruction'));
-    }
-  }
-
-  // ---------------------------------------------------------------------------
   // Build
   // ---------------------------------------------------------------------------
 
@@ -310,7 +275,11 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
     } else if (!reduce && !_pulseCtrl.isAnimating) {
       _pulseCtrl.repeat(reverse: true);
     }
-    return KeyboardListener(
+    return PopScope(
+      // 緊急画面からハードウェア戻る/スワイプで離脱しない。
+      // 災害コア画面なので誤操作脱出を防ぐ (DisasterCompassScreen と同設計)。
+      canPop: false,
+      child: KeyboardListener(
       focusNode: _focusNode,
       onKeyEvent: (event) {
         if (event is KeyDownEvent &&
@@ -321,14 +290,30 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
       child: Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
-          backgroundColor: AppColors.emergencyRedMuted,
+          backgroundColor: const Color(0xFF1A1A2E),
           foregroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          elevation: 0,
           title: Text(
             GapLessL10n.t('emergency_screen_title'),
             style: GapLessL10n.safeStyle(const TextStyle(
-                fontWeight: FontWeight.bold, fontSize: 18)),
+                fontWeight: FontWeight.w700,
+                fontSize: 19,
+                letterSpacing: 0.3)),
           ),
           actions: [
+            // RiskRadar 360° (深水・激流方位) への導線。
+            // README 機能 6「RiskRadar」の唯一のエントリ。
+            Semantics(
+              button: true,
+              label: GapLessL10n.t('risk_radar_title'),
+              child: IconButton(
+                icon: const Icon(Icons.radar, size: 22),
+                tooltip: GapLessL10n.t('risk_radar_title'),
+                onPressed: () =>
+                    Navigator.of(context).pushNamed('/risk_radar'),
+              ),
+            ),
             // バッテリー残量 (18pt以上 / コントラスト強化)
             ListenableBuilder(
               listenable: PowerManager.instance,
@@ -356,11 +341,13 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
         ),
         body: Column(
           children: [
-            Expanded(flex: 3, child: _buildSosZone()),
+            // SOS を画面の 40% 確保 (README「上半分=SOS」要件準拠)。
+            Expanded(flex: 4, child: _buildSosZone()),
             Expanded(flex: 3, child: _buildNavZone()),
-            Expanded(flex: 4, child: _buildActionsZone()),
+            Expanded(flex: 3, child: _buildActionsZone()),
           ],
         ),
+      ),
       ),
     );
   }
@@ -375,15 +362,20 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
             : GapLessL10n.t('sos_hold_3s_hint'));
     return Container(
       width: double.infinity,
-      color: _sosSent
-          ? AppColors.emergencyRedSurface
-          : AppColors.emergencyRedDark,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: _sosSent
+              ? [AppColors.emergencyRedSurface, const Color(0xFF3A0000)]
+              : [AppColors.emergencyRedDark, const Color(0xFF8B0000)],
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // WCAG: white + 16pt minimum
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: FittedBox(
               fit: BoxFit.scaleDown,
               child: Text(
@@ -391,12 +383,13 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                 textAlign: TextAlign.center,
                 style: GapLessL10n.safeStyle(const TextStyle(
                     color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600)),
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3)),
               ),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Semantics(
             button: true,
             label: GapLessL10n.t('sos_button_a11y'),
@@ -414,34 +407,46 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
-                      width: 110,
-                      height: 110,
+                      width: 208,
+                      height: 208,
                       child: CircularProgressIndicator(
                         value: _sosHoldProgress > 0 ? _sosHoldProgress : null,
                         valueColor:
                             const AlwaysStoppedAnimation(Colors.white),
-                        strokeWidth: 6,
+                        strokeWidth: 9,
                         backgroundColor: Colors.white24,
                       ),
                     ),
                     Container(
-                      width: 92,
-                      height: 92,
+                      width: 184,
+                      height: 184,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: _sosSent
-                            ? AppColors.emergencyRedMuted
-                            : (_sosArmed
-                                ? AppColors.emergencyRed
-                                : AppColors.emergencyRedDark),
+                        gradient: RadialGradient(
+                          colors: _sosSent
+                              ? [AppColors.emergencyRedMuted, const Color(0xFF3A0000)]
+                              : (_sosArmed
+                                  ? [AppColors.emergencyRed, const Color(0xFFB00020)]
+                                  : [AppColors.emergencyRedDark, const Color(0xFF6B0000)]),
+                          center: const Alignment(-0.3, -0.3),
+                          radius: 1.0,
+                        ),
                         border: Border.all(
-                            color: Colors.white,
-                            width: _sosArmed ? 4 : 3),
+                          color: Colors.white,
+                          width: _sosArmed ? 4.5 : 3.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.emergencyRed.withValues(alpha: 0.5),
+                            blurRadius: 32,
+                            spreadRadius: 4,
+                          ),
+                        ],
                       ),
                       child: Icon(
-                        _sosSent ? Icons.check : Icons.sos,
+                        _sosSent ? Icons.check_circle : Icons.sos,
                         color: Colors.white,
-                        size: 48,
+                        size: 92,
                       ),
                     ),
                   ],
@@ -525,36 +530,60 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
         : '---';
 
     return Container(
-      color: const Color(0xFF1A1A2E),
       width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF1A1A2E), Color(0xFF16213E)],
+        ),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Semantics(
-            label: bearingDeg != null
-                ? 'Direction ${bearingDeg.round()} degrees'
-                : 'No direction',
-            child: bearingDeg != null
-                ? Transform.rotate(
-                    angle: bearingDeg * math.pi / 180,
-                    child: const Icon(Icons.navigation,
-                        size: 72, color: Color(0xFF4CAF50)),
-                  )
-                : const Icon(Icons.explore,
-                    size: 72, color: Colors.white70),
+          // Arrow with soft glow
+          Container(
+            width: 96,
+            height: 96,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: const Color(0xFF00C896).withValues(alpha: 0.12),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF00C896).withValues(alpha: 0.25),
+                  blurRadius: 24,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
+            child: Semantics(
+              label: bearingDeg != null
+                  ? 'Direction ${bearingDeg.round()} degrees'
+                  : 'No direction',
+              child: bearingDeg != null
+                  ? Transform.rotate(
+                      angle: bearingDeg * math.pi / 180,
+                      child: const Icon(Icons.navigation_rounded,
+                          size: 56, color: Color(0xFF00C896)),
+                    )
+                  : const Icon(Icons.explore_rounded,
+                      size: 56, color: Colors.white54),
+            ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           Semantics(
             label: 'Distance $distText',
             child: Text(
               distText,
               style: GapLessL10n.safeStyle(const TextStyle(
                   color: Colors.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold)),
+                  fontSize: 42,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5)),
             ),
           ),
-          if (nearest != null)
+          if (nearest != null) ...[
+            const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Semantics(
@@ -564,14 +593,16 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   child: Text(
                     nearest.name,
                     style: GapLessL10n.safeStyle(const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600)),
+                        color: Colors.white70,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.3)),
                     textAlign: TextAlign.center,
                   ),
                 ),
               ),
             ),
+          ],
         ],
       ),
     );
@@ -581,8 +612,14 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
 
   Widget _buildActionsZone() {
     return Container(
-      color: const Color(0xFF212121),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF1E1E2E), Color(0xFF12121A)],
+        ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -590,11 +627,16 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
             children: [
               Expanded(
                 child: _actionButton(
-                  icon: Icons.phone,
-                  label: GapLessL10n.t('emergency_call'),
-                  semanticLabel: GapLessL10n.t('emergency_call_a11y'),
+                  icon: Icons.explore_rounded,
+                  label: GapLessL10n.t('nav_compass'),
+                  semanticLabel: GapLessL10n.t('nav_compass'),
                   color: const Color(0xFF1565C0),
-                  onTap: _callEmergency,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RiskRadarCompassScreen(),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -603,7 +645,7 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   icon: Icons.water_drop,
                   label: GapLessL10n.t('emergency_water'),
                   semanticLabel: GapLessL10n.t('water_a11y'),
-                  color: const Color(0xFF00838F),
+                  color: AppColors.darkSurface3,
                   onTap: () => _announcer
                       .announceAlert(GapLessL10n.t('emergency_water_tip')),
                 ),
@@ -617,7 +659,7 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   icon: Icons.medical_services,
                   label: GapLessL10n.t('emergency_first_aid'),
                   semanticLabel: GapLessL10n.t('first_aid_a11y'),
-                  color: const Color(0xFF558B2F),
+                  color: AppColors.primaryGreenMuted,
                   onTap: () => _announcer.announceAlert(
                       GapLessL10n.t('emergency_first_aid_tip')),
                 ),
@@ -628,7 +670,7 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   icon: Icons.record_voice_over,
                   label: GapLessL10n.t('emergency_repeat'),
                   semanticLabel: GapLessL10n.t('tts_replay_a11y'),
-                  color: const Color(0xFF6A1B9A),
+                  color: AppColors.darkSurface2,
                   onTap: _speakCurrentGuide,
                 ),
               ),
@@ -652,25 +694,37 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          height: 80,
+          height: 96,
           decoration: BoxDecoration(
             color: color,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.40),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.10),
+              width: 1.0,
+            ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white, size: 30),
-              const SizedBox(height: 4),
+              Icon(icon, color: Colors.white, size: 34),
+              const SizedBox(height: 6),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
                   label,
                   style: GapLessL10n.safeStyle(const TextStyle(
                       color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold)),
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.2)),
                   textAlign: TextAlign.center,
                 ),
               ),

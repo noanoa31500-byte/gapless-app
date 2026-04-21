@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
+import '../providers/region_mode_provider.dart';
 import 'offline_risk_scanner.dart';
 
 /// ============================================================================
@@ -219,9 +220,9 @@ class RiskRadarScanner {
   /// データがロード済みかチェック
   bool get isReady => _baseScanner.isLoaded;
 
-  /// データをロード
-  Future<void> loadData() async {
-    await _baseScanner.loadData();
+  /// データをロード。region 未指定時は OfflineRiskScanner の既定 (タイ)。
+  Future<void> loadData({Region? region}) async {
+    await _baseScanner.loadData(region: region);
   }
 
   /// ============================================================================

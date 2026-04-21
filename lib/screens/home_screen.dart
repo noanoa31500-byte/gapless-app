@@ -1,17 +1,5 @@
-/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-   ARCHITECTURAL OVERWRITE: LIB/SCREENS/HOME_SCREEN.DART
-   Directives Implemented:
-   1. UI: Navy (0xFF2E7D32) / Orange (0xFFFF6F00) Palette.
-          BorderRadius 30.0 for buttons/cards.
-          Height 56.0 for primary actions.
-          Padding 24.0+ for layout breathing room.
-   2. NAV: Visualizes Waypoint-based navigation (List<LatLng>) via Polyline.
-   3. LOGIC: Explicitly displays the active safety logic based on region.
-             Japan = Road Width Priority.
-             Thailand = Avoid Electric Shock Risk.
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
-
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
@@ -42,6 +30,7 @@ import '../widgets/dead_reckoning_badge.dart';
 import '../ble/ble_packet.dart';
 import '../ble/ble_repository.dart';
 import '../ble/ble_service.dart';
+import '../services/ble_road_report_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -51,12 +40,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
-  // --- DIRECTIVE 1: UI CONSTANTS ---
-  static const Color _greenPrimary = Color(0xFF2E7D32);
-  static const Color _orangeAccent = Color(0xFFFF6F00);
-  static const double _uiRadius = 30.0;
-  static const double _uiHeight = 56.0;
-  static const double _uiPadding = 24.0;
+  // --- DESIGN SYSTEM CONSTANTS ---
+  static const Color _greenPrimary = Color(0xFF00C896); // emerald
+  static const Color _orangeAccent = Color(0xFFFF6B35); // amber
+  static const Color _darkBg      = Color(0xFF1A1A2E);
+  static const Color _surface     = Color(0xFFF8F9FE);
+  static const double _uiRadius  = 28.0;
+  static const double _uiHeight  = 56.0;
+  static const double _uiPadding = 20.0;
 
   final MapController _mapController = MapController();
   
@@ -104,6 +95,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       await shelterProvider.loadHazardPolygons();
       await shelterProvider.loadRoadData();
     }
+    BleRoadReportService.instance.start();
   }
 
   @override
@@ -168,17 +160,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // Loading State
     if (shelterProvider.isLoading) {
       return Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: _surface,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 80,
-                height: 80,
+                width: 88,
+                height: 88,
                 decoration: BoxDecoration(
-                  color: _greenPrimary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(20),
+                  color: _greenPrimary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _greenPrimary.withValues(alpha: 0.18),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: const Center(
                   child: CircularProgressIndicator(
@@ -187,12 +186,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               Text(
                 GapLessL10n.t('bot_analyzing'),
-                style: const TextStyle(
-                  color: Colors.grey,
+                style: TextStyle(
+                  color: _darkBg.withValues(alpha: 0.55),
                   fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],
@@ -202,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _surface,
       body: Stack(
         children: [
           // ---------------------------------------------------------
@@ -310,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     LatLng? currentLocation,
     ShelterProvider shelterProv,
   ) {
-    const initialCenter = LatLng(38.3591, 140.9405); // 大崎市中心
+    const initialCenter = LatLng(35.6812, 139.7671); // 東京駅
 
     return FlutterMap(
       mapController: _mapController,
@@ -352,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             )).toList(),
           ),
 
-        // 4. Flood Risk Circles (Thailand) — トグルで表示/非表示
+        // 4. Flood Risk Circles — トグルで表示/非表示
         if (_showFloodOverlay && shelterProv.floodRiskCircles.isNotEmpty)
           CircleLayer(
             circles: shelterProv.floodRiskCircles.map((data) => CircleMarker(
@@ -371,10 +372,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             polylines: [
               Polyline(
                 points: shelterProv.getSafestRouteAsLatLng(),
-                strokeWidth: 6.0,
-                color: _greenPrimary.withValues(alpha: 0.8),
+                strokeWidth: 7.0,
+                color: _greenPrimary.withValues(alpha: 0.85),
                 borderColor: Colors.white,
-                borderStrokeWidth: 2.0,
+                borderStrokeWidth: 2.5,
                 strokeCap: StrokeCap.round,
                 strokeJoin: StrokeJoin.round,
               ),
@@ -390,17 +391,30 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             markers: _buildShelterMarkers(shelterProv),
             builder: (context, markers) => Container(
               decoration: BoxDecoration(
-                color: _greenPrimary,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF00C896), Color(0xFF00A07A)],
+                ),
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 3),
-                boxShadow: const [
-                  BoxShadow(color: Colors.black38, blurRadius: 4, offset: Offset(0, 2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: _greenPrimary.withValues(alpha: 0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
                 ],
               ),
               child: Center(
                 child: Text(
                   '${markers.length}',
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    letterSpacing: 0.3,
+                  ),
                 ),
               ),
             ),
@@ -485,15 +499,20 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 decoration: BoxDecoration(
                   color: isSelected ? _orangeAccent : _greenPrimary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                  boxShadow: const [
-                    BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2)),
+                  border: Border.all(color: Colors.white, width: 2.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (isSelected ? _orangeAccent : _greenPrimary)
+                          .withValues(alpha: 0.45),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
                   ],
                 ),
                 child: Icon(
                   _getShelterIcon(shelter.type),
                   color: Colors.white,
-                  size: 20,
+                  size: 22,
                 ),
               ),
               if (isSelected)
@@ -569,12 +588,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return Material(
       color: Colors.transparent,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: bg.withValues(alpha: 0.92),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: border, width: 1.5),
-          boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 8, offset: Offset(0, 3))],
+          color: bg.withValues(alpha: 0.94),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: border.withValues(alpha: 0.6), width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: bg.withValues(alpha: 0.35),
+              blurRadius: 20,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -611,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           icon: Icons.water_rounded,
           label: GapLessL10n.t('overlay_flood'),
           active: _showFloodOverlay,
-          activeColor: const Color(0xFF388E3C),
+          activeColor: _greenPrimary,
           onTap: () => setState(() => _showFloodOverlay = !_showFloodOverlay),
         ),
       ],
@@ -628,25 +653,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: active ? activeColor.withValues(alpha: 0.88) : Colors.white.withValues(alpha: 0.75),
+          color: active
+              ? activeColor.withValues(alpha: 0.90)
+              : Colors.white.withValues(alpha: 0.82),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: active ? activeColor : Colors.grey.shade400, width: 1.5),
-          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 4, offset: Offset(0, 2))],
+          border: Border.all(
+            color: active
+                ? activeColor.withValues(alpha: 0.6)
+                : Colors.white.withValues(alpha: 0.5),
+            width: 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: active
+                  ? activeColor.withValues(alpha: 0.30)
+                  : Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: active ? Colors.white : Colors.grey.shade600),
-            const SizedBox(width: 4),
+            Icon(
+              icon,
+              size: 16,
+              color: active ? Colors.white : _darkBg.withValues(alpha: 0.55),
+            ),
+            const SizedBox(width: 6),
             Text(
               label,
               style: GapLessL10n.safeStyle(TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: active ? Colors.white : Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
+                color: active ? Colors.white : _darkBg.withValues(alpha: 0.55),
               )),
             ),
           ],
@@ -658,114 +704,183 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   Widget _buildTopBar() {
     return Row(
       children: [
-        // App Title Card
-        Container(
-          height: _uiHeight,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(_uiRadius),
-            boxShadow: [
-              BoxShadow(
-                color: _greenPrimary.withValues(alpha: 0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Row(
-            children: [
-              const Icon(Icons.shield, color: _greenPrimary),
-              const SizedBox(width: 8),
-              RichText(
-                text: TextSpan(
-                  style: GapLessL10n.safeStyle(const TextStyle()),
-                  children: const [
-                    TextSpan(
-                      text: 'Gap',
-                      style: TextStyle(color: _greenPrimary, fontWeight: FontWeight.bold, fontSize: 18)
-                    ),
-                    TextSpan(
-                      text: 'Less',
-                      style: TextStyle(color: _orangeAccent, fontWeight: FontWeight.bold, fontSize: 18)
-                    ),
-                  ],
+        // App Title Card — glassmorphism pill
+        ClipRRect(
+          borderRadius: BorderRadius.circular(_uiRadius),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              height: _uiHeight,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.75),
+                borderRadius: BorderRadius.circular(_uiRadius),
+                border: Border.all(
+                  color: _greenPrimary.withValues(alpha: 0.18),
+                  width: 1.2,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
               ),
-            ],
+              alignment: Alignment.center,
+              child: Row(
+                children: [
+                  Icon(Icons.shield_rounded, color: _greenPrimary, size: 22),
+                  const SizedBox(width: 8),
+                  RichText(
+                    text: TextSpan(
+                      style: GapLessL10n.safeStyle(const TextStyle()),
+                      children: const [
+                        TextSpan(
+                          text: 'Gap',
+                          style: TextStyle(
+                            color: _greenPrimary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 19,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Less',
+                          style: TextStyle(
+                            color: _orangeAccent,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 19,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
         const Spacer(),
-        // Settings Button
-        _buildFab(
-          icon: Icons.settings,
-          onPressed: () => _showSettings(context),
-          color: Colors.white,
-          iconColor: _greenPrimary,
+        // Settings FAB — glassmorphism
+        ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              height: 52,
+              width: 52,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.75),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: _greenPrimary.withValues(alpha: 0.18),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: IconButton(
+                icon: Icon(Icons.settings_rounded, color: _greenPrimary, size: 22),
+                onPressed: () => _showSettings(context),
+              ),
+            ),
+          ),
         ),
       ],
     );
   }
 
-  // --- DIRECTIVE 3: LOGIC INDICATOR ---
   Widget _buildLogicIndicator(bool isJapan) {
-    // Display specific logic based on region
-    final text = isJapan 
-        ? "LOGIC: Road Width Priority (Blockage Avoidance)" 
-        : "LOGIC: Avoid Electric Shock & Flood Risk";
+    final text = isJapan
+        ? GapLessL10n.t('route_mode_road_width')
+        : GapLessL10n.t('route_mode_flood_avoid');
     final icon = isJapan ? Icons.add_road : Icons.flash_off;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: _greenPrimary.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(_uiRadius),
-        boxShadow: const [
-          BoxShadow(color: Colors.black26, blurRadius: 8, offset: Offset(0, 4)),
-        ],
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, color: _orangeAccent, size: 16),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-              overflow: TextOverflow.ellipsis,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_uiRadius),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                _greenPrimary.withValues(alpha: 0.88),
+                const Color(0xFF00A07A).withValues(alpha: 0.88),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
+            borderRadius: BorderRadius.circular(_uiRadius),
+            boxShadow: [
+              BoxShadow(
+                color: _greenPrimary.withValues(alpha: 0.3),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
-        ],
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: _orangeAccent, size: 16),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.3,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildBottomBar(BuildContext context) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(_uiRadius),
-        boxShadow: [
-          BoxShadow(
-            color: _greenPrimary.withValues(alpha: 0.1),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(_uiRadius),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.82),
+            borderRadius: BorderRadius.circular(_uiRadius),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.5),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.08),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildBottomBtn(Icons.smart_toy, "AI Guide", () => _showChat(context)),
-          _buildBottomBtn(Icons.badge, "ID Card", () => _showEmergencyCard(context)),
-        ],
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildBottomBtn(Icons.smart_toy_rounded, "AI Guide", () => _showChat(context)),
+              _buildBottomBtn(Icons.badge_rounded, "ID Card", () => _showEmergencyCard(context)),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -777,55 +892,62 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(11),
             decoration: BoxDecoration(
-              color: isPrimary ? _greenPrimary : Colors.transparent,
+              color: isPrimary
+                  ? _greenPrimary
+                  : _greenPrimary.withValues(alpha: 0.10),
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
-              color: isPrimary ? Colors.white : Colors.grey,
-              size: 24,
+              color: isPrimary ? Colors.white : _greenPrimary,
+              size: 26,
             ),
           ),
-          if (!isPrimary) ...[
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.grey,
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-              ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(
+              color: _darkBg.withValues(alpha: 0.65),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
-          ],
+          ),
         ],
       ),
     );
   }
 
   Widget _buildFab({
-    required IconData icon, 
+    required IconData icon,
     required VoidCallback onPressed,
     required Color color,
     required Color iconColor,
   }) {
+    final isWhite = color == Colors.white;
     return Container(
       height: 56,
       width: 56,
       decoration: BoxDecoration(
-        color: color,
+        color: isWhite ? Colors.white.withValues(alpha: 0.88) : color,
         shape: BoxShape.circle,
+        border: isWhite
+            ? Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.2)
+            : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: isWhite
+                ? Colors.black.withValues(alpha: 0.10)
+                : color.withValues(alpha: 0.40),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
       child: IconButton(
-        icon: Icon(icon, color: iconColor),
+        icon: Icon(icon, color: iconColor, size: 26),
         onPressed: onPressed,
       ),
     );
@@ -866,12 +988,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFFF6F00),
+              backgroundColor: _orangeAccent,
               foregroundColor: Colors.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(28),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            child: Text(GapLessL10n.t('disaster_mode_confirm_ok')),
+            child: Text(
+              GapLessL10n.t('disaster_mode_confirm_ok'),
+              style: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.3),
+            ),
           ),
         ],
       ),
@@ -891,8 +1019,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       effectiveLocation = null;
     }
 
-    // GPSなし時は大崎市をデフォルト位置とする
-    effectiveLocation ??= const LatLng(38.3591, 140.9405); // 大崎市
+    // GPSなし時は東京駅をデフォルト位置とする
+    effectiveLocation ??= const LatLng(35.6812, 139.7671); // 東京駅
 
     final targetList = shelter.displayedShelters.isNotEmpty 
         ? shelter.displayedShelters 
@@ -948,9 +1076,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.9,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(_uiRadius)),
+        decoration: BoxDecoration(
+          color: _surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 30,
+              offset: const Offset(0, -4),
+            ),
+          ],
         ),
         child: const SettingsScreen(),
       ),
@@ -964,9 +1099,16 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         height: MediaQuery.of(context).size.height * 0.9,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(_uiRadius)),
+        decoration: BoxDecoration(
+          color: _surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 30,
+              offset: const Offset(0, -4),
+            ),
+          ],
         ),
         child: const ChatScreen(),
       ),
@@ -1005,20 +1147,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           mainAxisSize: MainAxisSize.min,
           children: options.map((opt) {
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 4),
+              padding: const EdgeInsets.symmetric(vertical: 5),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: opt.color,
                     foregroundColor: Colors.white,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(28),
                     ),
-                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   icon: Icon(opt.icon),
-                  label: Text(opt.label, style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.bold))),
+                  label: Text(opt.label, style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, letterSpacing: 0.3))),
                   onPressed: () async {
                     Navigator.of(ctx).pop();
                     await _submitDangerReport(pos, opt.type);

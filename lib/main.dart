@@ -3,7 +3,7 @@
    Directives Implemented:
    1. UI: Navy (0xFF2E7D32) / Orange (0xFFFF6F00), Radius 30.0, Height 56.0, Padding 24.0+.
    2. NAV: Isolate-based A* Pathfinding returning LatLng Waypoints.
-   3. LOGIC: Japan (Width Priority) vs Thailand (Shock Risk Avoidance).
+   3. LOGIC: Japan (Width Priority for Blockage Avoidance).
    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */
 
 import 'dart:async';
@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'services/connectivity_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
@@ -41,6 +41,7 @@ import 'services/device_id_service.dart';
 import 'services/identity_keystore.dart';
 import 'services/route_compute_service.dart';
 import 'services/road_features_cache.dart';
+import 'services/power_manager.dart';
 
 // Utils
 import 'utils/web_bridge.dart';
@@ -65,6 +66,7 @@ import 'screens/tutorial_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/permission_gate_screen.dart';
 import 'screens/navigation_screen.dart';
+import 'screens/risk_radar_compass_screen.dart';
 
 // ---------------------------------------------------------------------------
 //  MAIN APPLICATION
@@ -102,7 +104,9 @@ void main() {
     };
 
     unawaited(SecurePiiStorage.migrateFromPrefsIfNeeded());
-    unawaited(setupServiceLocator());
+    // ServiceLocator は同期登録だけ (内部の Future は内部で完結)。
+    // 起動時に await することで HomeScreen から sl<>() を呼ぶ前に登録完了を保証する。
+    await setupServiceLocator();
 
     runApp(const LoadingApp());
   }, (error, stack) {
@@ -163,8 +167,7 @@ class GapLessApp extends StatelessWidget {
                     Locale('vi'),
                     Locale('ko'),
                     Locale('th'),
-                    Locale('fil'), // ISO 639-2 (内部コード)
-                    Locale('tl'),  // ISO 639-1 (Tagalog, システムロケール tl-PH 対応)
+                    Locale('fil'), // ISO 639-2 (内部コード) — tl-PH は callback で fil に変換
                     Locale('ne'),
                     Locale('pt'),
                     Locale('id'),
@@ -176,15 +179,19 @@ class GapLessApp extends StatelessWidget {
                     Locale('mn'),
                     Locale('uz'),
                     Locale('bn'),
+                    Locale('fr'),
+                    Locale('ms'),
                   ],
                   localeResolutionCallback: (locale, supportedLocales) {
                     if (locale == null) return const Locale('en');
+                    // tl-PH (Tagalog) → fil (Filipino) — no 'tl' translation block
+                    final langCode = locale.languageCode == 'tl' ? 'fil' : locale.languageCode;
                     for (final s in supportedLocales) {
-                      if (s.languageCode == locale.languageCode &&
+                      if (s.languageCode == langCode &&
                           s.countryCode == locale.countryCode) return s;
                     }
                     for (final s in supportedLocales) {
-                      if (s.languageCode == locale.languageCode) return s;
+                      if (s.languageCode == langCode) return s;
                     }
                     return const Locale('en');
                   },
@@ -240,6 +247,8 @@ class GapLessApp extends StatelessWidget {
       case 'hi':
       case 'ne': return 'NotoSansDevanagari';
       case 'bn': return 'NotoSansBengali';
+      case 'ar': return 'NotoSansArabic';
+      // fr, ms, es, pt, id, fil, uz, vi, en use NotoSans (Latin + Cyrillic covered)
       default:   return 'NotoSans';
     }
   }
@@ -257,6 +266,7 @@ class GapLessApp extends StatelessWidget {
       case '/emergency_card': page = const EmergencyCardScreen(); isModal = true; break;
       case '/survival_guide': page = const SurvivalGuideScreen(); break;
       case '/triage': page = const TriageScreen(); break;
+      case '/risk_radar': page = const RiskRadarCompassScreen(); break;
       case '/tutorial':
         page = TutorialScreen(onComplete: () {
           navigatorKey.currentState?.pushReplacementNamed('/home');
@@ -286,7 +296,7 @@ class _DisasterWatcherState extends State<DisasterWatcher>
   bool? _wasSafeInShelter;
   bool _isOffline = false; // オフライン状態フラグ（バナー表示制御）
   Timer? _disasterModeDebounce; // 頻繁なモード切替を防ぐデバウンスタイマー
-  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  StreamSubscription<bool>? _connectivitySubscription;
   StreamSubscription<MapLoadEvent>? _mapLoaderSubscription;
   Timer? _heartbeatTimer;
   Timer? _recoveryTimer;
@@ -337,12 +347,9 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       }
     });
 
-    _connectivitySubscription = Connectivity().onConnectivityChanged.listen((results) {
-      final offline = results.contains(ConnectivityResult.none);
-      if (mounted) setState(() => _isOffline = offline);
-      // カウンター管理はハートビートタイマーに一元化。
-      // ここでは UI バナーのみ更新し、復帰時にのみ通知する。
-      if (!offline) {
+    _connectivitySubscription = ConnectivityService.onConnectivityChanged.listen((connected) {
+      if (mounted) setState(() => _isOffline = !connected);
+      if (connected) {
         _heartbeatFailCount = 0;
         _onNetworkRestored('Connectivity API');
       }
@@ -525,9 +532,9 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       }
 
       // 道路データをキャッシュ経由で取得（NavigationScreen と共有、二重ロードなし）
-      // 地域が変わったらキャッシュを破棄して再ロード
-      final isJapan = context.read<RegionModeProvider>().isJapanMode;
-      final roadFile = isJapan ? 'tokyo_center_roads.gplb' : 'thailand_roads.gplb';
+      // 地域が変わったらキャッシュを破棄して再ロード。
+      final region = context.read<RegionModeProvider>().region;
+      final roadFile = '${region.gplbAssetPath}_roads.gplb';
       if (_roadFeaturesRegion != roadFile) {
         _roadFeatures = [];
         _roadFeaturesRegion = roadFile;
@@ -861,6 +868,17 @@ class _LoadingAppState extends State<LoadingApp> {
       SecurityService().init(),
       _preloadFonts(),
     ]);
+    // JMA Atom XML 60秒ポーリングを起動時から開始する。
+    // Why: DisasterWatcher の災害モード自動発火は hasActiveAlert を
+    //      AND 条件にしているため、ポーリング未開始だと災害モードが
+    //      永遠に発火しない (タブを開いた時のみの起動では遅すぎる)。
+    JmaAlertService.instance.startPolling();
+
+    // PowerManager をアプリ全体で起動 (バッテリー監視 + GPS 間隔制御)。
+    // 旧コードは NavigationScreen の initState 内のみで起動していたため、
+    // 災害時に /compass や /risk_radar に直行した場合バッテリーバッジが
+    // 古い値のまま表示される問題があった。
+    unawaited(PowerManager.instance.start());
     if (mounted) {
       runApp(const GapLessApp());
     }
@@ -885,6 +903,9 @@ class _LoadingAppState extends State<LoadingApp> {
       FontLoader('NotoSansBengali')
         ..addFont(rootBundle.load('assets/fonts/NotoSansBengali-Regular.ttf'))
         ..addFont(rootBundle.load('assets/fonts/NotoSansBengali-Bold.ttf')),
+      FontLoader('NotoSansArabic')
+        ..addFont(rootBundle.load('assets/fonts/NotoSansArabic-Regular.ttf'))
+        ..addFont(rootBundle.load('assets/fonts/NotoSansArabic-Bold.ttf')),
     ];
     await Future.wait(loaders.map((l) => l.load()));
   }

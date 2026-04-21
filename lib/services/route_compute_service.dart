@@ -16,6 +16,10 @@ class RouteComputeParams {
   final bool isElderly;
   final double walkSpeedMps;
 
+  /// 絶対回避するハザードポリゴン (洪水浸水域・倒壊予測ゾーン等)。
+  /// 各ポリゴンは [[lat, lng], ...] 形式の List<List<double>>。
+  final List<List<List<double>>> hazardPolygons;
+
   const RouteComputeParams({
     required this.features,
     required this.startLat,
@@ -25,6 +29,7 @@ class RouteComputeParams {
     this.requiresFlatRoute = false,
     this.isElderly = false,
     this.walkSpeedMps = 1.2,
+    this.hazardPolygons = const [],
   });
 }
 
@@ -36,6 +41,9 @@ RouteResult computeRouteInIsolate(RouteComputeParams p) {
     isElderly: p.isElderly,
     walkSpeedMps: p.walkSpeedMps,
   );
+  engine.hazardPolygons = p.hazardPolygons
+      .map((poly) => poly.map((pt) => LatLng(pt[0], pt[1])).toList())
+      .toList();
   engine.buildGraph(p.features, profile: profile);
   return engine.findRoute(
     LatLng(p.startLat, p.startLng),

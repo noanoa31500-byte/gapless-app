@@ -202,7 +202,7 @@ class BleService extends ChangeNotifier {
 
   Future<void> _readFromPeer(BluetoothDevice device) async {
     try {
-      await device.connect(timeout: const Duration(seconds: 6));
+      await device.connect(license: License.free, timeout: const Duration(seconds: 6));
 
       final services = await device.discoverServices();
       BluetoothService? target;

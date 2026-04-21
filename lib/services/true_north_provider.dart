@@ -270,7 +270,6 @@ class WMMCalculator {
   static const Map<String, _GeoPoint> japanCities = {
     'sapporo': _GeoPoint(43.0642, 141.3469, -9.5),
     'sendai': _GeoPoint(38.2682, 140.8694, -8.6),
-    'osaki': _GeoPoint(38.5775, 140.9518, -8.5),    // 大崎市
     'tokyo': _GeoPoint(35.6762, 139.6503, -7.5),
     'nagoya': _GeoPoint(35.1815, 136.9066, -7.3),
     'osaka': _GeoPoint(34.6937, 135.5023, -7.0),
@@ -535,9 +534,9 @@ class TrueNorthProvider with ChangeNotifier {
   double? _rawMagneticHeading;
   double? _filteredMagneticHeading;
   double? _trueHeading;
-  double _currentDeclination = -8.5; // デフォルト: 大崎市
-  double _currentLatitude = 38.5775;
-  double _currentLongitude = 140.9518;
+  double _currentDeclination = -7.5; // デフォルト: 東京
+  double _currentLatitude = 35.6812;
+  double _currentLongitude = 139.7671;
   bool _isInitialized = false;
   double _confidence = 0.0;
 
@@ -788,36 +787,26 @@ class TrueNorthProvider with ChangeNotifier {
 /// TrueNorthProviderTest - テストコード例
 /// ============================================================================
 /// 
-/// 大崎市（緯度: 38.57, 経度: 140.95）の座標を入力した際、
-/// 正しく偏角（約-8.5度）が適用されるかを確認するテストコード案。
-/// 
+/// 東京（緯度: 35.68, 経度: 139.77）の座標を入力した際、
+/// 正しく偏角（約-7.5度）が適用されるかを確認するテストコード案。
+///
 /// ```dart
 /// void main() {
-///   // 大崎市の座標
-///   const osakiLat = 38.5775;
-///   const osakiLon = 140.9518;
-///   
-///   // WMM計算
-///   final declination = WMMCalculator.calculateDeclination(osakiLat, osakiLon);
-///   debugPrint('大崎市の偏角: ${declination.toStringAsFixed(2)}°');
-///   
-///   // 期待値: -8.5度前後
-///   assert(declination < -7.5 && declination > -9.5, 
+///   const tokyoLat = 35.6812;
+///   const tokyoLon = 139.7671;
+///
+///   final declination = WMMCalculator.calculateDeclination(tokyoLat, tokyoLon);
+///   debugPrint('東京の偏角: ${declination.toStringAsFixed(2)}°');
+///
+///   // 期待値: -7.5度前後
+///   assert(declination < -6.5 && declination > -8.5,
 ///          '偏角が期待範囲外: $declination');
-///   
-///   // 高速参照テスト
-///   final quickDec = WMMCalculator.getQuickDeclination(osakiLat, osakiLon);
+///
+///   final quickDec = WMMCalculator.getQuickDeclination(tokyoLat, tokyoLon);
 ///   debugPrint('高速参照: ${quickDec.toStringAsFixed(2)}°');
-///   
-///   // 真方位変換テスト
+///
 ///   final provider = TrueNorthProvider();
-///   provider.updateLocation(osakiLat, osakiLon);
-///   
-///   // 磁北0度 → 真北約351.5度（= 磁北が真北より東に8.5度）
-///   // 補正式: 真北 = 磁北 - 偏角
-///   // 0 - (-8.5) = 8.5度（つまり真北0度を向くには磁北351.5度を向く）
+///   provider.updateLocation(tokyoLat, tokyoLon);
 ///   debugPrint('Provider偏角: ${provider.currentDeclination.toStringAsFixed(2)}°');
-///   
-///   debugPrint('✅ 全テスト通過');
 /// }
 /// ```

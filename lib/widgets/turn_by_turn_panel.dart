@@ -121,12 +121,20 @@ class TurnByTurnPanel extends StatefulWidget {
   /// 目的地到着コールバック（null 可）
   final VoidCallback? onArrived;
 
+  /// ナビ終了コールバック
+  final VoidCallback? onStop;
+
+  /// 目的地名（避難所名など）
+  final String? destinationName;
+
   const TurnByTurnPanel({
     super.key,
     required this.route,
     required this.currentPosition,
     required this.headingDeg,
     required this.onArrived,
+    this.onStop,
+    this.destinationName,
   });
 
   @override
@@ -134,8 +142,10 @@ class TurnByTurnPanel extends StatefulWidget {
 }
 
 class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
-  static const Color _navy = Color(0xFF2E7D32);
-  static const Color _orange = Color(0xFFFF6F00);
+  static const Color _dark = Color(0xFF1A1A2E);
+  static const Color _emerald = Color(0xFF00C896);
+  static const Color _orange = Color(0xFFFF6B35);
+  static const Color _surface = Color(0xFFF8F9FE);
   static const double _arrivalThresholdM = 20.0;
 
   bool _arrived = false;
@@ -167,7 +177,11 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // rebuild on language change
-    if (widget.route.isEmpty) return const SizedBox.shrink();
+    if (widget.route.isEmpty) {
+      // ルート未確定でも目的地名が設定されていれば小バーを表示
+      if (widget.destinationName != null) return _buildDestinationBar();
+      return const SizedBox.shrink();
+    }
     if (_arrived) return _buildArrivalPanel();
 
     const dist = Distance();
@@ -200,17 +214,26 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
   }) {
     return Container(
       height: 100,
-      decoration: const BoxDecoration(
-        color: _navy,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         children: [
-          // 左: 方向アイコン
-          Icon(_iconFor(dir), color: Colors.white, size: 48),
+          // 左: 方向アイコン（エメラルド円）
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: _emerald.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(_iconFor(dir), color: _emerald, size: 30),
+          ),
 
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
 
           // 中: 距離 + 方向ラベル
           Expanded(
@@ -221,8 +244,8 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
                 Text(
                   GapLessL10n.t('nav_dist_ahead').replaceAll('@dist', _fmt(distToNext)),
                   style: GapLessL10n.safeStyle(const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
+                    color: _dark,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                     letterSpacing: -0.5,
                   )),
@@ -232,7 +255,7 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
                   _labelFor(dir),
                   style: GapLessL10n.safeStyle(const TextStyle(
                     color: _orange,
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: FontWeight.w600,
                   )),
                 ),
@@ -240,7 +263,7 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
             ),
           ),
 
-          // 右: 残り距離
+          // 右: 残り距離 + 目的地名 + 終了ボタン
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -248,20 +271,78 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
               Text(
                 _fmt(remaining),
                 style: GapLessL10n.safeStyle(const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
+                  color: _dark,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                 )),
               ),
-              const SizedBox(height: 2),
-              Text(
-                GapLessL10n.t('nav_to_dest'),
-                style: GapLessL10n.safeStyle(const TextStyle(
-                  color: Color(0xFF90A4AE),
-                  fontSize: 12,
-                )),
+              if (widget.destinationName != null)
+                SizedBox(
+                  width: 90,
+                  child: Text(
+                    widget.destinationName!,
+                    style: GapLessL10n.safeStyle(
+                        TextStyle(color: _dark.withValues(alpha: 0.5), fontSize: 11)),
+                    textAlign: TextAlign.end,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              const SizedBox(height: 4),
+              GestureDetector(
+                onTap: widget.onStop,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(GapLessL10n.t('nav_btn_stop'),
+                      style: GapLessL10n.safeStyle(const TextStyle(
+                          color: Color(0xFFEF4444),
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600))),
+                ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ── 目的地設定バー（ルート未確定時）──────────────────────────────────────────
+
+  Widget _buildDestinationBar() {
+    return Container(
+      height: 72,
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        children: [
+          Icon(Icons.flag_rounded, color: _emerald, size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              widget.destinationName!,
+              style: GapLessL10n.safeStyle(const TextStyle(
+                color: _dark,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              )),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            width: 16,
+            height: 16,
+            child: CircularProgressIndicator(strokeWidth: 2, color: _emerald),
           ),
         ],
       ),
@@ -273,15 +354,15 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
   Widget _buildArrivalPanel() {
     return Container(
       height: 100,
-      decoration: const BoxDecoration(
-        color: _navy,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: _emerald,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       alignment: Alignment.center,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.flag_rounded, color: Color(0xFFFF6F00), size: 28),
+          const Icon(Icons.flag_rounded, color: Colors.white, size: 28),
           const SizedBox(width: 12),
           Text(
             GapLessL10n.t('nav_arrived_panel'),

@@ -29,9 +29,6 @@ enum _DownloadState { downloading, error, done }
 
 class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
   _DownloadState _state = _DownloadState.downloading;
-  int _current = 0;
-  int _total = 4;
-  String _currentFile = '';
   String _errorMessage = '';
 
   @override
@@ -43,7 +40,6 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
   Future<void> _startDownload() async {
     setState(() {
       _state = _DownloadState.downloading;
-      _current = 0;
       _errorMessage = '';
     });
 
@@ -60,13 +56,7 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
         if (progress.isDone) {
           setState(() => _state = _DownloadState.done);
           _navigateNext();
-          return;
         }
-        setState(() {
-          _current = progress.current;
-          _total = progress.total;
-          _currentFile = progress.fileName;
-        });
       },
     );
 
@@ -182,60 +172,21 @@ class _MapDataLoadingScreenState extends State<MapDataLoadingScreen> {
   }
 
   Widget _buildDownloading() {
-    final progress = _total > 0 ? _current / _total : 0.0;
-
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        // 進捗テキスト
+        const CircularProgressIndicator(
+          color: Color(0xFF00C896),
+          strokeWidth: 3,
+        ),
+        const SizedBox(height: 20),
         Text(
           GapLessL10n.t('map_download_title'),
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 8),
-        Text(
-          '$_current / $_total',
-          style: const TextStyle(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF2E7D32),
-          ),
-        ),
-        const SizedBox(height: 4),
-        if (_currentFile.isNotEmpty)
-          Text(
-            _currentFile,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Color(0xFF6B7280),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        const SizedBox(height: 24),
-
-        // プログレスバー
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value: progress > 0 ? progress : null,
-            minHeight: 8,
-            backgroundColor: const Color(0xFFE5E7EB),
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(Color(0xFF2E7D32)),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        Text(
-          GapLessL10n.t('map_download_note'),
-          style: const TextStyle(
-            fontSize: 12,
-            color: Color(0xFF9CA3AF),
-          ),
+          style: GapLessL10n.safeStyle(const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF6B7280),
+          )),
           textAlign: TextAlign.center,
         ),
       ],

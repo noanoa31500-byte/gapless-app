@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import '../models/shelter.dart';
 import '../services/risk_visualization_service.dart';
 import '../services/ble_road_report_service.dart';
+import '../services/route_compute_service.dart';
 import 'region_mode_provider.dart';
 import 'shelter_repository.dart';
 import 'hazard_service.dart';
@@ -51,7 +53,7 @@ class ShelterProvider with ChangeNotifier {
   DisasterModeNotifier get modeNotifier => _mode;
 
   // ── State (Region) ────────────────────────────────────────────────
-  String _currentRegion = 'jp_osaki';
+  String _currentRegion = 'jp_tokyo';
   AppRegion _currentAppRegion = AppRegion.japan;
   List<Shelter> _shelters = [];
   List<List<LatLng>> _roadPolylines = [];
@@ -77,6 +79,11 @@ class ShelterProvider with ChangeNotifier {
   bool get isNavigating => _nav.isNavigating;
   bool get isSafeInShelter => _nav.isSafeInShelter;
 
+  /// A* で計算した経路距離 (m)。0 = 未計算。
+  double get navRouteDistanceM => _nav.routeDistanceM;
+  bool get isComputingRoute => _nav.isComputingRoute;
+  List<LatLng> get computedRoute => _nav.computedRoute;
+
   /// 表示用Shelterリスト (モードに応じてフィルタリング)
   List<Shelter> get displayedShelters {
     if (!isEmergencyMode && !isDisasterMode) return _shelters;
@@ -87,45 +94,23 @@ class ShelterProvider with ChangeNotifier {
   }
 
   // ── Region helpers ────────────────────────────────────────────────
-  static bool isTokyoArea(double lat, double lng) =>
-      lat >= 35.60 && lat <= 35.78 && lng >= 139.60 && lng <= 139.85;
-
-  static bool isOsakiArea(double lat, double lng) =>
-      lat >= 38.30 && lat <= 38.90 && lng >= 140.60 && lng <= 141.20;
-
-  static String _nearestRegion(double lat, double lng) {
-    final distTokyo = (lat - 35.69).abs() + (lng - 139.69).abs();
-    final distOsaki = (lat - 38.59).abs() + (lng - 140.90).abs();
-    return distTokyo <= distOsaki ? 'jp_tokyo' : 'jp_osaki';
-  }
-
   Future<void> setRegionFromCoordinates(double lat, double lng) async {
-    final newRegion = isTokyoArea(lat, lng)
-        ? 'jp_tokyo'
-        : isOsakiArea(lat, lng)
-            ? 'jp_osaki'
-            : _nearestRegion(lat, lng);
-    if (_currentRegion != newRegion) {
-      debugPrint('🌏 GPS region change: $_currentRegion -> $newRegion');
-      await setRegion(newRegion);
+    if (_currentRegion != 'jp_tokyo') {
+      await setRegion('jp_tokyo');
     }
   }
 
   Future<void> setRegion(String region) async {
-    final normalized = region.toLowerCase();
     _nav.endNavigation();
     _currentAppRegion = AppRegion.japan;
-    _currentRegion = normalized == 'jp_tokyo' ? 'jp_tokyo' : 'jp_osaki';
+    _currentRegion = 'jp_tokyo';
     debugPrint('🌏 Region set to: $_currentRegion');
     notifyListeners();
     await loadShelters();
   }
 
   Map<String, double> getCenter() {
-    if (_currentRegion == 'jp_tokyo') {
-      return {'lat': 35.6895, 'lng': 139.6917};
-    }
-    return {'lat': 38.5772, 'lng': 140.9559};
+    return {'lat': 35.6812, 'lng': 139.7671};
   }
 
   // ── Data loading (delegated to repository) ────────────────────────
@@ -159,21 +144,6 @@ class ShelterProvider with ChangeNotifier {
     _hazard.setHazardPolygons(polys);
   }
 
-  /// レガシー互換: Thailand 専用だったため現在は no-op
-  Future<void> loadRiskData() async {
-    if (kDebugMode) debugPrint('⚠️ loadRiskData() is deprecated');
-  }
-
-  /// 旧API: グラフ構築は SafetyRouteEngine 側で行うため stub
-  Future<void> buildRoadGraph() async {}
-
-  /// 旧API: ルート計算は main.dart Isolate に移行済み
-  Future<void> calculateSafestRoute(LatLng start, LatLng goal,
-      {Shelter? target}) async {}
-
-  /// 旧API: バックグラウンドルートキャッシュは廃止
-  Future<void> updateBackgroundRoutes(LatLng currentLoc) async {}
-
   // ── Mode (delegated) ──────────────────────────────────────────────
   void toggleEmergencyMode() => _mode.toggleEmergencyMode();
   void toggleDisasterMode() => _mode.toggleDisasterMode();
@@ -189,8 +159,51 @@ class ShelterProvider with ChangeNotifier {
 
   // ── Navigation (delegated) ────────────────────────────────────────
   Future<void> startNavigation(Shelter shelter,
-          {LatLng? currentLocation}) =>
-      _nav.startNavigation(shelter, currentLocation: currentLocation);
+      {LatLng? currentLocation}) async {
+    await _nav.startNavigation(shelter, currentLocation: currentLocation);
+    if (currentLocation != null) {
+      unawaited(_computeSafeRouteFor(shelter, currentLocation));
+    }
+  }
+
+  /// 洪水・倒壊予測ハザードを絶対回避する A* 経路を計算してキャッシュ。
+  /// roads / hazards はキャッシュが空なら遅延ロード。
+  Future<void> _computeSafeRouteFor(Shelter target, LatLng from) async {
+    _nav.setComputingRoute(true);
+    try {
+      final features =
+          await _repo.loadRoadFeatures(_currentRegion);
+      if (features.isEmpty) {
+        _nav.setComputedRoute(const [], 0);
+        return;
+      }
+      // hazard が未ロードならロード
+      if (_hazard.hazardPolygons.isEmpty) {
+        await loadHazardPolygons();
+      }
+      final hazardSerialized = _hazard.hazardPolygons
+          .map((poly) =>
+              poly.map((pt) => [pt.latitude, pt.longitude]).toList())
+          .toList();
+
+      final result = await compute(
+        computeRouteInIsolate,
+        RouteComputeParams(
+          features: features,
+          startLat: from.latitude,
+          startLng: from.longitude,
+          goalLat: target.lat,
+          goalLng: target.lng,
+          hazardPolygons: hazardSerialized,
+        ),
+      ).timeout(const Duration(seconds: 20));
+
+      _nav.setComputedRoute(result.waypoints, result.totalDistanceM);
+    } catch (e) {
+      debugPrint('❌ Safe route compute failed: $e');
+      _nav.setComputedRoute(const [], 0);
+    }
+  }
   void endNavigation() => _nav.endNavigation();
   void updateSafeRoute(List<List<double>> pts) => _nav.updateSafeRoute(pts);
   List<LatLng> getSafestRouteAsLatLng() => _nav.getSafestRouteAsLatLng();
@@ -198,15 +211,6 @@ class ShelterProvider with ChangeNotifier {
   void setSafeInShelter(bool v) => _nav.setSafeInShelter(v);
   Future<void> restoreNavTarget() =>
       _nav.restoreNavTarget(knownShelters: _shelters);
-
-  // ── Cache (廃止済みだがAPI互換のため stub) ──────────────────────
-  bool startCachedNavigation(String type) => false;
-  List<String>? getCachedRoute(String type) => null;
-  double? getCachedDistance(String type) => null;
-  double? getDistanceToTargetIfCached(Shelter target) => null;
-  Map<String, dynamic>? getRoadRiskInDirection(
-          LatLng currentLocation, double heading) =>
-      null;
 
   // ── Shelter search ────────────────────────────────────────────────
   Shelter? getNearestShelter(

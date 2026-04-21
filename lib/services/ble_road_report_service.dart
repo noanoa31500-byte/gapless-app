@@ -12,6 +12,7 @@ import 'trusted_shelter_keyset.dart';
 import 'power_manager.dart';
 import 'road_report_scorer.dart';
 import '../ble/ble_packet.dart';
+import '../ble/ble_peripheral_channel.dart';
 import '../ble/ble_repository.dart';
 import '../models/peer_road_report.dart';
 import '../models/shelter_status_report.dart';
@@ -60,9 +61,17 @@ class BleRoadReportService extends ChangeNotifier {
   // ── 状態 ──────────────────────────────────────────────────
   bool _isRunning = false;
   int _receivedCount = 0;
+  int _exchangeCount = 0;
+  int _scanHitCount = 0;
 
   bool get isRunning => _isRunning;
   int get receivedCount => _receivedCount;
+  int get exchangeCount => _exchangeCount;
+  int get scanHitCount => _scanHitCount;
+
+  /// DIAG: 直近のscanで見えた最初のデバイスの素データ（UI診断用）
+  String _lastDiag = '';
+  String get lastDiag => _lastDiag;
 
   // ── 内部変数 ───────────────────────────────────────────────
   StreamSubscription<List<ScanResult>>? _scanSub;
@@ -134,12 +143,14 @@ class BleRoadReportService extends ChangeNotifier {
   Map<String, ShelterStatusReport> get shelterStatuses =>
       Map.unmodifiable(_shelterStatuses);
 
-  static const int _maxRelayHops = 3;
+  static const int _maxRelayHops = 7;
   static const int _maxReceivedSos = 200;
   static const int _maxPeerTracks = 100;
   static const int _maxRelayQueue = 100;
   static const int _maxShelterStatuses = 500;
   final List<PeerRoadReport> _relayQueue = [];
+  final List<SosReport> _sosRelayQueue = [];
+  final List<ShelterStatusReport> _shelterRelayQueue = [];
 
   /// 送信待ちGPS軌跡（交換ごとに直前の軌跡を1件だけ送る）
   GpsTrackSnapshot? _pendingTrack;
@@ -185,26 +196,31 @@ class BleRoadReportService extends ChangeNotifier {
   Future<void> start() async {
     if (_isRunning) return;
 
-    // iOS: CBCentralManager 初期化前に状態復元オプションを有効化
-    // アプリがBLEイベントで再起動された際、既存接続・スキャン状態が復元される
-    if (Platform.isIOS) {
-      await FlutterBluePlus.setOptions(restoreState: true);
-    }
+    // 注: state restoration は再インストール後の挙動が不安定なため無効化
+
+    BlePeripheralChannel.instance.onDataReceived = _onPeripheralDataReceived;
 
     _adapterSub = FlutterBluePlus.adapterState.listen((state) {
       if (state == BluetoothAdapterState.on) {
+        if (!_isRunning) {
+          _isRunning = true;
+          notifyListeners();
+        }
+        // adapter on 検知時に毎回 advertising/scan を確実に起動。
+        // 権限ダイアログ後など遅延 on の場合もここで開始される。
+        BlePeripheralChannel.instance.startAdvertising();
+        _runScan();
         _scheduleScan();
       } else {
         _isRunning = false;
         notifyListeners();
       }
     });
+  }
 
-    final state = await FlutterBluePlus.adapterState.first;
-    if (state == BluetoothAdapterState.on) {
-      _isRunning = true;
-      await _runScan();
-    }
+  /// ペリフェラルモードで Central から書き込まれたデータを処理する
+  Future<void> _onPeripheralDataReceived(Uint8List bytes) async {
+    await _handleReceivedBytes(bytes);
   }
 
   Future<void> stop() async {
@@ -294,6 +310,10 @@ class BleRoadReportService extends ChangeNotifier {
       debugPrint('BleRoadReportService: enqueued report '
           '(seg=${report.segmentId}, status=${report.status})');
     }
+    if (_isRunning) {
+      _scanTimer?.cancel();
+      _runScan().then((_) => _scheduleScan());
+    }
   }
 
   /// SOSビーコンをキューに積む（長押しボタンから呼ぶ）。
@@ -376,6 +396,10 @@ class BleRoadReportService extends ChangeNotifier {
       debugPrint('BleRoadReportService: enqueueFullReport $dataType @ '
           '${_redactGeo(lat, lng)}');
     }
+    if (_isRunning) {
+      _scanTimer?.cancel();
+      _runScan().then((_) => _scheduleScan());
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -391,22 +415,44 @@ class BleRoadReportService extends ChangeNotifier {
   }
 
   Future<void> _runScan() async {
-    debugPrint('BleRoadReportService: スキャン開始');
-    await FlutterBluePlus.startScan(
-      withServices: [_serviceUuid],
-      timeout: const Duration(seconds: 10),
-    );
+    if (FlutterBluePlus.isScanningNow) return;
 
     _scanSub?.cancel();
+    final probedThisScan = <DeviceIdentifier>{};
     _scanSub = FlutterBluePlus.scanResults.listen((results) {
+      if (results.isNotEmpty) {
+        _scanHitCount = results.length;
+        _lastDiag = 'scan返却=${results.length}件 '
+            'probed=${probedThisScan.length}';
+        notifyListeners();
+      }
       for (final r in results) {
-        if (!_connected.contains(r.device.remoteId) &&
-            !_pendingConnect.contains(r.device.remoteId)) {
-          _pendingConnect.add(r.device.remoteId);
-          _exchangeWithPeer(r.device);
-        }
+        if (probedThisScan.length >= 6) break;
+        if (probedThisScan.contains(r.device.remoteId)) continue;
+        if (_connected.contains(r.device.remoteId)) continue;
+        if (_pendingConnect.contains(r.device.remoteId)) continue;
+
+        // iOSは name/UUID を隠すことがあるので、無印デバイスもプローブ対象。
+        // 明らかに弱い信号(<-90dBm)はスキップ。
+        if (r.rssi < -90) continue;
+
+        probedThisScan.add(r.device.remoteId);
+        _pendingConnect.add(r.device.remoteId);
+        _exchangeWithPeer(r.device);
       }
     });
+
+    try {
+      debugPrint('BleRoadReportService: scan開始 (probe方式)');
+      await FlutterBluePlus.startScan(
+        timeout: const Duration(seconds: 10),
+        androidScanMode: AndroidScanMode.lowLatency,
+      );
+    } catch (e) {
+      debugPrint('BleRoadReportService: startScan失敗 $e');
+      _scanSub?.cancel();
+      _scanSub = null;
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -424,7 +470,7 @@ class BleRoadReportService extends ChangeNotifier {
     }
 
     try {
-      await device.connect(timeout: const Duration(seconds: 8));
+      await device.connect(license: License.free, timeout: const Duration(seconds: 8));
       _connected.add(device.remoteId);
       notifyListeners();
 
@@ -441,6 +487,10 @@ class BleRoadReportService extends ChangeNotifier {
         return;
       }
 
+      // GapLessサービスが見つかった時だけカウント
+      _exchangeCount++;
+      notifyListeners();
+
       BluetoothCharacteristic? txChar;
       BluetoothCharacteristic? rxChar;
       for (final c in gaplessService.characteristics) {
@@ -451,7 +501,7 @@ class BleRoadReportService extends ChangeNotifier {
       // 受信 (Notify)
       if (rxChar != null && rxChar.properties.notify) {
         await rxChar.setNotifyValue(true);
-        rxChar.lastValueStream.listen(_handleReceivedBytes);
+        rxChar.onValueReceived.listen(_handleReceivedBytes);
       }
 
       // MTU を要求（失敗してもデフォルト値にフォールバック）
@@ -465,7 +515,9 @@ class BleRoadReportService extends ChangeNotifier {
       // 送信 (Write) — 直前にGPS軌跡スナップショットを自動生成
       _autoEnqueueTrackSnapshot();
       if (txChar != null && txChar.properties.write &&
-          (_queue.isNotEmpty || _relayQueue.isNotEmpty || _shelterQueue.isNotEmpty || _sosQueue.isNotEmpty || _pendingTrack != null)) {
+          (_queue.isNotEmpty || _relayQueue.isNotEmpty || _sosRelayQueue.isNotEmpty ||
+           _shelterQueue.isNotEmpty || _shelterRelayQueue.isNotEmpty ||
+           _sosQueue.isNotEmpty || _pendingTrack != null)) {
         await _writeQueueToChar(txChar, chunkSize: mtu);
       }
 
@@ -488,7 +540,7 @@ class BleRoadReportService extends ChangeNotifier {
   /// BLE交換直前にGPSバッファから最新スナップショットを生成してセット
   void _autoEnqueueTrackSnapshot() {
     final entries = GpsLogger.instance.recentEntries;
-    if (entries.length < 3) return;
+    if (entries.isEmpty) return;
 
     // 10m間隔に間引き・最新15点
     const minDistM = 10.0;
@@ -519,8 +571,12 @@ class BleRoadReportService extends ChangeNotifier {
     _queue.clear();
     final relayToSend = List<PeerRoadReport>.from(_relayQueue);
     _relayQueue.clear();
+    final sosRelayToSend = List<SosReport>.from(_sosRelayQueue);
+    _sosRelayQueue.clear();
     final shelterToSend = List<ShelterStatusReport>.from(_shelterQueue);
     _shelterQueue.clear();
+    final shelterRelayToSend = List<ShelterStatusReport>.from(_shelterRelayQueue);
+    _shelterRelayQueue.clear();
     final sosToSend = List<SosReport>.from(_sosQueue);
     _sosQueue.clear();
     final track = _pendingTrack;
@@ -529,7 +585,9 @@ class BleRoadReportService extends ChangeNotifier {
     final lines = [
       ...toSend.map((r) => r.toCompactJson()),
       ...relayToSend.map((r) => r.toCompactJson()),
+      ...sosRelayToSend.map((r) => r.toCompactJson()),
       ...shelterToSend.map((r) => r.toCompactJson()),
+      ...shelterRelayToSend.map((r) => r.toCompactJson()),
       ...sosToSend.map((r) => r.toCompactJson()),
       if (track != null) track.toCompactJson(),
     ];
@@ -592,10 +650,13 @@ class BleRoadReportService extends ChangeNotifier {
       try {
         if (type == 'sos') {
           await _ingestSos(json);
+          _receivedCount++;
         } else if (type == 'sh') {
           await _ingestShelter(json);
+          _receivedCount++;
         } else if (type == 'tr') {
           _ingestTrack(json);
+          _receivedCount++;
         } else {
           // README仕様: type=="r" が道路レポート。type欠落も後方互換で受ける。
           final report = PeerRoadReport.fromCompactJson(json);
@@ -750,9 +811,14 @@ class BleRoadReportService extends ChangeNotifier {
     _sosOriginByDevice[sos.deviceId] =
         _SosOriginRecord(sos.lat, sos.lng, sos.timestamp);
 
+    // メッシュ中継: 次のピアへ転送（上限ホップ数まで）
+    if (sos.hops < _maxRelayHops && _sosRelayQueue.length < _maxRelayQueue) {
+      _sosRelayQueue.add(sos.withNextHop());
+    }
+
     if (!kReleaseMode) {
       debugPrint('BleRoadReportService: SOS 受信 ${sos.deviceId} @ '
-          '${_redactGeo(sos.lat, sos.lng)}');
+          '${_redactGeo(sos.lat, sos.lng)} hop=${sos.hops}');
     }
   }
 
@@ -807,6 +873,12 @@ class BleRoadReportService extends ChangeNotifier {
       _shelterStatuses[sr.shelterId] = sr;
     } else {
       _logDrop('shelter_capacity');
+      return;
+    }
+
+    // メッシュ中継: 次のピアへ転送（上限ホップ数まで）
+    if (sr.hops < _maxRelayHops && _shelterRelayQueue.length < _maxRelayQueue) {
+      _shelterRelayQueue.add(sr.withNextHop());
     }
   }
 

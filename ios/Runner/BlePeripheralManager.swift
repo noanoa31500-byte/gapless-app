@@ -4,47 +4,58 @@ import Flutter
 // ============================================================================
 // BlePeripheralManager — CoreBluetooth ペリフェラルモード
 // ============================================================================
-// flutter_blue_plus はiOSでペリフェラルAPIを提供しないため、
-// ネイティブ実装でアドバタイズ + Characteristic 更新を行う。
-//
-// Service UUID  : 6E400001-B5A3-F393-E0A9-E50E24DCCA9E (Nordic UART)
-// TX Char UUID  : 6E400003-B5A3-F393-E0A9-E50E24DCCA9E (Read + Notify)
+// Service UUID  : 4b474150-4c45-5353-0001-000000000001 (GapLess共通)
+// RX Char UUID  : ...0005  Notify — CentralへのデータPush
+// TX Char UUID  : ...0004  Write  — Centralからのデータ受信
 //
 // Flutter → Native:
 //   startAdvertising()         : アドバタイズ開始
 //   stopAdvertising()          : アドバタイズ停止
-//   updateData(FlutterStandardTypedData) : Characteristic値を更新して通知
+//   updateData(bytes)          : RX Char値を更新して購読Central全員に通知
+//
+// Native → Flutter (onDataReceived):
+//   受信データ(bytes)をFlutterに渡す
 // ============================================================================
 
 class BlePeripheralManager: NSObject {
 
-    // MARK: - Constants
+    // MARK: - UUIDs (BleRoadReportService.dart と一致させる)
+    static let serviceUUID = CBUUID(string: "4b474150-4c45-5353-0001-000000000001")
+    static let rxCharUUID  = CBUUID(string: "4b474150-4c45-5353-0001-000000000005") // Notify to Central
+    static let txCharUUID  = CBUUID(string: "4b474150-4c45-5353-0001-000000000004") // Write from Central
+
     static let methodChannelName = "gapless/ble_peripheral"
-    static let serviceUUID  = CBUUID(string: "6E400001-B5A3-F393-E0A9-E50E24DCCA9E")
-    static let txCharUUID   = CBUUID(string: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E")
 
     // MARK: - Internals
     private var peripheralManager: CBPeripheralManager!
+    private var rxCharacteristic: CBMutableCharacteristic?
     private var txCharacteristic: CBMutableCharacteristic?
     private var pendingData: Data?
     private var wantsAdvertising = false
+    private var methodChannel: FlutterMethodChannel?
+    private var lastAddServiceError: String = ""
+    private var didAddServiceCount = 0
+    private var didStartAdvertisingCount = 0
+    private var lastAdvertisingError: String = ""
+
+    // インスタンスを静的プロパティで保持（ARC解放防止）
+    private static var shared: BlePeripheralManager?
 
     // MARK: - Init
     static func register(with messenger: FlutterBinaryMessenger) {
         let instance = BlePeripheralManager()
+        shared = instance  // ARC解放を防ぐ
         let channel = FlutterMethodChannel(
             name: methodChannelName,
             binaryMessenger: messenger
         )
+        instance.methodChannel = channel
         channel.setMethodCallHandler(instance.handle)
-        // Peripheral manager は DispatchQueue.main で作成
         instance.peripheralManager = CBPeripheralManager(
             delegate: instance,
             queue: DispatchQueue.main,
             options: [
                 CBPeripheralManagerOptionShowPowerAlertKey: true,
-                // アプリがBLEイベントで再起動された際にペリフェラル状態を復元する
-                CBPeripheralManagerOptionRestoreIdentifierKey: "com.gapless.peripheral",
             ]
         )
     }
@@ -63,6 +74,7 @@ class BlePeripheralManager: NSObject {
             wantsAdvertising = false
             peripheralManager.stopAdvertising()
             peripheralManager.removeAllServices()
+            rxCharacteristic = nil
             txCharacteristic = nil
             result(nil)
 
@@ -72,10 +84,23 @@ class BlePeripheralManager: NSObject {
                 return
             }
             pendingData = typed.data
-            if let char = txCharacteristic, peripheralManager.state == .poweredOn {
+            if let char = rxCharacteristic, peripheralManager.state == .poweredOn {
                 peripheralManager.updateValue(typed.data, for: char, onSubscribedCentrals: nil)
             }
             result(nil)
+
+        case "getStatus":
+            let stateNum = peripheralManager?.state.rawValue ?? -1
+            let isAdv = peripheralManager?.isAdvertising ?? false
+            result([
+                "state": stateNum,
+                "isAdvertising": isAdv,
+                "wantsAdvertising": wantsAdvertising,
+                "didAddServiceCount": didAddServiceCount,
+                "didStartAdvertisingCount": didStartAdvertisingCount,
+                "lastAddServiceError": lastAddServiceError,
+                "lastAdvertisingError": lastAdvertisingError,
+            ])
 
         default:
             result(FlutterMethodNotImplemented)
@@ -84,23 +109,32 @@ class BlePeripheralManager: NSObject {
 
     // MARK: - Setup
     private func setupAndAdvertise() {
-        // 既存サービスをクリアして再登録
         peripheralManager.stopAdvertising()
         peripheralManager.removeAllServices()
+        rxCharacteristic = nil
         txCharacteristic = nil
 
-        let char = CBMutableCharacteristic(
-            type: BlePeripheralManager.txCharUUID,
+        // RX: Centralへ通知する Characteristic (Notify + Read)
+        let rxChar = CBMutableCharacteristic(
+            type: BlePeripheralManager.rxCharUUID,
             properties: [.read, .notify],
             value: nil,
             permissions: [.readable]
         )
-        txCharacteristic = char
+        rxCharacteristic = rxChar
+
+        // TX: Centralから書き込まれる Characteristic (Write)
+        let txChar = CBMutableCharacteristic(
+            type: BlePeripheralManager.txCharUUID,
+            properties: [.write, .writeWithoutResponse],
+            value: nil,
+            permissions: [.writeable]
+        )
+        txCharacteristic = txChar
 
         let service = CBMutableService(type: BlePeripheralManager.serviceUUID, primary: true)
-        service.characteristics = [char]
+        service.characteristics = [rxChar, txChar]
         peripheralManager.add(service)
-        // 広告はdidAdd:error:コールバック後に開始
     }
 }
 
@@ -113,57 +147,70 @@ extension BlePeripheralManager: CBPeripheralManagerDelegate {
         }
     }
 
-    // iOS がアプリを終了→BLEイベントで再起動した際に呼ばれる
     func peripheralManager(_ peripheral: CBPeripheralManager, willRestoreState dict: [String: Any]) {
         if let services = dict[CBPeripheralManagerRestoredStateServicesKey] as? [CBMutableService] {
             for service in services where service.uuid == BlePeripheralManager.serviceUUID {
                 if let chars = service.characteristics as? [CBMutableCharacteristic] {
+                    rxCharacteristic = chars.first { $0.uuid == BlePeripheralManager.rxCharUUID }
                     txCharacteristic = chars.first { $0.uuid == BlePeripheralManager.txCharUUID }
                 }
             }
         }
-        print("BlePeripheral: 状態を復元しました (txChar: \(txCharacteristic != nil ? "あり" : "なし"))")
     }
 
     func peripheralManager(_ peripheral: CBPeripheralManager, didAdd service: CBService, error: Error?) {
-        guard error == nil else {
-            print("BlePeripheral: サービス追加失敗 \(error!.localizedDescription)")
+        didAddServiceCount += 1
+        if let e = error {
+            lastAddServiceError = e.localizedDescription
+            print("BlePeripheral: add(service)失敗 \(e.localizedDescription)")
             return
         }
+        lastAddServiceError = ""
         peripheral.startAdvertising([
             CBAdvertisementDataServiceUUIDsKey: [BlePeripheralManager.serviceUUID],
             CBAdvertisementDataLocalNameKey: "GapLess"
         ])
-        print("BlePeripheral: アドバタイズ開始")
     }
 
     func peripheralManagerDidStartAdvertising(_ peripheral: CBPeripheralManager, error: Error?) {
+        didStartAdvertisingCount += 1
         if let e = error {
+            lastAdvertisingError = e.localizedDescription
             print("BlePeripheral: アドバタイズ開始失敗 \(e.localizedDescription)")
         } else {
-            print("BlePeripheral: アドバタイズ中")
+            lastAdvertisingError = ""
+            print("BlePeripheral: アドバタイズ中 (GapLess UUID)")
         }
     }
 
+    // Central が RX Char を Read 要求
     func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveRead request: CBATTRequest) {
-        guard request.characteristic.uuid == BlePeripheralManager.txCharUUID else {
+        guard request.characteristic.uuid == BlePeripheralManager.rxCharUUID else {
             peripheral.respond(to: request, withResult: .attributeNotFound)
             return
         }
-        if let data = pendingData {
-            request.value = data
+        request.value = pendingData ?? Data()
+        peripheral.respond(to: request, withResult: .success)
+    }
+
+    // Central が TX Char に Write → Flutter へ転送
+    func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest]) {
+        for request in requests {
+            guard request.characteristic.uuid == BlePeripheralManager.txCharUUID,
+                  let data = request.value else { continue }
             peripheral.respond(to: request, withResult: .success)
-        } else {
-            peripheral.respond(to: request, withResult: .unlikelyError)
+            // Dart 側に渡す
+            let bytes = FlutterStandardTypedData(bytes: data)
+            methodChannel?.invokeMethod("onDataReceived", arguments: bytes)
         }
     }
 
+    // Central が RX Char を Notify 購読 → 最新データを即送信
     func peripheralManager(_ peripheral: CBPeripheralManager,
                            central: CBCentral,
                            didSubscribeTo characteristic: CBCharacteristic) {
-        // セントラルがNotifyを購読 → 最新データを即送信
-        if let char = txCharacteristic, let data = pendingData {
-            peripheral.updateValue(data, for: char, onSubscribedCentrals: nil)
+        if let char = rxCharacteristic, let data = pendingData {
+            peripheral.updateValue(data, for: char, onSubscribedCentrals: [central])
         }
     }
 }

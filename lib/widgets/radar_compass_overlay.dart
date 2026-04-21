@@ -296,6 +296,8 @@ class RadarCompassOverlay extends StatelessWidget {
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
+                fontFamily: 'NotoSansJP',
+                fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
               ),
             ),
           ],

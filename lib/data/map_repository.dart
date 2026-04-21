@@ -1,75 +1,70 @@
 // ============================================================
 // map_repository.dart
 // GitHubからマップデータを取得・保存・オフライン管理する
+//
+// 動作: 起動時に GPS を取得し index.json から現在地に最も近い
+// タイルを選択して DL する。DL したファイルは
+//   (a) 既存の consumer 互換のため flat 名（current_roads.gplb 等）で保存
+//   (b) {documents}/maps/{areaId}/ 配下にも保存（タイルキャッシュ）
+// の両方に書き込む。
 // ============================================================
 
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import '../services/connectivity_service.dart';
 import '../utils/localization.dart';
-import '../providers/region_mode_provider.dart';
-import '../services/pinned_http_client.dart';
 import 'area_data.dart';
 import 'map_cache_manager.dart';
 import 'map_download_service.dart';
-
-final http.Client _pinnedClient = createPinnedClient();
+import 'map_tile_index.dart';
 
 // ────────────────────────────────────────
-// ダウンロード対象ファイルの定義
+// 既存 consumer (ShelterRepository 等) が読むフラット名
+// 動的に選んだタイルのファイルをこの名前にマッピングして保存する
 // ────────────────────────────────────────
-class MapFile {
-  /// プライマリURL（GitHub raw content）
-  final String remoteUrl;
-  /// フォールバックURL（jsDelivr CDN — GitHubミラー）
-  final String? fallbackUrl;
-  final String localName;
-  final bool isGzipped;
 
-  const MapFile({
-    required this.remoteUrl,
-    required this.localName,
-    required this.isGzipped,
-    this.fallbackUrl,
-  });
+/// 旧フラット名 → index.json の fileKey
+const Map<String, String> _aliasMap = {
+  'current_roads.gplb':  'roads',
+  'current_poi.gplb':    'poi_shelter', // shelter を代表 POI として配置
+  'current_hazard.gplh': 'hazard',
+};
 
-  /// 試行順の URL リスト（プライマリ → フォールバック）
-  List<String> get candidateUrls => [
-    remoteUrl,
-    if (fallbackUrl != null) fallbackUrl!,
-  ];
-}
+/// 現在地 GPS を取得。
+/// 1) 直近キャッシュ (getLastKnownPosition) を即試す
+/// 2) ダメなら getCurrentPosition を最大 12 秒で待つ
+/// 3) それでも失敗したら null を返す（呼び出し側で扱う）
+Future<({double lat, double lng})?> _currentPosition() async {
+  try {
+    final perm = await Geolocator.checkPermission();
+    if (perm == LocationPermission.denied) {
+      final req = await Geolocator.requestPermission();
+      if (req == LocationPermission.denied ||
+          req == LocationPermission.deniedForever) {
+        return null;
+      }
+    } else if (perm == LocationPermission.deniedForever) {
+      return null;
+    }
 
-const _baseUrl = 'https://raw.githubusercontent.com/noanoa31500-byte/maps/main';
-// jsDelivr は GitHub リポジトリを自動ミラーする無料CDN
-const _cdnUrl = 'https://cdn.jsdelivr.net/gh/noanoa31500-byte/maps@main';
+    final last = await Geolocator.getLastKnownPosition();
+    if (last != null) return (lat: last.latitude, lng: last.longitude);
 
-MapFile _mf(String name, {bool isGzipped = true}) => MapFile(
-  remoteUrl: '$_baseUrl/$name',
-  fallbackUrl: '$_cdnUrl/$name',
-  localName: isGzipped && name.endsWith('.gz') ? name.substring(0, name.length - 3) : name,
-  isGzipped: isGzipped,
-);
-
-/// 地域レジストリからマップファイル一覧を組み立てる
-/// 旧コードはハードコードされた `tokyo_center_*` / `osaki_*` / `thailand_*` を
-/// 列挙していたが、Region.gplbAssetPath 経由で動的に生成し、
-/// 新地域追加時もこのリストを編集不要にする。
-List<MapFile> _buildMapFiles() {
-  final files = <MapFile>[];
-  for (final region in RegionRegistry.all) {
-    final p = region.gplbAssetPath;
-    files.add(_mf('${p}_roads.gplb.gz'));
-    files.add(_mf('${p}_poi.gplb.gz'));
-    files.add(_mf('${p}_hazard.gplh.gz'));
+    final pos = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.low,
+      timeLimit: const Duration(seconds: 12),
+    );
+    return (lat: pos.latitude, lng: pos.longitude);
+  } catch (_) {
+    return null;
   }
-  return files;
 }
 
-final mapFiles = _buildMapFiles();
+/// alias 名のローカルファイル一覧（旧 consumer 互換）
+List<String> get _aliasFileNames => _aliasMap.keys.toList();
 
 // ────────────────────────────────────────
 // ダウンロード進捗の通知
@@ -127,8 +122,8 @@ class MapRepository {
   // オフライン判定に使う
   // ────────────────────────────────────
   Future<bool> isAllDataReady() async {
-    for (final f in mapFiles) {
-      if (!await isDownloaded(f.localName)) return false;
+    for (final name in _aliasFileNames) {
+      if (!await isDownloaded(name)) return false;
     }
     return true;
   }
@@ -137,108 +132,136 @@ class MapRepository {
   // ネット接続があるか確認
   // ────────────────────────────────────
   Future<bool> hasConnection() async {
-    final results = await Connectivity().checkConnectivity();
-    return results.any((r) => r != ConnectivityResult.none);
+    return ConnectivityService.isConnected();
   }
 
   // ────────────────────────────────────
   // 起動時のメイン処理
-  // 未取得のファイルだけダウンロードする
-  // progressCallback: 進捗をUIに通知するコールバック
+  // 1. GPS 取得（失敗時は東京駅）
+  // 2. index.json 取得
+  // 3. 現在地に最も近いタイルを 1 件選んで全ファイルを DL
+  // 4. _aliasMap で旧名にマッピングして保存（既存 consumer 互換）
+  //    + {documents}/maps/{areaId}/ にも保存（新タイルキャッシュ）
   // ────────────────────────────────────
   Future<void> ensureAllData({
     void Function(DownloadProgress)? progressCallback,
   }) async {
-    // まず未取得ファイルを洗い出す
-    final pending = <MapFile>[];
-    for (final f in mapFiles) {
-      if (!await isDownloaded(f.localName)) {
-        pending.add(f);
-      }
-    }
+    // 既に揃っていればスキップ
+    if (await isAllDataReady()) return;
 
-    // 全部揃っていればスキップ
-    if (pending.isEmpty) return;
-
-    // オフラインかつデータ未取得の場合はエラーを通知
     if (!await hasConnection()) {
       progressCallback?.call(DownloadProgress(
         current: 0,
-        total: pending.length,
+        total: _aliasMap.length,
         fileName: '',
         error: GapLessL10n.t('map_no_connection'),
       ));
       return;
     }
 
-    // 未取得ファイルを順番にダウンロード
-    for (int i = 0; i < pending.length; i++) {
-      final f = pending[i];
-      progressCallback?.call(DownloadProgress(
-        current: i + 1,
-        total: pending.length,
-        fileName: f.localName,
-      ));
+    final service = MapDownloadService();
+    final cache = MapCacheManager();
 
-      try {
-        await _downloadFile(f);
-      } catch (e) {
-        progressCallback?.call(DownloadProgress(
-          current: i + 1,
-          total: pending.length,
-          fileName: f.localName,
-          error: GapLessL10n.t('map_download_failed').replaceAll('@filename', f.localName),
-        ));
-        return; // 1件失敗したら中断
-      }
-    }
-
-    // 全完了
-    progressCallback?.call(DownloadProgress(
-      current: pending.length,
-      total: pending.length,
-      fileName: '',
-      isDone: true,
+    // index.json
+    progressCallback?.call(const DownloadProgress(
+      current: 0, total: 3, fileName: 'index.json',
     ));
-  }
-
-  // ────────────────────────────────────
-  // 1ファイルをダウンロードして保存
-  // URL候補を順に試し、各URLを最大2回リトライする（指数バックオフ）
-  // ────────────────────────────────────
-  Future<void> _downloadFile(MapFile mapFile) async {
-    const maxAttemptsPerUrl = 2;
-
-    for (final url in mapFile.candidateUrls) {
-      for (int attempt = 0; attempt < maxAttemptsPerUrl; attempt++) {
-        try {
-          final response = await _pinnedClient
-              .get(Uri.parse(url))
-              .timeout(const Duration(seconds: 30));
-
-          if (response.statusCode == 404) break; // このURLは存在しない、次のURLへ
-          if (response.statusCode != 200) {
-            throw Exception('HTTP ${response.statusCode}');
-          }
-
-          final Uint8List bytes;
-          if (mapFile.isGzipped) {
-            bytes = Uint8List.fromList(gzip.decode(response.bodyBytes));
-          } else {
-            bytes = response.bodyBytes;
-          }
-
-          final path = await localPath(mapFile.localName);
-          await File(path).writeAsBytes(bytes);
-          return; // 成功
-        } catch (e) {
-          if (attempt < maxAttemptsPerUrl - 1) {
-            await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
-          }
-        }
-      }
+    final index = await service.fetchIndex();
+    if (index == null) {
+      progressCallback?.call(DownloadProgress(
+        current: 0, total: _aliasMap.length, fileName: 'index.json',
+        error: GapLessL10n.t('map_download_failed').replaceAll('@filename', 'index.json'),
+      ));
+      return;
     }
-    throw Exception('${mapFile.localName}: 全URLからのダウンロードに失敗しました');
+    await cache.saveIndex(index);
+
+    // GPS 取得 → 最寄りタイル選定
+    final pos = await _currentPosition();
+    if (pos == null) {
+      progressCallback?.call(const DownloadProgress(
+        current: 0, total: 3, fileName: '',
+        error: '位置情報が取得できませんでした。設定で位置情報の許可を確認してください。',
+      ));
+      return;
+    }
+    final candidates = index.tilesNear(pos.lat, pos.lng, radiusKm: 50);
+    final TileEntry tile;
+    if (candidates.isNotEmpty) {
+      candidates.sort((a, b) => a
+          .distanceFromPoint(pos.lat, pos.lng)
+          .compareTo(b.distanceFromPoint(pos.lat, pos.lng)));
+      tile = candidates.first;
+    } else {
+      // 50km 圏内にタイルが無い場合、index 全体から最近傍
+      final all = [...index.tiles]..sort((a, b) => a
+          .distanceFromPoint(pos.lat, pos.lng)
+          .compareTo(b.distanceFromPoint(pos.lat, pos.lng)));
+      if (all.isEmpty) {
+        progressCallback?.call(const DownloadProgress(
+          current: 0, total: 0, fileName: '',
+          error: 'index.json にタイルが存在しません',
+        ));
+        return;
+      }
+      tile = all.first;
+    }
+
+    // タイル丸 DL（解凍済み）
+    progressCallback?.call(DownloadProgress(
+      current: 1, total: 3, fileName: '${tile.id} (DL中)',
+    ));
+    final downloaded = await service.downloadTile(tile);
+    if (downloaded.isEmpty) {
+      progressCallback?.call(DownloadProgress(
+        current: 1, total: 3, fileName: tile.id,
+        error: GapLessL10n.t('map_download_failed').replaceAll('@filename', tile.id),
+      ));
+      return;
+    }
+
+    // タイルキャッシュに保存
+    for (final entry in downloaded.entries) {
+      await cache.saveMapData(tile.id, entry.key, entry.value);
+    }
+
+    // 旧 consumer 互換: alias 名で保存
+    // POI は category 別 (poi_shelter / poi_hospital / poi_store / poi_water) を
+    // すべて単一 current_poi.gplb にマージ
+    final mergedPoi = _mergePoiBinaries([
+      downloaded['poi_shelter'],
+      downloaded['poi_hospital'],
+      downloaded['poi_store'],
+      downloaded['poi_water'],
+      downloaded['poi'],
+    ].whereType<Uint8List>().toList());
+
+    final aliasData = <String, Uint8List?>{
+      'current_roads.gplb':  downloaded['roads'],
+      'current_poi.gplb':    mergedPoi,
+      'current_hazard.gplh': downloaded['hazard'],
+    };
+
+    int progress = 1;
+    for (final entry in aliasData.entries) {
+      progress++;
+      progressCallback?.call(DownloadProgress(
+        current: progress, total: 3, fileName: entry.key,
+      ));
+      final data = entry.value;
+      if (data == null) continue;
+      final path = await localPath(entry.key);
+      await File(path).writeAsBytes(data);
+    }
+
+    // 遠方タイルキャッシュ削除
+    try {
+      await cache.evictDistantCache(pos.lat, pos.lng, index);
+    } catch (_) {}
+
+    progressCallback?.call(DownloadProgress(
+      current: 3, total: 3, fileName: tile.id, isDone: true,
+    ));
   }
 
   // ────────────────────────────────────
@@ -251,6 +274,39 @@ class MapRepository {
       throw Exception('$fileName がまだダウンロードされていません');
     }
     return file.readAsBytes();
+  }
+
+  /// 複数の POI gplb バイナリを 1 つにマージする。
+  /// フォーマット: GPLB(4) + version(1) + count uint32 LE(4) + records...
+  /// レコード長は固定 13 + nameLen バイト。
+  static Uint8List? _mergePoiBinaries(List<Uint8List> parts) {
+    if (parts.isEmpty) return null;
+    if (parts.length == 1) return parts.first;
+
+    int totalCount = 0;
+    int version = 2;
+    final bodies = <Uint8List>[];
+    for (final p in parts) {
+      if (p.length < 9) continue;
+      if (p[0] != 0x47 || p[1] != 0x50 || p[2] != 0x4C || p[3] != 0x42) continue;
+      version = p[4];
+      final cnt = ByteData.sublistView(p).getUint32(5, Endian.little);
+      totalCount += cnt;
+      bodies.add(Uint8List.sublistView(p, 9));
+    }
+    if (bodies.isEmpty) return null;
+
+    final bodyLen = bodies.fold<int>(0, (s, b) => s + b.length);
+    final out = Uint8List(9 + bodyLen);
+    out[0] = 0x47; out[1] = 0x50; out[2] = 0x4C; out[3] = 0x42;
+    out[4] = version;
+    ByteData.sublistView(out).setUint32(5, totalCount, Endian.little);
+    int off = 9;
+    for (final b in bodies) {
+      out.setRange(off, off + b.length, b);
+      off += b.length;
+    }
+    return out;
   }
 
   Future<String> readString(String fileName) async {
@@ -266,9 +322,14 @@ class MapRepository {
     void Function(DownloadProgress)? progressCallback,
   }) async {
     final dir = await _dir;
-    for (final f in mapFiles) {
-      final file = File('${dir.path}/${f.localName}');
+    for (final name in _aliasFileNames) {
+      final file = File('${dir.path}/$name');
       if (await file.exists()) await file.delete();
+    }
+    // タイルキャッシュも消す
+    final mapsDir = Directory('${dir.path}/maps');
+    if (await mapsDir.exists()) {
+      try { await mapsDir.delete(recursive: true); } catch (_) {}
     }
     await ensureAllData(progressCallback: progressCallback);
   }

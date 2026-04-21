@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 緊急時に最適化された短文ローカライゼーション
 /// 0.1秒で理解できる体言止め・単語を中心とした翻訳
 class GapLessL10n {
-  // 現在の言語コード（18言語対応: ja/en/th/zh/zh_TW/ko/fil/id/my/si/hi/ne/bn/es/pt/mn/uz/vi）
+  // 現在の言語コード（20言語対応: ja/en/th/zh/zh_TW/ko/fil/id/my/si/hi/ne/bn/es/pt/mn/uz/vi/fr/ms）
   static String lang = 'ja';
   
   static const String _langKey = 'app_language';
@@ -13,6 +13,7 @@ class GapLessL10n {
   static const Map<String, Map<String, String>> _values = {
     'ja': {
       'title': 'GapLess',
+      'connectivity_restored': '📶 通信が回復しました。ホームに戻れます。',
       // Safety Check Dialog
       'dialog_safety_title': '安全確認',
       'dialog_safety_desc': '避難所に到着しましたか？\nナビゲーションを終了し、生活支援モードに切り替えます。',
@@ -76,7 +77,7 @@ class GapLessL10n {
       'perm_skip': 'スキップ',
       'perm_compass_warning': 'コンパス機能が制限されます',
       'perm_location_required': '位置情報が必要です',
-      'perm_location_required_desc': '位置情報がないとナビが使えません。\n設定から位置情報を「常に許可」してください。',
+      'perm_location_required_desc': '位置情報がないとナビが使えません。\n設定から位置情報を「Appの使用中は許可」以上にしてください。',
       'loc_acquiring': '位置情報を取得中...',
       'loc_no_destination': '目的地を設定してください',
       'loc_select_in_chat': '下のチャットで「避難所」を選んでください',
@@ -122,7 +123,7 @@ class GapLessL10n {
       'guide_info': '情報の集め方',
       'guide_money': 'お金・貴重品',
       
-      // Thailand Official
+      // Flood/Tropical Guide (legacy)
       'guide_electric': '感電注意',
       'guide_disease': '水害感染症',
       'guide_animals': '毒害生物',
@@ -130,7 +131,7 @@ class GapLessL10n {
       'guide_heat': '熱中症',
       'guide_emergency': '緊急連絡先',
 
-      // Thailand Support
+      // Flood Recovery Guide (legacy)
       'guide_drowning': '水の事故',
       'guide_boat_safety': 'ボート移動',
       'guide_fungal': '足の真菌症',
@@ -370,8 +371,13 @@ class GapLessL10n {
       'overlay_power': '感電',
       'overlay_safe': '安全',
 
+      'route_mode_road_width': '安全経路（道幅優先）',
+      'route_mode_flood_avoid': '安全経路（浸水・感電回避）',
       // Turn-by-turn navigation
       'nav_straight': '直進',
+      'risk_legend_flood': '浸水',
+      'risk_legend_rapid': '激流',
+      'risk_legend_safe': '安全',
       'nav_turn_right': '右折',
       'nav_turn_left': '左折',
       'nav_u_turn': 'Uターン',
@@ -468,8 +474,7 @@ class GapLessL10n {
       'status_safe': '✅ 安全',
       'settings_gps': 'GPS位置情報',
       'set_about': 'このアプリについて',
-      'region_miyagi': '🇯🇵 宮城県（日本）',
-      'region_satun': '🇹🇭 サトゥーン（タイ）',
+      'region_japan_tokyo': '🇯🇵 日本（東京）',
       'demo_hazard': '🚨 災害モード',
       'demo_hazard_desc': 'デモ: 危険状態を表示',
       'clear_cache': 'キャッシュを削除',
@@ -643,8 +648,81 @@ class GapLessL10n {
       'compass_dir_11': '11時の方向（右斜め前）',
       'compass_distance_m_left': 'あと @n m',
       'compass_distance_km_left': 'あと @n km',
+
+      // Chips - Allergies (extended)
+      'allergy_soy': '大豆',
+      'allergy_tree_nuts': 'ナッツ類',
+      'allergy_shellfish': '甲殻類',
+      'allergy_gluten': 'グルテン',
+      'allergy_sesame': 'ごま',
+      'allergy_alcohol': 'アルコール',
+      'allergy_latex': 'ラテックス',
+
+      // Chips - Needs (extended)
+      'need_elderly': '高齢者',
+      'need_kosher': 'コーシャー',
+      'need_vegan': 'ヴィーガン',
+      'need_pet': 'ペット同伴',
+      'need_service_animal': '介助犬',
+      'need_oxygen': '酸素吸入',
+      'need_dialysis': '透析',
+
+      // Chips - Conditions
+      'cond_hypertension': '高血圧',
+      'cond_heart_disease': '心臓病',
+      'cond_diabetes': '糖尿病',
+      'cond_asthma': '喘息',
+      'cond_epilepsy': 'てんかん',
+      'cond_dementia': '認知症',
+      'cond_mental_health': '精神疾患',
+      'cond_kidney_disease': '腎臓病',
+      'cond_stroke': '脳卒中既往',
+      'cond_cancer': 'がん治療中',
+
+      // Chips - Languages (extended)
+      'lang_chinese': '中文',
+      'lang_korean': '한국어',
+      'lang_spanish': 'Español',
+      'lang_arabic': 'العربية',
+      'lang_portuguese': 'Português',
+      'lang_vietnamese': 'Tiếng Việt',
+      'lang_tagalog': 'Tagalog',
+      'lang_french': 'Français',
+      'lang_malay': 'Bahasa Melayu',
+
+      // Emergency Card - Section headers
+      'section_basic_info': '基本情報',
+      'section_emergency_contact': '緊急連絡先',
+      'section_medications': '服薬中',
+      'section_allergies': 'アレルギー',
+      'section_conditions': '持病',
+      'section_needs': '支援ニーズ',
+      'section_languages': '話せる言語',
+
+      // Emergency Card - Card titles
+      'card_medical': '医療情報',
+      'card_support_language': 'サポート・言語',
+
+      // Emergency Card - Field labels
+      'label_dob': '生年月日',
+      'label_emergency_name': '氏名',
+      'label_emergency_phone': '電話番号',
+      'label_medication_names': '薬品名',
+
+      // Navigation
+      'nav_btn_stop': '終了',
+      'nav_off_route_recalc': 'ルートを外れました。再計算します…',
+
+      // Settings
+      'section_offline_map': 'オフライン地図データ',
+      'map_data_cached': 'キャッシュ済み',
+      'map_data_not_cached': '未キャッシュ',
+      'map_data_size': 'サイズ: @size KB',
+      'map_data_download_needed': 'オフライン使用にはダウンロードが必要です',
+      'label_are_you_sure': 'よろしいですか？',
     },
     'en': {
+      'connectivity_restored': '📶 Connectivity restored. You can return home.',
       // Tabs
       'tab_map': 'Map',
       'tab_guide': 'AI Guide',
@@ -749,8 +827,7 @@ class GapLessL10n {
       'settings_gps': 'GPS Location',
       'settings_demo': 'Demo Settings',
       'set_about': 'About',
-      'region_miyagi': '🇯🇵 Miyagi, Japan',
-      'region_satun': '🇹🇭 Satun, Thailand',
+      'region_japan_tokyo': '🇯🇵 Japan (Tokyo)',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย (Thai)',
@@ -810,6 +887,15 @@ class GapLessL10n {
       'allergy_seafood': 'Seafood',
       'allergy_wheat': 'Wheat',
       
+      // Chips - Allergies (extended)
+      'allergy_soy': 'Soy',
+      'allergy_tree_nuts': 'Tree Nuts',
+      'allergy_shellfish': 'Shellfish',
+      'allergy_gluten': 'Gluten',
+      'allergy_sesame': 'Sesame',
+      'allergy_alcohol': 'Alcohol',
+      'allergy_latex': 'Latex',
+
       // Chips - Needs
       'need_wheelchair': 'Wheelchair',
       'need_visual': 'Visual Impairment',
@@ -817,6 +903,67 @@ class GapLessL10n {
       'need_pregnancy': 'Pregnancy',
       'need_infant': 'Infant',
       'need_halal': 'Halal',
+      'need_elderly': 'Elderly',
+      'need_kosher': 'Kosher',
+      'need_vegan': 'Vegan',
+      'need_pet': 'Pet',
+      'need_service_animal': 'Service Animal',
+      'need_oxygen': 'Oxygen',
+      'need_dialysis': 'Dialysis',
+
+      // Chips - Conditions
+      'cond_hypertension': 'Hypertension',
+      'cond_heart_disease': 'Heart Disease',
+      'cond_diabetes': 'Diabetes',
+      'cond_asthma': 'Asthma',
+      'cond_epilepsy': 'Epilepsy',
+      'cond_dementia': 'Dementia',
+      'cond_mental_health': 'Mental Health',
+      'cond_kidney_disease': 'Kidney Disease',
+      'cond_stroke': 'Stroke History',
+      'cond_cancer': 'Cancer',
+
+      // Chips - Languages (extended)
+      'lang_chinese': '中文',
+      'lang_korean': '한국어',
+      'lang_spanish': 'Español',
+      'lang_arabic': 'العربية',
+      'lang_portuguese': 'Português',
+      'lang_vietnamese': 'Tiếng Việt',
+      'lang_tagalog': 'Tagalog',
+      'lang_french': 'Français',
+      'lang_malay': 'Bahasa Melayu',
+
+      // Emergency Card - Section headers
+      'section_basic_info': 'Basic Info',
+      'section_emergency_contact': 'Emergency Contact',
+      'section_medications': 'Medications',
+      'section_allergies': 'Allergies',
+      'section_conditions': 'Medical Conditions',
+      'section_needs': 'Special Needs',
+      'section_languages': 'Languages',
+
+      // Emergency Card - Card titles
+      'card_medical': 'Medical Info',
+      'card_support_language': 'Support & Language',
+
+      // Emergency Card - Field labels
+      'label_dob': 'Date of Birth',
+      'label_emergency_name': 'Name',
+      'label_emergency_phone': 'Phone',
+      'label_medication_names': 'Medication names',
+
+      // Navigation
+      'nav_btn_stop': 'End',
+      'nav_off_route_recalc': 'Off route. Recalculating...',
+
+      // Settings
+      'section_offline_map': 'Offline Map Data',
+      'map_data_cached': 'Cached',
+      'map_data_not_cached': 'Not cached',
+      'map_data_size': 'Size: @size KB',
+      'map_data_download_needed': 'Download required for offline use',
+      'label_are_you_sure': 'Are you sure?',
 
       // Chat Interface
       'chat_prompt_main': 'How can I help?\nPlease select a topic.',
@@ -841,7 +988,7 @@ class GapLessL10n {
       'guide_info': 'Info Gathering',
       'guide_money': 'Cash & Valuables',
 
-      // Thailand Official
+      // Flood/Tropical Guide (legacy)
       'guide_electric': 'Electrical Safety',
       'guide_disease': 'Flood Diseases',
       'guide_animals': 'Poisonous Animals',
@@ -849,7 +996,7 @@ class GapLessL10n {
       'guide_heat': 'Heatstroke',
       'guide_emergency': 'Emergency #',
 
-      // Thailand Support
+      // Flood Recovery Guide (legacy)
       'guide_drowning': 'Drowning Prev.',
       'guide_boat_safety': 'Boat Safety',
       'guide_fungal': 'Fungal Infection',
@@ -1083,8 +1230,13 @@ class GapLessL10n {
       'overlay_power': 'Electric',
       'overlay_safe': 'Safe',
 
+      'route_mode_road_width': 'Safe Route (Road Width Priority)',
+      'route_mode_flood_avoid': 'Safe Route (Flood & Shock Avoidance)',
       // Turn-by-turn navigation
       'nav_straight': 'Straight',
+      'risk_legend_flood': 'Flood',
+      'risk_legend_rapid': 'Rapid',
+      'risk_legend_safe': 'Safe',
       'nav_turn_right': 'Turn Right',
       'nav_turn_left': 'Turn Left',
       'nav_u_turn': 'U-turn',
@@ -1342,8 +1494,7 @@ class GapLessL10n {
       'settings_gps': 'ตำแหน่ง GPS',
       'settings_demo': 'การตั้งค่าสาธิต',
       'set_about': 'เกี่ยวกับ',
-      'region_miyagi': '🇯🇵 มิยากิ, ญี่ปุ่น',
-      'region_satun': '🇹🇭 สตูล, ประเทศไทย',
+      'region_japan_tokyo': '🇯🇵 ญี่ปุ่น (โตเกียว)',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย (Thai)',
@@ -1434,7 +1585,7 @@ class GapLessL10n {
       'guide_info': 'การหาข้อมูล',
       'guide_money': 'เงินและของมีค่า',
 
-      // Thailand Official
+      // Flood/Tropical Guide (legacy)
       'guide_electric': 'ระวังไฟดูด',
       'guide_disease': 'โรคระบาด',
       'guide_animals': 'สัตว์มีพิษ',
@@ -1442,7 +1593,7 @@ class GapLessL10n {
       'guide_heat': 'โรคลมแดด',
       'guide_emergency': 'เบอร์ฉุกเฉิน',
 
-      // Thailand Support
+      // Flood Recovery Guide (legacy)
       'guide_drowning': 'ป้องกันจมน้ำ',
       'guide_boat_safety': 'ความปลอดภัยทางเรือ',
       'guide_fungal': 'โรคน้ำกัดเท้า',
@@ -1671,6 +1822,9 @@ class GapLessL10n {
 
       // Turn-by-turn navigation
       'nav_straight': 'ตรงไป',
+      'risk_legend_flood': 'น้ำท่วม',
+      'risk_legend_rapid': 'น้ำไหลเชี่ยว',
+      'risk_legend_safe': 'ปลอดภัย',
       'nav_turn_right': 'เลี้ยวขวา',
       'nav_turn_left': 'เลี้ยวซ้าย',
       'nav_u_turn': 'กลับรถ',
@@ -1929,8 +2083,7 @@ class GapLessL10n {
       'settings_gps': 'GPS位置',
       'settings_demo': '演示设置',
       'set_about': '关于',
-      'region_miyagi': '🇯🇵 宫城县（日本）',
-      'region_satun': '🇹🇭 沙敦（泰国）',
+      'region_japan_tokyo': '🇯🇵 日本（东京）',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย',
@@ -2194,6 +2347,9 @@ class GapLessL10n {
       'overlay_power': '触电',
       'overlay_safe': '安全',
       'nav_straight': '直行',
+      'risk_legend_flood': '洪水',
+      'risk_legend_rapid': '急流',
+      'risk_legend_safe': '安全',
       'nav_turn_right': '右转',
       'nav_turn_left': '左转',
       'nav_u_turn': 'U型转弯',
@@ -2368,8 +2524,7 @@ class GapLessL10n {
       'settings_gps': 'GPS位置',
       'settings_demo': '演示设置',
       'set_about': '關於',
-      'region_miyagi': '🇯🇵 宮城縣（日本）',
-      'region_satun': '🇹🇭 沙敦（泰國）',
+      'region_japan_tokyo': '🇯🇵 日本（東京）',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย',
@@ -2634,6 +2789,9 @@ class GapLessL10n {
       'overlay_power': '觸電',
       'overlay_safe': '安全',
       'nav_straight': '直行',
+      'risk_legend_flood': '洪水',
+      'risk_legend_rapid': '急流',
+      'risk_legend_safe': '安全',
       'nav_turn_right': '右轉',
       'nav_turn_left': '左轉',
       'nav_u_turn': 'U型迴轉',
@@ -2808,8 +2966,7 @@ class GapLessL10n {
       'settings_gps': 'GPS 위치',
       'settings_demo': '데모 설정',
       'set_about': '정보',
-      'region_miyagi': '🇯🇵 미야기（일본）',
-      'region_satun': '🇹🇭 사툰（태국）',
+      'region_japan_tokyo': '🇯🇵 일본（도쿄）',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย',
@@ -3067,6 +3224,9 @@ class GapLessL10n {
       'overlay_power': '감전',
       'overlay_safe': '안전',
       'nav_straight': '직진',
+      'risk_legend_flood': '홍수',
+      'risk_legend_rapid': '급류',
+      'risk_legend_safe': '안전',
       'nav_turn_right': '우회전',
       'nav_turn_left': '좌회전',
       'nav_u_turn': 'U턴',
@@ -3228,6 +3388,9 @@ class GapLessL10n {
       'dir_west': 'K',
       'dir_northwest': 'HK',
       'nav_straight': 'Diretso',
+      'risk_legend_flood': 'Baha',
+      'risk_legend_rapid': 'Agos',
+      'risk_legend_safe': 'Ligtas',
       'nav_turn_right': 'Kanan',
       'nav_turn_left': 'Kaliwa',
       'nav_u_turn': 'U-turn',
@@ -3375,6 +3538,9 @@ class GapLessL10n {
       'dir_west': 'B',
       'dir_northwest': 'BL',
       'nav_straight': 'Lurus',
+      'risk_legend_flood': 'Banjir',
+      'risk_legend_rapid': 'Arus Deras',
+      'risk_legend_safe': 'Aman',
       'nav_turn_right': 'Belok Kanan',
       'nav_turn_left': 'Belok Kiri',
       'nav_u_turn': 'Putar Balik',
@@ -3522,6 +3688,9 @@ class GapLessL10n {
       'dir_west': 'အနောက်',
       'dir_northwest': 'အနောက်မြောက်',
       'nav_straight': 'ဖြောင့်',
+      'risk_legend_flood': 'ရေကြီးမှု',
+      'risk_legend_rapid': 'စီးဆင်းမှု',
+      'risk_legend_safe': 'ဘေးကင်း',
       'nav_turn_right': 'ညာ',
       'nav_turn_left': 'ဘယ်',
       'nav_u_turn': 'U-turn',
@@ -3669,6 +3838,9 @@ class GapLessL10n {
       'dir_west': 'බ',
       'dir_northwest': 'වයඹ',
       'nav_straight': 'කෙළින්',
+      'risk_legend_flood': 'ගංවතුර',
+      'risk_legend_rapid': 'ප්‍රබල ගලා',
+      'risk_legend_safe': 'ආරක්ෂිත',
       'nav_turn_right': 'දකුණ',
       'nav_turn_left': 'වාම',
       'nav_u_turn': 'U-හැරවීම',
@@ -3816,6 +3988,9 @@ class GapLessL10n {
       'dir_west': 'प',
       'dir_northwest': 'वायव्य',
       'nav_straight': 'सीधे',
+      'risk_legend_flood': 'बाढ़',
+      'risk_legend_rapid': 'तेज़ धारा',
+      'risk_legend_safe': 'सुरक्षित',
       'nav_turn_right': 'दाएँ',
       'nav_turn_left': 'बाएँ',
       'nav_u_turn': 'U-टर्न',
@@ -3963,6 +4138,9 @@ class GapLessL10n {
       'dir_west': 'प',
       'dir_northwest': 'व',
       'nav_straight': 'सोझो',
+      'risk_legend_flood': 'बाढी',
+      'risk_legend_rapid': 'तीव्र प्रवाह',
+      'risk_legend_safe': 'सुरक्षित',
       'nav_turn_right': 'दायाँ',
       'nav_turn_left': 'बायाँ',
       'nav_u_turn': 'U-टर्न',
@@ -4110,6 +4288,9 @@ class GapLessL10n {
       'dir_west': 'প',
       'dir_northwest': 'উপ',
       'nav_straight': 'সোজা',
+      'risk_legend_flood': 'বন্যা',
+      'risk_legend_rapid': 'দ্রুত প্রবাহ',
+      'risk_legend_safe': 'নিরাপদ',
       'nav_turn_right': 'ডানে',
       'nav_turn_left': 'বামে',
       'nav_u_turn': 'U-টার্ন',
@@ -4257,6 +4438,9 @@ class GapLessL10n {
       'dir_west': 'O',
       'dir_northwest': 'NO',
       'nav_straight': 'Recto',
+      'risk_legend_flood': 'Inundación',
+      'risk_legend_rapid': 'Corriente',
+      'risk_legend_safe': 'Seguro',
       'nav_turn_right': 'Girar a la derecha',
       'nav_turn_left': 'Girar a la izquierda',
       'nav_u_turn': 'Dar la vuelta',
@@ -4404,6 +4588,9 @@ class GapLessL10n {
       'dir_west': 'O',
       'dir_northwest': 'NO',
       'nav_straight': 'Em frente',
+      'risk_legend_flood': 'Inundação',
+      'risk_legend_rapid': 'Correnteza',
+      'risk_legend_safe': 'Seguro',
       'nav_turn_right': 'Virar à direita',
       'nav_turn_left': 'Virar à esquerda',
       'nav_u_turn': 'Retorno',
@@ -4551,6 +4738,9 @@ class GapLessL10n {
       'dir_west': 'Б',
       'dir_northwest': 'ХБ',
       'nav_straight': 'Шулуун',
+      'risk_legend_flood': 'Үер',
+      'risk_legend_rapid': 'Урсгал',
+      'risk_legend_safe': 'Аюулгүй',
       'nav_turn_right': 'Баруун эргэ',
       'nav_turn_left': 'Зүүн эргэ',
       'nav_u_turn': 'U-эргэлт',
@@ -4698,6 +4888,9 @@ class GapLessL10n {
       'dir_west': 'G',
       'dir_northwest': 'ShG',
       'nav_straight': 'Toʻgʻri',
+      'risk_legend_flood': 'Suv toshqini',
+      'risk_legend_rapid': 'Oqim',
+      'risk_legend_safe': 'Xavfsiz',
       'nav_turn_right': 'Oʻngga bur',
       'nav_turn_left': 'Chapga bur',
       'nav_u_turn': 'Orqaga qayt',
@@ -4864,8 +5057,7 @@ class GapLessL10n {
       'settings_gps': 'Vị trí GPS',
       'settings_demo': 'Cài đặt Demo',
       'set_about': 'Giới thiệu',
-      'region_miyagi': '🇯🇵 Miyagi, Nhật Bản',
-      'region_satun': '🇹🇭 Satun, Thái Lan',
+      'region_japan_tokyo': '🇯🇵 Nhật Bản (Tokyo)',
       'lang_japanese': '日本語',
       'lang_english': 'English',
       'lang_thai': 'ไทย (Thai)',
@@ -5129,6 +5321,9 @@ class GapLessL10n {
       'overlay_power': 'Điện',
       'overlay_safe': 'An toàn',
       'nav_straight': 'Đi thẳng',
+      'risk_legend_flood': 'Lũ lụt',
+      'risk_legend_rapid': 'Dòng chảy',
+      'risk_legend_safe': 'An toàn',
       'nav_turn_right': 'Rẽ phải',
       'nav_turn_left': 'Rẽ trái',
       'nav_u_turn': 'Quay đầu',
@@ -5252,6 +5447,764 @@ class GapLessL10n {
       'jma_active': 'ĐANG HOẠT ĐỘNG',
       'nav_tab_feed': 'Cảnh báo',
     },
+
+    // ── フランス語 ────────────────────────────────────────────────────────────
+    'fr': {
+      'title': 'GapLess',
+      'connectivity_restored': '📶 Connexion rétablie. Vous pouvez rentrer.',
+
+      // Safety Check Dialog
+      'dialog_safety_title': 'Vérification de sécurité',
+      'dialog_safety_desc': 'Êtes-vous arrivé en sécurité ?\nTerminer la navigation et passer en mode assistance.',
+      'btn_yes_arrived': 'Oui, arrivé',
+      'btn_cancel': 'Annuler',
+
+      // Bot Messages
+      'chat_error_not_found': 'Désolé, information introuvable. Veuillez choisir un autre sujet.',
+      'bot_analyzing': 'Analyse...',
+      'bot_hospital': '🏥 Vers l\'hôpital',
+      'bot_water': '💧 Point d\'eau',
+      'bot_store': '🏪 Magasin',
+      'bot_safe_shelter': '🟢 Abri',
+      'bot_loc_error': '⚠️ Position indisponible.',
+      'bot_found': '🔍 **Lieu trouvé**',
+      'bot_found_desc': '"**@name**" est à **@dist**. Suivez l\'icône sur la carte.',
+      'bot_prefix_normal': 'Restez calme. Nous sommes avec vous.',
+      'bot_prefix_name': 'Restez calme, @name. Nous sommes avec vous.',
+      'bot_not_found': '⚠️ **Introuvable à proximité**',
+      'bot_not_found_desc': 'Aucune donnée dans un rayon de 3 km. Dirigez-vous vers un "Abri".',
+      'bot_go_to': 'Aller à @name',
+      'bot_dest_set': 'Destination : @name',
+      'bot_dest_changed': 'Changé : @old → @new',
+
+      // Profile / Emergency Gear
+      'header_emergency_gear': 'Carte d\'urgence',
+      'label_name': 'Nom',
+      'label_nation': 'Nationalité',
+      'label_blood': 'Groupe sanguin',
+      'label_allergies': 'Allergies',
+      'label_needs': 'Besoins spéciaux',
+      'label_unknown': 'Inconnu',
+      'label_edit': 'Modifier le profil',
+      'label_dob': 'Date de naissance',
+      'label_emergency_name': 'Nom',
+      'label_emergency_phone': 'Téléphone',
+      'label_medication_names': 'Noms des médicaments',
+
+      // Emergency Card sections
+      'section_basic_info': 'Informations de base',
+      'section_emergency_contact': 'Contact d\'urgence',
+      'section_medications': 'Médicaments',
+      'section_allergies': 'Allergies',
+      'section_conditions': 'Maladies',
+      'section_needs': 'Besoins spéciaux',
+      'section_languages': 'Langues parlées',
+      'card_medical': 'Infos médicales',
+      'card_support_language': 'Soutien & Langue',
+
+      // Shelter Dashboard
+      'header_safe_banner_title': 'En sécurité à l\'abri',
+      'header_safe_banner_desc': 'Vous êtes dans un endroit sûr.',
+      'header_survival_guide': 'Guide de survie officiel',
+      'btn_show_staff': 'Carte d\'urgence (montrer au personnel)',
+
+      // Compass
+      'waiting_destination': 'En attente d\'une destination...',
+      'follow_arrow': 'Suivez la flèche',
+      'btn_arrived_label': 'Arrivé à l\'abri',
+
+      // Settings
+      'settings_title': 'Paramètres',
+      'settings_language': 'Langue',
+      'settings_gps': 'Position GPS',
+      'settings_demo': 'Mode démonstration',
+      'set_about': 'À propos',
+      'set_region': 'Région',
+      'set_lang': 'Langue',
+      'set_demo': 'Démo',
+      'region_japan_tokyo': '🇯🇵 Japon (Tokyo)',
+      'demo_hazard': '🚨 Mode catastrophe',
+      'demo_hazard_desc': 'Démo: afficher état de danger',
+      'clear_cache': 'Vider le cache',
+      'app_version': 'Version',
+      'app_credit': 'Projet Mitou Junior',
+      'section_offline_map': 'Carte hors ligne',
+      'map_data_cached': 'En cache',
+      'map_data_not_cached': 'Non mis en cache',
+      'map_data_size': 'Taille : @size Ko',
+      'map_data_download_needed': 'Téléchargement requis pour l\'utilisation hors ligne',
+      'label_are_you_sure': 'Êtes-vous sûr ?',
+
+      // Permissions
+      'loc_permission_denied': 'Localisation refusée',
+      'loc_open_settings': 'Ouvrir les paramètres',
+      'perm_location_title': 'Localisation',
+      'perm_location_desc': 'Obtient votre position même en arrière-plan',
+      'perm_motion_title': 'Capteurs / Mouvement',
+      'perm_motion_desc': 'Utilise la boussole et l\'accéléromètre',
+      'perm_ble_title': 'Bluetooth',
+      'perm_ble_desc': 'Partage les conditions routières (optionnel)',
+      'perm_allow': 'Autoriser',
+      'perm_skip': 'Ignorer',
+      'perm_compass_warning': 'La boussole sera limitée',
+      'perm_location_required': 'Localisation requise',
+      'perm_location_required_desc': 'La navigation nécessite la localisation. Activez "Toujours autoriser" dans les paramètres.',
+      'loc_acquiring': 'Acquisition de la position...',
+      'loc_no_destination': 'Définissez une destination',
+      'loc_select_in_chat': 'Choisissez "Abri" dans le chat',
+
+      // Navigation
+      'nav_straight': 'Tout droit',
+      'risk_legend_flood': 'Inondation',
+      'risk_legend_rapid': 'Torrent',
+      'risk_legend_safe': 'Sûr',
+      'nav_turn_right': 'Tourner à droite',
+      'nav_turn_left': 'Tourner à gauche',
+      'nav_u_turn': 'Demi-tour',
+      'nav_dist_ahead': 'Dans @dist',
+      'nav_to_dest': 'Jusqu\'à destination',
+      'nav_to_next_point': 'Jusqu\'au prochain point',
+      'nav_total_distance': 'Distance totale',
+      'nav_arrived_panel': 'Vous êtes arrivé à destination',
+      'nav_btn_stop': 'Terminer',
+      'nav_off_route_recalc': 'Hors route. Recalcul...',
+      'nav_screen_title': 'Navigation sécurisée',
+      'nav_arrive_title': 'Arrivée à destination',
+      'nav_arrive_body': 'Êtes-vous arrivé en sécurité ?\nConfirmer affichera le tableau de bord de l\'abri.',
+      'nav_still_moving': 'Encore en route',
+      'nav_safe_confirm': 'Confirmer la sécurité',
+      'nav_no_location': 'Position indisponible',
+      'nav_no_shelter': 'Aucun abri à proximité',
+      'route_calc_failed': 'Calcul de route échoué',
+      'nav_route_calculated': 'Route vers @name calculée',
+      'nav_calculating': 'Calcul de la route...',
+      'nav_loading_map': 'Chargement de la carte...',
+      'nav_tab_map': 'Navigation',
+      'nav_tab_card': 'Carte d\'urgence',
+      'nav_tab_guide': 'Guide de survie',
+      'nav_tab_chat': 'Chat IA',
+      'nav_tab_settings': 'Paramètres',
+      'nav_tab_feed': 'Alertes',
+      'nav_nearest_shelter': 'Abri le plus proche',
+      'nav_compass': 'Boussole',
+      'gps_none': 'GPS non acquis',
+      'ble_off': 'BLE arrêté',
+      'power_saving': 'Économie d\'énergie',
+
+      // Dead Reckoning
+      'dr_badge': 'GPS perdu - Position estimée (@steps pas)',
+      'dr_accuracy_low': '⚠ Précision faible — Vérifiez votre position',
+      'dr_fix_location': 'Je suis ici',
+      'dr_tap_to_fix': 'Touchez la carte pour corriger',
+      'dr_location_fixed': 'Position corrigée',
+      'dr_uncertain_title': 'Position incertaine',
+      'dr_uncertain_body': 'Signal GPS perdu. Sortez du bâtiment.',
+      'dr_shelter_list': 'Abris les plus proches',
+
+      // Emergency
+      'emergency_call_instruction': 'Appelez le 15 (SAMU) ou le 17 (Police)',
+      'emergency_screen_title': 'Urgence',
+      'emergency_nearest': 'Abri le plus proche :',
+      'emergency_sos_resend': 'Renvoyer',
+      'emergency_call': 'Appeler',
+      'emergency_water': 'Trouver de l\'eau',
+      'emergency_water_tip': 'Vérifiez le robinet. Sinon, cherchez une rivière ou une source.',
+      'emergency_first_aid': 'Premiers secours',
+      'emergency_first_aid_tip': 'Nettoyez et comprimez la plaie. Ne déplacez pas les fractures.',
+      'emergency_repeat': 'Répéter',
+      'sos_hold_hint': 'Maintenir pour envoyer SOS',
+      'sos_sent': 'SOS envoyé aux appareils proches',
+      'sos_received': 'Signal SOS reçu à proximité',
+      'sos_auto_resend': 'SOS en renvoi automatique',
+      'sos_stop_resend': 'Arrêter le renvoi automatique',
+      'sos_armed': 'SOS prêt. Maintenir 3 secondes',
+      'sos_arming': 'SOS armé. Continuer à maintenir',
+      'disaster_mode_exit': 'Fausse alerte ? Accueil',
+      'disaster_mode_exit_confirm': 'Quitter le mode catastrophe et rentrer. Maintenir 3 s.',
+      'disaster_mode_exit_done': 'Mode catastrophe désactivé',
+
+      // Triage
+      'triage_title': 'Évaluation des blessures',
+      'triage_back': 'Retour',
+      'triage_recommendation': 'Action recommandée',
+      'triage_go_hospital': 'Aller à l\'hôpital le plus proche',
+      'triage_go_shelter': 'Aller à l\'abri',
+      'triage_restart': 'Recommencer',
+      'triage_critical_title': 'Critique : soins médicaux immédiats',
+      'triage_critical_desc': 'Pronostic vital engagé. Rendez-vous immédiatement aux urgences.',
+      'triage_critical_rec': '🚨 Hôpital le plus proche en urgence',
+      'triage_urgent_title': 'Urgent : consultation médicale recommandée',
+      'triage_urgent_desc': 'Un professionnel de santé doit vous examiner rapidement.',
+      'triage_urgent_rec': '🏥 Priorité aux abris médicalisés',
+      'triage_moderate_title': 'Modéré : évacuation avec surveillance',
+      'triage_moderate_desc': 'Soins de premiers secours à l\'abri et surveillance.',
+      'triage_moderate_rec': '⚠️ Aller à l\'abri pour les premiers secours',
+      'triage_minor_title': 'Léger : prise en charge à l\'abri',
+      'triage_minor_desc': 'Blessure légère. Consultez le personnel de l\'abri.',
+      'triage_minor_rec': '✅ Aller à l\'abri le plus proche',
+
+      // Risk Radar
+      'risk_radar_title': 'Radar de risques',
+      'risk_ready': 'Prêt',
+      'risk_loading': 'Chargement des données de risque...',
+      'risk_high': '⚠️ Risque élevé – Avancez avec précaution',
+      'risk_medium': 'Attention – Zone dangereuse détectée',
+      'risk_low': 'Environnement relativement sûr',
+      'risk_shock': 'Électrocution',
+      'risk_flood': 'Inondation',
+      'risk_safe': 'Sûr',
+      'risk_scanning': 'Analyse...',
+      'risk_rescan': 'Rescanner',
+
+      // Directions
+      'dir_north': 'Nord',
+      'dir_northeast': 'Nord-Est',
+      'dir_east': 'Est',
+      'dir_southeast': 'Sud-Est',
+      'dir_south': 'Sud',
+      'dir_southwest': 'Sud-Ouest',
+      'dir_west': 'Ouest',
+      'dir_northwest': 'Nord-Ouest',
+
+      // Splash / Onboarding
+      'splash_loading': 'Chargement...',
+      'splash_subtitle': 'Navigation en cas de catastrophe',
+      'splash_disclaimer_title': 'Avertissement',
+      'splash_disclaimer_jp': 'Cette application aide à l\'évacuation mais ne garantit pas la sécurité. La décision finale vous appartient.',
+      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk.',
+      'splash_warning': 'En cas d\'urgence, suivez les instructions officielles',
+      'splash_agree': 'Accepter et commencer',
+      'onb_select_language_title': 'Choisir la langue',
+      'onb_location_title': 'Autoriser la localisation',
+      'onb_location_desc': 'La localisation est requise pour une navigation précise.',
+      'onb_allow_location': 'Autoriser la localisation',
+      'onb_perm_granted': 'Localisation autorisée',
+      'onb_set_later': 'Configurer plus tard',
+
+      // Map
+      'map_title': 'Carte',
+      'map_download_title': 'Téléchargement de la carte',
+      'map_download_error': 'Échec du téléchargement',
+      'map_download_retry': 'Réessayer',
+      'map_download_skip': 'Ignorer et démarrer',
+      'map_download_done': 'Téléchargement terminé',
+      'map_no_connection': 'Pas de connexion Internet.\nActivez le Wi-Fi ou les données mobiles.',
+      'navigate_here': 'Naviguer ici',
+      'navigation_started': 'Navigation vers @name démarrée',
+
+      // Status
+      'status_safe': '✅ SÛR',
+      'status_danger': '⚠️ DANGER',
+      'status_offline': 'HORS LIGNE',
+      'offline_banner': 'Mode hors ligne : données sauvegardées utilisées',
+      'offline_nav_ok': 'Navigation hors ligne disponible',
+
+      // Chat
+      'chat_prompt_main': 'Comment puis-je vous aider ?\nChoisissez un sujet.',
+      'chat_btn_more': 'Autres sujets',
+      'chat_btn_back': 'Retour au menu',
+      'header_ai_guide': 'Guide d\'évacuation IA',
+
+      // Common
+      'btn_clear': 'Effacer',
+      'msg_reset_desc': 'Réinitialiser tous les paramètres',
+      'msg_no_data': 'Aucune donnée',
+      'shelters': 'Abris',
+      'navigate': 'Naviguer',
+      'distance': 'Distance',
+      'direction': 'Direction',
+      'verified': 'Vérifié',
+      'unverified': 'Non vérifié',
+      'type': 'Type',
+      'address': 'Adresse',
+      'capacity': 'Capacité',
+      'capacity_unit': ' pers.',
+      'flood_support': 'Résistant aux inondations',
+      'supported': 'Oui',
+      'not_supported': 'Non',
+
+      // Chips - Allergies
+      'allergy_eggs': 'Œufs',
+      'allergy_peanuts': 'Arachides',
+      'allergy_milk': 'Lait',
+      'allergy_seafood': 'Fruits de mer',
+      'allergy_wheat': 'Blé',
+      'allergy_soy': 'Soja',
+      'allergy_tree_nuts': 'Noix',
+      'allergy_shellfish': 'Crustacés',
+      'allergy_gluten': 'Gluten',
+      'allergy_sesame': 'Sésame',
+      'allergy_alcohol': 'Alcool',
+      'allergy_latex': 'Latex',
+
+      // Chips - Needs
+      'need_wheelchair': 'Fauteuil roulant',
+      'need_visual': 'Déficience visuelle',
+      'need_hearing': 'Déficience auditive',
+      'need_pregnancy': 'Grossesse',
+      'need_infant': 'Nourrisson',
+      'need_elderly': 'Personne âgée',
+      'need_halal': 'Halal',
+      'need_kosher': 'Casher',
+      'need_vegan': 'Végane',
+      'need_pet': 'Animal de compagnie',
+      'need_service_animal': 'Animal d\'assistance',
+      'need_oxygen': 'Oxygène',
+      'need_dialysis': 'Dialyse',
+
+      // Chips - Conditions
+      'cond_hypertension': 'Hypertension',
+      'cond_heart_disease': 'Maladie cardiaque',
+      'cond_diabetes': 'Diabète',
+      'cond_asthma': 'Asthme',
+      'cond_epilepsy': 'Épilepsie',
+      'cond_dementia': 'Démence',
+      'cond_mental_health': 'Santé mentale',
+      'cond_kidney_disease': 'Maladie rénale',
+      'cond_stroke': 'Antécédent d\'AVC',
+      'cond_cancer': 'Traitement anticancéreux',
+
+      // Chips - Languages
+      'lang_japanese': '日本語',
+      'lang_english': 'English',
+      'lang_french': 'Français',
+      'lang_chinese': '中文',
+      'lang_korean': '한국어',
+      'lang_spanish': 'Español',
+      'lang_arabic': 'العربية',
+      'lang_portuguese': 'Português',
+      'lang_thai': 'ภาษาไทย',
+      'lang_vietnamese': 'Tiếng Việt',
+      'lang_tagalog': 'Tagalog',
+      'lang_malay': 'Bahasa Melayu',
+
+      // Tutorial
+      'tutorial_skip': 'Passer',
+      'tutorial_back': 'Retour',
+      'tutorial_next': 'Suivant',
+      'tutorial_start': 'Commencer',
+      'tutorial_welcome_title': 'Bienvenue sur GapLess',
+      'tutorial_welcome_desc': 'Navigation hors ligne pour les catastrophes. Fonctionne sans Internet ni GPS.',
+      'tutorial_emergency_gear_title': 'Carte d\'urgence',
+      'tutorial_emergency_gear_desc': 'Enregistrez votre nom, groupe sanguin et allergies pour les montrer aux secouristes.',
+      'tutorial_ready_title': 'Prêt !',
+      'tutorial_ready_desc': 'GapLess vous guidera en sécurité. Configurez d\'abord votre profil.',
+
+      // JMA
+      'jma_feed_title': 'Alertes officielles',
+      'jma_loading': 'Chargement JMA...',
+      'jma_refresh': 'Actualiser',
+      'jma_error': 'Réseau indisponible.\nVérifiez votre connexion.',
+      'jma_no_alerts': 'Aucune alerte tremblement de terre ou tsunami en cours',
+      'jma_last_updated': 'Mis à jour :',
+      'jma_active': 'ACTIF',
+
+      // Survival Guide
+      'sg_title': 'Guide de survie',
+      'sg_tab_first_aid': 'Premiers secours',
+      'sg_tab_disaster': 'Actions par catastrophe',
+      'sg_tab_shelter_life': 'Vie en abri',
+      'sg_close': 'Fermer',
+      'sg_all_lang': 'Voir en plusieurs langues',
+
+      // Shelter types
+      'shelter_school': 'École',
+      'shelter_hospital': 'Hôpital',
+      'shelter_government': 'Mairie',
+      'shelter_evacuation': 'Abri',
+      'shelter_temple': 'Temple',
+      'shelter_other': 'Autre',
+
+      // Road Report
+      'qr_title': 'Signaler l\'état de cet endroit',
+      'qr_passable': 'Praticable',
+      'qr_passable_sub': 'La route est accessible',
+      'qr_blocked': 'Bloqué',
+      'qr_blocked_sub': 'La route est obstruée',
+      'qr_danger': 'Zone dangereuse',
+      'qr_danger_sub': 'Effondrement, feu, inondation...',
+      'report_passable': 'Praticable',
+      'report_blocked': 'Bloqué',
+    },
+
+    // ── マレー語 ──────────────────────────────────────────────────────────────
+    'ms': {
+      'title': 'GapLess',
+      'connectivity_restored': '📶 Sambungan dipulihkan. Anda boleh pulang.',
+
+      // Safety Check Dialog
+      'dialog_safety_title': 'Semakan Keselamatan',
+      'dialog_safety_desc': 'Adakah anda selamat tiba?\nTamatkan navigasi dan tukar ke mod sokongan.',
+      'btn_yes_arrived': 'Ya, sudah tiba',
+      'btn_cancel': 'Batal',
+
+      // Bot Messages
+      'chat_error_not_found': 'Maaf, maklumat tidak dijumpai. Sila pilih topik lain.',
+      'bot_analyzing': 'Menganalisis...',
+      'bot_hospital': '🏥 Ke Hospital',
+      'bot_water': '💧 Ke Bekalan Air',
+      'bot_store': '🏪 Ke Kedai',
+      'bot_safe_shelter': '🟢 Ke Tempat Perlindungan',
+      'bot_loc_error': '⚠️ Lokasi tidak tersedia.',
+      'bot_found': '🔍 **Kemudahan Dijumpai**',
+      'bot_found_desc': '"**@name**" berada **@dist** jauhnya. Ikuti ikon pada peta.',
+      'bot_prefix_normal': 'Sila tenang. Kami bersama anda.',
+      'bot_prefix_name': 'Tenang, @name. Kami bersama anda.',
+      'bot_not_found': '⚠️ **Tidak Dijumpai Berdekatan**',
+      'bot_not_found_desc': 'Tiada data dalam radius 3km. Disarankan pergi ke "Tempat Perlindungan".',
+      'bot_go_to': 'Pergi ke @name',
+      'bot_dest_set': 'Destinasi ditetapkan: @name',
+      'bot_dest_changed': 'Ditukar: @old → @new',
+
+      // Profile / Emergency Gear
+      'header_emergency_gear': 'Kad Kecemasan',
+      'label_name': 'Nama',
+      'label_nation': 'Kewarganegaraan',
+      'label_blood': 'Kumpulan Darah',
+      'label_allergies': 'Alergi',
+      'label_needs': 'Keperluan Khas',
+      'label_unknown': 'Tidak Diketahui',
+      'label_edit': 'Edit Profil',
+      'label_dob': 'Tarikh Lahir',
+      'label_emergency_name': 'Nama',
+      'label_emergency_phone': 'Telefon',
+      'label_medication_names': 'Nama Ubat',
+
+      // Emergency Card sections
+      'section_basic_info': 'Maklumat Asas',
+      'section_emergency_contact': 'Kenalan Kecemasan',
+      'section_medications': 'Ubat-ubatan',
+      'section_allergies': 'Alergi',
+      'section_conditions': 'Penyakit',
+      'section_needs': 'Keperluan Khas',
+      'section_languages': 'Bahasa yang Dituturkan',
+      'card_medical': 'Maklumat Perubatan',
+      'card_support_language': 'Sokongan & Bahasa',
+
+      // Shelter Dashboard
+      'header_safe_banner_title': 'Selamat di Tempat Perlindungan',
+      'header_safe_banner_desc': 'Anda berada di tempat yang selamat.',
+      'header_survival_guide': 'Panduan Kelangsungan Rasmi',
+      'btn_show_staff': 'Kad Kecemasan (Tunjuk kepada Kakitangan)',
+
+      // Compass
+      'waiting_destination': 'Menunggu destinasi...',
+      'follow_arrow': 'Ikuti anak panah',
+      'btn_arrived_label': 'Tiba di Tempat Perlindungan',
+
+      // Settings
+      'settings_title': 'Tetapan',
+      'settings_language': 'Bahasa',
+      'settings_gps': 'Lokasi GPS',
+      'settings_demo': 'Tetapan Demo',
+      'set_about': 'Tentang',
+      'set_region': 'Kawasan',
+      'set_lang': 'Bahasa',
+      'set_demo': 'Demo',
+      'region_japan_tokyo': '🇯🇵 Jepun (Tokyo)',
+      'demo_hazard': '🚨 Mod Bencana',
+      'demo_hazard_desc': 'Demo: Tunjuk keadaan bahaya',
+      'clear_cache': 'Padam Cache',
+      'app_version': 'Versi',
+      'app_credit': 'Projek Mitou Junior',
+      'section_offline_map': 'Peta Luar Talian',
+      'map_data_cached': 'Tersimpan dalam cache',
+      'map_data_not_cached': 'Belum dimuat turun',
+      'map_data_size': 'Saiz: @size KB',
+      'map_data_download_needed': 'Muat turun diperlukan untuk penggunaan luar talian',
+      'label_are_you_sure': 'Adakah anda pasti?',
+
+      // Permissions
+      'loc_permission_denied': 'Akses Lokasi Ditolak',
+      'loc_open_settings': 'Buka Tetapan',
+      'perm_location_title': 'Lokasi',
+      'perm_location_desc': 'Mendapatkan lokasi semasa di latar belakang semasa navigasi',
+      'perm_motion_title': 'Gerakan / Penderia',
+      'perm_motion_desc': 'Menggunakan kompas dan pemecut untuk arah tepat',
+      'perm_ble_title': 'Bluetooth',
+      'perm_ble_desc': 'Berkongsi keadaan jalan dengan pengguna berdekatan (pilihan)',
+      'perm_allow': 'Benarkan',
+      'perm_skip': 'Langkau',
+      'perm_compass_warning': 'Fungsi kompas akan terhad',
+      'perm_location_required': 'Lokasi Diperlukan',
+      'perm_location_required_desc': 'Navigasi memerlukan lokasi. Aktifkan "Benarkan Sentiasa" dalam Tetapan.',
+      'loc_acquiring': 'Mendapatkan lokasi...',
+      'loc_no_destination': 'Sila tetapkan destinasi',
+      'loc_select_in_chat': 'Pilih "Tempat Perlindungan" dalam chat',
+
+      // Navigation
+      'nav_straight': 'Terus',
+      'risk_legend_flood': 'Banjir',
+      'risk_legend_rapid': 'Arus Deras',
+      'risk_legend_safe': 'Selamat',
+      'nav_turn_right': 'Belok kanan',
+      'nav_turn_left': 'Belok kiri',
+      'nav_u_turn': 'Pusing balik',
+      'nav_dist_ahead': 'Dalam @dist',
+      'nav_to_dest': 'Ke destinasi',
+      'nav_to_next_point': 'Ke titik seterusnya',
+      'nav_total_distance': 'Jumlah jarak',
+      'nav_arrived_panel': 'Anda telah tiba di destinasi',
+      'nav_btn_stop': 'Tamat',
+      'nav_off_route_recalc': 'Terkeluar dari laluan. Mengira semula...',
+      'nav_screen_title': 'Navigasi Selamat',
+      'nav_arrive_title': 'Tiba di Destinasi',
+      'nav_arrive_body': 'Adakah anda selamat tiba?\nSahkan untuk memaparkan papan pemuka tempat perlindungan.',
+      'nav_still_moving': 'Masih dalam perjalanan',
+      'nav_safe_confirm': 'Sahkan Keselamatan',
+      'nav_no_location': 'Lokasi tidak tersedia',
+      'nav_no_shelter': 'Tiada tempat perlindungan berdekatan',
+      'route_calc_failed': 'Pengiraan laluan gagal',
+      'nav_route_calculated': 'Laluan ke @name dikira',
+      'nav_calculating': 'Mengira laluan...',
+      'nav_loading_map': 'Memuatkan peta...',
+      'nav_tab_map': 'Navigasi',
+      'nav_tab_card': 'Kad Kecemasan',
+      'nav_tab_guide': 'Panduan Hidup',
+      'nav_tab_chat': 'Chat AI',
+      'nav_tab_settings': 'Tetapan',
+      'nav_tab_feed': 'Amaran',
+      'nav_nearest_shelter': 'Tempat Perlindungan Terdekat',
+      'nav_compass': 'Kompas',
+      'gps_none': 'GPS tidak tersedia',
+      'ble_off': 'BLE dimatikan',
+      'power_saving': 'Jimat Kuasa',
+
+      // Dead Reckoning
+      'dr_badge': 'GPS hilang - Anggaran lokasi (@steps langkah)',
+      'dr_accuracy_low': '⚠ Ketepatan rendah — Sahkan lokasi anda',
+      'dr_fix_location': 'Saya di sini',
+      'dr_tap_to_fix': 'Ketuk peta untuk membetulkan',
+      'dr_location_fixed': 'Lokasi dibetulkan',
+      'dr_uncertain_title': 'Lokasi tidak pasti',
+      'dr_uncertain_body': 'Isyarat GPS hilang. Keluar dari bangunan.',
+      'dr_shelter_list': 'Tempat Perlindungan Terdekat',
+
+      // Emergency
+      'emergency_call_instruction': 'Hubungi 999 (polis/bomba/ambulans) untuk kecemasan',
+      'emergency_screen_title': 'Kecemasan',
+      'emergency_nearest': 'Tempat perlindungan terdekat:',
+      'emergency_sos_resend': 'Hantar semula',
+      'emergency_call': 'Panggil Bantuan',
+      'emergency_water': 'Cari Air',
+      'emergency_water_tip': 'Periksa paip dahulu. Jika tidak ada, cari sungai atau mata air.',
+      'emergency_first_aid': 'Pertolongan Cemas',
+      'emergency_first_aid_tip': 'Bersihkan luka dan tekan kuat. Jangan gerakkan patah tulang.',
+      'emergency_repeat': 'Ulang',
+      'sos_hold_hint': 'Tahan untuk hantar SOS',
+      'sos_sent': 'SOS disiarkan ke peranti berdekatan',
+      'sos_received': 'Isyarat SOS diterima berdekatan',
+      'sos_auto_resend': 'Menghantar semula SOS secara automatik',
+      'sos_stop_resend': 'Hentikan penghantaran semula',
+      'sos_armed': 'SOS sedia. Tahan 3 saat untuk hantar',
+      'sos_arming': 'SOS dipasang. Terus tahan',
+      'disaster_mode_exit': 'Penggera palsu? Utama',
+      'disaster_mode_exit_confirm': 'Keluar mod bencana dan kembali ke utama. Tahan 3 s.',
+      'disaster_mode_exit_done': 'Mod bencana dinyahaktifkan',
+
+      // Triage
+      'triage_title': 'Semakan Kecederaan',
+      'triage_back': 'Kembali',
+      'triage_recommendation': 'Tindakan yang Disyorkan',
+      'triage_go_hospital': 'Pergi ke Hospital Terdekat',
+      'triage_go_shelter': 'Pergi ke Tempat Perlindungan',
+      'triage_restart': 'Cuba Semula',
+      'triage_critical_title': 'Kritikal: Rawatan Perubatan Segera',
+      'triage_critical_desc': 'Nyawa mungkin terancam. Segera pergi ke kemudahan perubatan.',
+      'triage_critical_rec': '🚨 Terus ke hospital terdekat',
+      'triage_urgent_title': 'Mendesak: Rawatan Perubatan Disarankan',
+      'triage_urgent_desc': 'Pakar perubatan perlu merawat anda secepat mungkin.',
+      'triage_urgent_rec': '🏥 Utamakan tempat perlindungan perubatan',
+      'triage_moderate_title': 'Sederhana: Evakuasi dengan Pemantauan',
+      'triage_moderate_desc': 'Dapatkan pertolongan cemas di tempat perlindungan.',
+      'triage_moderate_rec': '⚠️ Pergi ke tempat perlindungan untuk pertolongan cemas',
+      'triage_minor_title': 'Ringan: Boleh Dirawat di Tempat Perlindungan',
+      'triage_minor_desc': 'Kecederaan ringan. Berjumpa kakitangan tempat perlindungan.',
+      'triage_minor_rec': '✅ Pergi ke tempat perlindungan terdekat',
+
+      // Risk Radar
+      'risk_radar_title': 'Radar Risiko',
+      'risk_ready': 'Sedia',
+      'risk_loading': 'Memuatkan data risiko...',
+      'risk_high': '⚠️ Risiko Tinggi – Bergerak dengan berhati-hati',
+      'risk_medium': 'Berhati-hati – Arah berbahaya dikesan',
+      'risk_low': 'Persekitaran agak selamat',
+      'risk_shock': 'Kejutan Elektrik',
+      'risk_flood': 'Banjir',
+      'risk_safe': 'Selamat',
+      'risk_scanning': 'Mengimbas...',
+      'risk_rescan': 'Imbas Semula',
+
+      // Directions
+      'dir_north': 'Utara',
+      'dir_northeast': 'Timur Laut',
+      'dir_east': 'Timur',
+      'dir_southeast': 'Tenggara',
+      'dir_south': 'Selatan',
+      'dir_southwest': 'Barat Daya',
+      'dir_west': 'Barat',
+      'dir_northwest': 'Barat Laut',
+
+      // Splash / Onboarding
+      'splash_loading': 'Memuatkan...',
+      'splash_subtitle': 'Navigasi Masa Bencana',
+      'splash_disclaimer_title': 'Sebelum Anda Mulakan',
+      'splash_disclaimer_jp': 'Aplikasi ini membantu evakuasi tetapi tidak menjamin keselamatan. Keputusan muktamad adalah tanggungjawab anda.',
+      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety.',
+      'splash_warning': 'Dalam kecemasan, ikuti arahan rasmi',
+      'splash_agree': 'Setuju dan Mulakan',
+      'onb_select_language_title': 'Pilih Bahasa',
+      'onb_location_title': 'Benarkan Lokasi',
+      'onb_location_desc': 'Lokasi diperlukan untuk navigasi tepat ke tempat perlindungan.',
+      'onb_allow_location': 'Benarkan Lokasi',
+      'onb_perm_granted': 'Lokasi dibenarkan',
+      'onb_set_later': 'Tetapkan kemudian',
+
+      // Map
+      'map_title': 'Peta',
+      'map_download_title': 'Memuat turun peta',
+      'map_download_error': 'Muat turun gagal',
+      'map_download_retry': 'Cuba Semula',
+      'map_download_skip': 'Langkau dan Mulakan',
+      'map_download_done': 'Muat turun selesai',
+      'map_no_connection': 'Tiada sambungan Internet.\nAktifkan Wi-Fi atau data mudah alih.',
+      'navigate_here': 'Navigasi ke sini',
+      'navigation_started': 'Navigasi ke @name dimulakan',
+
+      // Status
+      'status_safe': '✅ SELAMAT',
+      'status_danger': '⚠️ BAHAYA',
+      'status_offline': 'LUAR TALIAN',
+      'offline_banner': 'Mod luar talian: menggunakan data tersimpan',
+      'offline_nav_ok': 'Navigasi luar talian tersedia',
+
+      // Chat
+      'chat_prompt_main': 'Boleh saya bantu?\nSila pilih topik.',
+      'chat_btn_more': 'Topik Lain',
+      'chat_btn_back': 'Kembali ke Menu',
+      'header_ai_guide': 'Panduan Evakuasi AI',
+
+      // Common
+      'btn_clear': 'Padam',
+      'msg_reset_desc': 'Set semula semua tetapan',
+      'msg_no_data': 'Tiada data',
+      'shelters': 'Tempat Perlindungan',
+      'navigate': 'Navigasi',
+      'distance': 'Jarak',
+      'direction': 'Arah',
+      'verified': 'Disahkan',
+      'unverified': 'Tidak Disahkan',
+      'type': 'Jenis',
+      'address': 'Alamat',
+      'capacity': 'Kapasiti',
+      'capacity_unit': ' orang',
+      'flood_support': 'Sokongan Banjir',
+      'supported': 'Ya',
+      'not_supported': 'Tidak',
+
+      // Chips - Allergies
+      'allergy_eggs': 'Telur',
+      'allergy_peanuts': 'Kacang tanah',
+      'allergy_milk': 'Susu',
+      'allergy_seafood': 'Makanan laut',
+      'allergy_wheat': 'Gandum',
+      'allergy_soy': 'Kacang soya',
+      'allergy_tree_nuts': 'Kacang pokok',
+      'allergy_shellfish': 'Kerang-kerangan',
+      'allergy_gluten': 'Gluten',
+      'allergy_sesame': 'Bijan',
+      'allergy_alcohol': 'Alkohol',
+      'allergy_latex': 'Lateks',
+
+      // Chips - Needs
+      'need_wheelchair': 'Kerusi roda',
+      'need_visual': 'Masalah penglihatan',
+      'need_hearing': 'Masalah pendengaran',
+      'need_pregnancy': 'Hamil',
+      'need_infant': 'Bayi',
+      'need_elderly': 'Warga emas',
+      'need_halal': 'Halal',
+      'need_kosher': 'Kosher',
+      'need_vegan': 'Vegan',
+      'need_pet': 'Haiwan peliharaan',
+      'need_service_animal': 'Haiwan bantu',
+      'need_oxygen': 'Oksigen',
+      'need_dialysis': 'Dialisis',
+
+      // Chips - Conditions
+      'cond_hypertension': 'Tekanan darah tinggi',
+      'cond_heart_disease': 'Penyakit jantung',
+      'cond_diabetes': 'Kencing manis',
+      'cond_asthma': 'Asma',
+      'cond_epilepsy': 'Epilepsi',
+      'cond_dementia': 'Dementia',
+      'cond_mental_health': 'Kesihatan mental',
+      'cond_kidney_disease': 'Penyakit buah pinggang',
+      'cond_stroke': 'Riwayat strok',
+      'cond_cancer': 'Rawatan kanser',
+
+      // Chips - Languages
+      'lang_japanese': '日本語',
+      'lang_english': 'English',
+      'lang_french': 'Français',
+      'lang_chinese': '中文',
+      'lang_korean': '한국어',
+      'lang_spanish': 'Español',
+      'lang_arabic': 'العربية',
+      'lang_portuguese': 'Português',
+      'lang_thai': 'ภาษาไทย',
+      'lang_vietnamese': 'Tiếng Việt',
+      'lang_tagalog': 'Tagalog',
+      'lang_malay': 'Bahasa Melayu',
+
+      // Tutorial
+      'tutorial_skip': 'Langkau',
+      'tutorial_back': 'Kembali',
+      'tutorial_next': 'Seterusnya',
+      'tutorial_start': 'Mulakan',
+      'tutorial_welcome_title': 'Selamat Datang ke GapLess',
+      'tutorial_welcome_desc': 'Navigasi luar talian untuk bencana. Berfungsi tanpa Internet atau GPS.',
+      'tutorial_emergency_gear_title': 'Kad Kecemasan',
+      'tutorial_emergency_gear_desc': 'Daftarkan nama, kumpulan darah dan alergi untuk ditunjukkan kepada penyelamat.',
+      'tutorial_ready_title': 'Sedia!',
+      'tutorial_ready_desc': 'GapLess akan membimbing anda ke tempat selamat. Sila tetapkan profil anda terlebih dahulu.',
+
+      // JMA
+      'jma_feed_title': 'Amaran Rasmi',
+      'jma_loading': 'Memuat dari JMA...',
+      'jma_refresh': 'Muat Semula',
+      'jma_error': 'Rangkaian tidak tersedia.\nSila semak sambungan anda.',
+      'jma_no_alerts': 'Tiada amaran gempa bumi atau tsunami aktif',
+      'jma_last_updated': 'Dikemas kini:',
+      'jma_active': 'AKTIF',
+
+      // Survival Guide
+      'sg_title': 'Panduan Kelangsungan',
+      'sg_tab_first_aid': 'Pertolongan Cemas',
+      'sg_tab_disaster': 'Tindakan Mengikut Bencana',
+      'sg_tab_shelter_life': 'Kehidupan di Tempat Perlindungan',
+      'sg_close': 'Tutup',
+      'sg_all_lang': 'Lihat dalam pelbagai bahasa',
+
+      // Shelter types
+      'shelter_school': 'Sekolah',
+      'shelter_hospital': 'Hospital',
+      'shelter_government': 'Pejabat Kerajaan',
+      'shelter_evacuation': 'Tempat Perlindungan',
+      'shelter_temple': 'Kuil',
+      'shelter_other': 'Lain-lain',
+
+      // Road Report
+      'qr_title': 'Laporkan keadaan tempat ini',
+      'qr_passable': 'Boleh dilalui',
+      'qr_passable_sub': 'Jalan boleh dilalui',
+      'qr_blocked': 'Disekat',
+      'qr_blocked_sub': 'Jalan tersekat',
+      'qr_danger': 'Kawasan berbahaya',
+      'qr_danger_sub': 'Runtuhan, kebakaran, banjir...',
+      'report_passable': 'Boleh dilalui',
+      'report_blocked': 'Disekat',
+    },
   };
 
   /// 翻訳を取得（言語→英語→キー名の順でフォールバック）
@@ -5283,15 +6236,19 @@ class GapLessL10n {
       case 'zh_TW': return 'NotoSansTC';
       case 'ko': return 'NotoSansKR';
       case 'ja': return 'NotoSansJP';
+      case 'ar': return 'NotoSansArabic';
       default: return 'NotoSans';
     }
   }
 
   /// 全フォントを含むフォールバックリスト
+  // NotoSansArabic を含めることで、アラビア語チップラベル (العربية) が
+  // すべての言語コンテキストで豆腐にならない
   static List<String> get fallbackFonts => const [
     'NotoSansJP', 'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
     'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic',
+    'NotoSans', 'sans-serif',
   ];
 
   /// 任意の [TextStyle] にフォント設定を付与して返す
@@ -5356,6 +6313,8 @@ class GapLessL10n {
       case 'mn': return 'Монгол';
       case 'uz': return 'Oʻzbekcha';
       case 'vi': return 'Tiếng Việt';
+      case 'fr': return 'Français';
+      case 'ms': return 'Bahasa Melayu';
       default: return code;
     }
   }
@@ -5381,6 +6340,8 @@ class GapLessL10n {
       case 'mn': return '🇲🇳';
       case 'uz': return '🇺🇿';
       case 'vi': return '🇻🇳';
+      case 'fr': return '🇫🇷';
+      case 'ms': return '🇲🇾';
       default: return '🌐';
     }
   }
@@ -5406,6 +6367,8 @@ class GapLessL10n {
       case 'mn': return 'Монгол';
       case 'uz': return 'Oʻzbekcha';
       case 'vi': return 'Tiếng Việt';
+      case 'fr': return 'Français';
+      case 'ms': return 'Bahasa Melayu';
       default: return lang;
     }
   }
@@ -5431,6 +6394,8 @@ class GapLessL10n {
       case 'mn': return '🇲🇳';
       case 'uz': return '🇺🇿';
       case 'vi': return '🇻🇳';
+      case 'fr': return '🇫🇷';
+      case 'ms': return '🇲🇾';
       default: return '🌐';
     }
   }

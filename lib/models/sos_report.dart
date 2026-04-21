@@ -31,6 +31,7 @@ class SosReport {
   final int timestamp;
   final Uint8List? publicKey; // v2 のみ
   final Uint8List? signature; // v2 のみ
+  final int hops;             // メッシュ中継ホップ数
 
   const SosReport({
     required this.deviceId,
@@ -39,6 +40,7 @@ class SosReport {
     required this.timestamp,
     this.publicKey,
     this.signature,
+    this.hops = 0,
   });
 
   bool get isSigned => publicKey != null && signature != null;
@@ -81,6 +83,17 @@ class SosReport {
         timestamp: timestamp,
         publicKey: publicKey,
         signature: signature,
+        hops: hops,
+      );
+
+  SosReport withNextHop() => SosReport(
+        deviceId: deviceId,
+        lat: lat,
+        lng: lng,
+        timestamp: timestamp,
+        publicKey: publicKey,
+        signature: signature,
+        hops: hops + 1,
       );
 
   String toCompactJson() {
@@ -95,6 +108,7 @@ class SosReport {
       m['pk'] = base64.encode(publicKey!);
       m['sig'] = base64.encode(signature!);
     }
+    if (hops > 0) m['h'] = hops;
     return jsonEncode(m);
   }
 
@@ -121,6 +135,7 @@ class SosReport {
       timestamp: (j['t'] as num).toInt(),
       publicKey: pk,
       signature: sig,
+      hops: (j['h'] is num ? (j['h'] as num).toInt() : 0),
     );
   }
 

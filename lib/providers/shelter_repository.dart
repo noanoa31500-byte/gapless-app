@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import '../models/shelter.dart';
+import '../models/road_feature.dart';
 import '../data/poi_catalog.dart';
 import '../data/map_repository.dart';
 import '../data/road_parser.dart';
+import '../data/hazard_parser.dart';
 
 /// ============================================================================
 /// ShelterRepository — 避難所/POI/道路/ハザードのデータアクセス層
@@ -21,11 +23,12 @@ class ShelterRepository {
     '自動車', 'driving', 'kumon', 'ballet', 'dance', 'piano', 'swimming',
   ];
 
+  /// region → アセットファイル名プレフィックス
+  static String _assetPrefix(String region) => 'current';
+
   /// 指定地域の POI gplb を読み込み Shelter リストとして返す
   Future<List<Shelter>> loadPoiForRegion(String region) async {
-    final fileName = region == 'jp_tokyo'
-        ? 'tokyo_center_poi.gplb'
-        : 'osaki_poi.gplb';
+    final fileName = '${_assetPrefix(region)}_poi.gplb';
     try {
       final bytes = await MapRepository.instance.readBytes(fileName);
       final grouped = GplbPoiParser.parseAndGroup(bytes);
@@ -56,7 +59,7 @@ class ShelterRepository {
           type = 'landmark';
         }
 
-        final idPrefix = region == 'jp_tokyo' ? 'gplb_tokyo_' : 'gplb_';
+        final idPrefix = 'gplb_${_assetPrefix(region)}_';
         out.add(Shelter(
           id: '$idPrefix${feature.type.id}_${feature.lat.toStringAsFixed(5)}_${feature.lng.toStringAsFixed(5)}',
           name: feature.name,
@@ -87,7 +90,8 @@ class ShelterRepository {
           name.toLowerCase() == 'unknown' ||
           name == 'Unknown Spot' ||
           name == 'Unnamed' ||
-          name == '不明') return false;
+          name == '不明' ||
+          name == '（名称不明）') return false;
       for (final kw in blackListKeywords) {
         if (name.contains(kw)) return false;
       }
@@ -97,26 +101,39 @@ class ShelterRepository {
 
   /// 指定地域の道路ポリラインを読み込む
   Future<List<List<LatLng>>> loadRoadPolylines(String region) async {
-    final file = region == 'jp_tokyo'
-        ? 'tokyo_center_roads.gplb'
-        : 'osaki_roads.gplb';
+    final features = await loadRoadFeatures(region);
+    return features.map((f) => f.geometry).toList();
+  }
+
+  /// 指定地域の道路 RoadFeature を読み込む（A* 用）
+  Future<List<RoadFeature>> loadRoadFeatures(String region) async {
+    final file = '${_assetPrefix(region)}_roads.gplb';
     try {
       final bytes = await MapRepository.instance.readBytes(file);
-      final features = RoadParser.parse(bytes);
-      return features.map((f) => f.geometry).toList();
+      return RoadParser.parse(bytes);
     } catch (e) {
       debugPrint('❌ ShelterRepository road load error ($file): $e');
       return [];
     }
   }
 
-  /// 指定地域のハザードポリゴンを読み込む
+  /// 指定地域のハザードポリゴンを読み込む。
+  /// 新形式 (GPLH v3 バイナリ) を優先し、旧 JSON フォーマットにもフォールバック。
   Future<List<List<LatLng>>> loadHazardPolygons(String region) async {
-    final file = region == 'jp_tokyo'
-        ? 'tokyo_center_hazard.gplh'
-        : 'osaki_hazard.gplh';
+    final file = '${_assetPrefix(region)}_hazard.gplh';
     try {
-      final jsonStr = await MapRepository.instance.readString(file);
+      final bytes = await MapRepository.instance.readBytes(file);
+      // GPLH バイナリマジック判定
+      if (bytes.length >= 4 &&
+          bytes[0] == 0x47 &&
+          bytes[1] == 0x50 &&
+          bytes[2] == 0x4C &&
+          bytes[3] == 0x48) {
+        final polys = HazardParser.parse(bytes);
+        return polys.map((p) => p.points).toList();
+      }
+      // 旧 JSON フォールバック
+      final jsonStr = String.fromCharCodes(bytes);
       final data = json.decode(jsonStr) as Map<String, dynamic>;
       final polygonsData = (data['polygons'] as List<dynamic>?) ?? [];
       return polygonsData.map((polygon) {

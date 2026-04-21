@@ -6,15 +6,14 @@ import '../utils/localization.dart';
 /// ============================================================================
 /// Region — 地域メタデータ
 /// ============================================================================
-/// GapLessは複数地域 (日本/タイ/大崎 など) をサポートする。
 /// Region クラスは「地域固有のデータ」を一元管理することで、
 /// `if (currentRegion == AppRegion.japan)` のような分岐を排除する。
 /// ============================================================================
 class Region {
-  /// 地域ID（小文字、例: 'japan', 'thailand', 'osaki'）
+  /// 地域ID（小文字、例: 'japan'）
   final String id;
 
-  /// 国コード（例: 'JP', 'TH'）
+  /// 国コード（例: 'JP'）
   final String countryCode;
 
   /// 多言語表示名 (lang code -> name)
@@ -23,7 +22,7 @@ class Region {
   /// 地図初期表示の中心座標
   final LatLng defaultCenter;
 
-  /// マップアセット (.gplb) のプレフィックス。例: 'tokyo_center', 'thailand', 'osaki'
+  /// マップアセット (.gplb) のプレフィックス。例: 'tokyo_center'
   final String gplbAssetPath;
 
   /// 推奨/対応言語コード
@@ -68,12 +67,11 @@ class RegionRegistry {
     displayNames: const {
       'ja': '日本',
       'en': 'Japan',
-      'th': 'ญี่ปุ่น',
     },
     // 東京駅周辺。都庁(35.6895/139.6917)ではなく代表座標を使用
     defaultCenter: const LatLng(35.6762, 139.6503),
-    gplbAssetPath: 'tokyo_center',
-    supportedLanguages: const ['ja', 'en', 'zh', 'ko', 'th', 'vi'],
+    gplbAssetPath: 'current',
+    supportedLanguages: const ['ja', 'en', 'zh', 'ko', 'vi'],
     systemPrompt: '''あなたは経験豊富な日本の防災士です。
 
 【あなたの専門分野】
@@ -106,58 +104,8 @@ class RegionRegistry {
     analyzingLabel: '防災士が分析中...',
   );
 
-  /// タイ（バンコク）地域
-  static final Region thailand = Region(
-    id: 'thailand',
-    countryCode: 'TH',
-    displayNames: const {
-      'ja': 'タイ',
-      'en': 'Thailand',
-      'th': 'ประเทศไทย',
-    },
-    // バンコク中心
-    defaultCenter: const LatLng(13.7563, 100.5018),
-    gplbAssetPath: 'thailand',
-    supportedLanguages: const ['th', 'en', 'ja', 'zh'],
-    systemPrompt: '''You are an experienced disaster prevention advisor for Thailand.
-
-Specialty:
-- Flood, landslide, and tropical storm risk assessment
-- Shelter selection and evacuation route planning
-- Heat stroke and dehydration prevention
-- Local emergency contacts (191/1669)
-
-Provide calm, concise advice prioritizing the user's life.''',
-    themeColors: const {
-      'primary': '#1565C0',
-      'accent': '#FFC107',
-      'background': '#FAFAFA',
-      'icon': '🇹🇭',
-      'mode_label': 'Thailand Flood Mode',
-    },
-    analyzingLabel: 'Analyzing...',
-  );
-
-  /// 宮城県大崎市
-  static final Region osaki = Region(
-    id: 'osaki',
-    countryCode: 'JP',
-    displayNames: const {
-      'ja': '大崎市',
-      'en': 'Osaki',
-      'th': 'โอซากิ',
-    },
-    // 大崎市役所付近
-    defaultCenter: const LatLng(38.5772, 140.9555),
-    gplbAssetPath: 'osaki',
-    supportedLanguages: const ['ja', 'en'],
-    systemPrompt: japan.systemPrompt,
-    themeColors: japan.themeColors,
-    analyzingLabel: japan.analyzingLabel,
-  );
-
   /// 全地域
-  static final List<Region> all = [japan, thailand, osaki];
+  static final List<Region> all = [japan];
 
   /// IDで地域を取得
   static Region byId(String id) =>
@@ -169,21 +117,6 @@ Provide calm, concise advice prioritizing the user's life.''',
 
   /// GPS座標から地域を判定
   static Region detectFromGPS(double latitude, double longitude) {
-    // タイ: lat 5.6〜20.5, lng 97.3〜105.6
-    if (latitude >= 5.0 && latitude <= 21.0 &&
-        longitude >= 97.0 && longitude <= 106.0) {
-      return thailand;
-    }
-    // 大崎市周辺: lat 38.4〜38.7, lng 140.7〜141.1
-    if (latitude >= 38.4 && latitude <= 38.7 &&
-        longitude >= 140.7 && longitude <= 141.1) {
-      return osaki;
-    }
-    // 日本本土: lat 24〜46, lng 122〜146
-    if (latitude >= 24.0 && latitude <= 46.0 &&
-        longitude >= 122.0 && longitude <= 146.0) {
-      return japan;
-    }
     return japan;
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart' show Geolocator, LocationPermission;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,24 +118,26 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
     }
   }
 
-  // ① 位置情報（必須）
+  // ① 位置情報（必須）— 「使用中のみ」で十分
   Future<void> _requestLocation() async {
-    // すでに許可済みなら即次へ
-    if (await Permission.locationAlways.isGranted) {
-      _advance();
-      return;
-    }
+    // Geolocator で権限確認（permission_handler より iOS との互換性が高い）
+    LocationPermission perm = await Geolocator.checkPermission();
 
-    final status = await Permission.locationAlways.request();
+    if (perm == LocationPermission.denied) {
+      perm = await Geolocator.requestPermission();
+    }
 
     if (!mounted) return;
 
-    if (status.isGranted) {
-      _advance();
-    } else {
-      // 拒否 or 永久拒否 → ダイアログ
+    if (perm == LocationPermission.deniedForever) {
       setState(() => _isRequesting = false);
-      _showLocationDeniedDialog(isPermanent: status.isPermanentlyDenied);
+      _showLocationDeniedDialog(isPermanent: true);
+    } else if (perm == LocationPermission.denied) {
+      setState(() => _isRequesting = false);
+      _showLocationDeniedDialog(isPermanent: false);
+    } else {
+      // whileInUse または always → OK
+      _advance();
     }
   }
 

@@ -132,7 +132,7 @@ class PoiFeature {
 // ============================================================================
 // GplbPoiParser — POI バイナリを解析してグループ化して返す
 //
-// バイナリフォーマット（osaki_poi.gplb / thailand_poi.gplb）:
+// バイナリフォーマット（tokyo_center_poi.gplb など）:
 //   [0-3]  マジック "GPLB"
 //   [4]    バージョン UInt8
 //   [5-8]  レコード数 UInt32 LittleEndian

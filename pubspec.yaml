@@ -20,7 +20,6 @@ dependencies:
   intl: ^0.20.2
   animate_do: ^4.2.0
   url_launcher: ^6.3.2
-  connectivity_plus: ^6.0.0
   http: ^1.2.0
   web: ^1.1.1
   csv: ^6.0.0
@@ -29,7 +28,7 @@ dependencies:
   crypto: ^3.0.3
   cryptography: ^2.7.0
   # BLE通信 (iPhone間オフライン同期)
-  flutter_blue_plus: ^1.32.12
+  flutter_blue_plus: ^2.2.1
   # ローカルファイル保存 (gplbキャッシュ)
   path_provider: ^2.1.0
   # バッテリー監視 (省電力モード)
@@ -119,4 +118,10 @@ flutter:
       fonts:
         - asset: assets/fonts/NotoSansBengali-Regular.ttf
         - asset: assets/fonts/NotoSansBengali-Bold.ttf
+          weight: 700
+
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Regular.ttf
+        - asset: assets/fonts/NotoSansArabic-Bold.ttf
           weight: 700

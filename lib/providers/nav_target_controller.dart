@@ -20,9 +20,40 @@ class NavTargetController extends ChangeNotifier {
   bool _isSafeInShelter = false;
   List<LatLng>? _externalRoute;
 
+  /// A*で計算したナビ経路 (洪水・倒壊回避済み)
+  List<LatLng> _computedRoute = const [];
+
+  /// 経路総距離（m）。0 なら未計算 / 直線フォールバック使用。
+  double _routeDistanceM = 0;
+
+  /// 経路計算中フラグ
+  bool _isComputingRoute = false;
+
   Shelter? get navTarget => _navTarget;
   bool get isNavigating => _isNavigating;
   bool get isSafeInShelter => _isSafeInShelter;
+  List<LatLng> get computedRoute => _computedRoute;
+  double get routeDistanceM => _routeDistanceM;
+  bool get isComputingRoute => _isComputingRoute;
+
+  /// ルート計算結果を反映する（呼び出し側の Provider が compute 後に渡す）
+  void setComputedRoute(List<LatLng> waypoints, double distanceM) {
+    _computedRoute = waypoints;
+    _routeDistanceM = distanceM;
+    _isComputingRoute = false;
+    notifyListeners();
+  }
+
+  void setComputingRoute(bool v) {
+    _isComputingRoute = v;
+    notifyListeners();
+  }
+
+  void clearComputedRoute() {
+    _computedRoute = const [];
+    _routeDistanceM = 0;
+    _isComputingRoute = false;
+  }
 
   /// 安全ルート（main.dart Isolate 経由で受信した最新の経路）
   List<LatLng> getSafestRouteAsLatLng() => _externalRoute ?? const [];
@@ -37,6 +68,7 @@ class NavTargetController extends ChangeNotifier {
   void endNavigation() {
     _navTarget = null;
     _isNavigating = false;
+    clearComputedRoute();
     unawaited(_clearPersistedNavTarget());
     notifyListeners();
   }
@@ -85,8 +117,18 @@ class NavTargetController extends ChangeNotifier {
     try {
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
       final restored = Shelter.fromJson(decoded);
-      final match =
-          knownShelters.where((s) => s.id == restored.id).firstOrNull;
+      // IDで完全照合、失敗時は座標で50m以内の最近傍を使用（IDプレフィックス変更に対応）
+      Shelter? match = knownShelters.where((s) => s.id == restored.id).firstOrNull;
+      if (match == null && knownShelters.isNotEmpty) {
+        Shelter? nearest;
+        double minDist = 50.0; // 50m以内
+        for (final s in knownShelters) {
+          final d = Geolocator.distanceBetween(
+            restored.lat, restored.lng, s.lat, s.lng);
+          if (d < minDist) { minDist = d; nearest = s; }
+        }
+        match = nearest;
+      }
       _navTarget = match ?? restored;
       _isNavigating = true;
       notifyListeners();

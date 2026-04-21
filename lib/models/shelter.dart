@@ -8,7 +8,7 @@ class Shelter {
   final double lng;
   final String type; // 'school', 'hospital', 'gov', 'shelter', 'temple', etc.
   final bool verified; // 公式データかどうか
-  final String? region; // 'Japan' or 'Thailand'
+  final String? region; // 'Japan'
   final bool isFloodShelter; // 洪水時避難可能か（高台にある、など）
 
   const Shelter({

@@ -185,6 +185,8 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
             fontSize: 48,
             fontWeight: FontWeight.w700,
             letterSpacing: -1,
+            fontFamily: 'NotoSansJP',
+            fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
           ),
         ),
         const SizedBox(height: 4),

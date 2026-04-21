@@ -29,7 +29,7 @@ class CompassLogic {
   static const double _processNoise = 0.01;      // プロセスノイズ (動き予測誤差)
   static const double _measurementNoise = 0.5;   // 測定ノイズ (センサー誤差)
 
-  GeoRegion _currentRegion = GeoRegion.jpOsaki;
+  GeoRegion _currentRegion = GeoRegion.jpTokyo;
   final CompassCalibrator _calibrator = CompassCalibrator();
   bool _isStarted = false;
   bool _hasReceivedData = false;

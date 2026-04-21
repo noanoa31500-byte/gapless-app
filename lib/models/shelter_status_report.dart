@@ -35,8 +35,9 @@ class ShelterStatusReport {
   final bool isOccupied;
   final int timestamp;
   final String deviceId;
-  final int? keyId;          // v2 のみ
+  final int? keyId;           // v2 のみ
   final Uint8List? signature; // v2 のみ
+  final int hops;             // メッシュ中継ホップ数
 
   // 4時間で失効（道路レポートの2時間より長め）
   static const int _expirySeconds = 4 * 60 * 60;
@@ -50,6 +51,7 @@ class ShelterStatusReport {
     required this.deviceId,
     this.keyId,
     this.signature,
+    this.hops = 0,
   });
 
   bool get isSigned => keyId != null && signature != null;
@@ -82,6 +84,19 @@ class ShelterStatusReport {
         deviceId: deviceId,
         keyId: keyId,
         signature: signature,
+        hops: hops,
+      );
+
+  ShelterStatusReport withNextHop() => ShelterStatusReport(
+        shelterId: shelterId,
+        lat: lat,
+        lng: lng,
+        isOccupied: isOccupied,
+        timestamp: timestamp,
+        deviceId: deviceId,
+        keyId: keyId,
+        signature: signature,
+        hops: hops + 1,
       );
 
   String toCompactJson() {
@@ -98,6 +113,7 @@ class ShelterStatusReport {
       m['kid'] = keyId;
       m['sig'] = base64.encode(signature!);
     }
+    if (hops > 0) m['h'] = hops;
     return jsonEncode(m);
   }
 
@@ -125,6 +141,7 @@ class ShelterStatusReport {
       deviceId: j['v'] as String? ?? '',
       keyId: kid,
       signature: sig,
+      hops: (j['h'] is num ? (j['h'] as num).toInt() : 0),
     );
   }
 }

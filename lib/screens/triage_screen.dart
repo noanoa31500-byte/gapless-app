@@ -3,10 +3,20 @@ import 'package:provider/provider.dart';
 import '../providers/shelter_provider.dart';
 import '../providers/location_provider.dart';
 import '../providers/language_provider.dart';
+import '../theme/app_colors.dart';
 import '../utils/localization.dart';
-import '../utils/styles.dart';
 import '../widgets/safe_text.dart';
 import 'package:latlong2/latlong.dart';
+
+// Design system constants
+const _kEmerald     = Color(0xFF00C896);
+const _kEmeraldDark = Color(0xFF00A87E);
+const _kDark        = Color(0xFF1A1A2E);
+const _kDarkGreen   = Color(0xFF0D3B2E);
+const _kSurface     = Color(0xFFF8F9FE);
+const _kCritical    = Color(0xFFE53935);
+const _kUrgent      = Color(0xFFFF6B35);
+const _kModerate    = Color(0xFFFFB300);
 
 /// トリアージ画面
 /// 質問形式で怪我の重症度を判断し、適切な避難所を提案
@@ -21,6 +31,9 @@ class _TriageScreenState extends State<TriageScreen> {
   int _currentStep = 0;
   final Map<String, dynamic> _answers = {};
   TriageResult? _result;
+  // isUrgent (呼吸停止 / 大出血) を選択した瞬間に true。
+  // 戻るボタンを封じ、判定リセットによる二度押し事故を防ぐ。
+  bool _criticalLocked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +41,26 @@ class _TriageScreenState extends State<TriageScreen> {
     final lang = GapLessL10n.lang;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _kSurface,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: _kDark,
+        foregroundColor: Colors.white,
         title: SafeText(
           _getTitle(lang),
-          style: emergencyTextStyle(size: 20, isBold: true),
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            color: Colors.white,
+            letterSpacing: 0.3,
+          ),
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                onPressed: () => Navigator.maybePop(context),
+              )
+            : null,
       ),
       body: _result != null ? _buildResultView(lang) : _buildQuestionView(lang),
     );
@@ -55,124 +79,224 @@ class _TriageScreenState extends State<TriageScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) _calculateResult();
       });
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(_kEmerald),
+          strokeWidth: 3,
+        ),
+      );
     }
 
     final question = questions[_currentStep];
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Progress
-            LinearProgressIndicator(
-              value: (_currentStep + 1) / questions.length,
-              backgroundColor: Colors.grey[200],
-              valueColor: const AlwaysStoppedAnimation(Color(0xFFE53935)),
-            ),
-            const SizedBox(height: 8),
-            SafeText(
-              '${_currentStep + 1} / ${questions.length}',
-              style: emergencyTextStyle(size: 12, color: Colors.grey),
-            ),
-            const SizedBox(height: 32),
-
-            // Question Icon
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: question.color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(question.icon, size: 48, color: question.color),
-            ),
-            const SizedBox(height: 24),
-
-            // Question Text
-            SafeText(
-              question.text,
-              style: emergencyTextStyle(size: 24, isBold: true),
-            ),
-            const SizedBox(height: 8),
-            if (question.subtext != null)
-              SafeText(
-                question.subtext!,
-                style: emergencyTextStyle(size: 14, color: Colors.grey),
-              ),
-            const SizedBox(height: 32),
-
-            // Answer Options
-            Expanded(
-              child: ListView.builder(
-                itemCount: question.options.length,
-                itemBuilder: (context, index) {
-                  final option = question.options[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _buildOptionButton(option, question),
-                  );
-                },
+      child: Column(
+        children: [
+          // Dark header band with question icon + progress
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [_kDark, _kDarkGreen],
               ),
             ),
+            padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Progress pill bar
+                Row(
+                  children: [
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: (_currentStep + 1) / questions.length,
+                          backgroundColor: Colors.white.withOpacity(0.15),
+                          valueColor: const AlwaysStoppedAnimation<Color>(_kEmerald),
+                          minHeight: 6,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '${_currentStep + 1} / ${questions.length}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
 
-            // Back Button
-            if (_currentStep > 0)
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    _currentStep--;
-                  });
-                },
-                icon: const Icon(Icons.arrow_back),
-                label: SafeText(_getBackLabel(lang)),
+                // Question icon badge
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: question.color.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: question.color.withOpacity(0.35),
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Icon(question.icon, size: 36, color: question.color),
+                ),
+                const SizedBox(height: 16),
+
+                // Question Text
+                SafeText(
+                  question.text,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                    letterSpacing: 0.3,
+                    height: 1.3,
+                  ),
+                ),
+                if (question.subtext != null) ...[
+                  const SizedBox(height: 6),
+                  SafeText(
+                    question.subtext!,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white.withOpacity(0.6),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+
+          // Answer Options
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              itemCount: question.options.length,
+              itemBuilder: (context, index) {
+                final option = question.options[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildOptionButton(option, question),
+                );
+              },
+            ),
+          ),
+
+          // Back Button — Critical 判定後は戻れない (誤操作リセット防止)
+          if (_currentStep > 0 && !_criticalLocked)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+              child: TextButton.icon(
+                onPressed: () => setState(() => _currentStep--),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: _kEmerald),
+                label: SafeText(
+                  _getBackLabel(lang),
+                  style: const TextStyle(
+                    color: _kEmerald,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                ),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildOptionButton(TriageOption option, TriageQuestion question) {
-    return ElevatedButton(
-      onPressed: () {
-        setState(() {
-          _answers[question.id] = option.value;
-          _currentStep++;
-        });
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: option.isUrgent ? Colors.red[50] : Colors.grey[100],
-        foregroundColor: option.isUrgent ? Colors.red[900] : Colors.black87,
-        elevation: 0,
-        padding: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: option.isUrgent
-              ? const BorderSide(color: Colors.red, width: 2)
-              : BorderSide.none,
-        ),
-      ),
-      child: Row(
-        children: [
-          if (option.icon != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Icon(option.icon, size: 24),
-            ),
-          Expanded(
-            child: SafeText(
-              option.text,
-              style: emergencyTextStyle(
-                size: 16,
-                isBold: true,
-                color: option.isUrgent ? Colors.red[900]! : Colors.black87,
+    // Determine styling by urgency
+    final Color bgColor;
+    final Color borderColor;
+    final Color textColor;
+    final Color iconColor;
+
+    if (option.isUrgent) {
+      bgColor = _kCritical.withOpacity(0.06);
+      borderColor = _kCritical.withOpacity(0.5);
+      textColor = _kCritical;
+      iconColor = _kCritical;
+    } else {
+      bgColor = Colors.white;
+      borderColor = _kDark.withOpacity(0.1);
+      textColor = _kDark;
+      iconColor = _kEmerald;
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () {
+          setState(() {
+            _answers[question.id] = option.value;
+            _currentStep++;
+            if (option.isUrgent) _criticalLocked = true;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: borderColor, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(option.isUrgent ? 0.06 : 0.04),
+                blurRadius: option.isUrgent ? 16 : 8,
+                offset: const Offset(0, 4),
               ),
-            ),
+            ],
           ),
-          const Icon(Icons.chevron_right),
-        ],
+          child: Row(
+            children: [
+              if (option.icon != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: iconColor.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(option.icon, size: 22, color: iconColor),
+                ),
+                const SizedBox(width: 14),
+              ],
+              Expanded(
+                child: SafeText(
+                  option.text,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: option.isUrgent ? _kCritical.withOpacity(0.5) : _kDark.withOpacity(0.25),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -249,130 +373,270 @@ class _TriageScreenState extends State<TriageScreen> {
   /// 結果ビュー
   Widget _buildResultView(String lang) {
     final result = _result!;
+    final sev = result.severity;
+
+    // Severity gradient colors
+    final List<Color> sevGradient;
+    switch (sev) {
+      case TriageSeverity.critical:
+        sevGradient = [_kCritical, const Color(0xFFB71C1C)];
+        break;
+      case TriageSeverity.urgent:
+        sevGradient = [_kUrgent, const Color(0xFFE64A19)];
+        break;
+      case TriageSeverity.moderate:
+        sevGradient = [_kModerate, const Color(0xFFF57F17)];
+        break;
+      case TriageSeverity.minor:
+        sevGradient = [_kEmerald, _kEmeraldDark];
+        break;
+    }
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Result Icon
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: result.severity.color.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                result.severity.icon,
-                size: 64,
-                color: result.severity.color,
-              ),
-            ),
-            const SizedBox(height: 24),
-
-            // Result Title
-            SafeText(
-              result.severity.getTitle(lang),
-              style: emergencyTextStyle(size: 28, isBold: true),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            SafeText(
-              result.severity.getDescription(lang),
-              style: emergencyTextStyle(size: 16, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-
-            // Recommendation Box
+            // Hero result band
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: result.severity.color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: result.severity.color),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: sevGradient,
+                ),
               ),
+              padding: const EdgeInsets.fromLTRB(24, 32, 24, 36),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Severity icon with glow
+                  Container(
+                    width: 96,
+                    height: 96,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.18),
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 24,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Icon(sev.icon, size: 52, color: Colors.white),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Severity pill badge
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      sev.getBadgeLabel(lang),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
                   SafeText(
-                    _getRecommendationTitle(lang),
-                    style: emergencyTextStyle(size: 14, color: Colors.grey),
+                    sev.getTitle(lang),
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                      letterSpacing: 0.3,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   SafeText(
-                    result.severity.getRecommendation(lang),
-                    style: emergencyTextStyle(size: 18, isBold: true),
+                    sev.getDescription(lang),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white.withOpacity(0.8),
+                      height: 1.4,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
 
-            // Action Buttons
-            if (result.needsMedical)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () => _navigateToHospital(),
-                  icon: const Icon(Icons.local_hospital),
-                  label: SafeText(
-                    _getGoToHospitalLabel(lang),
-                    style: emergencyTextStyle(color: Colors.white, isBold: true),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            // Content area
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Recommendation card
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: sev.color.withOpacity(0.25),
+                        width: 1.5,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.07),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: sev.color.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(Icons.lightbulb_rounded, color: sev.color, size: 18),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              _getRecommendationTitle(lang),
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: _kDark.withOpacity(0.45),
+                                letterSpacing: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        SafeText(
+                          sev.getRecommendation(lang),
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: _kDark,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-            const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _navigateToShelter(),
-                icon: const Icon(Icons.night_shelter),
-                label: SafeText(
-                  _getGoToShelterLabel(lang),
-                  style: emergencyTextStyle(
-                      color: result.needsMedical ? Colors.black87 : Colors.white,
-                      isBold: true),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      result.needsMedical ? Colors.grey[200] : Colors.green,
-                  foregroundColor:
-                      result.needsMedical ? Colors.black87 : Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  // Action Buttons
+                  if (result.needsMedical) ...[
+                    _buildActionButton(
+                      label: _getGoToHospitalLabel(lang),
+                      icon: Icons.local_hospital_rounded,
+                      gradient: const LinearGradient(
+                        colors: [_kCritical, Color(0xFFB71C1C)],
+                      ),
+                      onPressed: _navigateToHospital,
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+
+                  _buildActionButton(
+                    label: _getGoToShelterLabel(lang),
+                    icon: Icons.night_shelter_rounded,
+                    gradient: result.needsMedical
+                        ? const LinearGradient(colors: [Color(0xFFEEEEEE), Color(0xFFE0E0E0)])
+                        : const LinearGradient(colors: [_kEmerald, _kEmeraldDark]),
+                    textColor: result.needsMedical ? _kDark : Colors.white,
+                    onPressed: _navigateToShelter,
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-            // Restart
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  _currentStep = 0;
-                  _answers.clear();
-                  _result = null;
-                });
-              },
-              child: SafeText(
-                _getRestartLabel(lang),
-                style: emergencyTextStyle(color: Colors.grey),
+                  // Restart
+                  Center(
+                    child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _currentStep = 0;
+                          _answers.clear();
+                          _result = null;
+                          _criticalLocked = false;
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                        foregroundColor: _kDark.withOpacity(0.45),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.refresh_rounded, size: 16),
+                          const SizedBox(width: 6),
+                          SafeText(
+                            _getRestartLabel(lang),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required Gradient gradient,
+    Color textColor = Colors.white,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: gradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.12),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(28),
+          onTap: onPressed,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 22, color: textColor),
+              const SizedBox(width: 10),
+              SafeText(
+                label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: textColor,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -451,7 +715,7 @@ class _TriageScreenState extends State<TriageScreen> {
       TriageQuestion(
         id: 'breathing',
         icon: Icons.air,
-        color: Colors.blue,
+        color: const Color(0xFF5B9CF6),
         text: GapLessL10n.t('triage_q_breathing'),
         options: [
           TriageOption(
@@ -478,7 +742,7 @@ class _TriageScreenState extends State<TriageScreen> {
       TriageQuestion(
         id: 'bleeding',
         icon: Icons.water_drop,
-        color: Colors.red,
+        color: _kCritical,
         text: GapLessL10n.t('triage_q_bleeding'),
         options: [
           TriageOption(
@@ -504,7 +768,7 @@ class _TriageScreenState extends State<TriageScreen> {
       TriageQuestion(
         id: 'consciousness',
         icon: Icons.psychology,
-        color: Colors.purple,
+        color: const Color(0xFF9C6FE4),
         text: GapLessL10n.t('triage_q_consciousness'),
         subtext: GapLessL10n.t('triage_q_consciousness_sub'),
         options: [
@@ -532,7 +796,7 @@ class _TriageScreenState extends State<TriageScreen> {
       TriageQuestion(
         id: 'mobility',
         icon: Icons.directions_walk,
-        color: Colors.orange,
+        color: _kUrgent,
         text: GapLessL10n.t('triage_q_mobility'),
         options: [
           TriageOption(
@@ -558,7 +822,7 @@ class _TriageScreenState extends State<TriageScreen> {
       TriageQuestion(
         id: 'pain',
         icon: Icons.healing,
-        color: Colors.amber,
+        color: _kModerate,
         text: GapLessL10n.t('triage_q_pain'),
         options: [
           TriageOption(
@@ -636,15 +900,17 @@ enum TriageSeverity {
   minor;
 
   Color get color {
+    // Apple HIG semantic colors。国際 START 法と完全一致ではないが
+    // (START は黒/赤/黄/緑) 一般ユーザ向けに重症度が直感的に伝わる順序を保つ。
     switch (this) {
       case TriageSeverity.critical:
-        return Colors.red;
+        return AppColors.emergencyRed;
       case TriageSeverity.urgent:
-        return Colors.orange;
+        return AppColors.warningOrange;
       case TriageSeverity.moderate:
-        return Colors.amber;
+        return AppColors.warningOrange;
       case TriageSeverity.minor:
-        return Colors.green;
+        return AppColors.primaryGreen;
     }
   }
 
@@ -658,6 +924,20 @@ enum TriageSeverity {
         return Icons.info;
       case TriageSeverity.minor:
         return Icons.check_circle;
+    }
+  }
+
+  /// Short pill label (ALL CAPS style)
+  String getBadgeLabel(String lang) {
+    switch (this) {
+      case TriageSeverity.critical:
+        return 'CRITICAL';
+      case TriageSeverity.urgent:
+        return 'URGENT';
+      case TriageSeverity.moderate:
+        return 'MODERATE';
+      case TriageSeverity.minor:
+        return 'MINOR';
     }
   }
 

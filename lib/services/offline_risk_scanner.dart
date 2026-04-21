@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import '../data/map_repository.dart';
+import '../providers/region_mode_provider.dart';
 import '../utils/localization.dart';
 
 /// ============================================================================
@@ -152,12 +153,13 @@ class OfflineRiskScanner {
   String? get loadError => _loadError;
   int get floodPointCount => _floodPoints.length;
 
-  Future<void> loadData() async {
+  /// region: 現在の地域 (RegionRegistry.byId or detectFromGPS)。
+  Future<void> loadData({Region? region}) async {
     if (_isLoaded || _isLoading) return;
     _isLoading = true;
     _loadError = null;
     try {
-      await _loadFloodPredictionData();
+      await _loadFloodPredictionData(region ?? RegionRegistry.japan);
       _isLoaded = true;
       if (kDebugMode) {
         debugPrint('🌊 OfflineRiskScanner: データロード完了');
@@ -173,9 +175,10 @@ class OfflineRiskScanner {
     }
   }
 
-  Future<void> _loadFloodPredictionData() async {
+  Future<void> _loadFloodPredictionData(Region region) async {
+    final hazardFile = '${region.gplbAssetPath}_hazard.gplh';
     try {
-      final jsonString = await MapRepository.instance.readString('thailand_hazard.gplh');
+      final jsonString = await MapRepository.instance.readString(hazardFile);
       final data = json.decode(jsonString) as Map<String, dynamic>;
 
       if (data['type'] == 'point_hazard') {

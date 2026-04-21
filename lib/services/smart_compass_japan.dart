@@ -17,7 +17,7 @@ import '../utils/localization.dart';
 /// 「2時の方向に歩いて」という直感的な音声/視覚/触覚ガイダンスを提供します。
 /// 
 /// 【技術的特徴】
-/// 1. 磁気偏角補正: 大崎市周辺の偏角（約8.5度西）を考慮した真方位計算
+/// 1. 磁気偏角補正: 地域別の偏角（東京: 約7.5度西など）を考慮した真方位計算
 /// 2. クロックナビゲーション: 12方位を時計の文字盤に対応付け
 /// 3. ハプティックフィードバック: 正しい方向を向いた瞬間に振動
 /// 4. 視覚障害者対応: 画面を見なくても進路がわかる
@@ -151,14 +151,14 @@ class SmartCompass with ChangeNotifier {
   /// 
   /// 【地域別偏角（2024年時点の概算値）】
   /// - 北海道（札幌）: 約9.5度西
-  /// - 東北（大崎市）: 約8.5度西
+  /// - 東北: 約8.5度西
   /// - 関東（東京）: 約7.5度西
   /// - 関西（大阪）: 約7.0度西
   /// - 九州（福岡）: 約6.5度西
   /// - 沖縄（那覇）: 約5.0度西
   static const Map<String, double> regionalDeclination = {
     'hokkaido': -9.5,
-    'tohoku': -8.5,    // 大崎市はここ
+    'tohoku': -8.5,
     'kanto': -7.5,
     'chubu': -7.5,
     'kansai': -7.0,
@@ -168,9 +168,9 @@ class SmartCompass with ChangeNotifier {
     'okinawa': -5.0,
   };
 
-  /// 大崎市（宮城県）の偏角
+  /// 東京（関東）の偏角
   /// 負の値 = 西偏（磁北が真北より西にある）
-  static const double osakiDeclination = -8.5;
+  static const double tokyoDeclination = -7.5;
 
   /// ハプティックフィードバックのクールダウン（連続振動を防ぐ）
   static const Duration hapticCooldown = Duration(milliseconds: 500);
@@ -182,7 +182,7 @@ class SmartCompass with ChangeNotifier {
   static const double nearTargetThreshold = 30.0;
 
   // === 状態 ===
-  double _currentDeclination = osakiDeclination;
+  double _currentDeclination = tokyoDeclination;
   DateTime? _lastHapticTime;
   bool _hapticEnabled = true;
   bool _isOnTargetPrevious = false;
@@ -199,7 +199,7 @@ class SmartCompass with ChangeNotifier {
 
   /// 地域名から偏角を設定
   void setRegion(String region) {
-    _currentDeclination = regionalDeclination[region] ?? osakiDeclination;
+    _currentDeclination = regionalDeclination[region] ?? tokyoDeclination;
     notifyListeners();
     
     if (kDebugMode) {
@@ -243,9 +243,9 @@ class SmartCompass with ChangeNotifier {
   /// 【計算式】
   /// 真北方位 = 磁北方位 + 偏角
   /// 
-  /// 【例：大崎市の場合】
-  /// 偏角 = -8.5度（西偏）
-  /// コンパスが0度（磁北）を指している時、真北は -(-8.5) = +8.5度の方向
+  /// 【例：東京の場合】
+  /// 偏角 = -7.5度（西偏）
+  /// コンパスが0度（磁北）を指している時、真北は -(-7.5) = +7.5度の方向
   /// つまり、磁北方位に偏角を加算すると真北方位になる
   /// 
   /// 【実装上の注意】

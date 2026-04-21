@@ -4,17 +4,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import '../utils/accessibility.dart';
 import '../utils/localization.dart';
-import '../utils/apple_design_system.dart';
+// apple_design_system.dart removed — replaced by local design constants
 import '../providers/location_provider.dart';
 import '../providers/language_provider.dart';
 import '../providers/shelter_provider.dart';
 import '../providers/compass_provider.dart';
-import 'package:latlong2/latlong.dart';
+
+// Design system constants
+const _kEmerald   = Color(0xFF00C896);
+const _kEmeraldDark = Color(0xFF00A87E);
+const _kDark      = Color(0xFF1A1A2E);
+const _kDarkGreen = Color(0xFF0D3B2E);
+const _kSurface   = Color(0xFFF8F9FE);
+const _kAmber     = Color(0xFFFF6B35);
 
 /// ============================================================================
 /// OnboardingScreen - Apple HIG準拠のオンボーディング体験
 /// ============================================================================
-/// 
+///
 /// デザインコンセプト: "First Impression Matters"
 /// 初回起動時の体験がアプリの印象を決定づける
 /// Apple風のミニマルで洗練されたデザインを採用
@@ -37,7 +44,7 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> 
+class _OnboardingScreenState extends State<OnboardingScreen>
     with SingleTickerProviderStateMixin {
   int _currentStep = 0;
   String _selectedLanguage = 'ja';
@@ -45,7 +52,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   bool _isLoading = false;
   double _loadingProgress = 0.0;
   String _loadingMessage = '';
-  
+
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
 
@@ -85,7 +92,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       _animController.value = 1.0;
     }
     return Scaffold(
-      backgroundColor: AppleColors.systemBackground,
+      backgroundColor: _kSurface,
       body: SafeArea(
         child: FadeTransition(
           opacity: _fadeAnim,
@@ -111,55 +118,71 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   // ============================================
-  // Step 1: 言語選択 (Apple風)
+  // Step 1: 言語選択 (Modernized)
   // ============================================
   Widget _buildLanguageSelection() {
     return Padding(
       key: const ValueKey('language'),
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
 
-          // Icon with subtle gradient background
+          // Step progress pill
+          _buildStepPills(0),
+          const SizedBox(height: 28),
+
+          // Icon with emerald gradient background
           Container(
-            width: 100,
-            height: 100,
+            width: 96,
+            height: 96,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppleColors.actionBlue.withValues(alpha: 0.15),
-                  AppleColors.actionBlue.withValues(alpha: 0.05),
-                ],
+                colors: [_kEmerald, _kEmeraldDark],
               ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: _kEmerald.withOpacity(0.35),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.language_rounded,
-              size: 48,
-              color: AppleColors.actionBlue,
+              size: 44,
+              color: Colors.white,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
 
           // Title
           Text(
             GapLessL10n.t('onb_select_language_title'),
-            style: AppleTypography.largeTitle.copyWith(
-              color: AppleColors.label,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: _kDark,
+              letterSpacing: 0.3,
             ),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             '言語を選択 / Select / เลือก / 选择语言',
-            style: AppleTypography.body.copyWith(
-              color: AppleColors.secondaryLabel,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: _kDark.withOpacity(0.5),
+              letterSpacing: 0.2,
             ),
+            textAlign: TextAlign.center,
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           // Language Options (all 18 languages, scrollable)
           Expanded(
@@ -177,7 +200,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             ),
           ),
 
-          // Next Button (Apple風)
+          // Next Button (gradient pill)
           _buildPrimaryButton(
             label: _getNextText(),
             onPressed: () async {
@@ -188,8 +211,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               }
             },
           ),
-          
-          const SizedBox(height: 48),
+
+          const SizedBox(height: 40),
         ],
       ),
     );
@@ -201,37 +224,54 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     required String code,
   }) {
     final isSelected = _selectedLanguage == code;
-    
+
     return GestureDetector(
       onTap: () => setState(() => _selectedLanguage = code),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeOut,
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? AppleColors.actionBlue.withValues(alpha: 0.1) 
-              : AppleColors.secondaryBackground,
-          borderRadius: BorderRadius.circular(14),
+          color: isSelected
+              ? _kEmerald.withOpacity(0.08)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppleColors.actionBlue : Colors.transparent,
+            color: isSelected ? _kEmerald : Colors.transparent,
             width: 2,
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isSelected ? 0.05 : 0.04),
+              blurRadius: isSelected ? 16 : 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Text(flag, style: const TextStyle(fontSize: 28)),
+            Text(flag, style: const TextStyle(fontSize: 26)),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 name,
-                style: AppleTypography.headline.copyWith(
-                  color: isSelected ? AppleColors.actionBlue : AppleColors.label,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? _kEmerald : _kDark,
+                  letterSpacing: 0.2,
                 ),
               ),
             ),
             if (isSelected)
-              const Icon(Icons.check_circle_rounded, color: AppleColors.actionBlue, size: 24),
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: const BoxDecoration(
+                  color: _kEmerald,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
+              ),
           ],
         ),
       ),
@@ -239,82 +279,98 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   // ============================================
-  // Step 2: 位置情報許可 (Apple風)
+  // Step 2: 位置情報許可 (Modernized)
   // ============================================
   Widget _buildLocationPermission() {
     final lang = _selectedLanguage;
-    
+
     return Padding(
       key: const ValueKey('location'),
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: 28),
       child: Column(
         children: [
+          const SizedBox(height: 24),
+          _buildStepPills(1),
           const Spacer(flex: 2),
-          
-          // Icon
+
+          // Icon with gradient
           Container(
-            width: 100,
-            height: 100,
+            width: 96,
+            height: 96,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  AppleColors.safetyGreen.withValues(alpha: 0.15),
-                  AppleColors.safetyGreen.withValues(alpha: 0.05),
-                ],
+                colors: [_kEmerald, _kEmeraldDark],
               ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: _kEmerald.withOpacity(0.35),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: const Icon(
               Icons.location_on_rounded,
-              size: 48,
-              color: AppleColors.safetyGreen,
+              size: 44,
+              color: Colors.white,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
 
           Text(
             _getLocationTitle(lang),
-            style: AppleTypography.largeTitle.copyWith(
-              color: AppleColors.label,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: _kDark,
+              letterSpacing: 0.3,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
           Text(
             _getLocationDescription(lang),
-            style: AppleTypography.body.copyWith(
-              color: AppleColors.secondaryLabel,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: _kDark.withOpacity(0.55),
+              height: 1.5,
+              letterSpacing: 0.2,
             ),
             textAlign: TextAlign.center,
           ),
-          
-          const SizedBox(height: 48),
+
+          const SizedBox(height: 40),
 
           // Permission Status
           if (_locationPermissionGranted)
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
               decoration: BoxDecoration(
-                color: AppleColors.safetyGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(14),
+                color: _kEmerald.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: _kEmerald.withOpacity(0.3), width: 1),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle_rounded, color: AppleColors.safetyGreen),
-                  const SizedBox(width: 8),
+                  const Icon(Icons.check_circle_rounded, color: _kEmerald, size: 22),
+                  const SizedBox(width: 10),
                   Text(
                     _getPermissionGrantedText(lang),
-                    style: AppleTypography.headline.copyWith(
-                      color: AppleColors.safetyGreen,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _kEmerald,
                     ),
                   ),
                 ],
               ),
             ),
-          
+
           const Spacer(flex: 2),
 
           // Request Permission Button
@@ -322,10 +378,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             _buildPrimaryButton(
               label: _getAllowLocationText(lang),
               icon: Icons.location_searching_rounded,
-              color: AppleColors.safetyGreen,
               onPressed: _requestLocationPermission,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 14),
           ],
 
           // Skip / Next Button
@@ -338,12 +393,14 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   onPressed: _goToNextStep,
                   child: Text(
                     _getSkipText(lang),
-                    style: AppleTypography.body.copyWith(
-                      color: AppleColors.secondaryLabel,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: _kDark.withOpacity(0.45),
                     ),
                   ),
                 ),
-          
+
           const SizedBox(height: 48),
         ],
       ),
@@ -386,21 +443,25 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: AppleTypography.subhead.copyWith(color: Colors.white)),
-        backgroundColor: AppleColors.secondaryLabel,
+        content: Text(
+          message,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
+        backgroundColor: _kDark,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
 
   // ============================================
-  // Step 3: チュートリアル (Apple風)
+  // Step 3: チュートリアル (Modernized)
   // ============================================
   Widget _buildTutorial() {
     final lang = _selectedLanguage;
     final pages = _getTutorialPages(lang);
-    
+
     return _AppleTutorialPager(
       key: const ValueKey('tutorial'),
       pages: pages,
@@ -411,163 +472,189 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   // ============================================
-  // Step 4: データローディング (Apple風)
+  // Step 4: データローディング (Modernized)
   // ============================================
   Widget _buildDataLoading() {
     final lang = _selectedLanguage;
-    
+
     if (!_isLoading) {
       _isLoading = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _loadAllData();
       });
     }
-    
-    return Center(
+
+    return Container(
       key: const ValueKey('loading'),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-          // App Logo
-          Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppleColors.dangerRed.withValues(alpha: 0.15),
-                  AppleColors.dangerRed.withValues(alpha: 0.05),
-                ],
-              ),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.shield_rounded,
-              size: 56,
-              color: AppleColors.dangerRed,
-            ),
-          ),
-          const SizedBox(height: 32),
-
-          // GapLess Logo
-          RichText(
-            text: TextSpan(
-              style: GapLessL10n.safeStyle(const TextStyle()),
-              children: [
-                TextSpan(
-                  text: 'Gap',
-                  style: AppleTypography.largeTitle.copyWith(
-                    color: AppleColors.label,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [_kDark, _kDarkGreen],
+        ),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // App Logo with glow
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [_kEmerald, _kEmeraldDark],
                   ),
-                ),
-                TextSpan(
-                  text: 'Less',
-                  style: AppleTypography.largeTitle.copyWith(
-                    color: AppleColors.dangerRed,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _getLoadingSubtitle(lang),
-            style: AppleTypography.subhead.copyWith(
-              color: AppleColors.secondaryLabel,
-            ),
-          ),
-          const SizedBox(height: 16),
-          
-          // Latest Version Badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppleColors.safetyGreen.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppleColors.safetyGreen.withValues(alpha: 0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.verified_rounded,
-                  size: 14,
-                  color: AppleColors.safetyGreen,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'v4.5 [Latest]',
-                  style: AppleTypography.caption1.copyWith(
-                    color: AppleColors.safetyGreen,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 64),
-
-          // Progress (Apple風の円形プログレス)
-          SizedBox(
-            width: 80,
-            height: 80,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Background circle
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: CircularProgressIndicator(
-                    value: 1.0,
-                    strokeWidth: 4,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppleColors.separator,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: _kEmerald.withOpacity(0.45),
+                      blurRadius: 36,
+                      offset: const Offset(0, 12),
                     ),
-                  ),
+                  ],
                 ),
-                // Progress circle
-                SizedBox(
-                  width: 80,
-                  height: 80,
-                  child: CircularProgressIndicator(
-                    value: _loadingProgress,
-                    strokeWidth: 4,
-                    strokeCap: StrokeCap.round,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppleColors.actionBlue,
+                child: const Icon(
+                  Icons.shield_rounded,
+                  size: 56,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 32),
+
+              // GapLess Logo
+              RichText(
+                text: TextSpan(
+                  style: GapLessL10n.safeStyle(const TextStyle()),
+                  children: [
+                    const TextSpan(
+                      text: 'Gap',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 0.5,
+                      ),
                     ),
+                    TextSpan(
+                      text: 'Less',
+                      style: TextStyle(
+                        fontSize: 36,
+                        fontWeight: FontWeight.w700,
+                        color: _kEmerald,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                _getLoadingSubtitle(lang),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.6),
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Latest Version Badge
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _kEmerald.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: _kEmerald.withOpacity(0.4),
+                    width: 1,
                   ),
                 ),
-                // Percentage
-                Text(
-                  '${(_loadingProgress * 100).toInt()}%',
-                  style: AppleTypography.headline.copyWith(
-                    color: AppleColors.label,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.verified_rounded,
+                      size: 14,
+                      color: _kEmerald,
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'v4.5 [Latest]',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: _kEmerald,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 60),
+
+              // Progress (circular with emerald)
+              SizedBox(
+                width: 88,
+                height: 88,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Background circle
+                    SizedBox(
+                      width: 88,
+                      height: 88,
+                      child: CircularProgressIndicator(
+                        value: 1.0,
+                        strokeWidth: 5,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          Colors.white.withOpacity(0.12),
+                        ),
+                      ),
+                    ),
+                    // Progress circle
+                    SizedBox(
+                      width: 88,
+                      height: 88,
+                      child: CircularProgressIndicator(
+                        value: _loadingProgress,
+                        strokeWidth: 5,
+                        strokeCap: StrokeCap.round,
+                        valueColor: const AlwaysStoppedAnimation<Color>(_kEmerald),
+                      ),
+                    ),
+                    // Percentage
+                    Text(
+                      '${(_loadingProgress * 100).toInt()}%',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              Text(
+                _loadingMessage,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.white.withOpacity(0.65),
+                  letterSpacing: 0.2,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          
-          const SizedBox(height: 24),
-          
-          Text(
-            _loadingMessage,
-            style: AppleTypography.subhead.copyWith(
-              color: AppleColors.secondaryLabel,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
         ),
       ),
     );
@@ -578,7 +665,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     final shelterProvider = context.read<ShelterProvider>();
     final locationProvider = context.read<LocationProvider>();
     final compassProvider = context.read<CompassProvider>();
-    
+
     try {
       setState(() {
         _loadingMessage = _getLoadingMessage(lang, 'shelters');
@@ -590,11 +677,11 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       final loadSheltersFuture = shelterProvider.loadShelters();
       final loadHazardsFuture = shelterProvider.loadHazardPolygons();
       final loadRoadsFuture = shelterProvider.loadRoadData(); // This is the heaviest
-      
+
       // Simulate progress updates or just wait for all
       // We can await them individually if we want to update the progress bar incrementally,
       // but Future.wait is faster. Let's do a hybrid approach.
-      
+
       await loadSheltersFuture;
       if (!mounted) return;
       setState(() {
@@ -617,7 +704,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
          _loadingMessage = _getLoadingMessage(lang, 'locating');
          _loadingProgress = 0.7;
       });
-      
+
       // 最大10秒待機
       await locationProvider.waitForFreshGPS(timeoutSeconds: 10);
       if (!mounted) return;
@@ -632,28 +719,18 @@ class _OnboardingScreenState extends State<OnboardingScreen>
              _loadingMessage = _getLoadingMessage(lang, 'graph');
              _loadingProgress = 0.9;
           });
-          
-          // バックグラウンド計算（キャッシュ）を並列ではなく直列で待機し、確実に完了させる
-          await shelterProvider.updateBackgroundRoutes(locationProvider.currentLocation!);
-          
-          if (shelterProvider.navTarget != null) {
-              await shelterProvider.calculateSafestRoute(
-                  LatLng(locationProvider.currentLocation!.latitude, locationProvider.currentLocation!.longitude),
-                  LatLng(shelterProvider.navTarget!.lat, shelterProvider.navTarget!.lng),
-                  target: shelterProvider.navTarget
-              );
-          }
+
       }
-      
+
       if (!mounted) return;
       setState(() {
         _loadingMessage = _getLoadingMessage(lang, 'complete');
         _loadingProgress = 1.0;
       });
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       await OnboardingScreen.markCompleted();
-      
+
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
@@ -669,6 +746,33 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ============================================
   // 共通ウィジェット
   // ============================================
+
+  /// Step progress pills (4 steps: 0-3)
+  Widget _buildStepPills(int activeStep) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(4, (i) {
+        final isActive = i == activeStep;
+        final isDone = i < activeStep;
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          width: isActive ? 28 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive
+                ? _kEmerald
+                : isDone
+                    ? _kEmerald.withOpacity(0.4)
+                    : _kDark.withOpacity(0.15),
+            borderRadius: BorderRadius.circular(4),
+          ),
+        );
+      }),
+    );
+  }
+
   Widget _buildPrimaryButton({
     required String label,
     required VoidCallback onPressed,
@@ -677,47 +781,46 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }) {
     return Container(
       width: double.infinity,
-      height: 56, // Taller for better touch target
+      height: 56,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(28),
+        gradient: LinearGradient(
+          colors: color != null
+              ? [color, color.withOpacity(0.8)]
+              : [_kEmerald, _kEmeraldDark],
+        ),
         boxShadow: [
           BoxShadow(
-            color: (color ?? AppleColors.actionBlue).withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: (color ?? _kEmerald).withOpacity(0.38),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color ?? AppleColors.actionBlue,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: EdgeInsets.zero, // Use Container height
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 20),
-              const SizedBox(width: 8),
-            ],
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: AppleTypography.headline.copyWith(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                height: 1.2, // Explicit height to prevent Safari clipping
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(28),
+          onTap: onPressed,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 20, color: Colors.white),
+                const SizedBox(width: 10),
+              ],
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.4,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -752,31 +855,31 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return [
       _TutorialPageData(
         icon: Icons.shield_rounded,
-        color: AppleColors.dangerRed,
+        color: const Color(0xFFFF6B35),
         title: GapLessL10n.t('tutorial_welcome_title'),
         description: GapLessL10n.t('tutorial_welcome_desc'),
       ),
       _TutorialPageData(
         icon: Icons.navigation_rounded,
-        color: AppleColors.actionBlue,
+        color: _kEmerald,
         title: GapLessL10n.t('tutorial_compass_title'),
         description: GapLessL10n.t('tutorial_compass_desc'),
       ),
       _TutorialPageData(
         icon: Icons.record_voice_over_rounded,
-        color: AppleColors.safetyGreen,
+        color: const Color(0xFF5B9CF6),
         title: GapLessL10n.t('tutorial_voice_title'),
         description: GapLessL10n.t('tutorial_voice_desc'),
       ),
       _TutorialPageData(
         icon: Icons.healing_rounded,
-        color: AppleColors.warningOrange,
+        color: _kAmber,
         title: GapLessL10n.t('tutorial_first_aid_title'),
         description: GapLessL10n.t('tutorial_first_aid_desc'),
       ),
       _TutorialPageData(
         icon: Icons.check_circle_rounded,
-        color: AppleColors.safetyGreen,
+        color: _kEmerald,
         title: GapLessL10n.t('tutorial_ready_title'),
         description: GapLessL10n.t('tutorial_ready_desc'),
       ),
@@ -785,7 +888,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 }
 
 // ============================================================================
-// Apple風チュートリアルページャー
+// Modern Tutorial Pager
 // ============================================================================
 class _AppleTutorialPager extends StatefulWidget {
   final List<_TutorialPageData> pages;
@@ -819,17 +922,23 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Skip Button (Apple風)
+        // Skip Button
         Align(
           alignment: Alignment.topRight,
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: TextButton(
               onPressed: widget.onSkip,
+              style: TextButton.styleFrom(
+                foregroundColor: _kDark.withOpacity(0.45),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
               child: Text(
                 GapLessL10n.t('tutorial_skip'),
-                style: AppleTypography.body.copyWith(
-                  color: AppleColors.secondaryLabel,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.2,
                 ),
               ),
             ),
@@ -849,9 +958,9 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
           ),
         ),
 
-        // Apple風ページインジケーター
+        // Pill page indicators (emerald)
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
@@ -859,25 +968,25 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
               (index) => AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeOut,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: _currentPage == index ? 20 : 8,
+                margin: const EdgeInsets.symmetric(horizontal: 3),
+                width: _currentPage == index ? 24 : 8,
                 height: 8,
                 decoration: BoxDecoration(
                   color: _currentPage == index
-                      ? AppleColors.actionBlue
-                      : AppleColors.separator,
+                      ? _kEmerald
+                      : _kDark.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),
             ),
           ),
         ),
-        
-        const SizedBox(height: 16),
+
+        const SizedBox(height: 12),
 
         // Navigation Buttons
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Row(
             children: [
               // Back Button
@@ -890,15 +999,19 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
                         curve: Curves.easeInOut,
                       );
                     },
+                    style: TextButton.styleFrom(
+                      foregroundColor: _kEmerald,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(Icons.arrow_back_ios_rounded, size: 16),
+                        const Icon(Icons.arrow_back_ios_rounded, size: 15),
                         const SizedBox(width: 4),
                         Text(
                           GapLessL10n.t('tutorial_back'),
-                          style: AppleTypography.body.copyWith(
-                            color: AppleColors.actionBlue,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -907,66 +1020,63 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
                 )
               else
                 const Spacer(),
-              
-              // Next/Start Button
+
+              // Next/Start Button — gradient pill
               Expanded(
                 flex: 2,
                 child: Container(
-                  height: 56, // Slightly taller for better touch target and premium feel
+                  height: 56,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(28),
+                    gradient: const LinearGradient(
+                      colors: [_kEmerald, _kEmeraldDark],
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppleColors.actionBlue.withValues(alpha: 0.3),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
+                        color: _kEmerald.withOpacity(0.38),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentPage < widget.pages.length - 1) {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut,
-                        );
-                      } else {
-                        widget.onComplete();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppleColors.actionBlue,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      padding: EdgeInsets.zero, // Use Container height
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        _currentPage < widget.pages.length - 1
-                            ? GapLessL10n.t('tutorial_next')
-                            : GapLessL10n.t('tutorial_start'),
-                        style: AppleTypography.headline.copyWith(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
-                          height: 1.2, // Explicit height for Safari
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(28),
+                      onTap: () {
+                        if (_currentPage < widget.pages.length - 1) {
+                          _controller.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        } else {
+                          widget.onComplete();
+                        }
+                      },
+                      child: Center(
+                        child: Text(
+                          _currentPage < widget.pages.length - 1
+                              ? GapLessL10n.t('tutorial_next')
+                              : GapLessL10n.t('tutorial_start'),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-              
+
               if (_currentPage > 0) const Spacer() else const SizedBox(),
             ],
           ),
         ),
-        
-        const SizedBox(height: 48),
+
+        const SizedBox(height: 24),
       ],
     );
   }
@@ -977,39 +1087,49 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Icon with gradient background
+          // Icon with gradient circle
           Container(
-            width: 120,
-            height: 120,
+            width: 112,
+            height: 112,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  page.color.withValues(alpha: 0.15),
-                  page.color.withValues(alpha: 0.05),
+                  page.color.withOpacity(0.18),
+                  page.color.withOpacity(0.06),
                 ],
               ),
               shape: BoxShape.circle,
+              border: Border.all(
+                color: page.color.withOpacity(0.25),
+                width: 1.5,
+              ),
             ),
-            child: Icon(page.icon, size: 56, color: page.color),
+            child: Icon(page.icon, size: 52, color: page.color),
           ),
-          const SizedBox(height: 48),
-          
+          const SizedBox(height: 28),
+
           Text(
             page.title,
-            style: AppleTypography.title1.copyWith(
-              color: AppleColors.label,
+            style: const TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              color: _kDark,
+              letterSpacing: 0.3,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
-          
+          const SizedBox(height: 14),
+
           Text(
             page.description,
-            style: AppleTypography.body.copyWith(
-              color: AppleColors.secondaryLabel,
-              height: 1.5,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: _kDark.withOpacity(0.55),
+              height: 1.6,
+              letterSpacing: 0.2,
             ),
             textAlign: TextAlign.center,
           ),

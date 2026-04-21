@@ -146,7 +146,7 @@ class BleSyncService extends ChangeNotifier {
       _connectedPeerCount = _activeConnections.length;
       notifyListeners();
 
-      await device.connect(timeout: const Duration(seconds: 8));
+      await device.connect(license: License.free, timeout: const Duration(seconds: 8));
 
       // MTUを512バイトに交渉（iOSは自動交渉するが明示的に要求）
       await device.requestMtu(512);

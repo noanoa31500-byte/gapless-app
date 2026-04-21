@@ -5,32 +5,26 @@ import 'package:flutter/foundation.dart';
 /// MagneticDeclinationConfig - 地域別地磁気偏角管理システム
 /// ============================================================================
 /// 
-/// 【審査員へのアピール】
-/// サトゥンの偏角は-0.6度と無視できるレベルですが、将来的に偏角の大きい地域
-/// （例：ニュージーランド +20度、カナダ北部 -15度など）へ展開することを見据え、
-/// **すべてのエリアで真北（True North）基準に統一する設計**としています。
-/// 
+/// 【設計方針】
+/// 偏角の大きい地域（例：ニュージーランド +20度、カナダ北部 -15度など）へ
+/// 展開することを見据え、**すべてのエリアで真北（True North）基準に統一する設計**。
+///
 /// 【技術的背景】
 /// 地磁気偏角（Magnetic Declination）は、地球上の位置と時間によって変化します。
 /// - 日本: 約-7〜-10度（西偏）
-/// - タイ: 約-0.5〜-1度（西偏）
 /// - ニュージーランド: 約+18〜+23度（東偏）
 /// - カナダ・イエローナイフ: 約-15度（西偏）
-/// 
+///
 /// この差異を無視すると、1kmの移動で最大350mの誤差が生じます。
 /// 災害時の避難誘導では、この誤差が命取りになる可能性があります。
-/// 
+///
 /// 【データソース】
 /// - NOAA World Magnetic Model (WMM) 2020-2025
 /// - 国土地理院 地磁気偏角データ
-/// - Thai Geomagnetic Survey
 /// ============================================================================
 
 /// 地域コード
 enum GeoRegion {
-  /// 日本（大崎市・東北地方）
-  jpOsaki('jp_osaki', '日本（大崎市）', 'Japan (Osaki)', -8.5),
-  
   /// 日本（東京都）
   jpTokyo('jp_tokyo', '日本（東京）', 'Japan (Tokyo)', -7.5),
   
@@ -91,7 +85,6 @@ enum GeoRegion {
     if (latitude >= 24 && latitude <= 46 && longitude >= 123 && longitude <= 154) {
       // 日本国内の細分化
       if (latitude >= 42) return GeoRegion.jpSapporo;
-      if (latitude >= 37) return GeoRegion.jpOsaki;
       if (longitude >= 138) return GeoRegion.jpTokyo;
       if (longitude >= 134) return GeoRegion.jpOsaka;
       if (latitude <= 27) return GeoRegion.jpOkinawa;
@@ -125,11 +118,8 @@ class MagneticDeclinationConfig {
 
   // === 主要地域の偏角（定数） ===
   
-  /// 日本・大崎市（2024-2026年）
-  /// 国土地理院データ + WMM2020検証
-  static const double declinationJpOsaki = -8.5;
-  
   /// 日本・東京（2024-2026年）
+  /// 国土地理院データ + WMM2020検証
   static const double declinationJpTokyo = -7.5;
   
   /// 偏角テーブル（座標 → 偏角のマッピング）
@@ -137,7 +127,6 @@ class MagneticDeclinationConfig {
   static final Map<String, double> _declinationTable = {
     // 日本
     '43.1_141.3': -9.5,  // 札幌
-    '38.6_141.0': -8.5,  // 大崎
     '38.3_140.9': -8.6,  // 仙台
     '35.7_139.7': -7.5,  // 東京
     '35.2_136.9': -7.3,  // 名古屋
@@ -241,7 +230,7 @@ class CompassCalibrator with ChangeNotifier {
   double _lastTrueHeading = 0;
 
   CompassCalibrator({
-    GeoRegion initialRegion = GeoRegion.jpOsaki,
+    GeoRegion initialRegion = GeoRegion.jpTokyo,
   })  : _currentRegion = initialRegion,
         _currentDeclination = initialRegion.declination;
 
@@ -265,11 +254,8 @@ class CompassCalibrator with ChangeNotifier {
   /// 【計算式】
   /// TrueHeading = (MagneticHeading - Declination) mod 360
   /// 
-  /// 【例: 大崎市（偏角 -8.5度）】
-  /// 磁北0度 → 真北 0 - (-8.5) = 8.5度
-  /// 
-  /// 【例: サトゥン県（偏角 -0.6度）】
-  /// 磁北0度 → 真北 0 - (-0.6) = 0.6度
+  /// 【例: 東京（偏角 -7.5度）】
+  /// 磁北0度 → 真北 0 - (-7.5) = 7.5度
   double calibrate(double magneticHeading) {
     _lastMagneticHeading = magneticHeading;
     _calibrationCount++;
@@ -413,11 +399,6 @@ class CompassCalibrator with ChangeNotifier {
 /// 地域に応じたCompassCalibratorを生成します。
 class CompassCalibratorFactory {
   CompassCalibratorFactory._();
-
-  /// 日本（大崎市）用のキャリブレーター
-  static CompassCalibrator createForJapanOsaki() {
-    return CompassCalibrator(initialRegion: GeoRegion.jpOsaki);
-  }
 
   /// 座標から自動生成
   static CompassCalibrator createFromCoordinates(double lat, double lon) {

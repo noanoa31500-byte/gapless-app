@@ -202,6 +202,7 @@
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
 				F040B434D5B009436B8B5215 /* [CP] Embed Pods Frameworks */,
 				A7FB785049F52C789F0B164E /* [CP] Copy Pods Resources */,
+				BB9900AABB001122334455CC /* Strip Xattrs */,
 			);
 			buildRules = (
 			);
@@ -346,7 +347,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/bin/xattr -cr \"$BUILT_PRODUCTS_DIR\" 2>/dev/null || true\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "set +e\n/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\nBUILD_EXIT=$?\nif [ $BUILD_EXIT -ne 0 ]; then\n  find \"$BUILT_PRODUCTS_DIR\" \"$TARGET_BUILD_DIR\" \"$SRCROOT/../build\" -type f -o -type d 2>/dev/null | xargs /usr/bin/xattr -c 2>/dev/null || true\n  set -e\n  /bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\nfi\n";
+		};
+		BB9900AABB001122334455CC /* Strip Xattrs */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Strip Xattrs";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "find \"$CODESIGNING_FOLDER_PATH\" -type f -o -type d | xargs /usr/bin/xattr -c 2>/dev/null || true\n";
 		};
 		A7FB785049F52C789F0B164E /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;

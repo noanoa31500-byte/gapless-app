@@ -83,6 +83,8 @@ class DeadReckoningBadge extends StatelessWidget {
                     color: Colors.white,
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
+                    fontFamily: 'NotoSansJP',
+                    fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
                   ),
                 ),
               ),
@@ -101,6 +103,8 @@ class DeadReckoningBadge extends StatelessWidget {
                     style: const TextStyle(
                       color: Colors.white60,
                       fontSize: 10,
+                      fontFamily: 'NotoSansJP',
+                      fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
                     ),
                   ),
                 ),
@@ -112,11 +116,11 @@ class DeadReckoningBadge extends StatelessWidget {
             const SizedBox(height: 3),
             Text(
               GapLessL10n.t('dr_accuracy_low'),
-              style: const TextStyle(
+              style: GapLessL10n.safeStyle(const TextStyle(
                 color: Colors.white70,
                 fontSize: 10,
                 fontWeight: FontWeight.w400,
-              ),
+              )),
             ),
           ],
         ],

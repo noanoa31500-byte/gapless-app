@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:xml/xml.dart';
 
+import 'pinned_http_client.dart';
+
 // ============================================================================
 // JmaAlertService — 気象庁オープンデータ (緊急地震速報・津波警報) 取得
 // ============================================================================
@@ -119,6 +121,14 @@ class JmaAlertService extends ChangeNotifier {
 
   Timer? _timer;
 
+  // 気象庁配信ホスト用に TLS ピン済みクライアントを使用する。
+  // pin 値は本番投入前に投入。User-Agent も明示してブロック回避。
+  final http.Client _httpClient = createPinnedClient();
+  static const Map<String, String> _httpHeaders = {
+    'User-Agent': 'GapLess/5.0.0 (disaster-prevention; contact: gapless@example.org)',
+    'Accept': 'application/atom+xml, application/xml, text/xml',
+  };
+
   // ---------------------------------------------------------------------------
   // ライフサイクル
   // ---------------------------------------------------------------------------
@@ -203,8 +213,8 @@ class JmaAlertService extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await http
-          .get(Uri.parse(_feedUrl))
+      final response = await _httpClient
+          .get(Uri.parse(_feedUrl), headers: _httpHeaders)
           .timeout(const Duration(seconds: 15));
 
       if (response.statusCode == 200) {
