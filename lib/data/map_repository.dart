@@ -28,8 +28,8 @@ import 'map_tile_index.dart';
 
 /// 旧フラット名 → index.json の fileKey
 const Map<String, String> _aliasMap = {
-  'current_roads.gplb':  'roads',
-  'current_poi.gplb':    'poi_shelter', // shelter を代表 POI として配置
+  'current_roads.gplb': 'roads',
+  'current_poi.gplb': 'poi_shelter', // shelter を代表 POI として配置
   'current_hazard.gplh': 'hazard',
 };
 
@@ -70,11 +70,11 @@ List<String> get _aliasFileNames => _aliasMap.keys.toList();
 // ダウンロード進捗の通知
 // ────────────────────────────────────────
 class DownloadProgress {
-  final int current;      // 現在何件目か
-  final int total;        // 全件数
-  final String fileName;  // 現在処理中のファイル名
-  final bool isDone;      // 全完了したか
-  final String? error;    // エラーメッセージ（失敗時のみ）
+  final int current; // 現在何件目か
+  final int total; // 全件数
+  final String fileName; // 現在処理中のファイル名
+  final bool isDone; // 全完了したか
+  final String? error; // エラーメッセージ（失敗時のみ）
 
   const DownloadProgress({
     required this.current,
@@ -164,13 +164,18 @@ class MapRepository {
 
     // index.json
     progressCallback?.call(const DownloadProgress(
-      current: 0, total: 3, fileName: 'index.json',
+      current: 0,
+      total: 3,
+      fileName: 'index.json',
     ));
     final index = await service.fetchIndex();
     if (index == null) {
       progressCallback?.call(DownloadProgress(
-        current: 0, total: _aliasMap.length, fileName: 'index.json',
-        error: GapLessL10n.t('map_download_failed').replaceAll('@filename', 'index.json'),
+        current: 0,
+        total: _aliasMap.length,
+        fileName: 'index.json',
+        error: GapLessL10n.t('map_download_failed')
+            .replaceAll('@filename', 'index.json'),
       ));
       return;
     }
@@ -180,7 +185,9 @@ class MapRepository {
     final pos = await _currentPosition();
     if (pos == null) {
       progressCallback?.call(const DownloadProgress(
-        current: 0, total: 3, fileName: '',
+        current: 0,
+        total: 3,
+        fileName: '',
         error: '位置情報が取得できませんでした。設定で位置情報の許可を確認してください。',
       ));
       return;
@@ -199,7 +206,9 @@ class MapRepository {
           .compareTo(b.distanceFromPoint(pos.lat, pos.lng)));
       if (all.isEmpty) {
         progressCallback?.call(const DownloadProgress(
-          current: 0, total: 0, fileName: '',
+          current: 0,
+          total: 0,
+          fileName: '',
           error: 'index.json にタイルが存在しません',
         ));
         return;
@@ -209,13 +218,18 @@ class MapRepository {
 
     // タイル丸 DL（解凍済み）
     progressCallback?.call(DownloadProgress(
-      current: 1, total: 3, fileName: '${tile.id} (DL中)',
+      current: 1,
+      total: 3,
+      fileName: '${tile.id} (DL中)',
     ));
     final downloaded = await service.downloadTile(tile);
     if (downloaded.isEmpty) {
       progressCallback?.call(DownloadProgress(
-        current: 1, total: 3, fileName: tile.id,
-        error: GapLessL10n.t('map_download_failed').replaceAll('@filename', tile.id),
+        current: 1,
+        total: 3,
+        fileName: tile.id,
+        error: GapLessL10n.t('map_download_failed')
+            .replaceAll('@filename', tile.id),
       ));
       return;
     }
@@ -237,8 +251,8 @@ class MapRepository {
     ].whereType<Uint8List>().toList());
 
     final aliasData = <String, Uint8List?>{
-      'current_roads.gplb':  downloaded['roads'],
-      'current_poi.gplb':    mergedPoi,
+      'current_roads.gplb': downloaded['roads'],
+      'current_poi.gplb': mergedPoi,
       'current_hazard.gplh': downloaded['hazard'],
     };
 
@@ -246,7 +260,9 @@ class MapRepository {
     for (final entry in aliasData.entries) {
       progress++;
       progressCallback?.call(DownloadProgress(
-        current: progress, total: 3, fileName: entry.key,
+        current: progress,
+        total: 3,
+        fileName: entry.key,
       ));
       final data = entry.value;
       if (data == null) continue;
@@ -260,7 +276,10 @@ class MapRepository {
     } catch (_) {}
 
     progressCallback?.call(DownloadProgress(
-      current: 3, total: 3, fileName: tile.id, isDone: true,
+      current: 3,
+      total: 3,
+      fileName: tile.id,
+      isDone: true,
     ));
   }
 
@@ -288,7 +307,8 @@ class MapRepository {
     final bodies = <Uint8List>[];
     for (final p in parts) {
       if (p.length < 9) continue;
-      if (p[0] != 0x47 || p[1] != 0x50 || p[2] != 0x4C || p[3] != 0x42) continue;
+      if (p[0] != 0x47 || p[1] != 0x50 || p[2] != 0x4C || p[3] != 0x42)
+        continue;
       version = p[4];
       final cnt = ByteData.sublistView(p).getUint32(5, Endian.little);
       totalCount += cnt;
@@ -298,7 +318,10 @@ class MapRepository {
 
     final bodyLen = bodies.fold<int>(0, (s, b) => s + b.length);
     final out = Uint8List(9 + bodyLen);
-    out[0] = 0x47; out[1] = 0x50; out[2] = 0x4C; out[3] = 0x42;
+    out[0] = 0x47;
+    out[1] = 0x50;
+    out[2] = 0x4C;
+    out[3] = 0x42;
     out[4] = version;
     ByteData.sublistView(out).setUint32(5, totalCount, Endian.little);
     int off = 9;
@@ -329,7 +352,9 @@ class MapRepository {
     // タイルキャッシュも消す
     final mapsDir = Directory('${dir.path}/maps');
     if (await mapsDir.exists()) {
-      try { await mapsDir.delete(recursive: true); } catch (_) {}
+      try {
+        await mapsDir.delete(recursive: true);
+      } catch (_) {}
     }
     await ensureAllData(progressCallback: progressCallback);
   }

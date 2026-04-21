@@ -1,4 +1,3 @@
-
 // Stub implementation (Mobile/Desktop)
 class WebBridge {
   static void listenForOfflineEvent(Function() onOffline) {

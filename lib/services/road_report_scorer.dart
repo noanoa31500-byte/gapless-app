@@ -117,18 +117,16 @@ class RoadReportScorer extends ChangeNotifier {
   SegmentScore? scoreFor(String segmentId) => scores[segmentId];
 
   /// 安全確認済みセグメント ID の集合
-  Set<String> get confirmedSafeSegments =>
-      scores.entries
-          .where((e) => e.value.isConfirmedSafe)
-          .map((e) => e.key)
-          .toSet();
+  Set<String> get confirmedSafeSegments => scores.entries
+      .where((e) => e.value.isConfirmedSafe)
+      .map((e) => e.key)
+      .toSet();
 
   /// 危険確認済みセグメント ID の集合
-  Set<String> get confirmedDangerousSegments =>
-      scores.entries
-          .where((e) => e.value.isConfirmedDangerous)
-          .map((e) => e.key)
-          .toSet();
+  Set<String> get confirmedDangerousSegments => scores.entries
+      .where((e) => e.value.isConfirmedDangerous)
+      .map((e) => e.key)
+      .toSet();
 
   /// 全セグメントのレポートをクリア
   void clear() {

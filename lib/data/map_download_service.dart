@@ -40,8 +40,9 @@ class MapDownloadService {
         final response =
             await _pinnedClient.get(Uri.parse(_indexUrl)).timeout(_timeout);
         if (response.statusCode == 200) {
-          final json = jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true))
-              as Map<String, dynamic>;
+          final json =
+              jsonDecode(utf8.decode(response.bodyBytes, allowMalformed: true))
+                  as Map<String, dynamic>;
           return TileIndex.fromJson(json);
         }
       } catch (_) {

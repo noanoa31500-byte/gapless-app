@@ -215,8 +215,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                             color: item.color,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child:
-                              Icon(item.icon, size: 32, color: Colors.white),
+                          child: Icon(item.icon, size: 32, color: Colors.white),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
@@ -315,7 +314,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                                       size: 16,
                                       isBold: true,
                                       color: step.isWarning
-                                          ? (Colors.orange[900] ?? Colors.orange)
+                                          ? (Colors.orange[900] ??
+                                              Colors.orange)
                                           : Colors.black87,
                                     ),
                                   ),
@@ -481,8 +481,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                             color: item.color,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child:
-                              Icon(item.icon, size: 32, color: Colors.white),
+                          child: Icon(item.icon, size: 32, color: Colors.white),
                         ),
                         const SizedBox(width: 16),
                         SafeText(
@@ -588,14 +587,14 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
   // ============================================================================
   // 避難所生活タブ（オンラインコンテンツをオフラインでも表示）
   // ============================================================================
-  
+
   Widget _buildShelterLifeTab(String lang) {
     final shelterProvider = context.watch<ShelterProvider>();
     final region = shelterProvider.currentRegion;
-    
+
     final officialGuides = SurvivalData.getOfficialGuides(region);
     final aiSupportGuides = SurvivalData.getAiSupportGuides(region);
-    
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -606,9 +605,9 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         ),
         const SizedBox(height: 12),
         ...officialGuides.map((item) => _buildShelterGuideCard(item, lang)),
-        
+
         const SizedBox(height: 24),
-        
+
         // AI Support Guides Section
         _buildSectionTitle(
           GapLessL10n.t('sg_ai_title'),
@@ -616,12 +615,12 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         ),
         const SizedBox(height: 12),
         ...aiSupportGuides.map((item) => _buildShelterGuideCard(item, lang)),
-        
+
         const SizedBox(height: 40),
       ],
     );
   }
-  
+
   Widget _buildSectionTitle(String title, String subtitle) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -638,11 +637,11 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
       ],
     );
   }
-  
+
   Widget _buildShelterGuideCard(SurvivalGuideItem item, String lang) {
     final title = item.title[lang] ?? item.title['en']!;
     final action = item.action[lang] ?? item.action['en']!;
-    
+
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 2,
@@ -664,7 +663,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                   color: const Color(0xFFE53935).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(item.icon, size: 28, color: const Color(0xFFE53935)),
+                child:
+                    Icon(item.icon, size: 28, color: const Color(0xFFE53935)),
               ),
               const SizedBox(width: 16),
               // Content
@@ -698,12 +698,12 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
       ),
     );
   }
-  
+
   void _showShelterGuideDetail(SurvivalGuideItem item, String lang) {
     final title = item.title[lang] ?? item.title['en']!;
     final action = item.action[lang] ?? item.action['en']!;
     final steps = item.steps;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -722,7 +722,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE53935).withValues(alpha: 0.1),
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(24)),
                 ),
                 child: Column(
                   children: [
@@ -754,12 +755,14 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                             children: [
                               SafeText(
                                 title,
-                                style: emergencyTextStyle(size: 20, isBold: true),
+                                style:
+                                    emergencyTextStyle(size: 20, isBold: true),
                               ),
                               const SizedBox(height: 4),
                               SafeText(
                                 item.source,
-                                style: emergencyTextStyle(size: 12, color: Colors.grey),
+                                style: emergencyTextStyle(
+                                    size: 12, color: Colors.grey),
                               ),
                             ],
                           ),
@@ -769,7 +772,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                   ],
                 ),
               ),
-              
+
               // Content
               Expanded(
                 child: SingleChildScrollView(
@@ -783,35 +786,40 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                         decoration: BoxDecoration(
                           color: Colors.blue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
+                          border: Border.all(
+                              color: Colors.blue.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.lightbulb_outline, color: Colors.blue),
+                            const Icon(Icons.lightbulb_outline,
+                                color: Colors.blue),
                             const SizedBox(width: 12),
                             Expanded(
                               child: SafeText(
                                 action,
-                                style: emergencyTextStyle(size: 16, isBold: true),
+                                style:
+                                    emergencyTextStyle(size: 16, isBold: true),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      
+
                       // Steps if available
                       if (steps != null && steps.isNotEmpty) ...[
                         const SizedBox(height: 24),
                         SafeText(
                           GapLessL10n.t('sg_steps_btn'),
-                          style: emergencyTextStyle(size: 14, isBold: true, color: Colors.grey),
+                          style: emergencyTextStyle(
+                              size: 14, isBold: true, color: Colors.grey),
                         ),
                         const SizedBox(height: 16),
                         ...steps.asMap().entries.map((entry) {
                           final index = entry.key;
                           final step = entry.value;
-                          final instruction = step.instruction[lang] ?? step.instruction['en']!;
-                          
+                          final instruction =
+                              step.instruction[lang] ?? step.instruction['en']!;
+
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16),
                             child: Row(
@@ -826,11 +834,13 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                                   ),
                                   child: Center(
                                     child: step.icon != null
-                                        ? Icon(step.icon, size: 18, color: Colors.white)
+                                        ? Icon(step.icon,
+                                            size: 18, color: Colors.white)
                                         : SafeText(
                                             '${index + 1}',
                                             style: emergencyTextStyle(
-                                                color: Colors.white, isBold: true),
+                                                color: Colors.white,
+                                                isBold: true),
                                           ),
                                   ),
                                 ),
@@ -853,13 +863,14 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                           );
                         }),
                       ],
-                      
+
                       // Multi-language section
                       const SizedBox(height: 24),
                       ExpansionTile(
                         title: SafeText(
                           GapLessL10n.t('sg_multilang'),
-                          style: emergencyTextStyle(size: 14, color: Colors.grey),
+                          style:
+                              emergencyTextStyle(size: 14, color: Colors.grey),
                         ),
                         children: [
                           _buildLangRow('English', item.action['en']!),
@@ -871,7 +882,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                   ),
                 ),
               ),
-              
+
               // Close Button
               Padding(
                 padding: const EdgeInsets.all(20),
@@ -889,7 +900,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
                     ),
                     child: SafeText(
                       GapLessL10n.t('sg_close_btn'),
-                      style: emergencyTextStyle(color: Colors.white, isBold: true),
+                      style:
+                          emergencyTextStyle(color: Colors.white, isBold: true),
                     ),
                   ),
                 ),
@@ -900,7 +912,7 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
       },
     );
   }
-  
+
   Widget _buildLangRow(String label, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -909,7 +921,8 @@ class _SurvivalGuideScreenState extends State<SurvivalGuideScreen>
         children: [
           SafeText(
             label,
-            style: emergencyTextStyle(size: 12, isBold: true, color: Colors.grey),
+            style:
+                emergencyTextStyle(size: 12, isBold: true, color: Colors.grey),
           ),
           const SizedBox(height: 4),
           SafeText(

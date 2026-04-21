@@ -88,7 +88,12 @@ class ShelterProvider with ChangeNotifier {
   List<Shelter> get displayedShelters {
     if (!isEmergencyMode && !isDisasterMode) return _shelters;
     const officialTypes = [
-      'shelter', 'hospital', 'school', 'temple', 'gov', 'community_centre'
+      'shelter',
+      'hospital',
+      'school',
+      'temple',
+      'gov',
+      'community_centre'
     ];
     return _shelters.where((s) => officialTypes.contains(s.type)).toList();
   }
@@ -171,8 +176,7 @@ class ShelterProvider with ChangeNotifier {
   Future<void> _computeSafeRouteFor(Shelter target, LatLng from) async {
     _nav.setComputingRoute(true);
     try {
-      final features =
-          await _repo.loadRoadFeatures(_currentRegion);
+      final features = await _repo.loadRoadFeatures(_currentRegion);
       if (features.isEmpty) {
         _nav.setComputedRoute(const [], 0);
         return;
@@ -182,8 +186,7 @@ class ShelterProvider with ChangeNotifier {
         await loadHazardPolygons();
       }
       final hazardSerialized = _hazard.hazardPolygons
-          .map((poly) =>
-              poly.map((pt) => [pt.latitude, pt.longitude]).toList())
+          .map((poly) => poly.map((pt) => [pt.latitude, pt.longitude]).toList())
           .toList();
 
       final result = await compute(
@@ -204,6 +207,7 @@ class ShelterProvider with ChangeNotifier {
       _nav.setComputedRoute(const [], 0);
     }
   }
+
   void endNavigation() => _nav.endNavigation();
   void updateSafeRoute(List<List<double>> pts) => _nav.updateSafeRoute(pts);
   List<LatLng> getSafestRouteAsLatLng() => _nav.getSafestRouteAsLatLng();
@@ -270,8 +274,7 @@ class ShelterProvider with ChangeNotifier {
     for (final s in _shelters) {
       final d = Geolocator.distanceBetween(
           currentPos.latitude, currentPos.longitude, s.lat, s.lng);
-      final inHazard =
-          _hazard.isPointInHazardZone(LatLng(s.lat, s.lng));
+      final inHazard = _hazard.isPointInHazardZone(LatLng(s.lat, s.lng));
       final cost = inHazard ? d * 3.0 : d;
       if (cost < minCost) {
         minCost = cost;

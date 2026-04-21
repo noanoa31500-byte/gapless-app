@@ -19,7 +19,7 @@ import '../services/magnetic_declination_config.dart';
 class CompassProvider with ChangeNotifier {
   // Core Engine
   final GapLessNavigationEngine _engine = GapLessNavigationEngine();
-  
+
   // Legacy/Compatibility Getters
   GapLessNavigationEngine get engine => _engine;
 
@@ -28,42 +28,46 @@ class CompassProvider with ChangeNotifier {
   double? get trueHeading => _engine.compass.trueHeading;
   double get headingDegrees => heading ?? 0.0;
   double get trueHeadingDegrees => trueHeading ?? 0.0;
-  
+
   bool get isCalibrating => _engine.compass.heading == 0.0; // Simplified check
   bool get isNavigating => _engine.isNavigating;
   bool get isNavigatingRoute => _engine.route.hasActiveRoute;
   bool get isSafeNavigating => _engine.route.hasActiveRoute;
-  
+
   GeoRegion get currentGeoRegion => _engine.compass.currentRegion;
   double get currentDeclination => _engine.compass.currentRegion.declination;
   bool get hapticEnabled => true; // Managed by Engine/FeedbackController
   bool get hasSensorData => _engine.hasSensorData;
 
   // === MagnetResult Compatibility ===
-  // Engine uses RouteManager, but UI expects MagnetResult. 
+  // Engine uses RouteManager, but UI expects MagnetResult.
   // We construct a MagnetResult on the fly or mapping from RouteManager state.
   MagnetResult? get magnetResult {
     if (!_engine.route.hasActiveRoute) return null;
-    
-    final target = _engine.route.currentTarget?.position ?? _engine.route.activeRoute.lastOrNull;
+
+    final target = _engine.route.currentTarget?.position ??
+        _engine.route.activeRoute.lastOrNull;
     if (target == null) return null;
 
     // Note: accessing private _currentLocation via public getter needed in Engine
     // For now, let's assume Engine exposes currentLocation.
     // If not, we might explicitly track it or ask Engine to expose it.
-    
+
     // Check RouteManager state
     // Ideally RouteManager should expose a "currentStatus" object synonymous to MagnetResult
-    
+
     final userLoc = _engine.currentLocation ?? LatLng(0, 0);
-    final bearing = calculateBearing(userLoc.latitude, userLoc.longitude, target.latitude, target.longitude);
+    final bearing = calculateBearing(
+        userLoc.latitude, userLoc.longitude, target.latitude, target.longitude);
 
     return MagnetResult(
       targetWaypoint: target,
       distanceToTarget: _engine.route.remainingDistance,
       bearingToTarget: bearing,
       displayAngle: (bearing - headingDegrees) * (pi / 180),
-      state: _engine.route.hasActiveRoute ? NavigationState.onRoute : NavigationState.idle,
+      state: _engine.route.hasActiveRoute
+          ? NavigationState.onRoute
+          : NavigationState.idle,
       currentWaypointIndex: _engine.route.currentWaypointIndex,
       totalWaypoints: _engine.route.activeRouteLength,
       offRouteDistance: 0,
@@ -71,22 +75,24 @@ class CompassProvider with ChangeNotifier {
       progress: 0,
     );
   }
-  
+
   // Quick fix: RouteManager doesn't expose all these yet.
   // Ideally, RouteManager should have "updateProgress" return a rich status object.
   // For this refactor, I will add `lastMagnetResult` to RouteManager or Engine.
-  
+
   // TEMPORARY: Adapter to keep UI working without rewriting UI logic
   // The UI calls `getDisplayAngle`.
-  
+
   MagnetResult? get lastMagnetResult => magnetResult; // Alias
-  NavigationState get navigationState => _engine.route.hasActiveRoute ? NavigationState.onRoute : NavigationState.idle;
+  NavigationState get navigationState => _engine.route.hasActiveRoute
+      ? NavigationState.onRoute
+      : NavigationState.idle;
   double get remainingDistance => _engine.route.remainingDistance;
 
   LatLng? get nextSafeWaypoint => _engine.route.currentTarget?.position;
 
   // === Lifecycle ===
-  
+
   Future<void> startListening() async {
     await _engine.init();
     _engine.addListener(_onEngineUpdate);
@@ -108,44 +114,43 @@ class CompassProvider with ChangeNotifier {
     stopListening();
     super.dispose();
   }
-  
+
   void _onEngineUpdate() {
     notifyListeners();
   }
 
   // === Navigation Methods ===
-  
+
   void startRouteNavigation(List<LatLng> route) {
     // Engine requires Shelter object for target.
     // UI passes List<LatLng>.
     // creating a dummy Shelter or using first point.
     if (route.isEmpty) return;
-    
+
     // We need a specific target. For generic route nav, we can define a Dummy Shelter.
     final lastPt = route.last;
     final target = Shelter(
-      id: 'nav_target', 
-      name: 'Destination', 
-      lat: lastPt.latitude, 
-      lng: lastPt.longitude, 
-      type: 'user_target', 
-      verified: false
-    );
-    
+        id: 'nav_target',
+        name: 'Destination',
+        lat: lastPt.latitude,
+        lng: lastPt.longitude,
+        type: 'user_target',
+        verified: false);
+
     _engine.startNavigation(route, target);
   }
-  
+
   void stopRouteNavigation() {
     _engine.stopNavigation();
   }
 
   // === UI Helpers ===
-  
+
   String getNavigationMessage(String lang) {
     if (!_engine.isNavigating) return GapLessL10n.t('waiting_destination');
     return GapLessL10n.t('follow_arrow');
   }
-  
+
   double getDisplayAngle({
     required double userLat,
     required double userLng,
@@ -160,18 +165,19 @@ class CompassProvider with ChangeNotifier {
   }
 
   // === Utilities ===
-  
+
   void setGeoRegion(GeoRegion region) {
     _engine.compass.updateRegionWithRegion(region);
     notifyListeners();
   }
-  
+
   void setGeoRegionFromCoordinates(double lat, double lng) {
     _engine.compass.updateRegion(LatLng(lat, lng));
     notifyListeners();
   }
-  
-  double calculateBearing(double fromLat, double fromLng, double toLat, double toLng) {
+
+  double calculateBearing(
+      double fromLat, double fromLng, double toLat, double toLng) {
     final double lat1 = fromLat * (pi / 180);
     final double lat2 = toLat * (pi / 180);
     final double dLng = (toLng - fromLng) * (pi / 180);
@@ -180,18 +186,28 @@ class CompassProvider with ChangeNotifier {
     final double bearing = atan2(y, x) * (180 / pi);
     return (bearing + 360) % 360;
   }
-  
+
   // Direction Names from Engine (not implemented there yet, keep here)
-  String getDirectionName() => _getDirName(_engine.currentHeading, ['北', '北東', '東', '南東', '南', '南西', '西', '北西']);
-  String getDirectionNameEN() => _getDirName(_engine.currentHeading, ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
-  String getDirectionNameTH() => _getDirName(_engine.currentHeading, ['เหนือ', 'ตะวันออกเฉียงเหนือ', 'ตะวันออก', 'ตะวันออกเฉียงใต้', 'ใต้', 'ตะวันตกเฉียงใต้', 'ตะวันตก', 'ตะวันตกเฉียงเหนือ']);
+  String getDirectionName() => _getDirName(
+      _engine.currentHeading, ['北', '北東', '東', '南東', '南', '南西', '西', '北西']);
+  String getDirectionNameEN() => _getDirName(
+      _engine.currentHeading, ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW']);
+  String getDirectionNameTH() => _getDirName(_engine.currentHeading, [
+        'เหนือ',
+        'ตะวันออกเฉียงเหนือ',
+        'ตะวันออก',
+        'ตะวันออกเฉียงใต้',
+        'ใต้',
+        'ตะวันตกเฉียงใต้',
+        'ตะวันตก',
+        'ตะวันตกเฉียงเหนือ'
+      ]);
 
   String _getDirName(double heading, List<String> dirs) {
     if (heading < 0) return '---';
     final idx = ((heading + 22.5) % 360) ~/ 45;
     return dirs[idx];
   }
-  
 }
 
 // Extensions removed as real getters are now implemented.

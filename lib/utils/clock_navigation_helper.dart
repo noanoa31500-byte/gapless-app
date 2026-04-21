@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 /// ============================================================================
 /// ClockNavigationHelper - 0.1秒判断のためのナビゲーションUI変換ロジック
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// パニック状態の被災者は、複雑な情報を処理できません。
 /// 本クラスは「色」と「短い言葉」だけで、0.1秒で行動を決定できるUIを生成します。
-/// 
+///
 /// 【認知心理学的根拠】
 /// - 緑 = GO（本能的に「進め」と認識）
 /// - 黄/橙 = 注意（方向修正が必要）
 /// - 赤 = STOP（即座に行動を止める）
-/// 
+///
 /// これは世界共通の信号機カラーコードであり、言語を超えて理解されます。
 /// ============================================================================
 
@@ -20,13 +20,13 @@ import 'package:flutter/material.dart';
 enum NavZone {
   /// 正解（前方 ±11.25度）- そのまま進め
   go,
-  
+
   /// 微修正（前方〜斜め前 ±45度）- 少し方向を変えて
   slightAdjust,
-  
+
   /// 要修正（斜め〜横 ±45〜112.5度）- 大きく方向を変えて
   majorAdjust,
-  
+
   /// 逆方向（後方 ±112.5度以上）- 引き返せ
   reverse,
 }
@@ -39,28 +39,28 @@ class ClockNavState {
   final String messageJa;
   final String messageEn;
   final String messageTh;
-  
+
   /// 短縮メッセージ（UI表示用）
   final String shortMessage;
-  
+
   /// 背景色
   final Color backgroundColor;
-  
+
   /// テキスト色
   final Color textColor;
-  
+
   /// アイコン
   final IconData icon;
-  
+
   /// アイコンの回転角（ラジアン）
   final double iconRotation;
-  
+
   /// ナビゲーション区分
   final NavZone zone;
-  
+
   /// 角度差（デバッグ用）
   final double relativeAngle;
-  
+
   /// 時計位置（1-12、0は12時）
   final int clockPosition;
 
@@ -94,7 +94,8 @@ class ClockNavState {
   bool get isOnTarget => zone == NavZone.go;
 
   /// 修正が必要か
-  bool get needsAdjustment => zone == NavZone.slightAdjust || zone == NavZone.majorAdjust;
+  bool get needsAdjustment =>
+      zone == NavZone.slightAdjust || zone == NavZone.majorAdjust;
 
   /// 逆方向か
   bool get isReverse => zone == NavZone.reverse;
@@ -107,36 +108,36 @@ class ClockNavigationHelper {
   ClockNavigationHelper._(); // インスタンス化防止
 
   // === 定数定義 ===
-  
+
   /// 正解範囲（±11.25度 = 時計の1目盛りの半分）
   static const double goThreshold = 11.25;
-  
+
   /// 微修正範囲（±45度 = 前方寄り）
   static const double slightAdjustThreshold = 45.0;
-  
+
   /// 要修正範囲（±112.5度 = 横〜斜め後ろ）
   static const double majorAdjustThreshold = 112.5;
-  
+
   /// ヒステリシス幅（境界でのパタパタを防止）
-  /// 
+  ///
   /// 【ヒステリシスとは】
   /// 状態が切り替わる閾値に「幅」を持たせること。
   /// 例: 11.25度で「GO」→「微修正」に切り替わる場合、
   ///     逆方向（「微修正」→「GO」）は9.25度で切り替わる。
   /// これにより、11.25度付近でのパタパタ表示を防止。
   static const double hysteresis = 2.0;
-  
+
   // === カラー定義 ===
-  
+
   /// 正解（緑）- 進め
   static const Color goColor = Color(0xFF00C853); // Green A700
-  
+
   /// 微修正（黄）- 少し調整
   static const Color slightAdjustColor = Color(0xFFFFD600); // Yellow A700
-  
+
   /// 要修正（橙）- 大きく調整
   static const Color majorAdjustColor = Color(0xFFFF9100); // Orange A700
-  
+
   /// 逆方向（赤）- 戻れ
   static const Color reverseColor = Color(0xFFFF1744); // Red A400
 
@@ -146,7 +147,7 @@ class ClockNavigationHelper {
   /// ============================================================================
   /// calculateState - 状態計算のメインエントリーポイント
   /// ============================================================================
-  /// 
+  ///
   /// @param targetBearing 目的地への真方位（0-360度）
   /// @param deviceHeading 端末が向いている真方位（0-360度）
   /// @param applyHysteresis ヒステリシスを適用するか（デフォルト: true）
@@ -175,7 +176,7 @@ class ClockNavigationHelper {
   /// ナビゲーション区分を判定（ヒステリシス対応）
   static NavZone _determineZone(double angle, bool applyHysteresis) {
     final absAngle = angle.abs();
-    
+
     // ヒステリシス調整値
     double goThresholdAdj = goThreshold;
     double slightThresholdAdj = slightAdjustThreshold;
@@ -213,7 +214,7 @@ class ClockNavigationHelper {
   }
 
   /// 角度を時計位置（1-12）に変換
-  /// 
+  ///
   /// 【変換ルール】
   /// - 0度（前方）= 12時
   /// - +30度（右斜め前）= 1時
@@ -233,7 +234,8 @@ class ClockNavigationHelper {
   }
 
   /// 状態オブジェクトを生成
-  static ClockNavState _createState(NavZone zone, double angle, int clockPosition) {
+  static ClockNavState _createState(
+      NavZone zone, double angle, int clockPosition) {
     switch (zone) {
       case NavZone.go:
         return ClockNavState(

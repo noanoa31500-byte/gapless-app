@@ -27,9 +27,9 @@ import 'package:latlong2/latlong.dart';
 
 /// 磁気センサー精度レベル
 enum SensorAccuracyLevel {
-  high,   // accuracy ≤ 15°
+  high, // accuracy ≤ 15°
   medium, // accuracy ≤ 45°
-  low,    // accuracy > 45°
+  low, // accuracy > 45°
 }
 
 /// センサーフュージョン後の方位状態
@@ -85,7 +85,7 @@ class DivergenceWarning {
 
 class SensorFusionBearingController {
   // ── 閾値定数 ──────────────────────────────────────────────────────────────
-  static const double _stopSpeedThreshold = 0.3;   // m/s
+  static const double _stopSpeedThreshold = 0.3; // m/s
   static const double _divergenceThreshold = 30.0; // °
   static const Duration _lowAccuracyTimeout = Duration(seconds: 3);
 
@@ -110,7 +110,8 @@ class SensorFusionBearingController {
   Stream<BearingState> get bearingStream => _bearingCtrl.stream;
 
   /// GPS－コンパス乖離 ≥ 30° のとき発火
-  Stream<DivergenceWarning> get divergenceWarningStream => _divergenceCtrl.stream;
+  Stream<DivergenceWarning> get divergenceWarningStream =>
+      _divergenceCtrl.stream;
 
   /// true = 八の字補正が必要、false = 補正完了
   Stream<bool> get calibrationNeededStream => _calibrationCtrl.stream;
@@ -240,7 +241,8 @@ class SensorFusionBearingController {
   static const double _lowAccuracyThreshold = 45.0;
 
   static SensorAccuracyLevel _accuracyLevel(double accuracyDeg) {
-    if (accuracyDeg <= _mediumAccuracyThreshold) return SensorAccuracyLevel.high;
+    if (accuracyDeg <= _mediumAccuracyThreshold)
+      return SensorAccuracyLevel.high;
     if (accuracyDeg <= _lowAccuracyThreshold) return SensorAccuracyLevel.medium;
     return SensorAccuracyLevel.low;
   }

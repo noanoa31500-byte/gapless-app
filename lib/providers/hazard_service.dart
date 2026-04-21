@@ -43,8 +43,10 @@ class HazardService extends ChangeNotifier {
   bool isNearFloodRisk(LatLng point, {double radiusM = 50.0}) {
     for (final circle in _floodRiskCircles) {
       final dist = Geolocator.distanceBetween(
-        point.latitude, point.longitude,
-        circle.position.latitude, circle.position.longitude,
+        point.latitude,
+        point.longitude,
+        circle.position.latitude,
+        circle.position.longitude,
       );
       if (dist <= radiusM) return true;
     }

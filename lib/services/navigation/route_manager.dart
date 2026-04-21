@@ -25,7 +25,8 @@ class RouteManager {
     _activeRoute = route;
     _currentTarget = target;
     _currentWaypointIndex = 0;
-    _remainingDistance = _calcRemaining(route.isNotEmpty ? route.first : LatLng(0, 0));
+    _remainingDistance =
+        _calcRemaining(route.isNotEmpty ? route.first : LatLng(0, 0));
   }
 
   void stopNavigation() {
@@ -39,7 +40,8 @@ class RouteManager {
 
     _remainingDistance = _calcRemaining(userLoc);
 
-    final distToGoal = const Distance().as(LengthUnit.Meter, userLoc, _activeRoute.last);
+    final distToGoal =
+        const Distance().as(LengthUnit.Meter, userLoc, _activeRoute.last);
     if (distToGoal < 10.0) return RouteUpdateResult.arrived();
 
     if (_currentWaypointIndex < _activeRoute.length - 1) {
@@ -47,7 +49,8 @@ class RouteManager {
           .as(LengthUnit.Meter, userLoc, _activeRoute[_currentWaypointIndex]);
       if (distToTarget < _waypointPassThreshold) {
         _currentWaypointIndex++;
-        return RouteUpdateResult.waypointPassed(_activeRoute[_currentWaypointIndex]);
+        return RouteUpdateResult.waypointPassed(
+            _activeRoute[_currentWaypointIndex]);
       }
     }
 
@@ -55,10 +58,12 @@ class RouteManager {
   }
 
   double _calcRemaining(LatLng currentLoc) {
-    if (_activeRoute.isEmpty || _currentWaypointIndex >= _activeRoute.length) return 0.0;
+    if (_activeRoute.isEmpty || _currentWaypointIndex >= _activeRoute.length)
+      return 0.0;
     double total = 0.0;
     const d = Distance();
-    total += d.as(LengthUnit.Meter, currentLoc, _activeRoute[_currentWaypointIndex]);
+    total +=
+        d.as(LengthUnit.Meter, currentLoc, _activeRoute[_currentWaypointIndex]);
     for (int i = _currentWaypointIndex; i < _activeRoute.length - 1; i++) {
       total += d.as(LengthUnit.Meter, _activeRoute[i], _activeRoute[i + 1]);
     }

@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // 1. 言語設定
     setState(() => _loadingKey = 'splash_loading_lang');
     await GapLessL10n.loadLanguage();
-    
+
     if (mounted) {
       final languageProvider = context.read<LanguageProvider>();
       await languageProvider.loadLanguage();
@@ -80,22 +80,22 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Spacer(),
-                    
+
                     // ロゴ
                     _buildLogo(),
-                    
+
                     const SizedBox(height: 48),
-                    
+
                     // 免責事項カード
                     _buildDisclaimerCard(),
-                    
+
                     const SizedBox(height: 32),
-                    
+
                     // 同意ボタン
                     _buildAgreeButton(),
-                    
+
                     const Spacer(),
-                    
+
                     // バージョン情報
                     const Text(
                       'v5.3',
@@ -107,9 +107,10 @@ class _SplashScreenState extends State<SplashScreen> {
                     ),
                     Text(
                       'Version 1.0.0 - Mitou Junior',
-                      style: emergencyTextStyle(size: 12, color: const Color(0xFF6B7280)),
+                      style: emergencyTextStyle(
+                          size: 12, color: const Color(0xFF6B7280)),
                     ),
-                    
+
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -146,9 +147,9 @@ class _SplashScreenState extends State<SplashScreen> {
             color: Colors.white,
           ),
         ),
-        
+
         const SizedBox(height: 24),
-        
+
         // タイトル（GapLess ロゴ）
         RichText(
           text: TextSpan(
@@ -156,18 +157,20 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               TextSpan(
                 text: 'Gap',
-                style: emergencyTextStyle(size: 32, isBold: true, color: const Color(0xFF111827)),
+                style: emergencyTextStyle(
+                    size: 32, isBold: true, color: const Color(0xFF111827)),
               ),
               TextSpan(
                 text: 'Less',
-                style: emergencyTextStyle(size: 32, isBold: true, color: const Color(0xFFE53935)),
+                style: emergencyTextStyle(
+                    size: 32, isBold: true, color: const Color(0xFFE53935)),
               ),
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // サブタイトル
         Text(
           GapLessL10n.t('splash_subtitle'),
@@ -210,33 +213,34 @@ class _SplashScreenState extends State<SplashScreen> {
               const SizedBox(width: 8),
               Text(
                 GapLessL10n.t('splash_disclaimer_title'),
-                style: emergencyTextStyle(size: 18, isBold: true, color: const Color(0xFF111827)),
+                style: emergencyTextStyle(
+                    size: 18, isBold: true, color: const Color(0xFF111827)),
               ),
             ],
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           const Divider(),
-          
+
           const SizedBox(height: 16),
-          
+
           // 本文（日本語）
           Text(
             GapLessL10n.t('splash_disclaimer_jp'),
             style: emergencyTextStyle(size: 14, color: const Color(0xFF374151)),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // 本文（英語）
           Text(
             GapLessL10n.t('splash_disclaimer_en'),
             style: emergencyTextStyle(size: 13, color: const Color(0xFF6B7280)),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 注意事項
           Container(
             padding: const EdgeInsets.all(12),
@@ -288,12 +292,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: _isInitialized
             ? Text(
                 GapLessL10n.t('splash_agree'),
-                style: emergencyTextStyle(size: 18, isBold: true, color: Colors.white),
+                style: emergencyTextStyle(
+                    size: 18, isBold: true, color: Colors.white),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                   const SizedBox(
+                  const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
@@ -301,7 +306,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       strokeWidth: 2,
                     ),
                   ),
-                   const SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Text(
                     GapLessL10n.t(_loadingKey),
                     style: emergencyTextStyle(size: 16, color: Colors.white),

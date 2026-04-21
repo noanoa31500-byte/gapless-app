@@ -9,14 +9,14 @@ import '../widgets/safe_text.dart';
 import 'package:latlong2/latlong.dart';
 
 // Design system constants
-const _kEmerald     = Color(0xFF00C896);
+const _kEmerald = Color(0xFF00C896);
 const _kEmeraldDark = Color(0xFF00A87E);
-const _kDark        = Color(0xFF1A1A2E);
-const _kDarkGreen   = Color(0xFF0D3B2E);
-const _kSurface     = Color(0xFFF8F9FE);
-const _kCritical    = Color(0xFFE53935);
-const _kUrgent      = Color(0xFFFF6B35);
-const _kModerate    = Color(0xFFFFB300);
+const _kDark = Color(0xFF1A1A2E);
+const _kDarkGreen = Color(0xFF0D3B2E);
+const _kSurface = Color(0xFFF8F9FE);
+const _kCritical = Color(0xFFE53935);
+const _kUrgent = Color(0xFFFF6B35);
+const _kModerate = Color(0xFFFFB300);
 
 /// トリアージ画面
 /// 質問形式で怪我の重症度を判断し、適切な避難所を提案
@@ -57,7 +57,8 @@ class _TriageScreenState extends State<TriageScreen> {
         ),
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    color: Colors.white),
                 onPressed: () => Navigator.maybePop(context),
               )
             : null,
@@ -114,14 +115,16 @@ class _TriageScreenState extends State<TriageScreen> {
                         child: LinearProgressIndicator(
                           value: (_currentStep + 1) / questions.length,
                           backgroundColor: Colors.white.withOpacity(0.15),
-                          valueColor: const AlwaysStoppedAnimation<Color>(_kEmerald),
+                          valueColor:
+                              const AlwaysStoppedAnimation<Color>(_kEmerald),
                           minHeight: 6,
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(20),
@@ -202,7 +205,8 @@ class _TriageScreenState extends State<TriageScreen> {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
               child: TextButton.icon(
                 onPressed: () => setState(() => _currentStep--),
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 14, color: _kEmerald),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                    size: 14, color: _kEmerald),
                 label: SafeText(
                   _getBackLabel(lang),
                   style: const TextStyle(
@@ -212,7 +216,8 @@ class _TriageScreenState extends State<TriageScreen> {
                   ),
                 ),
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                 ),
               ),
             ),
@@ -292,7 +297,9 @@ class _TriageScreenState extends State<TriageScreen> {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: option.isUrgent ? _kCritical.withOpacity(0.5) : _kDark.withOpacity(0.25),
+                color: option.isUrgent
+                    ? _kCritical.withOpacity(0.5)
+                    : _kDark.withOpacity(0.25),
               ),
             ],
           ),
@@ -430,7 +437,8 @@ class _TriageScreenState extends State<TriageScreen> {
 
                   // Severity pill badge
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(20),
@@ -506,7 +514,8 @@ class _TriageScreenState extends State<TriageScreen> {
                                 color: sev.color.withOpacity(0.12),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.lightbulb_rounded, color: sev.color, size: 18),
+                              child: Icon(Icons.lightbulb_rounded,
+                                  color: sev.color, size: 18),
                             ),
                             const SizedBox(width: 10),
                             Text(
@@ -552,8 +561,10 @@ class _TriageScreenState extends State<TriageScreen> {
                     label: _getGoToShelterLabel(lang),
                     icon: Icons.night_shelter_rounded,
                     gradient: result.needsMedical
-                        ? const LinearGradient(colors: [Color(0xFFEEEEEE), Color(0xFFE0E0E0)])
-                        : const LinearGradient(colors: [_kEmerald, _kEmeraldDark]),
+                        ? const LinearGradient(
+                            colors: [Color(0xFFEEEEEE), Color(0xFFE0E0E0)])
+                        : const LinearGradient(
+                            colors: [_kEmerald, _kEmeraldDark]),
                     textColor: result.needsMedical ? _kDark : Colors.white,
                     onPressed: _navigateToShelter,
                   ),
@@ -572,7 +583,8 @@ class _TriageScreenState extends State<TriageScreen> {
                       },
                       style: TextButton.styleFrom(
                         foregroundColor: _kDark.withOpacity(0.45),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -581,7 +593,8 @@ class _TriageScreenState extends State<TriageScreen> {
                           const SizedBox(width: 6),
                           SafeText(
                             _getRestartLabel(lang),
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w500),
                           ),
                         ],
                       ),

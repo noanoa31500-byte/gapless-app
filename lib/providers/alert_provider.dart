@@ -14,7 +14,7 @@ class AlertProvider with ChangeNotifier {
   Color _currentBackgroundColor = Colors.white;
   Timer? _flashTimer;
   final FlutterTts _tts = FlutterTts();
-  
+
   // 自動読み上げ制御
   bool _isVoiceGuidanceEnabled = true;
   DateTime? _lastSpokenTime;
@@ -38,24 +38,46 @@ class AlertProvider with ChangeNotifier {
     await _tts.setVolume(1.0);
     await _tts.setPitch(1.0);
   }
-  
+
   /// 言語設定に応じてTTS言語を更新（18言語対応）
   Future<void> _updateTtsLanguage() async {
     final lang = GapLessL10n.lang;
     String ttsLang;
 
     switch (lang) {
-      case 'ja':    ttsLang = 'ja-JP'; break;
-      case 'th':    ttsLang = 'th-TH'; break;
-      case 'zh':    ttsLang = 'zh-CN'; break;
-      case 'zh_TW': ttsLang = 'zh-TW'; break;
-      case 'ko':    ttsLang = 'ko-KR'; break;
-      case 'hi':    ttsLang = 'hi-IN'; break;
-      case 'bn':    ttsLang = 'bn-BD'; break;
-      case 'id':    ttsLang = 'id-ID'; break;
-      case 'vi':    ttsLang = 'vi-VN'; break;
-      case 'es':    ttsLang = 'es-ES'; break;
-      case 'pt':    ttsLang = 'pt-BR'; break;
+      case 'ja':
+        ttsLang = 'ja-JP';
+        break;
+      case 'th':
+        ttsLang = 'th-TH';
+        break;
+      case 'zh':
+        ttsLang = 'zh-CN';
+        break;
+      case 'zh_TW':
+        ttsLang = 'zh-TW';
+        break;
+      case 'ko':
+        ttsLang = 'ko-KR';
+        break;
+      case 'hi':
+        ttsLang = 'hi-IN';
+        break;
+      case 'bn':
+        ttsLang = 'bn-BD';
+        break;
+      case 'id':
+        ttsLang = 'id-ID';
+        break;
+      case 'vi':
+        ttsLang = 'vi-VN';
+        break;
+      case 'es':
+        ttsLang = 'es-ES';
+        break;
+      case 'pt':
+        ttsLang = 'pt-BR';
+        break;
       case 'fil':
       case 'my':
       case 'si':
@@ -63,23 +85,25 @@ class AlertProvider with ChangeNotifier {
       case 'mn':
       case 'uz':
       case 'en':
-      default:      ttsLang = 'en-US'; break;
+      default:
+        ttsLang = 'en-US';
+        break;
     }
 
     await _tts.setLanguage(ttsLang);
   }
-  
+
   /// 言語変更時に呼び出す
   Future<void> onLanguageChanged() async {
     await _updateTtsLanguage();
   }
-  
+
   /// 音声ガイダンスのON/OFF切り替え
   void toggleVoiceGuidance() {
     _isVoiceGuidanceEnabled = !_isVoiceGuidanceEnabled;
     notifyListeners();
   }
-  
+
   /// 音声ガイダンスを設定
   void setVoiceGuidance(bool enabled) {
     _isVoiceGuidanceEnabled = enabled;
@@ -130,13 +154,14 @@ class AlertProvider with ChangeNotifier {
 
     await _speak(_getLocalizedMessage('safe_area'));
   }
-  
+
   /// 深水エリア警告
   Future<void> warnDeepWater(double depth) async {
     final depthText = depth.toStringAsFixed(1);
-    await _speakWithCooldown(_getLocalizedMessage('deep_water').replaceAll('@depth', depthText));
+    await _speakWithCooldown(
+        _getLocalizedMessage('deep_water').replaceAll('@depth', depthText));
   }
-  
+
   /// 激流警告
   Future<void> warnFastCurrent() async {
     await _speakWithCooldown(_getLocalizedMessage('fast_current'));
@@ -185,7 +210,7 @@ class AlertProvider with ChangeNotifier {
   /// 音声読み上げ（基本）
   Future<void> _speak(String text) async {
     if (!_isVoiceGuidanceEnabled) return;
-    
+
     try {
       await _updateTtsLanguage(); // 言語を常に最新に
       await _tts.speak(text);
@@ -195,20 +220,21 @@ class AlertProvider with ChangeNotifier {
       }
     }
   }
-  
+
   /// クールダウン付き音声読み上げ（連続読み上げ防止）
   Future<void> _speakWithCooldown(String text) async {
     if (!_isVoiceGuidanceEnabled) return;
-    
+
     final now = DateTime.now();
-    if (_lastSpokenTime != null && now.difference(_lastSpokenTime!) < _speakCooldown) {
+    if (_lastSpokenTime != null &&
+        now.difference(_lastSpokenTime!) < _speakCooldown) {
       return; // クールダウン中
     }
-    
+
     _lastSpokenTime = now;
     await _speak(text);
   }
-  
+
   /// 外部から直接読み上げ（公開メソッド）
   Future<void> speak(String text) async {
     await _speak(text);
@@ -222,16 +248,21 @@ class AlertProvider with ChangeNotifier {
   /// 距離と方向を音声で案内（多言語）
   Future<void> speakNavigation(double distanceMeters, String direction) async {
     final distanceText = distanceMeters < 1000
-        ? GapLessL10n.t('tts_distance_m').replaceAll('@dist', distanceMeters.toInt().toString())
-        : GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
+        ? GapLessL10n.t('tts_distance_m')
+            .replaceAll('@dist', distanceMeters.toInt().toString())
+        : GapLessL10n.t('tts_distance_km')
+            .replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
     await _speakWithCooldown('$distanceText $direction');
   }
 
   /// 曲がり角通知（多言語）
-  Future<void> speakTurnAhead(String turnDirection, double distanceMeters) async {
+  Future<void> speakTurnAhead(
+      String turnDirection, double distanceMeters) async {
     final distanceText = distanceMeters < 1000
-        ? GapLessL10n.t('tts_distance_m').replaceAll('@dist', distanceMeters.toInt().toString())
-        : GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
+        ? GapLessL10n.t('tts_distance_m')
+            .replaceAll('@dist', distanceMeters.toInt().toString())
+        : GapLessL10n.t('tts_distance_km')
+            .replaceAll('@dist', (distanceMeters / 1000).toStringAsFixed(1));
     final message = GapLessL10n.t('tts_turn')
         .replaceAll('@dist', distanceText)
         .replaceAll('@direction', turnDirection);
@@ -245,25 +276,34 @@ class AlertProvider with ChangeNotifier {
 
   /// 目的地設定時の音声（多言語）
   Future<void> speakDestinationSet(String destinationName) async {
-    await _speak(GapLessL10n.t('bot_dest_set').replaceAll('@name', destinationName));
+    await _speak(
+        GapLessL10n.t('bot_dest_set').replaceAll('@name', destinationName));
   }
-  
+
   /// オフコース警告（多言語）
   Future<void> speakOffCourse() async {
     await _speakWithCooldown(_getLocalizedMessage('off_course'));
   }
-  
+
   /// 多言語メッセージ取得（GapLessL10n経由で18言語対応）
   String _getLocalizedMessage(String key) {
     switch (key) {
-      case 'monitoring_start':   return GapLessL10n.t('tts_monitoring_start');
-      case 'hazard_warning':     return GapLessL10n.t('tts_hazard_warning');
-      case 'safe_area':          return GapLessL10n.t('tts_safe_area');
-      case 'arrival':            return GapLessL10n.t('tts_arrived');
-      case 'deep_water':         return GapLessL10n.t('tts_deep_water');
-      case 'fast_current':       return GapLessL10n.t('tts_fast_current');
-      case 'off_course':         return GapLessL10n.t('tts_off_course');
-      default:                   return key;
+      case 'monitoring_start':
+        return GapLessL10n.t('tts_monitoring_start');
+      case 'hazard_warning':
+        return GapLessL10n.t('tts_hazard_warning');
+      case 'safe_area':
+        return GapLessL10n.t('tts_safe_area');
+      case 'arrival':
+        return GapLessL10n.t('tts_arrived');
+      case 'deep_water':
+        return GapLessL10n.t('tts_deep_water');
+      case 'fast_current':
+        return GapLessL10n.t('tts_fast_current');
+      case 'off_course':
+        return GapLessL10n.t('tts_off_course');
+      default:
+        return key;
     }
   }
 

@@ -6,13 +6,13 @@ import 'package:geolocator/geolocator.dart';
 /// ============================================================================
 /// WaypointMagnetManager - ウェイポイント吸着ナビゲーションシステム
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 災害時、被災者はパニック状態にあり、地図を読む認知的余裕がありません。
 /// 本システムは「針に引っ張られるだけで安全な道に出られる」UXを実現します。
-/// 
+///
 /// 【従来のナビ vs 吸着型コンパスの違い】
-/// 
+///
 /// ┌───────────────────────────────────────────────────────────────────────────┐
 /// │ 従来の地図ナビ                     │ 吸着型コンパス                       │
 /// ├───────────────────────────────────────────────────────────────────────────┤
@@ -22,14 +22,14 @@ import 'package:geolocator/geolocator.dart';
 /// │ ・バッテリー消費大（画面点灯）     │ ・コンパス+GPSのみで省電力           │
 /// │ ・通信必須（タイルDL）             │ ・完全オフライン動作                 │
 /// └───────────────────────────────────────────────────────────────────────────┘
-/// 
+///
 /// 【技術的優位性】
 /// 1. **認知心理学的根拠**: パニック時、人間の視野は狭窄し、複雑な情報処理が困難になる。
 ///    単一の「方向」だけを示すUIは、この状態でも機能する。
-/// 
+///
 /// 2. **アクセシビリティ**: 視覚障害者でも、触覚フィードバック（バイブレーション）と
 ///    組み合わせることで利用可能。
-/// 
+///
 /// 3. **エネルギー効率**: 災害時はバッテリーが命綱。画面表示を最小化できる。
 /// ============================================================================
 
@@ -37,16 +37,16 @@ import 'package:geolocator/geolocator.dart';
 enum NavigationState {
   /// 通常ナビゲーション中（ルート上）
   onRoute,
-  
+
   /// ルート逸脱中（復帰モード）
   offRoute,
-  
+
   /// ウェイポイント到達直前（吸着切り替え中）
   approaching,
-  
+
   /// ゴール到達
   arrived,
-  
+
   /// ナビゲーション未開始
   idle,
 }
@@ -55,34 +55,34 @@ enum NavigationState {
 class MagnetResult {
   /// 現在のターゲットウェイポイント
   final LatLng targetWaypoint;
-  
+
   /// ターゲットまでの距離（メートル）
   final double distanceToTarget;
-  
+
   /// ターゲットへの方位角（度、北=0、時計回り）
   final double bearingToTarget;
-  
+
   /// コンパス表示用の回転角（端末の向きを考慮）
   final double displayAngle;
-  
+
   /// 現在のナビゲーション状態
   final NavigationState state;
-  
+
   /// 現在のウェイポイントインデックス
   final int currentWaypointIndex;
-  
+
   /// 総ウェイポイント数
   final int totalWaypoints;
-  
+
   /// ルートからの逸脱距離（メートル）
   final double offRouteDistance;
-  
+
   /// 残り総距離（メートル）
   final double remainingDistance;
-  
+
   /// 進捗率（0.0〜1.0）
   final double progress;
-  
+
   /// デバッグ情報
   final String? debugInfo;
 
@@ -102,10 +102,10 @@ class MagnetResult {
 
   /// 到達判定
   bool get isArrived => state == NavigationState.arrived;
-  
+
   /// ルート逸脱判定
   bool get isOffRoute => state == NavigationState.offRoute;
-  
+
   /// 進捗文字列
   String get progressText => '${currentWaypointIndex + 1}/${totalWaypoints}';
 }
@@ -116,51 +116,51 @@ class MagnetResult {
 class WaypointMagnetManager with ChangeNotifier {
   /// ルートのウェイポイントリスト（LatLng座標）
   List<LatLng> _waypoints = [];
-  
+
   /// 現在のターゲットウェイポイントのインデックス
   int _currentWaypointIndex = 0;
-  
+
   /// 現在のターゲット方位角
   double _currentBearing = 0.0;
-  
+
   /// 補間済み方位角（滑らかなアニメーション用）
   double _interpolatedBearing = 0.0;
-  
+
   /// ナビゲーション状態
   NavigationState _state = NavigationState.idle;
 
   // === 設定パラメータ ===
-  
+
   /// ウェイポイント到達判定距離（メートル）
-  /// 
+  ///
   /// この距離以内に入ると、次のウェイポイントへ自動切り替え。
-  /// 
+  ///
   /// 【設定根拠】
   /// - GPS精度: 一般的なスマートフォンは3-10mの誤差
   /// - 歩行速度: 災害時は通常より遅く、約3km/h = 0.8m/s
   /// - 反応時間: 切り替え後0.5秒で針が動くと仮定
   /// → 余裕を持って5mに設定（3mでは狭すぎる可能性）
   static const double waypointReachedThreshold = 5.0;
-  
+
   /// ルート逸脱判定距離（メートル）
-  /// 
+  ///
   /// この距離以上ルートから離れると、復帰モードに移行。
-  /// 
+  ///
   /// 【設定根拠】
   /// - 通常の歩行者: 道幅4-6m、その半分の位置を歩く → 最大3mの誤差
   /// - GPS誤差: 最大10m
   /// - 意図的逸脱: 障害物回避で5m程度
   /// → 15m以上の逸脱は「道を間違えた」と判断
   static const double offRouteThreshold = 15.0;
-  
+
   /// ウェイポイント接近判定距離（メートル）
-  /// 
+  ///
   /// この距離以内でアニメーション補間を強化
   static const double approachingThreshold = 15.0;
-  
+
   /// ゴール到達判定距離（メートル）
   static const double goalReachedThreshold = 10.0;
-  
+
   /// 方位角補間係数（0.0〜1.0、大きいほど追従が速い）
   static const double bearingInterpolationFactor = 0.15;
 
@@ -169,7 +169,8 @@ class WaypointMagnetManager with ChangeNotifier {
   int get currentWaypointIndex => _currentWaypointIndex;
   NavigationState get state => _state;
   double get interpolatedBearing => _interpolatedBearing;
-  bool get isNavigating => _state != NavigationState.idle && _waypoints.isNotEmpty;
+  bool get isNavigating =>
+      _state != NavigationState.idle && _waypoints.isNotEmpty;
 
   /// ============================================================================
   /// ルートを設定してナビゲーションを開始
@@ -179,17 +180,17 @@ class WaypointMagnetManager with ChangeNotifier {
       if (kDebugMode) print('⚠️ 空のルートが渡されました');
       return;
     }
-    
+
     _waypoints = List.from(route);
     _currentWaypointIndex = 0;
     _currentBearing = 0.0;
     _interpolatedBearing = 0.0;
     _state = NavigationState.onRoute;
-    
+
     if (kDebugMode) {
       debugPrint('🧭 ナビゲーション開始: ${route.length} ウェイポイント');
     }
-    
+
     notifyListeners();
   }
 
@@ -204,28 +205,28 @@ class WaypointMagnetManager with ChangeNotifier {
   /// ターゲットを強制的に更新（安全ルート更新用）
   void updateTarget(LatLng target) {
     if (_waypoints.isEmpty) return;
-    
+
     // 現在のターゲットのみ更新したい場合（ただし通常は_waypoints全体を更新すべき）
     // 安全ナビゲーションでは _waypoints 自体が更新されないため、
     // ここでは単純に notifyListeners() を呼び出すだけで、
     // 呼び出し元が _currentWaypointIndex を管理している前提で動く設計にするのが安全。
     // しかし CompassProvider 側で _magnetManager.updateTarget を呼んでいるため、
     // 一時的なターゲットとして設定するか、再計算を促す。
-    
+
     notifyListeners();
   }
 
   /// ============================================================================
   /// calcTargetBearing - メイン計算関数
   /// ============================================================================
-  /// 
+  ///
   /// 【アルゴリズム概要】
   /// 1. 現在地と各ウェイポイントの距離を計算
   /// 2. 進行方向ベクトルを用いて「通過済み」を判定
   /// 3. 最適なターゲットを選定
   /// 4. ルート逸脱チェック
   /// 5. 方位角を計算・補間
-  /// 
+  ///
   /// @param userLocation 現在のユーザー位置
   /// @param deviceHeading 端末のコンパス方位（0-360度）
   /// @return MagnetResult 計算結果
@@ -254,16 +255,16 @@ class WaypointMagnetManager with ChangeNotifier {
     if (offRouteDistance > offRouteThreshold) {
       // ルート復帰モード: ルート上の最近接点を一時的なターゲットに
       _state = NavigationState.offRoute;
-      
+
       final bearingToRoute = Geolocator.bearingBetween(
         userLocation.latitude,
         userLocation.longitude,
         nearestPointOnRoute.latitude,
         nearestPointOnRoute.longitude,
       );
-      
+
       _updateBearing(bearingToRoute);
-      
+
       return MagnetResult(
         targetWaypoint: nearestPointOnRoute,
         distanceToTarget: offRouteDistance,
@@ -291,7 +292,7 @@ class WaypointMagnetManager with ChangeNotifier {
     // ゴール到達チェック
     final isLastWaypoint = _currentWaypointIndex >= _waypoints.length - 1;
     final distanceToFinal = _calculateDistance(userLocation, _waypoints.last);
-    
+
     if (isLastWaypoint && distanceToFinal < goalReachedThreshold) {
       _state = NavigationState.arrived;
       return MagnetResult(
@@ -312,7 +313,7 @@ class WaypointMagnetManager with ChangeNotifier {
     // === Step 3: ターゲットへの方位角計算 ===
     final targetWaypoint = _waypoints[_currentWaypointIndex];
     final distanceToTarget = _calculateDistance(userLocation, targetWaypoint);
-    
+
     final bearingToTarget = Geolocator.bearingBetween(
       userLocation.latitude,
       userLocation.longitude,
@@ -341,7 +342,7 @@ class WaypointMagnetManager with ChangeNotifier {
       offRouteDistance: offRouteDistance,
       remainingDistance: _calculateRemainingDistance(userLocation),
       progress: _currentWaypointIndex / _waypoints.length,
-      debugInfo: _state == NavigationState.approaching 
+      debugInfo: _state == NavigationState.approaching
           ? '🟡 接近中: ${distanceToTarget.toStringAsFixed(1)}m'
           : '🟢 ナビ中: WP ${_currentWaypointIndex + 1}/${_waypoints.length}',
     );
@@ -354,13 +355,13 @@ class WaypointMagnetManager with ChangeNotifier {
     while (_currentWaypointIndex < _waypoints.length) {
       final currentTarget = _waypoints[_currentWaypointIndex];
       final distance = _calculateDistance(userLocation, currentTarget);
-      
+
       // ウェイポイントに十分近づいた場合
       if (distance < waypointReachedThreshold) {
         if (_currentWaypointIndex < _waypoints.length - 1) {
           // 次のウェイポイントへ
           _currentWaypointIndex++;
-          
+
           if (kDebugMode) {
             debugPrint('🎯 ウェイポイント通過: '
                 '${_currentWaypointIndex}/${_waypoints.length}');
@@ -374,13 +375,13 @@ class WaypointMagnetManager with ChangeNotifier {
         break;
       }
     }
-    
+
     // === 進行方向ベクトルによる追加チェック ===
     // 「通り過ぎた」ウェイポイントを飛ばす
     if (_currentWaypointIndex < _waypoints.length - 1) {
       final currentTarget = _waypoints[_currentWaypointIndex];
       final nextTarget = _waypoints[_currentWaypointIndex + 1];
-      
+
       if (_hasPassedWaypoint(userLocation, currentTarget, nextTarget)) {
         _currentWaypointIndex++;
         if (kDebugMode) {
@@ -394,31 +395,32 @@ class WaypointMagnetManager with ChangeNotifier {
   /// ============================================================================
   /// 進行方向ベクトルによる通過判定
   /// ============================================================================
-  /// 
+  ///
   /// 【数学的説明】
   /// ユーザーがウェイポイントAを通過してBに向かっている場合、
   /// ベクトル A→B と ベクトル A→User の内積が正なら「Aを通過した」と判定。
-  bool _hasPassedWaypoint(LatLng userLocation, LatLng waypointA, LatLng waypointB) {
+  bool _hasPassedWaypoint(
+      LatLng userLocation, LatLng waypointA, LatLng waypointB) {
     // A→B ベクトル
     final abLat = waypointB.latitude - waypointA.latitude;
     final abLng = waypointB.longitude - waypointA.longitude;
-    
+
     // A→User ベクトル
     final auLat = userLocation.latitude - waypointA.latitude;
     final auLng = userLocation.longitude - waypointA.longitude;
-    
+
     // 内積
     final dotProduct = abLat * auLat + abLng * auLng;
-    
+
     // A→B ベクトルの長さの2乗
     final abLengthSquared = abLat * abLat + abLng * abLng;
-    
+
     // 内積が正で、かつA→Bの長さ以上進んでいる場合は通過済み
     // （ただし、次のウェイポイントに近すぎない場合のみ）
     final distanceToB = _calculateDistance(userLocation, waypointB);
-    return dotProduct > 0 && 
-           dotProduct >= abLengthSquared * 0.5 &&
-           distanceToB < _calculateDistance(waypointA, waypointB) * 0.8;
+    return dotProduct > 0 &&
+        dotProduct >= abLengthSquared * 0.5 &&
+        distanceToB < _calculateDistance(waypointA, waypointB) * 0.8;
   }
 
   /// ============================================================================
@@ -439,13 +441,13 @@ class WaypointMagnetManager with ChangeNotifier {
     for (int i = 0; i < _waypoints.length - 1; i++) {
       final segmentStart = _waypoints[i];
       final segmentEnd = _waypoints[i + 1];
-      
+
       final result = _pointToSegmentDistance(
         userLocation,
         segmentStart,
         segmentEnd,
       );
-      
+
       if (result.distance < minDistance) {
         minDistance = result.distance;
         nearestPoint = result.nearestPoint;
@@ -463,7 +465,7 @@ class WaypointMagnetManager with ChangeNotifier {
   ) {
     final dx = segmentEnd.longitude - segmentStart.longitude;
     final dy = segmentEnd.latitude - segmentStart.latitude;
-    
+
     if (dx == 0 && dy == 0) {
       // セグメントが点の場合
       return _PointToSegmentResult(
@@ -473,11 +475,13 @@ class WaypointMagnetManager with ChangeNotifier {
     }
 
     // パラメータ t を計算（0〜1の範囲に制限）
-    final t = math.max(0, math.min(1,
-      ((point.longitude - segmentStart.longitude) * dx +
-       (point.latitude - segmentStart.latitude) * dy) /
-      (dx * dx + dy * dy)
-    ));
+    final t = math.max(
+        0,
+        math.min(
+            1,
+            ((point.longitude - segmentStart.longitude) * dx +
+                    (point.latitude - segmentStart.latitude) * dy) /
+                (dx * dx + dy * dy)));
 
     // 最近接点
     final nearestLat = segmentStart.latitude + t * dy;
@@ -495,17 +499,17 @@ class WaypointMagnetManager with ChangeNotifier {
   /// ============================================================================
   void _updateBearing(double newBearing) {
     _currentBearing = newBearing;
-    
+
     // 角度の差を計算（最短経路）
     double diff = _currentBearing - _interpolatedBearing;
-    
+
     // -180〜180の範囲に正規化
     while (diff > 180) diff -= 360;
     while (diff < -180) diff += 360;
-    
+
     // 補間（急な変化を防ぐ）
     _interpolatedBearing += diff * bearingInterpolationFactor;
-    
+
     // 0〜360の範囲に正規化
     _interpolatedBearing = (_interpolatedBearing + 360) % 360;
   }
@@ -528,19 +532,20 @@ class WaypointMagnetManager with ChangeNotifier {
   /// 残り総距離を計算
   double _calculateRemainingDistance(LatLng userLocation) {
     if (_waypoints.isEmpty) return 0;
-    
+
     double total = 0;
-    
+
     // 現在地からターゲットウェイポイントまで
     if (_currentWaypointIndex < _waypoints.length) {
-      total += _calculateDistance(userLocation, _waypoints[_currentWaypointIndex]);
+      total +=
+          _calculateDistance(userLocation, _waypoints[_currentWaypointIndex]);
     }
-    
+
     // ターゲット以降のウェイポイント間距離
     for (int i = _currentWaypointIndex; i < _waypoints.length - 1; i++) {
       total += _calculateDistance(_waypoints[i], _waypoints[i + 1]);
     }
-    
+
     return total;
   }
 
@@ -560,7 +565,7 @@ class WaypointMagnetManager with ChangeNotifier {
   /// デバッグ情報を出力
   void printDebugInfo() {
     if (!kDebugMode) return;
-    
+
     debugPrint('''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🧭 WaypointMagnetManager Debug
@@ -579,7 +584,7 @@ Interpolated: ${_interpolatedBearing.toStringAsFixed(1)}°
 class _OffRouteResult {
   final double distance;
   final LatLng nearestPoint;
-  
+
   _OffRouteResult({required this.distance, required this.nearestPoint});
 }
 
@@ -587,6 +592,6 @@ class _OffRouteResult {
 class _PointToSegmentResult {
   final double distance;
   final LatLng nearestPoint;
-  
+
   _PointToSegmentResult({required this.distance, required this.nearestPoint});
 }

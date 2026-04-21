@@ -5,7 +5,7 @@ import 'apple_design_system.dart';
 /// ============================================================================
 /// Apple HIG準拠のアクセシビリティユーティリティ
 /// ============================================================================
-/// 
+///
 /// WCAG 2.1 AA基準とApple HIGに準拠したアクセシビリティ機能:
 /// - 最小タップターゲット44x44pt
 /// - コントラスト比4.5:1以上
@@ -19,11 +19,11 @@ class AppleAccessibility {
   // 最小タップターゲットサイズ (Apple HIG: 44pt)
   // ============================================
   static const double minTapTarget = 44.0;
-  
+
   // ============================================
   // コントラスト比チェック
   // ============================================
-  
+
   /// 2色間のコントラスト比を計算
   /// WCAG 2.1 AA基準: 通常テキスト4.5:1、大きなテキスト3:1
   static double calculateContrastRatio(Color foreground, Color background) {
@@ -33,20 +33,24 @@ class AppleAccessibility {
     final darker = l1 > l2 ? l2 : l1;
     return (lighter + 0.05) / (darker + 0.05);
   }
-  
+
   static double _relativeLuminance(Color color) {
-    final r = _luminanceComponent((color.r * 255.0).round().clamp(0, 255) / 255);
-    final g = _luminanceComponent((color.g * 255.0).round().clamp(0, 255) / 255);
-    final b = _luminanceComponent((color.b * 255.0).round().clamp(0, 255) / 255);
+    final r =
+        _luminanceComponent((color.r * 255.0).round().clamp(0, 255) / 255);
+    final g =
+        _luminanceComponent((color.g * 255.0).round().clamp(0, 255) / 255);
+    final b =
+        _luminanceComponent((color.b * 255.0).round().clamp(0, 255) / 255);
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
-  
+
   static double _luminanceComponent(double value) {
     return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055);
   }
-  
+
   /// コントラスト比が十分かチェック
-  static bool hasAdequateContrast(Color foreground, Color background, {bool isLargeText = false}) {
+  static bool hasAdequateContrast(Color foreground, Color background,
+      {bool isLargeText = false}) {
     final ratio = calculateContrastRatio(foreground, background);
     return isLargeText ? ratio >= 3.0 : ratio >= 4.5;
   }
@@ -330,7 +334,7 @@ class NavigationSemantics extends StatelessWidget {
     if (destination != null) {
       label = '$destination: $label';
     }
-    
+
     return Semantics(
       label: label,
       liveRegion: true, // 変更時に自動読み上げ
@@ -346,16 +350,16 @@ class NavigationSemantics extends StatelessWidget {
 extension AccessibilityExtension on BuildContext {
   /// 動的テキストサイズスケール
   double get textScaleFactor => MediaQuery.textScalerOf(this).scale(1.0);
-  
+
   /// アニメーション減少モードかどうか
   bool get reduceMotion => MediaQuery.disableAnimationsOf(this);
-  
+
   /// 高コントラストモードかどうか
   bool get highContrast => MediaQuery.highContrastOf(this);
-  
+
   /// VoiceOver/TalkBackが有効かどうか
   bool get accessibleNavigation => MediaQuery.accessibleNavigationOf(this);
-  
+
   /// 太字テキストモードかどうか
   bool get boldText => MediaQuery.boldTextOf(this);
 }

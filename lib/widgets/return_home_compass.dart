@@ -106,8 +106,7 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
         child: child,
       ),
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
           color: const Color(0xFFFF6F00),
           borderRadius: BorderRadius.circular(20),
@@ -172,9 +171,8 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
 
   Widget _buildDistanceText() {
     final d = widget.returnDistanceM;
-    final text = d >= 1000
-        ? '${(d / 1000).toStringAsFixed(1)} km'
-        : '${d.round()} m';
+    final text =
+        d >= 1000 ? '${(d / 1000).toStringAsFixed(1)} km' : '${d.round()} m';
 
     return Column(
       children: [
@@ -186,7 +184,19 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
             fontWeight: FontWeight.w700,
             letterSpacing: -1,
             fontFamily: 'NotoSansJP',
-            fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+            fontFamilyFallback: [
+              'NotoSansSC',
+              'NotoSansTC',
+              'NotoSansKR',
+              'NotoSansThai',
+              'NotoSansMyanmar',
+              'NotoSansSinhala',
+              'NotoSansDevanagari',
+              'NotoSansBengali',
+              'NotoSansArabic',
+              'NotoSans',
+              'sans-serif'
+            ],
           ),
         ),
         const SizedBox(height: 4),
@@ -217,8 +227,7 @@ class _ReturnHomeCompassState extends State<ReturnHomeCompass>
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
-        padding:
-            const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
@@ -274,9 +283,7 @@ class _CompassRingPainter extends CustomPainter {
                 ? const Color(0xFFFF6F00)
                 : const Color(0xFF78909C),
             fontSize: 11,
-            fontWeight: labels[i] == 'N'
-                ? FontWeight.bold
-                : FontWeight.normal,
+            fontWeight: labels[i] == 'N' ? FontWeight.bold : FontWeight.normal,
             fontFamily: GapLessL10n.currentFont,
             fontFamilyFallback: GapLessL10n.fallbackFonts,
           ),
@@ -285,10 +292,8 @@ class _CompassRingPainter extends CustomPainter {
       )..layout();
 
       final labelPos = Offset(
-        center.dx + (radius - 34) * math.cos(angle) -
-            textPainter.width / 2,
-        center.dy + (radius - 34) * math.sin(angle) -
-            textPainter.height / 2,
+        center.dx + (radius - 34) * math.cos(angle) - textPainter.width / 2,
+        center.dy + (radius - 34) * math.sin(angle) - textPainter.height / 2,
       );
       textPainter.paint(canvas, labelPos);
     }

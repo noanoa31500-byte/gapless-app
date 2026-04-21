@@ -72,7 +72,7 @@ class RouteRatingService {
 
     // 3. 評価データを構築
     final rating = RouteRating(
-      deviceId: deviceId,   // ← localStorageのUUID (個人情報なし)
+      deviceId: deviceId, // ← localStorageのUUID (個人情報なし)
       routeId: routeId,
       score: score,
       ratingType: ratingType,
@@ -132,9 +132,7 @@ class RouteRatingService {
     try {
       final prefs = await SharedPreferences.getInstance();
       final queue = prefs.getStringList('gapless_ratings_queue') ?? [];
-      return queue
-          .map((s) => jsonDecode(s) as Map<String, dynamic>)
-          .toList();
+      return queue.map((s) => jsonDecode(s) as Map<String, dynamic>).toList();
     } catch (e) {
       return [];
     }

@@ -6,16 +6,16 @@ import 'package:flutter_compass/flutter_compass.dart';
 /// ============================================================================
 /// TrueNorthProvider - 高精度真方位コンパス（WMM偏角補正 + センサー融合）
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 災害時のナビゲーションでは、1度の誤差が数十メートルの差異を生みます。
 /// 本クラスは以下の技術で最高精度の真方位を提供します：
-/// 
+///
 /// 1. **WMM（World Magnetic Model）**: GPS座標から地磁気偏角を自動算出
 /// 2. **カルマンフィルタ**: センサーノイズを統計的に除去
 /// 3. **ローパスフィルタ**: 高周波ジッターを滑らかに
 /// 4. **デッドゾーン**: 静止時に針がピタリと止まる
-/// 
+///
 /// 【精度目標】
 /// - 静止時: ±0.5度以内の安定性
 /// - 歩行時: ±2度以内の追従性
@@ -28,20 +28,20 @@ import 'package:flutter_compass/flutter_compass.dart';
 class TrueNorthResult {
   /// 真方位（0-360度、真北基準）
   final double trueHeading;
-  
+
   /// 磁北方位（0-360度、磁北基準）
   final double magneticHeading;
-  
+
   /// 地磁気偏角（度）
   /// 負: 西偏（日本）、正: 東偏
   final double declination;
-  
+
   /// フィルター適用済みか
   final bool isFiltered;
-  
+
   /// センサー信頼度（0.0-1.0）
   final double confidence;
-  
+
   /// タイムスタンプ
   final DateTime timestamp;
 
@@ -62,16 +62,16 @@ class TrueNorthResult {
 /// ============================================================================
 /// WMMCalculator - World Magnetic Model 簡易実装
 /// ============================================================================
-/// 
+///
 /// 【技術的背景】
 /// World Magnetic Model (WMM) は、地球の磁場を数学的にモデル化したものです。
 /// NOAA/NCEI（アメリカ海洋大気庁）が5年ごとに更新を発行しています。
-/// 
+///
 /// 【本実装の方式】
 /// WMM2020-2025の係数を使った球面調和関数の簡略化実装。
 /// 完全なWMMは180次の球面調和展開ですが、日本国内では
 /// 12次までの展開で十分な精度（±0.3度）を達成できます。
-/// 
+///
 /// 【参考資料】
 /// - NOAA WMM: https://www.ngdc.noaa.gov/geomag/WMM/
 /// - IGRF: https://www.ngdc.noaa.gov/IAGA/vmod/igrf.html
@@ -81,32 +81,32 @@ class WMMCalculator {
 
   // === WMM2020の主要係数（12次まで） ===
   // 実際のWMMは180次ですが、日本国内では12次で十分
-  
+
   /// 基準年（WMM2020の場合）
   static const double wmm2020Epoch = 2020.0;
-  
+
   /// 地球の平均半径（km）
   static const double earthRadiusKm = 6371.2;
-  
+
   /// 参照半径（km）
   static const double referenceRadius = 6371.2;
 
   /// ガウス係数 g(n,m) と h(n,m) - WMM2020の主要係数
   /// 簡略化のため、日本に影響が大きい低次項のみ使用
   static const List<List<double>> gCoefficients = [
-    [0],                                    // n=0
-    [-29404.8, -1450.9],                    // n=1
-    [-2499.6, 2982.0, 1677.0],              // n=2
-    [1363.2, -2381.2, 1236.2, 525.7],       // n=3
-    [903.0, 809.5, 86.3, -309.4, 48.0],     // n=4
+    [0], // n=0
+    [-29404.8, -1450.9], // n=1
+    [-2499.6, 2982.0, 1677.0], // n=2
+    [1363.2, -2381.2, 1236.2, 525.7], // n=3
+    [903.0, 809.5, 86.3, -309.4, 48.0], // n=4
   ];
 
   static const List<List<double>> hCoefficients = [
-    [0],                                    // n=0
-    [0, 4652.5],                            // n=1
-    [0, -2991.6, -734.6],                   // n=2
-    [0, -82.1, 241.9, -543.4],              // n=3
-    [0, 281.9, -158.4, 199.7, -349.7],      // n=4
+    [0], // n=0
+    [0, 4652.5], // n=1
+    [0, -2991.6, -734.6], // n=2
+    [0, -82.1, 241.9, -543.4], // n=3
+    [0, 281.9, -158.4, 199.7, -349.7], // n=4
   ];
 
   /// 年変化率（nT/年）- WMM2020
@@ -129,7 +129,7 @@ class WMMCalculator {
   /// ============================================================================
   /// calculateDeclination - 偏角計算のメインエントリーポイント
   /// ============================================================================
-  /// 
+  ///
   /// @param latitude 緯度（度、-90〜90）
   /// @param longitude 経度（度、-180〜180）
   /// @param altitudeKm 高度（km、通常は0でOK）
@@ -142,21 +142,21 @@ class WMMCalculator {
     DateTime? date,
   }) {
     date ??= DateTime.now();
-    
+
     // 日付を年の小数表現に変換
     final decimalYear = _toDecimalYear(date);
-    
+
     // 座標をラジアンに変換
     final latRad = latitude * (math.pi / 180);
     final lonRad = longitude * (math.pi / 180);
-    
+
     // 地心座標への変換
     final r = (earthRadiusKm + altitudeKm) / referenceRadius;
-    
+
     // 磁場成分を計算
     double bx = 0; // 北向き成分
     double by = 0; // 東向き成分
-    
+
     // 球面調和展開（4次まで - 日本向け簡略化）
     for (int n = 1; n < gCoefficients.length; n++) {
       for (int m = 0; m <= n && m < gCoefficients[n].length; m++) {
@@ -164,32 +164,36 @@ class WMMCalculator {
         final dt = decimalYear - wmm2020Epoch;
         double gNm = gCoefficients[n][m];
         double hNm = m < hCoefficients[n].length ? hCoefficients[n][m] : 0;
-        
+
         if (n < gDotCoefficients.length && m < gDotCoefficients[n].length) {
           gNm += gDotCoefficients[n][m] * dt;
         }
         if (n < hDotCoefficients.length && m < hDotCoefficients[n].length) {
           hNm += hDotCoefficients[n][m] * dt;
         }
-        
+
         // 球面調和関数の計算
         final pNm = _schmidtQuasiNormalized(n, m, math.sin(latRad));
         final dPNm = _dSchmidtQuasiNormalized(n, m, latRad);
-        
+
         final cosMLon = math.cos(m * lonRad);
         final sinMLon = math.sin(m * lonRad);
-        
+
         final rTerm = math.pow(1 / r, n + 2);
-        
+
         // 磁場成分への寄与
         bx += rTerm * (gNm * cosMLon + hNm * sinMLon) * dPNm;
-        by += rTerm * m * (gNm * sinMLon - hNm * cosMLon) * pNm / math.cos(latRad);
+        by += rTerm *
+            m *
+            (gNm * sinMLon - hNm * cosMLon) *
+            pNm /
+            math.cos(latRad);
       }
     }
-    
+
     // 偏角を計算（東向きが正）
     final declination = math.atan2(by, bx) * (180 / math.pi);
-    
+
     return declination;
   }
 
@@ -206,40 +210,40 @@ class WMMCalculator {
   /// シュミット準正規化ルジャンドル陪関数
   static double _schmidtQuasiNormalized(int n, int m, double sinLat) {
     final cosLat = math.sqrt(1 - sinLat * sinLat);
-    
+
     if (n == 0) return 1;
     if (n == 1 && m == 0) return sinLat;
     if (n == 1 && m == 1) return cosLat;
-    
+
     // 漸化式による計算
     double pmm = 1;
     for (int i = 1; i <= m; i++) {
       pmm *= (2 * i - 1) * cosLat;
     }
-    
+
     if (n == m) {
       return pmm * _schmidtNormFactor(n, m);
     }
-    
+
     double pmm1 = sinLat * (2 * m + 1) * pmm;
     if (n == m + 1) {
       return pmm1 * _schmidtNormFactor(n, m);
     }
-    
+
     double pnm = 0;
     for (int k = m + 2; k <= n; k++) {
       pnm = ((2 * k - 1) * sinLat * pmm1 - (k + m - 1) * pmm) / (k - m);
       pmm = pmm1;
       pmm1 = pnm;
     }
-    
+
     return pnm * _schmidtNormFactor(n, m);
   }
 
   /// シュミット準正規化係数
   static double _schmidtNormFactor(int n, int m) {
     if (m == 0) return 1;
-    
+
     double factor = 2;
     for (int i = n - m + 1; i <= n + m; i++) {
       factor *= i;
@@ -250,21 +254,21 @@ class WMMCalculator {
   /// シュミット準正規化ルジャンドル陪関数の緯度微分
   static double _dSchmidtQuasiNormalized(int n, int m, double latRad) {
     final cosLat = math.cos(latRad);
-    
+
     if (cosLat.abs() < 1e-10) return 0;
-    
+
     // 数値微分による近似
     const delta = 1e-6;
     final pPlus = _schmidtQuasiNormalized(n, m, math.sin(latRad + delta));
     final pMinus = _schmidtQuasiNormalized(n, m, math.sin(latRad - delta));
-    
+
     return -(pPlus - pMinus) / (2 * delta);
   }
 
   /// ============================================================================
   /// 日本主要都市の偏角データベース（高速参照用）
   /// ============================================================================
-  /// 
+  ///
   /// WMM計算は重いため、主要都市は事前計算値を使用。
   /// 他の地点は最近傍都市からの補間で近似。
   static const Map<String, _GeoPoint> japanCities = {
@@ -282,7 +286,7 @@ class WMMCalculator {
   static double getQuickDeclination(double latitude, double longitude) {
     double minDist = double.infinity;
     double declination = -7.5; // デフォルト（東京周辺）
-    
+
     for (final city in japanCities.values) {
       final dist = _haversineDistance(latitude, longitude, city.lat, city.lon);
       if (dist < minDist) {
@@ -290,14 +294,16 @@ class WMMCalculator {
         declination = city.declination;
       }
     }
-    
+
     return declination;
   }
 
   /// ハーバーサイン距離（km）
   static double _haversineDistance(
-    double lat1, double lon1,
-    double lat2, double lon2,
+    double lat1,
+    double lon1,
+    double lat2,
+    double lon2,
   ) {
     const R = 6371.0; // 地球半径（km）
     final dLat = (lat2 - lat1) * (math.pi / 180);
@@ -317,17 +323,17 @@ class _GeoPoint {
   final double lat;
   final double lon;
   final double declination;
-  
+
   const _GeoPoint(this.lat, this.lon, this.declination);
 }
 
 /// ============================================================================
 /// KalmanFilter - 1次元カルマンフィルタ
 /// ============================================================================
-/// 
+///
 /// 【カルマンフィルタとは】
 /// センサーの観測値から、ノイズを除去して真の状態を推定する最適フィルタ。
-/// 
+///
 /// 【パラメータ調整の指針】
 /// - Q（プロセスノイズ）: 大きいと追従性↑、安定性↓
 /// - R（観測ノイズ）: 大きいと安定性↑、追従性↓
@@ -335,13 +341,13 @@ class _GeoPoint {
 class KalmanFilter {
   /// 推定値
   double _estimate;
-  
+
   /// 推定誤差共分散
   double _errorCovariance;
-  
+
   /// プロセスノイズ共分散
   final double processNoise;
-  
+
   /// 観測ノイズ共分散
   final double measurementNoise;
 
@@ -362,11 +368,12 @@ class KalmanFilter {
 
     // === 更新ステップ ===
     // カルマンゲイン
-    final kalmanGain =
-        predictedErrorCovariance / (predictedErrorCovariance + measurementNoise);
-    
+    final kalmanGain = predictedErrorCovariance /
+        (predictedErrorCovariance + measurementNoise);
+
     // 状態更新
-    _estimate = predictedEstimate + kalmanGain * (measurement - predictedEstimate);
+    _estimate =
+        predictedEstimate + kalmanGain * (measurement - predictedEstimate);
     _errorCovariance = (1 - kalmanGain) * predictedErrorCovariance;
 
     return _estimate;
@@ -388,7 +395,7 @@ class KalmanFilter {
 /// ============================================================================
 /// CircularKalmanFilter - 角度用カルマンフィルタ
 /// ============================================================================
-/// 
+///
 /// 【なぜ専用フィルタが必要か】
 /// 角度は 0° と 360° が同じ値です（周期性）。
 /// 通常のカルマンフィルタでは、359° → 1° の変化を -358° と誤認します。
@@ -418,15 +425,15 @@ class CircularKalmanFilter {
     final predictedErrorCovariance = _errorCovariance + processNoise;
 
     // 更新ステップ
-    final kalmanGain =
-        predictedErrorCovariance / (predictedErrorCovariance + measurementNoise);
-    
+    final kalmanGain = predictedErrorCovariance /
+        (predictedErrorCovariance + measurementNoise);
+
     _estimate += kalmanGain * diff;
-    
+
     // 0-360度に正規化
     while (_estimate < 0) _estimate += 360;
     while (_estimate >= 360) _estimate -= 360;
-    
+
     _errorCovariance = (1 - kalmanGain) * predictedErrorCovariance;
 
     return _estimate;
@@ -444,7 +451,7 @@ class CircularKalmanFilter {
 /// ============================================================================
 /// LowPassFilter - ローパスフィルタ（角度用）
 /// ============================================================================
-/// 
+///
 /// 【特徴】
 /// - シンプルで計算が軽い
 /// - カルマンフィルタの補助として使用
@@ -466,7 +473,7 @@ class LowPassFilter {
     while (diff < -180) diff += 360;
 
     _value += alpha * diff;
-    
+
     // 正規化
     while (_value < 0) _value += 360;
     while (_value >= 360) _value -= 360;
@@ -484,7 +491,7 @@ class LowPassFilter {
 /// ============================================================================
 /// DeadZoneFilter - デッドゾーンフィルタ（静止検出）
 /// ============================================================================
-/// 
+///
 /// 【目的】
 /// 静止時にコンパスの針が「ピクピク」動くのを防止。
 /// 微小な変化は無視し、閾値以上の変化のみを反映。
@@ -596,19 +603,19 @@ class TrueNorthProvider with ChangeNotifier {
   void _processReading(double magneticHeading) {
     // 1. フィルターチェーンを通す
     double filtered = magneticHeading;
-    
+
     if (_useLowPassFilter) {
       filtered = _lowPassFilter.update(filtered);
     }
-    
+
     if (_useKalmanFilter) {
       filtered = _kalmanFilter.update(filtered);
     }
-    
+
     if (_useDeadZone) {
       filtered = _deadZoneFilter.update(filtered);
     }
-    
+
     _filteredMagneticHeading = filtered;
 
     // 2. 真方位に変換
@@ -631,7 +638,7 @@ class TrueNorthProvider with ChangeNotifier {
       confidence: _confidence,
       timestamp: DateTime.now(),
     );
-    
+
     if (!_streamController.isClosed) _streamController.add(result);
     notifyListeners();
   }
@@ -643,11 +650,11 @@ class TrueNorthProvider with ChangeNotifier {
     // 例: 磁北0° + (-8.5°) = 真北351.5°（つまり磁北は真北より東に8.5°）
     // 補正: 真北 = 磁北 - 偏角（西偏は負なので引くと足す効果）
     double true_ = magneticHeading - _currentDeclination;
-    
+
     // 0-360度に正規化
     while (true_ < 0) true_ += 360;
     while (true_ >= 360) true_ -= 360;
-    
+
     return true_;
   }
 
@@ -680,7 +687,8 @@ class TrueNorthProvider with ChangeNotifier {
     }
 
     if (kDebugMode) {
-      debugPrint('🧭 偏角更新: ${_currentDeclination.toStringAsFixed(2)}° (${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)})');
+      debugPrint(
+          '🧭 偏角更新: ${_currentDeclination.toStringAsFixed(2)}° (${latitude.toStringAsFixed(4)}, ${longitude.toStringAsFixed(4)})');
     }
 
     notifyListeners();
@@ -748,7 +756,7 @@ class TrueNorthProvider with ChangeNotifier {
   void stopListening() {
     _compassSubscription?.cancel();
     _compassSubscription = null;
-    
+
     if (kDebugMode) {
       debugPrint('🧭 TrueNorthProvider: リスニング停止');
     }
@@ -766,7 +774,7 @@ class TrueNorthProvider with ChangeNotifier {
   /// ============================================================================
   void printDebugInfo() {
     if (!kDebugMode) return;
-    
+
     debugPrint('''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🧭 TrueNorthProvider Debug
@@ -786,7 +794,7 @@ class TrueNorthProvider with ChangeNotifier {
 /// ============================================================================
 /// TrueNorthProviderTest - テストコード例
 /// ============================================================================
-/// 
+///
 /// 東京（緯度: 35.68, 経度: 139.77）の座標を入力した際、
 /// 正しく偏角（約-7.5度）が適用されるかを確認するテストコード案。
 ///

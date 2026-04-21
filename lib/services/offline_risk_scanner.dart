@@ -69,10 +69,14 @@ class RiskZone {
   String get warningTh => warnings['th'] ?? 'อันตราย';
 
   String get warningLocalized =>
-      warnings[GapLessL10n.lang] ?? warnings['en'] ?? warnings['ja'] ?? 'Danger ahead';
+      warnings[GapLessL10n.lang] ??
+      warnings['en'] ??
+      warnings['ja'] ??
+      'Danger ahead';
 
   @override
-  String toString() => 'RiskZone($type: ${startBearing.toStringAsFixed(0)}°-${endBearing.toStringAsFixed(0)}°, severity: ${(severity * 100).toStringAsFixed(0)}%)';
+  String toString() =>
+      'RiskZone($type: ${startBearing.toStringAsFixed(0)}°-${endBearing.toStringAsFixed(0)}°, severity: ${(severity * 100).toStringAsFixed(0)}%)';
 }
 
 /// ============================================================================
@@ -189,7 +193,8 @@ class OfflineRiskScanner {
           final rs = (point['risk_score'] as num?)?.toInt() ?? 0;
           if (!t.contains('flood') && rs == 0) continue;
           final lat = (point['lat'] as num).toDouble();
-          final lng = (point['lng'] as num? ?? point['lon'] as num? ?? 0).toDouble();
+          final lng =
+              (point['lng'] as num? ?? point['lon'] as num? ?? 0).toDouble();
           final floodPoint = _FloodPoint(
             location: LatLng(lat, lng),
             predDepth: (point['pred_depth'] as num?)?.toDouble() ?? 0.0,
@@ -233,7 +238,8 @@ class OfflineRiskScanner {
     return keys;
   }
 
-  RiskScanResult scanRisks(LatLng location, {double radius = defaultScanRadius}) {
+  RiskScanResult scanRisks(LatLng location,
+      {double radius = defaultScanRadius}) {
     if (!_isLoaded) {
       return RiskScanResult(
         riskZones: [],
@@ -291,15 +297,18 @@ class OfflineRiskScanner {
         if (_isRapidFlow(point.predSpeed) && point.predDepth >= 0.3) {
           if (!bearingRapidFlowMap.containsKey(bearingBucket) ||
               _getFlowSpeedPriority(point.predSpeed) >
-                  _getFlowSpeedPriority(bearingRapidFlowMap[bearingBucket]!.predSpeed)) {
+                  _getFlowSpeedPriority(
+                      bearingRapidFlowMap[bearingBucket]!.predSpeed)) {
             bearingRapidFlowMap[bearingBucket] = point;
           }
         }
       }
     }
 
-    zones.addAll(_groupBearingsIntoZones(location, bearingDepthMap, RiskType.deepWater));
-    zones.addAll(_groupBearingsIntoZones(location, bearingRapidFlowMap, RiskType.rapidFlow));
+    zones.addAll(
+        _groupBearingsIntoZones(location, bearingDepthMap, RiskType.deepWater));
+    zones.addAll(_groupBearingsIntoZones(
+        location, bearingRapidFlowMap, RiskType.rapidFlow));
     return zones;
   }
 
@@ -336,7 +345,8 @@ class OfflineRiskScanner {
     int prevBearing = startBearing;
     double maxValue = bearingMap[startBearing]!.predDepth;
     String maxSpeed = bearingMap[startBearing]!.predSpeed;
-    double minDistance = _haversineDistance(location, bearingMap[startBearing]!.location);
+    double minDistance =
+        _haversineDistance(location, bearingMap[startBearing]!.location);
 
     for (int i = 1; i <= sortedBearings.length; i++) {
       final isLast = i == sortedBearings.length;
@@ -356,14 +366,16 @@ class OfflineRiskScanner {
           startBearing = currentBearing;
           maxValue = bearingMap[currentBearing]!.predDepth;
           maxSpeed = bearingMap[currentBearing]!.predSpeed;
-          minDistance = _haversineDistance(location, bearingMap[currentBearing]!.location);
+          minDistance = _haversineDistance(
+              location, bearingMap[currentBearing]!.location);
         }
       } else {
         final point = bearingMap[currentBearing]!;
         if (point.predDepth > maxValue) {
           maxValue = point.predDepth;
         }
-        if (_getFlowSpeedPriority(point.predSpeed) > _getFlowSpeedPriority(maxSpeed)) {
+        if (_getFlowSpeedPriority(point.predSpeed) >
+            _getFlowSpeedPriority(maxSpeed)) {
           maxSpeed = point.predSpeed;
         }
         final dist = _haversineDistance(location, point.location);
@@ -446,7 +458,8 @@ class OfflineRiskScanner {
       int safeWidth = 0;
       for (int offset = 0; offset < 360; offset += 10) {
         final bearing = (start + offset) % 360;
-        final isSafe = zones.every((z) => !z.containsBearing(bearing.toDouble()));
+        final isSafe =
+            zones.every((z) => !z.containsBearing(bearing.toDouble()));
         if (isSafe) {
           safeWidth += 10;
         } else {
@@ -502,8 +515,10 @@ class OfflineRiskScanner {
     final dLat = (p2.latitude - p1.latitude) * math.pi / 180;
     final dLon = (p2.longitude - p1.longitude) * math.pi / 180;
     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1) * math.cos(lat2) *
-            math.sin(dLon / 2) * math.sin(dLon / 2);
+        math.cos(lat1) *
+            math.cos(lat2) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
     final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
     return R * c;
   }

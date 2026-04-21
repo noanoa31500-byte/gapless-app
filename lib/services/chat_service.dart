@@ -37,7 +37,9 @@ class ChatService {
     // 避難所到着フェーズ: ThaiSanitationBot（18言語対応済み）
     if (isSafeInShelter) {
       final text = ThaiSanitationBot.generateResponse(
-        item.id, lang, profile.name.isNotEmpty ? profile.name : null,
+        item.id,
+        lang,
+        profile.name.isNotEmpty ? profile.name : null,
       );
       return BotResponse(text, guideId: guideId);
     }
@@ -47,7 +49,7 @@ class ChatService {
         ? GapLessL10n.t('bot_prefix_name').replaceAll('@name', profile.name)
         : GapLessL10n.t('bot_prefix_normal');
 
-    final title  = item.title[lang]  ?? item.title['en']  ?? '';
+    final title = item.title[lang] ?? item.title['en'] ?? '';
     final action = item.action[lang] ?? item.action['en'] ?? '';
 
     return BotResponse(

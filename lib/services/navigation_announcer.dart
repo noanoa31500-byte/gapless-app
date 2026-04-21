@@ -85,18 +85,30 @@ class NavigationAnnouncer {
 
   static String _ttsLocale(String lang) {
     switch (lang) {
-      case 'ja':   return 'ja-JP';
-      case 'en':   return 'en-US';
-      case 'th':   return 'th-TH';
-      case 'zh':   return 'zh-CN';
-      case 'zh_TW': return 'zh-TW';
-      case 'ko':   return 'ko-KR';
-      case 'hi':   return 'hi-IN';
-      case 'bn':   return 'bn-BD';
-      case 'id':   return 'id-ID';
-      case 'vi':   return 'vi-VN';
-      case 'es':   return 'es-ES';
-      case 'pt':   return 'pt-BR';
+      case 'ja':
+        return 'ja-JP';
+      case 'en':
+        return 'en-US';
+      case 'th':
+        return 'th-TH';
+      case 'zh':
+        return 'zh-CN';
+      case 'zh_TW':
+        return 'zh-TW';
+      case 'ko':
+        return 'ko-KR';
+      case 'hi':
+        return 'hi-IN';
+      case 'bn':
+        return 'bn-BD';
+      case 'id':
+        return 'id-ID';
+      case 'vi':
+        return 'vi-VN';
+      case 'es':
+        return 'es-ES';
+      case 'pt':
+        return 'pt-BR';
       // Languages with limited TTS support: fall back to en-US
       case 'fil':
       case 'my':
@@ -104,7 +116,8 @@ class NavigationAnnouncer {
       case 'ne':
       case 'mn':
       case 'uz':
-      default:     return 'en-US';
+      default:
+        return 'en-US';
     }
   }
 
@@ -225,8 +238,7 @@ class NavigationAnnouncer {
     final now = DateTime.now();
     // 2秒以内の連続読み上げを防ぐ
     if (_lastSpeakTime != null &&
-        now.difference(_lastSpeakTime!) <
-            const Duration(seconds: 2)) {
+        now.difference(_lastSpeakTime!) < const Duration(seconds: 2)) {
       return;
     }
     _lastSpokenText = text;
@@ -247,8 +259,7 @@ class NavigationAnnouncer {
       return GapLessL10n.t('tts_distance_km')
           .replaceAll('@dist', (m / 1000).toStringAsFixed(1));
     }
-    return GapLessL10n.t('tts_distance_m')
-        .replaceAll('@dist', '${m.round()}');
+    return GapLessL10n.t('tts_distance_m').replaceAll('@dist', '${m.round()}');
   }
 
   void dispose() {

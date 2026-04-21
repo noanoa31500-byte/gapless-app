@@ -58,7 +58,6 @@ class RouteRating {
       };
 
   @override
-  String toString() =>
-      'RouteRating(routeId: $routeId, score: $score, '
+  String toString() => 'RouteRating(routeId: $routeId, score: $score, '
       'deviceId: ${deviceId.substring(0, deviceId.length.clamp(0, 8))}****)';
 }

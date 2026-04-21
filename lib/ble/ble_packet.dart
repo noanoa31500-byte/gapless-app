@@ -30,23 +30,23 @@ enum BleDataType {
   final int value;
   const BleDataType(this.value);
 
-  static BleDataType fromValue(int v) =>
-      BleDataType.values.firstWhere((e) => e.value == v,
-          orElse: () => BleDataType.walk);
+  static BleDataType fromValue(int v) => BleDataType.values
+      .firstWhere((e) => e.value == v, orElse: () => BleDataType.walk);
 }
 
 class BlePacket {
   static const List<int> _magic = [0x47, 0x4C]; // "GL"
   static const int _version = 0x01;
-  static const int _headerSize = 35; // magic2 + ver1 + type1 + ts4 + lat4 + lng4 + acc2 + id16 + len1
+  static const int _headerSize =
+      35; // magic2 + ver1 + type1 + ts4 + lat4 + lng4 + acc2 + id16 + len1
 
   final String senderDeviceId; // UUID v4 文字列（ハイフン含む）
-  final int timestamp;         // UNIX秒
+  final int timestamp; // UNIX秒
   final double lat;
   final double lng;
   final double accuracyMeters;
   final BleDataType dataType;
-  final String payload;        // JSON文字列（最大200バイト）
+  final String payload; // JSON文字列（最大200バイト）
 
   const BlePacket({
     required this.senderDeviceId,
@@ -85,7 +85,8 @@ class BlePacket {
     buf.setInt32(off, (lng * 1e6).round(), Endian.little);
     off += 4;
     // accuracy (uint16 LE)
-    buf.setUint16(off, (accuracyMeters * 10).round().clamp(0, 65535), Endian.little);
+    buf.setUint16(
+        off, (accuracyMeters * 10).round().clamp(0, 65535), Endian.little);
     off += 2;
     // deviceId (16 bytes UUID)
     final idBytes = _uuidToBytes(senderDeviceId);
@@ -115,7 +116,8 @@ class BlePacket {
     return true;
   }
 
-  static bool isValidTimestamp(int tsSeconds, {int toleranceSeconds = 24 * 3600}) {
+  static bool isValidTimestamp(int tsSeconds,
+      {int toleranceSeconds = 24 * 3600}) {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     return (tsSeconds - now).abs() <= toleranceSeconds;
   }
@@ -162,16 +164,15 @@ class BlePacket {
     final payloadLen = buf.getUint8(off++);
 
     if (bytes.length < _headerSize + payloadLen) return null;
-    final payloadStr =
-        payloadLen > 0 ? utf8.decode(bytes.sublist(off, off + payloadLen), allowMalformed: true) : '';
+    final payloadStr = payloadLen > 0
+        ? utf8.decode(bytes.sublist(off, off + payloadLen),
+            allowMalformed: true)
+        : '';
 
     final lat = latI / 1e6;
     final lng = lngI / 1e6;
     if (validateFields(
-            lat: lat,
-            lng: lng,
-            timestamp: ts,
-            payloadByteLength: payloadLen) !=
+            lat: lat, lng: lng, timestamp: ts, payloadByteLength: payloadLen) !=
         null) {
       return null;
     }

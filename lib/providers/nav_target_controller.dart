@@ -58,7 +58,8 @@ class NavTargetController extends ChangeNotifier {
   /// 安全ルート（main.dart Isolate 経由で受信した最新の経路）
   List<LatLng> getSafestRouteAsLatLng() => _externalRoute ?? const [];
 
-  Future<void> startNavigation(Shelter shelter, {LatLng? currentLocation}) async {
+  Future<void> startNavigation(Shelter shelter,
+      {LatLng? currentLocation}) async {
     _navTarget = shelter;
     _isNavigating = true;
     notifyListeners();
@@ -110,7 +111,8 @@ class NavTargetController extends ChangeNotifier {
 
   /// SharedPreferencesから前回の目的地を復元
   /// [knownShelters] が与えられた場合、IDで照合し最新オブジェクトを優先
-  Future<void> restoreNavTarget({List<Shelter> knownShelters = const []}) async {
+  Future<void> restoreNavTarget(
+      {List<Shelter> knownShelters = const []}) async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_kNavTargetKey);
     if (raw == null) return;
@@ -118,21 +120,26 @@ class NavTargetController extends ChangeNotifier {
       final decoded = jsonDecode(raw) as Map<String, dynamic>;
       final restored = Shelter.fromJson(decoded);
       // IDで完全照合、失敗時は座標で50m以内の最近傍を使用（IDプレフィックス変更に対応）
-      Shelter? match = knownShelters.where((s) => s.id == restored.id).firstOrNull;
+      Shelter? match =
+          knownShelters.where((s) => s.id == restored.id).firstOrNull;
       if (match == null && knownShelters.isNotEmpty) {
         Shelter? nearest;
         double minDist = 50.0; // 50m以内
         for (final s in knownShelters) {
           final d = Geolocator.distanceBetween(
-            restored.lat, restored.lng, s.lat, s.lng);
-          if (d < minDist) { minDist = d; nearest = s; }
+              restored.lat, restored.lng, s.lat, s.lng);
+          if (d < minDist) {
+            minDist = d;
+            nearest = s;
+          }
         }
         match = nearest;
       }
       _navTarget = match ?? restored;
       _isNavigating = true;
       notifyListeners();
-      if (kDebugMode) debugPrint('🔄 NavTargetController restored: ${_navTarget!.name}');
+      if (kDebugMode)
+        debugPrint('🔄 NavTargetController restored: ${_navTarget!.name}');
     } catch (e) {
       if (kDebugMode) debugPrint('NavTarget restore failed: $e');
       await prefs.remove(_kNavTargetKey);

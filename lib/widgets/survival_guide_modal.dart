@@ -37,7 +37,7 @@ class SurvivalGuideModal {
                   ),
                 ),
               ),
-              
+
               // Icon & Title
               Row(
                 children: [
@@ -47,7 +47,8 @@ class SurvivalGuideModal {
                       color: const Color(0xFFFFEBEE),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(item.icon, size: 32, color: const Color(0xFFE53935)),
+                    child: Icon(item.icon,
+                        size: 32, color: const Color(0xFFE53935)),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
@@ -97,8 +98,10 @@ class SurvivalGuideModal {
                         ...steps.asMap().entries.map((entry) {
                           final index = entry.key;
                           final step = entry.value;
-                          final stepText = step.instruction[lang] ?? step.instruction['en'] ?? '';
-                          
+                          final stepText = step.instruction[lang] ??
+                              step.instruction['en'] ??
+                              '';
+
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 24),
                             child: Row(
@@ -116,7 +119,8 @@ class SurvivalGuideModal {
                                       alignment: Alignment.center,
                                       child: SafeText(
                                         '${index + 1}',
-                                        style: emergencyTextStyle(color: Colors.white, isBold: true),
+                                        style: emergencyTextStyle(
+                                            color: Colors.white, isBold: true),
                                       ),
                                     ),
                                     if (index != steps.length - 1)
@@ -124,19 +128,24 @@ class SurvivalGuideModal {
                                         width: 2,
                                         height: 30,
                                         color: Colors.grey[200],
-                                        margin: const EdgeInsets.symmetric(vertical: 4),
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 4),
                                       ),
                                   ],
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       if (step.icon != null)
                                         Padding(
-                                          padding: const EdgeInsets.only(bottom: 8),
-                                          child: Icon(step.icon, color: Colors.blue[800], size: 28),
+                                          padding:
+                                              const EdgeInsets.only(bottom: 8),
+                                          child: Icon(step.icon,
+                                              color: Colors.blue[800],
+                                              size: 28),
                                         ),
                                       SafeText(
                                         stepText,
@@ -148,14 +157,20 @@ class SurvivalGuideModal {
                                       ),
                                       if (step.durationSeconds != null)
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 4),
+                                          padding:
+                                              const EdgeInsets.only(top: 4),
                                           child: Chip(
                                             label: SafeText(
-                                              GapLessL10n.t('sg_seconds').replaceAll('@n', '${step.durationSeconds}'),
+                                              GapLessL10n.t('sg_seconds')
+                                                  .replaceAll('@n',
+                                                      '${step.durationSeconds}'),
                                             ),
                                             backgroundColor: Colors.blue[50],
-                                            labelStyle: emergencyTextStyle(color: Colors.blue[800]!, size: 12),
-                                            visualDensity: VisualDensity.compact,
+                                            labelStyle: emergencyTextStyle(
+                                                color: Colors.blue[800]!,
+                                                size: 12),
+                                            visualDensity:
+                                                VisualDensity.compact,
                                           ),
                                         ),
                                     ],
@@ -184,25 +199,27 @@ class SurvivalGuideModal {
                           ),
                         ),
                       ],
-                      
+
                       const SizedBox(height: 24),
 
                       // Multi-language Reference
                       ExpansionTile(
                         title: SafeText(
                           GapLessL10n.t('sg_all_lang'),
-                          style: emergencyTextStyle(size: 16, color: Colors.grey),
+                          style:
+                              emergencyTextStyle(size: 16, color: Colors.grey),
                         ),
                         children: [
-                           if (steps == null) ...[
-                               _buildLangRow('English', item.action['en']!),
-                               _buildLangRow('日本語', item.action['ja']!),
-                               _buildLangRow('ไทย', item.action['th']!),
-                           ] else ...[
-                             _buildLangRow('Summary (English)', item.action['en']!),
-                             _buildLangRow('サマリー (日本語)', item.action['ja']!),
-                             _buildLangRow('สรุป (ไทย)', item.action['th']!),
-                           ]
+                          if (steps == null) ...[
+                            _buildLangRow('English', item.action['en']!),
+                            _buildLangRow('日本語', item.action['ja']!),
+                            _buildLangRow('ไทย', item.action['th']!),
+                          ] else ...[
+                            _buildLangRow(
+                                'Summary (English)', item.action['en']!),
+                            _buildLangRow('サマリー (日本語)', item.action['ja']!),
+                            _buildLangRow('สรุป (ไทย)', item.action['th']!),
+                          ]
                         ],
                       ),
                     ],
@@ -221,9 +238,11 @@ class SurvivalGuideModal {
                     foregroundColor: Colors.black87,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: SafeText(GapLessL10n.t('sg_close'), style: emergencyTextStyle(isBold: true)),
+                  child: SafeText(GapLessL10n.t('sg_close'),
+                      style: emergencyTextStyle(isBold: true)),
                 ),
               ),
             ],
@@ -240,16 +259,18 @@ class SurvivalGuideModal {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SafeText(label, style: const TextStyle(
-            fontSize: 12, 
-            fontWeight: FontWeight.bold, 
-            color: Colors.grey,
-          )),
+          SafeText(label,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              )),
           const SizedBox(height: 2),
-          SafeText(text, style: const TextStyle(
-            fontSize: 16,
-            height: 1.5,
-          )),
+          SafeText(text,
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+              )),
         ],
       ),
     );

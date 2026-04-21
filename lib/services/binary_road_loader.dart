@@ -5,7 +5,7 @@ import 'package:latlong2/latlong.dart';
 /// 独自バイナリ形式(.bin)の道路データを高速に読み込むローダー
 class BinaryRoadLoader {
   /// バイナリファイルを読み込んで、地図描画用の座標リストのリストを返す
-  /// 
+  ///
   /// フォーマット仕様:
   /// [Roads Loop]
   ///   - Point Count (2byte UInt16)
@@ -17,7 +17,7 @@ class BinaryRoadLoader {
     try {
       // 1. ファイルをバイナリとして読み込む
       final ByteData data = await rootBundle.load(assetPath);
-      
+
       final List<List<LatLng>> roads = [];
       int offset = 0;
       final int length = data.lengthInBytes;
@@ -36,7 +36,7 @@ class BinaryRoadLoader {
 
         // 座標データを読み込む
         final List<LatLng> points = [];
-        
+
         // 安全策: 座標データ分の容量があるか確認 (1点あたり8byte)
         if (offset + (pointCount * 8) > length) {
           debugPrint('BinaryRoadLoader: Unexpected EOF');
@@ -47,10 +47,10 @@ class BinaryRoadLoader {
           // GeoJSON/Python側は [lat, lng] や [lng, lat] の順序に注意
           // 今回のPythonスクリプトは struct.pack('>ff', float(lat), float(lng)) で保存している
           // よって、先にLat(4byte), 次にLng(4byte) が来る
-          
+
           final double lat = data.getFloat32(offset, Endian.big);
           offset += 4;
-          
+
           final double lng = data.getFloat32(offset, Endian.big);
           offset += 4;
 
@@ -62,9 +62,9 @@ class BinaryRoadLoader {
         }
       }
 
-      debugPrint('BinaryRoadLoader: Loaded ${roads.length} roads from $assetPath');
+      debugPrint(
+          'BinaryRoadLoader: Loaded ${roads.length} roads from $assetPath');
       return roads;
-
     } catch (e) {
       debugPrint('BinaryRoadLoader Error: $e');
       return [];

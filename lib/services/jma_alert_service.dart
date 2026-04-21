@@ -48,8 +48,8 @@ class JmaAlert {
 
   /// 発報から6時間以内なら「有効」とみなす（システム時計逆行ガード付き）
   bool get isActive {
-    var ageMs =
-        DateTime.now().millisecondsSinceEpoch - updatedAt.millisecondsSinceEpoch;
+    var ageMs = DateTime.now().millisecondsSinceEpoch -
+        updatedAt.millisecondsSinceEpoch;
     if (ageMs < 0) ageMs = 0; // 時計逆行クランプ
     return ageMs < const Duration(hours: 6).inMilliseconds;
   }
@@ -70,8 +70,8 @@ class JmaAlert {
       );
       return JmaAlert(
         title: j['title'] as String? ?? '',
-        updatedAt:
-            DateTime.tryParse(j['updatedAt'] as String? ?? '') ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(j['updatedAt'] as String? ?? '') ??
+            DateTime.now(),
         type: type,
         linkUrl: j['linkUrl'] as String? ?? '',
       );
@@ -87,7 +87,8 @@ class JmaParseException implements Exception {
   final Object? cause;
   JmaParseException(this.message, [this.cause]);
   @override
-  String toString() => 'JmaParseException: $message${cause != null ? " ($cause)" : ""}';
+  String toString() =>
+      'JmaParseException: $message${cause != null ? " ($cause)" : ""}';
 }
 
 class JmaAlertService extends ChangeNotifier {
@@ -125,7 +126,8 @@ class JmaAlertService extends ChangeNotifier {
   // pin 値は本番投入前に投入。User-Agent も明示してブロック回避。
   final http.Client _httpClient = createPinnedClient();
   static const Map<String, String> _httpHeaders = {
-    'User-Agent': 'GapLess/5.0.0 (disaster-prevention; contact: gapless@example.org)',
+    'User-Agent':
+        'GapLess/5.0.0 (disaster-prevention; contact: gapless@example.org)',
     'Accept': 'application/atom+xml, application/xml, text/xml',
   };
 

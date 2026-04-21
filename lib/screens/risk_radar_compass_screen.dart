@@ -159,7 +159,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
   Widget build(BuildContext context) {
     // Selector化: 言語と currentRegion のみ購読し、ShelterProvider 全体の変更で再描画されないようにする
     context.select<LanguageProvider, String>((p) => p.currentLanguage);
-    final region = context.select<ShelterProvider, String>((p) => p.currentRegion);
+    final region =
+        context.select<ShelterProvider, String>((p) => p.currentRegion);
     final themeColor = _getThemeColor();
 
     return Scaffold(
@@ -417,7 +418,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(12),
@@ -459,9 +461,11 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
   String _getDangerSummary() {
     final flood = _scanResult!.dangerZones
-        .where((z) => z.type == RiskType.deepWater).length;
+        .where((z) => z.type == RiskType.deepWater)
+        .length;
     final rapid = _scanResult!.dangerZones
-        .where((z) => z.type == RiskType.rapidFlow).length;
+        .where((z) => z.type == RiskType.rapidFlow)
+        .length;
 
     final parts = <String>[];
     if (flood > 0) parts.add('🌊$flood');
@@ -500,7 +504,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
                     const SizedBox(width: 8),
                     Text(
                       GapLessL10n.t('loc_no_destination'),
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.45)),
+                      style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.45)),
                     ),
                   ],
                 ),
@@ -527,7 +532,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
                 : '${(distance / 1000).toStringAsFixed(1)}km';
 
         // ルート補正が必要かチェック
-        final needsCorrection = _scanResult?.safetyGuidance?.needsCorrection ?? false;
+        final needsCorrection =
+            _scanResult?.safetyGuidance?.needsCorrection ?? false;
         final accentColor = needsCorrection ? _amber : _emerald;
 
         return ClipRRect(
@@ -592,7 +598,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
                     child: BackdropFilter(
                       filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
                           color: accentColor.withValues(alpha: 0.18),
                           borderRadius: BorderRadius.circular(14),
@@ -624,7 +631,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
   Widget _buildRadarCompass() {
     return Consumer3<CompassProvider, LocationProvider, ShelterProvider>(
-      builder: (context, compassProvider, locationProvider, shelterProvider, _) {
+      builder:
+          (context, compassProvider, locationProvider, shelterProvider, _) {
         final target = shelterProvider.navTarget;
         final currentLocation = locationProvider.currentLocation;
         final heading = compassProvider.heading ?? 0.0;
@@ -635,8 +643,10 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
           final clampedIdx = _waypointIdx.clamp(0, route.length - 1);
           final wp = route[clampedIdx];
           final d = Geolocator.distanceBetween(
-            currentLocation.latitude, currentLocation.longitude,
-            wp.latitude, wp.longitude,
+            currentLocation.latitude,
+            currentLocation.longitude,
+            wp.latitude,
+            wp.longitude,
           );
           if (d < 30 && clampedIdx < route.length - 1) {
             // 次フレームで setState
@@ -658,8 +668,10 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
         double? targetBearing;
         if (aimPoint != null && currentLocation != null) {
           targetBearing = Geolocator.bearingBetween(
-            currentLocation.latitude, currentLocation.longitude,
-            aimPoint.latitude, aimPoint.longitude,
+            currentLocation.latitude,
+            currentLocation.longitude,
+            aimPoint.latitude,
+            aimPoint.longitude,
           );
           if (targetBearing < 0) targetBearing += 360;
         }
@@ -675,20 +687,31 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
           final idx = _waypointIdx.clamp(0, route.length - 2);
           if (idx + 1 < route.length) {
             final bearingToNext = Geolocator.bearingBetween(
-              currentLocation.latitude, currentLocation.longitude,
-              route[idx].latitude, route[idx].longitude,
+              currentLocation.latitude,
+              currentLocation.longitude,
+              route[idx].latitude,
+              route[idx].longitude,
             );
             final bearingAfter = Geolocator.bearingBetween(
-              route[idx].latitude, route[idx].longitude,
-              route[idx + 1].latitude, route[idx + 1].longitude,
+              route[idx].latitude,
+              route[idx].longitude,
+              route[idx + 1].latitude,
+              route[idx + 1].longitude,
             );
             final diff = ((bearingAfter - bearingToNext + 540) % 360) - 180;
             final distToNext = Geolocator.distanceBetween(
-              currentLocation.latitude, currentLocation.longitude,
-              route[idx].latitude, route[idx].longitude,
+              currentLocation.latitude,
+              currentLocation.longitude,
+              route[idx].latitude,
+              route[idx].longitude,
             );
-            final label = diff > 30 ? GapLessL10n.t('nav_turn_right') : diff < -30 ? GapLessL10n.t('nav_turn_left') : GapLessL10n.t('nav_straight');
-            final ahead = GapLessL10n.t('nav_dist_ahead').replaceAll('@dist', '${distToNext.toStringAsFixed(0)}m');
+            final label = diff > 30
+                ? GapLessL10n.t('nav_turn_right')
+                : diff < -30
+                    ? GapLessL10n.t('nav_turn_left')
+                    : GapLessL10n.t('nav_straight');
+            final ahead = GapLessL10n.t('nav_dist_ahead')
+                .replaceAll('@dist', '${distToNext.toStringAsFixed(0)}m');
             turnHint = '$ahead $label';
           }
         }
@@ -703,7 +726,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
@@ -766,9 +790,11 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _buildLegendItem('🌊', Colors.blue.shade300, _getLegendText('flood')),
+              _buildLegendItem(
+                  '🌊', Colors.blue.shade300, _getLegendText('flood')),
               const SizedBox(width: 16),
-              _buildLegendItem('🌀', Colors.purple.shade300, _getLegendText('rapid')),
+              _buildLegendItem(
+                  '🌀', Colors.purple.shade300, _getLegendText('rapid')),
               const SizedBox(width: 16),
               _buildLegendItem('✅', _emerald, _getLegendText('safe')),
             ],
@@ -881,7 +907,9 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
 
     if (userLoc == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: SafeText(GapLessL10n.t('nav_no_location'), style: safeStyle(color: Colors.white))),
+        SnackBar(
+            content: SafeText(GapLessL10n.t('nav_no_location'),
+                style: safeStyle(color: Colors.white))),
       );
       return;
     }
@@ -917,7 +945,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
           ),
           backgroundColor: _emerald,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           margin: const EdgeInsets.all(16),
           duration: const Duration(seconds: 2),
         ),
@@ -933,7 +962,8 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
           ),
           backgroundColor: Colors.grey.shade800,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           margin: const EdgeInsets.all(16),
         ),
       );

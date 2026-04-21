@@ -36,7 +36,7 @@ class ReceivedReport {
   /// 鮮度に基づく不透明度
   double get opacity {
     final age = DateTime.now().millisecondsSinceEpoch ~/ 1000 - receivedAt;
-    if (age < 30 * 60)  return 1.0;
+    if (age < 30 * 60) return 1.0;
     if (age < 2 * 3600) return 0.5;
     return 0.0; // 除外対象
   }
@@ -109,13 +109,13 @@ class BleRepository {
       await db.insert(
         _tableName,
         {
-          'device_id':   packet.senderDeviceId,
-          'timestamp':   packet.timestamp,
-          'lat':         packet.lat,
-          'lng':         packet.lng,
-          'accuracy':    packet.accuracyMeters,
-          'data_type':   packet.dataType.value,
-          'payload':     packet.payload,
+          'device_id': packet.senderDeviceId,
+          'timestamp': packet.timestamp,
+          'lat': packet.lat,
+          'lng': packet.lng,
+          'accuracy': packet.accuracyMeters,
+          'data_type': packet.dataType.value,
+          'payload': packet.payload,
           'received_at': now,
         },
         conflictAlgorithm: ConflictAlgorithm.ignore, // 重複は無視
@@ -138,15 +138,13 @@ class BleRepository {
   }) async {
     final db = await _database;
     // queryNearby は道路レポート用 — 最長 TTL (24h) を採用
-    final cutoff = DateTime.now()
-            .subtract(CacheTtl.roadReport)
-            .millisecondsSinceEpoch ~/
-        1000;
+    final cutoff =
+        DateTime.now().subtract(CacheTtl.roadReport).millisecondsSinceEpoch ~/
+            1000;
 
     // 矩形で大まかにフィルタ（緯度1度≒111km）
     final dLat = radiusMeters / 111320.0;
-    final dLng = radiusMeters /
-        (111320.0 * math.cos(lat * math.pi / 180.0));
+    final dLng = radiusMeters / (111320.0 * math.cos(lat * math.pi / 180.0));
 
     final rows = await db.query(
       _tableName,
@@ -157,8 +155,10 @@ class BleRepository {
       ''',
       whereArgs: [
         cutoff,
-        lat - dLat, lat + dLat,
-        lng - dLng, lng + dLng,
+        lat - dLat,
+        lat + dLat,
+        lng - dLng,
+        lng + dLng,
       ],
     );
 
@@ -169,7 +169,8 @@ class BleRepository {
 
       // 精密な距離フィルタ
       final dist = _haversineM(
-        lat, lng,
+        lat,
+        lng,
         row['lat'] as double,
         row['lng'] as double,
       );
@@ -210,17 +211,18 @@ class BleRepository {
   BlePacket _rowToPacket(Map<String, dynamic> row) {
     return BlePacket(
       senderDeviceId: row['device_id'] as String,
-      timestamp:      row['timestamp'] as int,
-      lat:            row['lat'] as double,
-      lng:            row['lng'] as double,
+      timestamp: row['timestamp'] as int,
+      lat: row['lat'] as double,
+      lng: row['lng'] as double,
       accuracyMeters: row['accuracy'] as double,
-      dataType:       BleDataType.fromValue(row['data_type'] as int),
-      payload:        row['payload'] as String? ?? '',
+      dataType: BleDataType.fromValue(row['data_type'] as int),
+      payload: row['payload'] as String? ?? '',
     );
   }
 
   /// Haversine 距離 (メートル)
-  static double _haversineM(double lat1, double lng1, double lat2, double lng2) {
+  static double _haversineM(
+      double lat1, double lng1, double lat2, double lng2) {
     const r = 6371000.0;
     final dLat = (lat2 - lat1) * math.pi / 180;
     final dLng = (lng2 - lng1) * math.pi / 180;

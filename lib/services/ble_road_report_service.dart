@@ -47,8 +47,7 @@ class BleRoadReportService extends ChangeNotifier {
   static final BleRoadReportService instance = BleRoadReportService._();
   BleRoadReportService._();
 
-  static final Guid _serviceUuid =
-      Guid('4b474150-4c45-5353-0001-000000000001');
+  static final Guid _serviceUuid = Guid('4b474150-4c45-5353-0001-000000000001');
   static final Guid _txRoadCharUuid =
       Guid('4b474150-4c45-5353-0001-000000000004');
   static final Guid _rxRoadCharUuid =
@@ -159,8 +158,7 @@ class BleRoadReportService extends ChangeNotifier {
   final Map<String, GpsTrackSnapshot> _peerTracks = {};
 
   /// 受信済みピア軌跡の読み取り専用ビュー
-  Map<String, GpsTrackSnapshot> get peerTracks =>
-      Map.unmodifiable(_peerTracks);
+  Map<String, GpsTrackSnapshot> get peerTracks => Map.unmodifiable(_peerTracks);
 
   /// iOS バックグラウンドタスク延長用チャンネル（Android では未使用）
   static const _bgTaskChannel = MethodChannel('gapless/bg_task');
@@ -176,7 +174,8 @@ class BleRoadReportService extends ChangeNotifier {
 
   /// 100m グリッドキー → 直近 SOS 受信時刻（UNIX秒）
   /// deviceId ローテートでスパムする攻撃をフィルタするため。
-  final LinkedHashMap<String, int> _sosCellLastTs = LinkedHashMap<String, int>();
+  final LinkedHashMap<String, int> _sosCellLastTs =
+      LinkedHashMap<String, int>();
   static const int _maxSosCells = 1024;
 
   /// 受信PII最小化: lat/lng は小数2桁(≈1km)に丸めてログ出力
@@ -239,8 +238,7 @@ class BleRoadReportService extends ChangeNotifier {
   // ---------------------------------------------------------------------------
 
   void setSavingMode(bool saving) {
-    _currentScanInterval =
-        saving ? _savingScanInterval : _normalScanInterval;
+    _currentScanInterval = saving ? _savingScanInterval : _normalScanInterval;
     _scanTimer?.cancel();
     if (_isRunning) _scheduleScan();
     debugPrint('BleRoadReportService: scan interval → $_currentScanInterval');
@@ -249,15 +247,16 @@ class BleRoadReportService extends ChangeNotifier {
   /// PowerManager の多段階モードに対応したスキャン間隔更新
   void setPowerMode(PowerMode mode) {
     _currentScanInterval = switch (mode) {
-      PowerMode.normal    => PowerManager.bleScanNormal,
-      PowerMode.reduced   => PowerManager.bleScanReduced,
-      PowerMode.saving    => PowerManager.bleScanSaving,
-      PowerMode.ultra     => PowerManager.bleScanUltra,
+      PowerMode.normal => PowerManager.bleScanNormal,
+      PowerMode.reduced => PowerManager.bleScanReduced,
+      PowerMode.saving => PowerManager.bleScanSaving,
+      PowerMode.ultra => PowerManager.bleScanUltra,
       PowerMode.emergency => PowerManager.bleScanEmergency,
     };
     _scanTimer?.cancel();
     if (_isRunning) _scheduleScan();
-    debugPrint('BleRoadReportService: power mode $mode → interval $_currentScanInterval');
+    debugPrint(
+        'BleRoadReportService: power mode $mode → interval $_currentScanInterval');
   }
 
   // ---------------------------------------------------------------------------
@@ -292,8 +291,7 @@ class BleRoadReportService extends ChangeNotifier {
     bool isDrActive = false,
     double drErrorM = 0.0,
   }) {
-    final reportId =
-        DateTime.now().millisecondsSinceEpoch.toRadixString(16);
+    final reportId = DateTime.now().millisecondsSinceEpoch.toRadixString(16);
     final report = PeerRoadReport.create(
       reportId: reportId,
       deviceId: _outgoingBleId(),
@@ -329,12 +327,13 @@ class BleRoadReportService extends ChangeNotifier {
       final ks = IdentityKeystore.instance;
       report = SosReport.create(deviceId: ks.deviceId, lat: lat, lng: lng);
       final sig = await ks.sign(report.canonicalBytes());
-      report = report.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
+      report =
+          report.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
     } catch (e) {
       // 鍵生成不可 (e.g. テスト環境) → 無署名 v1 にフォールバック
-      debugPrint('BleRoadReportService: SOS sign failed ($e), falling back to v1');
-      report = SosReport.create(
-          deviceId: _outgoingBleId(), lat: lat, lng: lng);
+      debugPrint(
+          'BleRoadReportService: SOS sign failed ($e), falling back to v1');
+      report = SosReport.create(deviceId: _outgoingBleId(), lat: lat, lng: lng);
     }
     _sosQueue.add(report);
     if (!kReleaseMode) {
@@ -464,13 +463,13 @@ class BleRoadReportService extends ChangeNotifier {
     int _bgTaskId = -1;
     if (Platform.isIOS) {
       try {
-        _bgTaskId =
-            await _bgTaskChannel.invokeMethod<int>('begin') ?? -1;
+        _bgTaskId = await _bgTaskChannel.invokeMethod<int>('begin') ?? -1;
       } catch (_) {}
     }
 
     try {
-      await device.connect(license: License.free, timeout: const Duration(seconds: 8));
+      await device.connect(
+          license: License.free, timeout: const Duration(seconds: 8));
       _connected.add(device.remoteId);
       notifyListeners();
 
@@ -514,10 +513,15 @@ class BleRoadReportService extends ChangeNotifier {
 
       // 送信 (Write) — 直前にGPS軌跡スナップショットを自動生成
       _autoEnqueueTrackSnapshot();
-      if (txChar != null && txChar.properties.write &&
-          (_queue.isNotEmpty || _relayQueue.isNotEmpty || _sosRelayQueue.isNotEmpty ||
-           _shelterQueue.isNotEmpty || _shelterRelayQueue.isNotEmpty ||
-           _sosQueue.isNotEmpty || _pendingTrack != null)) {
+      if (txChar != null &&
+          txChar.properties.write &&
+          (_queue.isNotEmpty ||
+              _relayQueue.isNotEmpty ||
+              _sosRelayQueue.isNotEmpty ||
+              _shelterQueue.isNotEmpty ||
+              _shelterRelayQueue.isNotEmpty ||
+              _sosQueue.isNotEmpty ||
+              _pendingTrack != null)) {
         await _writeQueueToChar(txChar, chunkSize: mtu);
       }
 
@@ -559,14 +563,13 @@ class BleRoadReportService extends ChangeNotifier {
     _pendingTrack = GpsTrackSnapshot(
       deviceId: _outgoingBleId(),
       timestamp: recent.last.timestamp,
-      points: recent
-          .map((e) => GpsPoint(e.lat, e.lng, e.timestamp))
-          .toList(),
+      points: recent.map((e) => GpsPoint(e.lat, e.lng, e.timestamp)).toList(),
     );
   }
 
   /// キュー内の全レポートを Characteristic に書き込み、送信済みをクリアする
-  Future<void> _writeQueueToChar(BluetoothCharacteristic txChar, {int chunkSize = 180}) async {
+  Future<void> _writeQueueToChar(BluetoothCharacteristic txChar,
+      {int chunkSize = 180}) async {
     final toSend = List<PeerRoadReport>.from(_queue);
     _queue.clear();
     final relayToSend = List<PeerRoadReport>.from(_relayQueue);
@@ -575,7 +578,8 @@ class BleRoadReportService extends ChangeNotifier {
     _sosRelayQueue.clear();
     final shelterToSend = List<ShelterStatusReport>.from(_shelterQueue);
     _shelterQueue.clear();
-    final shelterRelayToSend = List<ShelterStatusReport>.from(_shelterRelayQueue);
+    final shelterRelayToSend =
+        List<ShelterStatusReport>.from(_shelterRelayQueue);
     _shelterRelayQueue.clear();
     final sosToSend = List<SosReport>.from(_sosQueue);
     _sosQueue.clear();
@@ -758,8 +762,7 @@ class BleRoadReportService extends ChangeNotifier {
 
     // 偽SOSスパム抑止 (1): 同 deviceId & 60秒未満
     final alreadyKnown = _receivedSos.any((r) =>
-        r.deviceId == sos.deviceId &&
-        (r.timestamp - sos.timestamp).abs() < 60);
+        r.deviceId == sos.deviceId && (r.timestamp - sos.timestamp).abs() < 60);
     if (alreadyKnown) {
       _logDrop('sos_dup_recent');
       return;
@@ -768,8 +771,7 @@ class BleRoadReportService extends ChangeNotifier {
     // 偽SOSスパム抑止 (1.5): 同一 100m グリッドからの複数 SOS は 5分間に1件まで
     // (deviceId をローテートするスパム攻撃をフィルタ。
     //  100m は約 lat/lng 0.001 度。)
-    final cellKey =
-        '${(sos.lat * 1000).round()}_${(sos.lng * 1000).round()}';
+    final cellKey = '${(sos.lat * 1000).round()}_${(sos.lng * 1000).round()}';
     final lastCellTs = _sosCellLastTs[cellKey];
     if (lastCellTs != null && (sos.timestamp - lastCellTs).abs() < 300) {
       _logDrop('sos_cell_rate_limited');
@@ -785,9 +787,8 @@ class BleRoadReportService extends ChangeNotifier {
     if (prev != null) {
       final dtSec = (sos.timestamp - prev.timestamp).abs();
       if (dtSec < 60) {
-        final dist = const Distance()
-            .as(LengthUnit.Meter, LatLng(prev.lat, prev.lng),
-                LatLng(sos.lat, sos.lng));
+        final dist = const Distance().as(LengthUnit.Meter,
+            LatLng(prev.lat, prev.lng), LatLng(sos.lat, sos.lng));
         // 1分未満で10km超 → 物理的にありえない移動 = 偽装の可能性大
         if (dist > _maxSosJumpMetersPerMinute) {
           _logDrop('sos_impossible_jump', 'dist=${dist.toStringAsFixed(0)}m');

@@ -196,4 +196,3 @@ class MapAutoLoader {
     return (_defaultLat, _defaultLng);
   }
 }
-

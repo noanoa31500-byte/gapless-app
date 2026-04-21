@@ -44,7 +44,8 @@ class LocationProvider extends ChangeNotifier {
 
   // Getters
   LatLng? get currentLocation => _currentLocation;
-  bool get isUsingLastKnownLocation => _currentLocation != null && _currentLocationName == 'Last Known Location';
+  bool get isUsingLastKnownLocation =>
+      _currentLocation != null && _currentLocationName == 'Last Known Location';
   String get currentLocationName => _currentLocationName;
   bool get isTracking => _isTracking;
   bool get isLoadingLocation => _isLoadingLocation;
@@ -64,7 +65,7 @@ class LocationProvider extends ChangeNotifier {
   // Internal State
   LocationPermission? _lastPermissionStatus;
 
-/// アプリ起動時の初期化処理（権限リクエストと現在地取得）
+  /// アプリ起動時の初期化処理（権限リクエストと現在地取得）
   Future<void> initLocation() async {
     // 保存済み学習歩幅を読み込む
     await _deadReckoning.init();
@@ -76,9 +77,9 @@ class LocationProvider extends ChangeNotifier {
       }
       _lastPermissionStatus = permission;
       notifyListeners();
-      
+
       // 許可されていれば読み込み開始（キャッシュ優先）
-      if (permission != LocationPermission.denied && 
+      if (permission != LocationPermission.denied &&
           permission != LocationPermission.deniedForever) {
         await loadLastKnownLocation();
       }
@@ -91,7 +92,7 @@ class LocationProvider extends ChangeNotifier {
   Future<bool> waitForFreshGPS({int timeoutSeconds = 10}) async {
     _isWaitingForFreshGPS = true;
     notifyListeners();
-    
+
     try {
       // 位置情報サービスが有効かチェック
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -103,7 +104,8 @@ class LocationProvider extends ChangeNotifier {
 
       // 位置情報の権限チェック
       LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
         _isWaitingForFreshGPS = false;
         notifyListeners();
         return false;
@@ -116,7 +118,8 @@ class LocationProvider extends ChangeNotifier {
       );
 
       // GPS入力検証 — 不正値は採用拒否し、最後の有効値を保持
-      if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+      if (!isValidFix(
+          position.latitude, position.longitude, position.accuracy)) {
         _rejectedFixCount++;
         debugPrint('⚠️ Invalid GPS fix rejected (waitForFreshGPS): '
             'lat=${position.latitude}, lng=${position.longitude}, acc=${position.accuracy}');
@@ -128,7 +131,8 @@ class LocationProvider extends ChangeNotifier {
       _currentLocation = LatLng(position.latitude, position.longitude);
       _currentLocationName = 'GPS Location';
 
-      await SecurePiiStorage.setLastLatLng(position.latitude, position.longitude);
+      await SecurePiiStorage.setLastLatLng(
+          position.latitude, position.longitude);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('last_loc_time', DateTime.now().toIso8601String());
 
@@ -151,7 +155,8 @@ class LocationProvider extends ChangeNotifier {
 
       if (lat != null && lng != null) {
         if (!isValidFix(lat, lng, 0.0)) {
-          debugPrint('⚠️ Stored last-known location invalid, skipped: ($lat, $lng)');
+          debugPrint(
+              '⚠️ Stored last-known location invalid, skipped: ($lat, $lng)');
           await SecurePiiStorage.clearLastLatLng();
           return;
         }
@@ -210,7 +215,8 @@ class LocationProvider extends ChangeNotifier {
       );
 
       // GPS入力検証 — 不正値は採用拒否
-      if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+      if (!isValidFix(
+          position.latitude, position.longitude, position.accuracy)) {
         _rejectedFixCount++;
         _lastPermissionStatus = LocationPermission.whileInUse;
         _isLoadingLocation = false;
@@ -223,11 +229,13 @@ class LocationProvider extends ChangeNotifier {
       _lastPermissionStatus = LocationPermission.whileInUse; // Assumed success
 
       _currentLocation = LatLng(position.latitude, position.longitude);
-      
+
       try {
-        await SecurePiiStorage.setLastLatLng(position.latitude, position.longitude);
+        await SecurePiiStorage.setLastLatLng(
+            position.latitude, position.longitude);
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('last_loc_time', DateTime.now().toIso8601String());
+        await prefs.setString(
+            'last_loc_time', DateTime.now().toIso8601String());
       } catch (e) {
         debugPrint('⚠️ 位置情報の保存に失敗: $e');
       }
@@ -294,7 +302,8 @@ class LocationProvider extends ChangeNotifier {
     ).listen(
       (Position position) async {
         // GPS入力検証 — 不正値は採用拒否し、最後の有効値を保持
-        if (!isValidFix(position.latitude, position.longitude, position.accuracy)) {
+        if (!isValidFix(
+            position.latitude, position.longitude, position.accuracy)) {
           _rejectedFixCount++;
           debugPrint('⚠️ Invalid GPS fix rejected (stream): '
               'lat=${position.latitude}, lng=${position.longitude}, acc=${position.accuracy}');
@@ -307,8 +316,8 @@ class LocationProvider extends ChangeNotifier {
         final now = position.timestamp;
 
         // 移動モードと速度を記録（DR起動前のみ有効）
-        _deadReckoning.setMovementContext(
-            position.speed >= 0 ? position.speed : 0.0);
+        _deadReckoning
+            .setMovementContext(position.speed >= 0 ? position.speed : 0.0);
 
         if (_deadReckoning.isActive) {
           // DR モードから GPS 復帰 → 融合位置を使う
@@ -348,11 +357,12 @@ class LocationProvider extends ChangeNotifier {
 
     if (last != null && lastTime != null) {
       final distM = Geolocator.distanceBetween(
-        last.latitude, last.longitude,
-        newPos.latitude, newPos.longitude,
+        last.latitude,
+        last.longitude,
+        newPos.latitude,
+        newPos.longitude,
       );
-      final elapsedSecs =
-          now.difference(lastTime).inMilliseconds / 1000.0;
+      final elapsedSecs = now.difference(lastTime).inMilliseconds / 1000.0;
       final steps = _deadReckoning.takeCalibStepSnapshot();
 
       await _deadReckoning.updateStrideFromGps(
@@ -403,7 +413,6 @@ class LocationProvider extends ChangeNotifier {
     _currentLocationName = name;
     notifyListeners();
   }
-
 
   /// 現在地をクリア
   void exitDemoMode() {

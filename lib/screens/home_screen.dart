@@ -43,23 +43,23 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // --- DESIGN SYSTEM CONSTANTS ---
   static const Color _greenPrimary = Color(0xFF00C896); // emerald
   static const Color _orangeAccent = Color(0xFFFF6B35); // amber
-  static const Color _darkBg      = Color(0xFF1A1A2E);
-  static const Color _surface     = Color(0xFFF8F9FE);
-  static const double _uiRadius  = 28.0;
-  static const double _uiHeight  = 56.0;
+  static const Color _darkBg = Color(0xFF1A1A2E);
+  static const Color _surface = Color(0xFFF8F9FE);
+  static const double _uiRadius = 28.0;
+  static const double _uiHeight = 56.0;
   static const double _uiPadding = 20.0;
 
   final MapController _mapController = MapController();
-  
+
   // Animation for "Current Location" Pulse
   late final AnimationController _pulseController;
   late final Animation<double> _pulseAnimation;
-  
+
   bool _initialZoomDone = false;
   String? _lastRegion;
 
   // ── ハザードオーバーレイ ON/OFF ─────────────────────────────────────────────
-  bool _showFloodOverlay  = true;
+  bool _showFloodOverlay = true;
 
   // ── 危険エリア在圏警告 ──────────────────────────────────────────────────────
   // 0=安全, 1=ハザードポリゴン内, 2=洪水リスク近傍
@@ -73,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
     // 言語フィールドのみ購読（単一文字列が変わったときだけ再描画）
     context.select<LanguageProvider, String>((p) => p.currentLanguage);
-    
+
     // Region change detection for map centering
     if (_lastRegion != shelterProvider.currentRegion) {
       _lastRegion = shelterProvider.currentRegion;
@@ -234,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
             ),
           ),
-          
+
           // ---------------------------------------------------------
           // LAYER 3: DEAD RECKONING BADGE
           // ---------------------------------------------------------
@@ -325,7 +325,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       children: [
         // 1. Base Tiles
         TileLayer(
-          urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+          urlTemplate:
+              'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
           subdomains: const ['a', 'b', 'c'],
           userAgentPackageName: 'com.gapless.app',
           tileProvider: CancellableNetworkTileProvider(silenceExceptions: true),
@@ -334,36 +335,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         // 2. Road Polylines (Background)
         if (shelterProv.roadPolylines.isNotEmpty)
           PolylineLayer(
-            polylines: shelterProv.roadPolylines.map((points) => Polyline(
-              points: points,
-              strokeWidth: 2.0,
-              color: Colors.grey.withValues(alpha: 0.3),
-            )).toList(),
+            polylines: shelterProv.roadPolylines
+                .map((points) => Polyline(
+                      points: points,
+                      strokeWidth: 2.0,
+                      color: Colors.grey.withValues(alpha: 0.3),
+                    ))
+                .toList(),
           ),
 
         // 3. Hazard Polygons
         if (shelterProv.hazardPolygons.isNotEmpty)
           PolygonLayer(
-            polygons: shelterProv.hazardPolygons.map((points) => Polygon(
-              points: points,
-              color: Colors.red.withValues(alpha: 0.15),
-              borderColor: Colors.red.withValues(alpha: 0.5),
-              borderStrokeWidth: 2.0,
-              isFilled: true,
-            )).toList(),
+            polygons: shelterProv.hazardPolygons
+                .map((points) => Polygon(
+                      points: points,
+                      color: Colors.red.withValues(alpha: 0.15),
+                      borderColor: Colors.red.withValues(alpha: 0.5),
+                      borderStrokeWidth: 2.0,
+                      isFilled: true,
+                    ))
+                .toList(),
           ),
 
         // 4. Flood Risk Circles — トグルで表示/非表示
         if (_showFloodOverlay && shelterProv.floodRiskCircles.isNotEmpty)
           CircleLayer(
-            circles: shelterProv.floodRiskCircles.map((data) => CircleMarker(
-              point: data.position,
-              radius: 40.0,
-              useRadiusInMeter: true,
-              color: Colors.blue.withValues(alpha: 0.2 + (data.riskScore / 10).clamp(0.0, 0.6)),
-              borderColor: Colors.blue.withValues(alpha: 0.5),
-              borderStrokeWidth: 1.0,
-            )).toList(),
+            circles: shelterProv.floodRiskCircles
+                .map((data) => CircleMarker(
+                      point: data.position,
+                      radius: 40.0,
+                      useRadiusInMeter: true,
+                      color: Colors.blue.withValues(
+                          alpha: 0.2 + (data.riskScore / 10).clamp(0.0, 0.6)),
+                      borderColor: Colors.blue.withValues(alpha: 0.5),
+                      borderStrokeWidth: 1.0,
+                    ))
+                .toList(),
           ),
 
         // 6. DIRECTIVE 2: WAYPOINT NAVIGATION ROUTE (List<LatLng>)
@@ -462,7 +470,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           attributions: [
             TextSourceAttribution(
               'OpenStreetMap contributors',
-              onTap: () => launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
+              onTap: () =>
+                  launchUrl(Uri.parse('https://openstreetmap.org/copyright')),
             ),
           ],
         ),
@@ -486,7 +495,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 content: Text("Target Set: ${shelter.name}"),
                 backgroundColor: _greenPrimary,
                 duration: const Duration(milliseconds: 1500),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
                 behavior: SnackBarBehavior.floating,
               ),
             );
@@ -518,14 +528,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               if (isSelected)
                 Container(
                   margin: const EdgeInsets.only(top: 4),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: _greenPrimary,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     GapLessL10n.t('label_target'),
-                    style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+                    style: GapLessL10n.safeStyle(const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold)),
                   ),
                 ),
             ],
@@ -551,8 +565,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // ---------------------------------------------------------------------------
 
   Widget _buildDangerBanner() {
-    final (Color bg, Color border, IconData icon, String titleKey, String subKey) =
-        switch (_dangerLevel) {
+    final (
+      Color bg,
+      Color border,
+      IconData icon,
+      String titleKey,
+      String subKey
+    ) = switch (_dangerLevel) {
       1 => (
           const Color(0xFFB71C1C),
           const Color(0xFFEF9A9A),
@@ -579,7 +598,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     // GapLessL10n.safeStyle() で常に両フォントを保証
     final titleStyle = GapLessL10n.safeStyle(
-      const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+      const TextStyle(
+          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
     );
     final subStyle = GapLessL10n.safeStyle(
       const TextStyle(color: Colors.white70, fontSize: 11),
@@ -610,7 +630,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(GapLessL10n.t(titleKey), style: titleStyle),
-                  Text(GapLessL10n.t(subKey),   style: subStyle),
+                  Text(GapLessL10n.t(subKey), style: subStyle),
                 ],
               ),
             ),
@@ -787,7 +807,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ],
               ),
               child: IconButton(
-                icon: Icon(Icons.settings_rounded, color: _greenPrimary, size: 22),
+                icon: Icon(Icons.settings_rounded,
+                    color: _greenPrimary, size: 22),
                 onPressed: () => _showSettings(context),
               ),
             ),
@@ -876,8 +897,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildBottomBtn(Icons.smart_toy_rounded, "AI Guide", () => _showChat(context)),
-              _buildBottomBtn(Icons.badge_rounded, "ID Card", () => _showEmergencyCard(context)),
+              _buildBottomBtn(Icons.smart_toy_rounded, "AI Guide",
+                  () => _showChat(context)),
+              _buildBottomBtn(Icons.badge_rounded, "ID Card",
+                  () => _showEmergencyCard(context)),
             ],
           ),
         ),
@@ -885,7 +908,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildBottomBtn(IconData icon, String label, VoidCallback onTap, {bool isPrimary = false}) {
+  Widget _buildBottomBtn(IconData icon, String label, VoidCallback onTap,
+      {bool isPrimary = false}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -969,7 +993,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             const SizedBox(width: 8),
             Text(
               GapLessL10n.t('disaster_mode_confirm_title'),
-              style: GapLessL10n.safeStyle(const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              style: GapLessL10n.safeStyle(
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -982,7 +1007,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             onPressed: () => Navigator.pop(ctx, false),
             child: Text(
               GapLessL10n.t('btn_cancel'),
-              style: GapLessL10n.safeStyle(const TextStyle(color: Color(0xFF6B7280))),
+              style: GapLessL10n.safeStyle(
+                  const TextStyle(color: Color(0xFF6B7280))),
             ),
           ),
           ElevatedButton(
@@ -998,7 +1024,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             ),
             child: Text(
               GapLessL10n.t('disaster_mode_confirm_ok'),
-              style: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.3),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w600, letterSpacing: 0.3),
             ),
           ),
         ],
@@ -1015,15 +1042,17 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     LatLng? effectiveLocation = loc;
 
-    if (effectiveLocation != null && effectiveLocation.latitude == 0 && effectiveLocation.longitude == 0) {
+    if (effectiveLocation != null &&
+        effectiveLocation.latitude == 0 &&
+        effectiveLocation.longitude == 0) {
       effectiveLocation = null;
     }
 
     // GPSなし時は東京駅をデフォルト位置とする
     effectiveLocation ??= const LatLng(35.6812, 139.7671); // 東京駅
 
-    final targetList = shelter.displayedShelters.isNotEmpty 
-        ? shelter.displayedShelters 
+    final targetList = shelter.displayedShelters.isNotEmpty
+        ? shelter.displayedShelters
         : shelter.shelters;
 
     Shelter? nearest;
@@ -1127,20 +1156,38 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
 
     final options = [
-      (label: GapLessL10n.t('home_report_passable'), type: BleDataType.passable, icon: Icons.check_circle, color: const Color(0xFF43A047)),
-      (label: GapLessL10n.t('home_report_blocked'),  type: BleDataType.blocked,  icon: Icons.block,         color: const Color(0xFFE53935)),
-      (label: GapLessL10n.t('home_report_danger'),   type: BleDataType.danger,   icon: Icons.warning,       color: _orangeAccent),
+      (
+        label: GapLessL10n.t('home_report_passable'),
+        type: BleDataType.passable,
+        icon: Icons.check_circle,
+        color: const Color(0xFF43A047)
+      ),
+      (
+        label: GapLessL10n.t('home_report_blocked'),
+        type: BleDataType.blocked,
+        icon: Icons.block,
+        color: const Color(0xFFE53935)
+      ),
+      (
+        label: GapLessL10n.t('home_report_danger'),
+        type: BleDataType.danger,
+        icon: Icons.warning,
+        color: _orangeAccent
+      ),
     ];
 
     await showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(_uiRadius)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(_uiRadius)),
         title: Row(
           children: [
             const Icon(Icons.report_rounded, color: Color(0xFFE53935)),
             const SizedBox(width: 8),
-            Text(GapLessL10n.t('home_danger_title'), style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.bold))),
+            Text(GapLessL10n.t('home_danger_title'),
+                style: GapLessL10n.safeStyle(
+                    const TextStyle(fontWeight: FontWeight.bold))),
           ],
         ),
         content: Column(
@@ -1161,7 +1208,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
                   icon: Icon(opt.icon),
-                  label: Text(opt.label, style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.w600, fontSize: 15, letterSpacing: 0.3))),
+                  label: Text(opt.label,
+                      style: GapLessL10n.safeStyle(const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 15,
+                          letterSpacing: 0.3))),
                   onPressed: () async {
                     Navigator.of(ctx).pop();
                     await _submitDangerReport(pos, opt.type);
@@ -1180,11 +1231,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
     final packet = BlePacket(
       senderDeviceId: deviceId,
-      timestamp:      now,
-      lat:            pos.latitude,
-      lng:            pos.longitude,
+      timestamp: now,
+      lat: pos.latitude,
+      lng: pos.longitude,
       accuracyMeters: 10.0,
-      dataType:       dataType,
+      dataType: dataType,
     );
     await BleRepository.instance.insert(packet);
     BleService.instance.enqueue(packet);
@@ -1196,7 +1247,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           backgroundColor: _greenPrimary,
           duration: const Duration(seconds: 2),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }

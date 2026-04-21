@@ -13,7 +13,7 @@ class LanguageProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  
+
   Future<void> loadLanguage() async {
     await GapLessL10n.loadLanguage();
     _currentLanguage = GapLessL10n.lang;

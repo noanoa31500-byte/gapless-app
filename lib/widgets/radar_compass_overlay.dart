@@ -9,27 +9,27 @@ import '../utils/localization.dart';
 /// ============================================================================
 /// RadarCompassOverlay - リスクレーダー付きコンパスウィジェット
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 「画面の赤い方向・雷の方向さえ避ければ生き残れる」
 /// と直感的に理解できるUIを目指しています。
-/// 
+///
 /// 【なぜこの機能が洪水時に有効なのか】
-/// 
+///
 /// 1. **泥水で視界が悪い**
 ///    洪水時の水は濁っており、足元の危険（深い穴、流されている物）が
 ///    見えません。本機能は、予測データを使って「見えない危険」を
 ///    レーダーのように可視化します。
-/// 
+///
 /// 2. **激流は突然来る**
 ///    濁流の中で流速の速い方向は予測困難です。
 ///    浸水シミュレーションデータから、流れの速い方向を警告します。
-/// 
+///
 /// 3. **パニック時の認知負荷軽減**
 ///    災害時、人は複雑な判断ができません。
 ///    「青=深水」「紫=激流」「緑=安全」という
 ///    色だけで判断できるUIにしています。
-/// 
+///
 /// 4. **360度全方位の危険を一目で把握**
 ///    地図アプリでは「前方」しか見えませんが、
 ///    本機能は背後からの危険（追い流される激流など）も
@@ -39,19 +39,19 @@ import '../utils/localization.dart';
 class RadarCompassOverlay extends StatelessWidget {
   /// リスクスキャン結果
   final RiskScanResult? scanResult;
-  
+
   /// 端末の向き（真北基準、度）
   final double deviceHeading;
-  
+
   /// ターゲット方位（ウェイポイントへの方向）
   final double? targetBearing;
-  
+
   /// コンパスのサイズ
   final double size;
-  
+
   /// 言語設定
   final String lang;
-  
+
   /// アニメーション用コントローラー（点滅効果）
   final Animation<double>? pulseAnimation;
 
@@ -75,19 +75,19 @@ class RadarCompassOverlay extends StatelessWidget {
         children: [
           // 背景円
           _buildBackgroundCircle(),
-          
+
           // リスクゾーン（レーダー表示）
           if (scanResult != null) _buildRiskRadar(),
-          
+
           // 方位目盛り
           _buildCompassMarkers(),
-          
+
           // 安全方向の矢印
           if (targetBearing != null) _buildSafetyArrow(),
-          
+
           // 中央の端末アイコン
           _buildDeviceIndicator(),
-          
+
           // 警告バッジ
           if (scanResult != null && scanResult!.overallRisk > 0.3)
             _buildWarningBadge(),
@@ -142,7 +142,7 @@ class RadarCompassOverlay extends StatelessWidget {
         children: [
           // N/E/S/W マーカー
           ..._buildCardinalMarkers(),
-          
+
           // 度数目盛り
           ..._buildDegreeMarkers(),
         ],
@@ -153,11 +153,11 @@ class RadarCompassOverlay extends StatelessWidget {
   List<Widget> _buildCardinalMarkers() {
     const cardinals = ['N', 'E', 'S', 'W'];
     const colors = [Colors.red, Colors.white70, Colors.white70, Colors.white70];
-    
+
     return List.generate(4, (index) {
       final angle = index * 90 * math.pi / 180;
       final radius = size / 2 - 25;
-      
+
       return Positioned(
         left: size / 2 + math.sin(angle) * radius - 12,
         top: size / 2 - math.cos(angle) * radius - 12,
@@ -178,13 +178,13 @@ class RadarCompassOverlay extends StatelessWidget {
 
   List<Widget> _buildDegreeMarkers() {
     final markers = <Widget>[];
-    
+
     for (int i = 0; i < 360; i += 30) {
       if (i % 90 == 0) continue; // N/E/S/Wは別途描画
-      
+
       final angle = i * math.pi / 180;
       final radius = size / 2 - 15;
-      
+
       markers.add(
         Positioned(
           left: size / 2 + math.sin(angle) * radius - 10,
@@ -202,18 +202,19 @@ class RadarCompassOverlay extends StatelessWidget {
         ),
       );
     }
-    
+
     return markers;
   }
 
   /// 安全方向の矢印
   Widget _buildSafetyArrow() {
     final relativeBearing = (targetBearing! - deviceHeading + 360) % 360;
-    
+
     // ターゲット方向にリスクがあるかチェック
-    final hasRiskInTargetDirection = scanResult?.getRisksAtBearing(targetBearing!) ?? [];
+    final hasRiskInTargetDirection =
+        scanResult?.getRisksAtBearing(targetBearing!) ?? [];
     final isRisky = hasRiskInTargetDirection.isNotEmpty;
-    
+
     return Transform.rotate(
       angle: relativeBearing * math.pi / 180,
       child: Container(
@@ -265,7 +266,7 @@ class RadarCompassOverlay extends StatelessWidget {
   Widget _buildWarningBadge() {
     final riskPercent = (scanResult!.overallRisk * 100).toInt();
     final isHighRisk = scanResult!.overallRisk > 0.6;
-    
+
     return Positioned(
       top: 10,
       child: Container(
@@ -297,7 +298,19 @@ class RadarCompassOverlay extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 fontFamily: 'NotoSansJP',
-                fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+                fontFamilyFallback: [
+                  'NotoSansSC',
+                  'NotoSansTC',
+                  'NotoSansKR',
+                  'NotoSansThai',
+                  'NotoSansMyanmar',
+                  'NotoSansSinhala',
+                  'NotoSansDevanagari',
+                  'NotoSansBengali',
+                  'NotoSansArabic',
+                  'NotoSans',
+                  'sans-serif'
+                ],
               ),
             ),
           ],
@@ -326,7 +339,7 @@ class _RiskRadarPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final outerRadius = size.width / 2 - 5;
     final innerRadius = outerRadius - 40;
-    
+
     for (final zone in riskZones) {
       _drawRiskZone(canvas, center, outerRadius, innerRadius, zone);
     }
@@ -344,11 +357,11 @@ class _RiskRadarPainter extends CustomPainter {
     final endAngle = (zone.endBearing - deviceHeading - 90) * math.pi / 180;
     double sweepAngle = endAngle - startAngle;
     if (sweepAngle < 0) sweepAngle += 2 * math.pi;
-    
+
     // リスクタイプに応じた色
     Color baseColor;
     String icon;
-    
+
     switch (zone.type) {
       case RiskType.deepWater:
         baseColor = Colors.blue;
@@ -359,15 +372,15 @@ class _RiskRadarPainter extends CustomPainter {
         icon = '🌀';
         break;
     }
-    
+
     // 重大度に応じた不透明度
     final opacity = 0.3 + zone.severity * 0.5 * pulseValue;
-    
+
     // 扇形を描画
     final paint = Paint()
       ..color = baseColor.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
-    
+
     final path = Path()
       ..moveTo(center.dx, center.dy)
       ..arcTo(
@@ -378,15 +391,15 @@ class _RiskRadarPainter extends CustomPainter {
       )
       ..lineTo(center.dx, center.dy)
       ..close();
-    
+
     canvas.drawPath(path, paint);
-    
+
     // 境界線
     final borderPaint = Paint()
       ..color = baseColor.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: outerRadius),
       startAngle,
@@ -394,15 +407,17 @@ class _RiskRadarPainter extends CustomPainter {
       false,
       borderPaint,
     );
-    
+
     // アイコンを描画
-    _drawIcon(canvas, center, outerRadius - 20, startAngle + sweepAngle / 2, icon);
+    _drawIcon(
+        canvas, center, outerRadius - 20, startAngle + sweepAngle / 2, icon);
   }
 
-  void _drawIcon(Canvas canvas, Offset center, double radius, double angle, String icon) {
+  void _drawIcon(
+      Canvas canvas, Offset center, double radius, double angle, String icon) {
     final x = center.dx + math.cos(angle) * radius;
     final y = center.dy + math.sin(angle) * radius;
-    
+
     final textPainter = TextPainter(
       text: TextSpan(
         text: icon,
@@ -410,15 +425,22 @@ class _RiskRadarPainter extends CustomPainter {
           fontSize: 24,
           fontFamily: 'NotoSansJP',
           fontFamilyFallback: [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
+            'NotoSansSC',
+            'NotoSansTC',
+            'NotoSansKR',
+            'NotoSansThai',
+            'NotoSansMyanmar',
+            'NotoSansSinhala',
+            'NotoSansDevanagari',
+            'NotoSansBengali',
+            'NotoSans',
+            'sans-serif',
           ],
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    
+
     textPainter.paint(
       canvas,
       Offset(x - textPainter.width / 2, y - textPainter.height / 2),
@@ -468,7 +490,7 @@ class _RadarCompassCardState extends State<RadarCompassCard>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -505,9 +527,9 @@ class _RadarCompassCardState extends State<RadarCompassCard>
             children: [
               // ヘッダー
               _buildHeader(),
-              
+
               const SizedBox(height: 16),
-              
+
               // レーダーコンパス
               AnimatedBuilder(
                 animation: _pulseAnimation,
@@ -522,14 +544,15 @@ class _RadarCompassCardState extends State<RadarCompassCard>
                   );
                 },
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // 凡例
               _buildLegend(),
-              
+
               // 警告メッセージ
-              if (widget.scanResult != null && widget.scanResult!.riskZones.isNotEmpty)
+              if (widget.scanResult != null &&
+                  widget.scanResult!.riskZones.isNotEmpty)
                 _buildWarningMessages(),
             ],
           ),
@@ -540,7 +563,7 @@ class _RadarCompassCardState extends State<RadarCompassCard>
 
   Widget _buildHeader() {
     final isLoaded = widget.scanResult != null;
-    
+
     return Row(
       children: [
         Icon(
@@ -624,9 +647,9 @@ class _RadarCompassCardState extends State<RadarCompassCard>
         warnings.add(warning);
       }
     }
-    
+
     if (warnings.isEmpty) return const SizedBox.shrink();
-    
+
     return Padding(
       padding: const EdgeInsets.only(top: 12),
       child: Container(
@@ -639,16 +662,19 @@ class _RadarCompassCardState extends State<RadarCompassCard>
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: warnings.take(3).map((w) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
-            child: Text(
-              w,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-              ),
-            ),
-          )).toList(),
+          children: warnings
+              .take(3)
+              .map((w) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Text(
+                      w,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ))
+              .toList(),
         ),
       ),
     );

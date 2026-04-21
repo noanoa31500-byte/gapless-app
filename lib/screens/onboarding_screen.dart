@@ -11,12 +11,12 @@ import '../providers/shelter_provider.dart';
 import '../providers/compass_provider.dart';
 
 // Design system constants
-const _kEmerald   = Color(0xFF00C896);
+const _kEmerald = Color(0xFF00C896);
 const _kEmeraldDark = Color(0xFF00A87E);
-const _kDark      = Color(0xFF1A1A2E);
+const _kDark = Color(0xFF1A1A2E);
 const _kDarkGreen = Color(0xFF0D3B2E);
-const _kSurface   = Color(0xFFF8F9FE);
-const _kAmber     = Color(0xFFFF6B35);
+const _kSurface = Color(0xFFF8F9FE);
+const _kAmber = Color(0xFFFF6B35);
 
 /// ============================================================================
 /// OnboardingScreen - Apple HIG準拠のオンボーディング体験
@@ -88,7 +88,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
-    if (AppleAccessibility.reduceMotion(context) && _animController.value < 1.0) {
+    if (AppleAccessibility.reduceMotion(context) &&
+        _animController.value < 1.0) {
       _animController.value = 1.0;
     }
     return Scaffold(
@@ -232,9 +233,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         curve: Curves.easeOut,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected
-              ? _kEmerald.withOpacity(0.08)
-              : Colors.white,
+          color: isSelected ? _kEmerald.withOpacity(0.08) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? _kEmerald : Colors.transparent,
@@ -270,7 +269,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   color: _kEmerald,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
+                child: const Icon(Icons.check_rounded,
+                    color: Colors.white, size: 14),
               ),
           ],
         ),
@@ -357,7 +357,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.check_circle_rounded, color: _kEmerald, size: 22),
+                  const Icon(Icons.check_circle_rounded,
+                      color: _kEmerald, size: 22),
                   const SizedBox(width: 10),
                   Text(
                     _getPermissionGrantedText(lang),
@@ -445,7 +446,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
         ),
         backgroundColor: _kDark,
         behavior: SnackBarBehavior.floating,
@@ -565,7 +567,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
               // Latest Version Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                 decoration: BoxDecoration(
                   color: _kEmerald.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
@@ -624,7 +627,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         value: _loadingProgress,
                         strokeWidth: 5,
                         strokeCap: StrokeCap.round,
-                        valueColor: const AlwaysStoppedAnimation<Color>(_kEmerald),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(_kEmerald),
                       ),
                     ),
                     // Percentage
@@ -676,7 +680,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       // Shelters, Hazard Polygons, Road Data
       final loadSheltersFuture = shelterProvider.loadShelters();
       final loadHazardsFuture = shelterProvider.loadHazardPolygons();
-      final loadRoadsFuture = shelterProvider.loadRoadData(); // This is the heaviest
+      final loadRoadsFuture =
+          shelterProvider.loadRoadData(); // This is the heaviest
 
       // Simulate progress updates or just wait for all
       // We can await them individually if we want to update the progress bar incrementally,
@@ -685,15 +690,15 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       await loadSheltersFuture;
       if (!mounted) return;
       setState(() {
-         _loadingMessage = _getLoadingMessage(lang, 'hazard');
-         _loadingProgress = 0.3;
+        _loadingMessage = _getLoadingMessage(lang, 'hazard');
+        _loadingProgress = 0.3;
       });
 
       await loadHazardsFuture;
       if (!mounted) return;
       setState(() {
-         _loadingMessage = _getLoadingMessage(lang, 'roads');
-         _loadingProgress = 0.5;
+        _loadingMessage = _getLoadingMessage(lang, 'roads');
+        _loadingProgress = 0.5;
       });
 
       await loadRoadsFuture;
@@ -701,8 +706,8 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
       // 2. Start GPS wait (Robust 10s window)
       setState(() {
-         _loadingMessage = _getLoadingMessage(lang, 'locating');
-         _loadingProgress = 0.7;
+        _loadingMessage = _getLoadingMessage(lang, 'locating');
+        _loadingProgress = 0.7;
       });
 
       // 最大10秒待機
@@ -715,11 +720,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
       // 3. Pre-calculate Routes (Ensure EVERYTHING is done)
       if (locationProvider.currentLocation != null) {
-          setState(() {
-             _loadingMessage = _getLoadingMessage(lang, 'graph');
-             _loadingProgress = 0.9;
-          });
-
+        setState(() {
+          _loadingMessage = _getLoadingMessage(lang, 'graph');
+          _loadingProgress = 0.9;
+        });
       }
 
       if (!mounted) return;
@@ -831,23 +835,35 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   // ============================================
   String _getNextText() => GapLessL10n.t('tutorial_start');
   String _getLocationTitle(String lang) => GapLessL10n.t('onb_location_title');
-  String _getLocationDescription(String lang) => GapLessL10n.t('onb_location_desc');
-  String _getAllowLocationText(String lang) => GapLessL10n.t('onb_allow_location');
-  String _getPermissionGrantedText(String lang) => GapLessL10n.t('onb_perm_granted');
+  String _getLocationDescription(String lang) =>
+      GapLessL10n.t('onb_location_desc');
+  String _getAllowLocationText(String lang) =>
+      GapLessL10n.t('onb_allow_location');
+  String _getPermissionGrantedText(String lang) =>
+      GapLessL10n.t('onb_perm_granted');
   String _getSkipText(String lang) => GapLessL10n.t('onb_set_later');
-  String _getLoadingSubtitle(String lang) => GapLessL10n.t('onb_loading_subtitle');
-  String _getLocationServiceDisabledText(String lang) => GapLessL10n.t('onb_loc_service_disabled');
+  String _getLoadingSubtitle(String lang) =>
+      GapLessL10n.t('onb_loading_subtitle');
+  String _getLocationServiceDisabledText(String lang) =>
+      GapLessL10n.t('onb_loc_service_disabled');
   String _getLocationDeniedText(String lang) => GapLessL10n.t('onb_loc_denied');
 
   String _getLoadingMessage(String lang, String step) {
     switch (step) {
-      case 'shelters': return GapLessL10n.t('onb_load_shelters');
-      case 'hazard': return GapLessL10n.t('onb_load_hazard');
-      case 'roads': return GapLessL10n.t('onb_load_roads');
-      case 'locating': return GapLessL10n.t('onb_load_locating');
-      case 'graph': return GapLessL10n.t('onb_load_graph');
-      case 'complete': return GapLessL10n.t('onb_load_complete');
-      default: return '';
+      case 'shelters':
+        return GapLessL10n.t('onb_load_shelters');
+      case 'hazard':
+        return GapLessL10n.t('onb_load_hazard');
+      case 'roads':
+        return GapLessL10n.t('onb_load_roads');
+      case 'locating':
+        return GapLessL10n.t('onb_load_locating');
+      case 'graph':
+        return GapLessL10n.t('onb_load_graph');
+      case 'complete':
+        return GapLessL10n.t('onb_load_complete');
+      default:
+        return '';
     }
   }
 
@@ -931,7 +947,8 @@ class _AppleTutorialPagerState extends State<_AppleTutorialPager> {
               onPressed: widget.onSkip,
               style: TextButton.styleFrom(
                 foregroundColor: _kDark.withOpacity(0.45),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
               child: Text(
                 GapLessL10n.t('tutorial_skip'),

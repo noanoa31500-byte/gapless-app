@@ -10,10 +10,10 @@ import '../ble/ble_packet.dart';
 class CacheTtl {
   CacheTtl._();
 
-  static const Duration roadReport     = Duration(hours: 24);
-  static const Duration sos            = Duration(hours: 1);
-  static const Duration shelterStatus  = Duration(hours: 4);
-  static const Duration jmaAlert       = Duration(hours: 6);
+  static const Duration roadReport = Duration(hours: 24);
+  static const Duration sos = Duration(hours: 1);
+  static const Duration shelterStatus = Duration(hours: 4);
+  static const Duration jmaAlert = Duration(hours: 6);
   static const Duration hazardJudgment = Duration(hours: 1);
 
   /// BLE dataType ごとの TTL を返す。

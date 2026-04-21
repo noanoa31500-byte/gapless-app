@@ -63,28 +63,28 @@ class _PermissionGateScreenState extends State<PermissionGateScreen> {
 
   // ── ステップ定義（多言語対応: GapLessL10n.t() で動的取得）────────────────
   static List<_PermStep> get _steps => [
-    _PermStep(
-      title: GapLessL10n.t('perm_location_title'),
-      description: GapLessL10n.t('perm_location_desc'),
-      icon: Icons.location_on_rounded,
-      isSkippable: false,
-      isOptional: false,
-    ),
-    _PermStep(
-      title: GapLessL10n.t('perm_motion_title'),
-      description: GapLessL10n.t('perm_motion_desc'),
-      icon: Icons.compass_calibration_rounded,
-      isSkippable: false,
-      isOptional: true,
-    ),
-    _PermStep(
-      title: GapLessL10n.t('perm_ble_title'),
-      description: GapLessL10n.t('perm_ble_desc'),
-      icon: Icons.bluetooth_rounded,
-      isSkippable: true,
-      isOptional: true,
-    ),
-  ];
+        _PermStep(
+          title: GapLessL10n.t('perm_location_title'),
+          description: GapLessL10n.t('perm_location_desc'),
+          icon: Icons.location_on_rounded,
+          isSkippable: false,
+          isOptional: false,
+        ),
+        _PermStep(
+          title: GapLessL10n.t('perm_motion_title'),
+          description: GapLessL10n.t('perm_motion_desc'),
+          icon: Icons.compass_calibration_rounded,
+          isSkippable: false,
+          isOptional: true,
+        ),
+        _PermStep(
+          title: GapLessL10n.t('perm_ble_title'),
+          description: GapLessL10n.t('perm_ble_desc'),
+          icon: Icons.bluetooth_rounded,
+          isSkippable: true,
+          isOptional: true,
+        ),
+      ];
 
   // ── 状態 ─────────────────────────────────────────────────────────────────
   int _currentStep = 0;

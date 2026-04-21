@@ -5,7 +5,7 @@ import 'apple_design_system.dart';
 /// ============================================================================
 /// Apple HIG準拠のアニメーション定義
 /// ============================================================================
-/// 
+///
 /// Apple Human Interface Guidelinesに基づくアニメーション設定:
 /// - iOS/macOSの標準アニメーションカーブを採用
 /// - 一貫したデュレーションとカーブで統一感を演出
@@ -15,41 +15,41 @@ class AppleAnimations {
   // ============================================
   // Standard Durations
   // ============================================
-  
+
   /// 超高速アニメーション（マイクロインタラクション）
   static const Duration instant = Duration(milliseconds: 100);
-  
+
   /// 高速アニメーション（ボタンフィードバック、トグル）
   static const Duration fast = Duration(milliseconds: 200);
-  
+
   /// 標準アニメーション（ほとんどのUI変更）
   static const Duration standard = Duration(milliseconds: 300);
-  
+
   /// 強調アニメーション（モーダル、画面遷移）
   static const Duration emphasis = Duration(milliseconds: 400);
-  
+
   /// スローアニメーション（大きな画面変更）
   static const Duration slow = Duration(milliseconds: 500);
 
   // ============================================
   // Standard Curves
   // ============================================
-  
+
   /// 標準イーズアウト（Apple標準）
   static const Curve standard_curve = Curves.easeOutCubic;
-  
+
   /// イーズイン（開始アニメーション）
   static const Curve easeIn = Curves.easeInCubic;
-  
+
   /// イーズアウト（終了アニメーション）
   static const Curve easeOut = Curves.easeOutCubic;
-  
+
   /// イーズインアウト（往復アニメーション）
   static const Curve easeInOut = Curves.easeInOutCubic;
-  
+
   /// バウンス（強調したいインタラクション）
   static const Curve bounce = Curves.elasticOut;
-  
+
   /// スプリング（自然な物理演算風）
   static const Curve spring = Curves.easeOutBack;
 }
@@ -248,7 +248,7 @@ class _AppleSkeletonLoaderState extends State<AppleSkeletonLoader>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat();
-    
+
     _animation = Tween<double>(begin: -1.0, end: 2.0).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );

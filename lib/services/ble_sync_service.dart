@@ -43,8 +43,10 @@ class BleSyncService extends ChangeNotifier {
   // ─── GATTサービス/キャラクタリスティックUUID ──────────────────
   // これらは全端末で同一にする必要がある（アプリ識別子として機能）
   static final Guid _serviceUuid = Guid('4b474150-4c45-5353-0001-000000000001');
-  static final Guid _txCharUuid  = Guid('4b474150-4c45-5353-0001-000000000002'); // Central→Peripheralへの送信
-  static final Guid _rxCharUuid  = Guid('4b474150-4c45-5353-0001-000000000003'); // PeripheralからのNotify受信
+  static final Guid _txCharUuid =
+      Guid('4b474150-4c45-5353-0001-000000000002'); // Central→Peripheralへの送信
+  static final Guid _rxCharUuid =
+      Guid('4b474150-4c45-5353-0001-000000000003'); // PeripheralからのNotify受信
 
   // ─── 状態 ──────────────────────────────────────────────────
   bool _isRunning = false;
@@ -146,14 +148,14 @@ class BleSyncService extends ChangeNotifier {
       _connectedPeerCount = _activeConnections.length;
       notifyListeners();
 
-      await device.connect(license: License.free, timeout: const Duration(seconds: 8));
+      await device.connect(
+          license: License.free, timeout: const Duration(seconds: 8));
 
       // MTUを512バイトに交渉（iOSは自動交渉するが明示的に要求）
       await device.requestMtu(512);
 
       // サービスとキャラクタリスティックを発見
       await _performDataExchange(device);
-
     } catch (e) {
       debugPrint('⚠️ BLE接続エラー (${device.remoteId}): $e');
     } finally {
@@ -170,7 +172,8 @@ class BleSyncService extends ChangeNotifier {
     debugPrint('🔵 BLE: サービス探索中... (${device.remoteId})');
 
     final services = await device.discoverServices();
-    final targetService = services.where((s) => s.serviceUuid == _serviceUuid).firstOrNull;
+    final targetService =
+        services.where((s) => s.serviceUuid == _serviceUuid).firstOrNull;
 
     if (targetService == null) {
       debugPrint('⚠️ BLE: GapLessサービスが見つかりません');
@@ -178,8 +181,12 @@ class BleSyncService extends ChangeNotifier {
     }
 
     // キャラクタリスティックの取得
-    final txChar = targetService.characteristics.where((c) => c.characteristicUuid == _txCharUuid).firstOrNull;
-    final rxChar = targetService.characteristics.where((c) => c.characteristicUuid == _rxCharUuid).firstOrNull;
+    final txChar = targetService.characteristics
+        .where((c) => c.characteristicUuid == _txCharUuid)
+        .firstOrNull;
+    final rxChar = targetService.characteristics
+        .where((c) => c.characteristicUuid == _rxCharUuid)
+        .firstOrNull;
 
     if (txChar == null || rxChar == null) {
       debugPrint('⚠️ BLE: キャラクタリスティックが見つかりません');
@@ -207,7 +214,9 @@ class BleSyncService extends ChangeNotifier {
       await completer.future.timeout(const Duration(seconds: 10));
 
       // ④ 受信バッファをパース（終端マーカーを除去）
-      final rawJson = utf8.decode(receiveBuffer.where((b) => b != 0x00).toList(), allowMalformed: true);
+      final rawJson = utf8.decode(
+          receiveBuffer.where((b) => b != 0x00).toList(),
+          allowMalformed: true);
       await _processReceivedData(rawJson);
 
       _lastSyncTime = DateTime.now();
@@ -215,7 +224,6 @@ class BleSyncService extends ChangeNotifier {
       notifyListeners();
 
       debugPrint('✅ BLE: データ交換完了 (${device.remoteId})');
-
     } on TimeoutException {
       debugPrint('⚠️ BLE: 受信タイムアウト (${device.remoteId})');
     } finally {
@@ -254,8 +262,11 @@ class BleSyncService extends ChangeNotifier {
       final receivedSpots = decoded
           .whereType<Map<String, dynamic>>()
           .map((json) {
-            try { return HazardSpot.fromCompactJson(json); }
-            catch (_) { return null; }
+            try {
+              return HazardSpot.fromCompactJson(json);
+            } catch (_) {
+              return null;
+            }
           })
           .whereType<HazardSpot>()
           .toList();
@@ -263,7 +274,8 @@ class BleSyncService extends ChangeNotifier {
       debugPrint('🔵 BLE: ${receivedSpots.length}件のスポットを受信');
 
       // マージ処理（内部でnotifyListeners()が呼ばれ地図が即時更新される）
-      final changed = await HazardSpotRepository.instance.mergeReceived(receivedSpots);
+      final changed =
+          await HazardSpotRepository.instance.mergeReceived(receivedSpots);
       if (changed) {
         debugPrint('🗺️ 地図を更新: ${HazardSpotRepository.instance.spots.length}件');
       }
@@ -278,7 +290,6 @@ class BleSyncService extends ChangeNotifier {
     super.dispose();
   }
 }
-
 
 /// ============================================================================
 /// BleAdvertiserService - ペリフェラル（アドバタイズ）側

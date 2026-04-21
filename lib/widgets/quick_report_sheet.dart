@@ -31,7 +31,8 @@ import '../services/ble_road_report_service.dart';
 /// 被災中に立ち止まれない場面向け。ボタン1つで現在地の状態を即送信する。
 /// [dataType] に BleDataType.passable / blocked / danger を渡す。
 /// ───────────────────────────────────────────────────────────────────────────
-Future<void> sendInstantReport(BuildContext context, BleDataType dataType) async {
+Future<void> sendInstantReport(
+    BuildContext context, BleDataType dataType) async {
   final locationProv = context.read<LocationProvider>();
   final loc = locationProv.currentLocation;
   if (loc == null) {
@@ -151,7 +152,8 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(GapLessL10n.t('qr_reported').replaceAll('@label', label)),
+          content:
+              Text(GapLessL10n.t('qr_reported').replaceAll('@label', label)),
           behavior: SnackBarBehavior.floating,
           duration: const Duration(seconds: 2),
         ),
@@ -218,7 +220,8 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
               child: Text(
                 GapLessL10n.t('qr_no_photo'),
-                style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white38, fontSize: 12)),
+                style: GapLessL10n.safeStyle(
+                    const TextStyle(color: Colors.white38, fontSize: 12)),
               ),
             ),
           ],
@@ -231,21 +234,29 @@ class _QuickReportSheetState extends State<_QuickReportSheet> {
             color: const Color(0xFF43A047),
             label: GapLessL10n.t('qr_passable'),
             sublabel: GapLessL10n.t('qr_passable_sub'),
-            onTap: _submitting ? null : () => _submit(BleDataType.passable, GapLessL10n.t('qr_passable')),
+            onTap: _submitting
+                ? null
+                : () =>
+                    _submit(BleDataType.passable, GapLessL10n.t('qr_passable')),
           ),
           _ReportButton(
             icon: Icons.block,
             color: const Color(0xFFE53935),
             label: GapLessL10n.t('qr_blocked'),
             sublabel: GapLessL10n.t('qr_blocked_sub'),
-            onTap: _submitting ? null : () => _submit(BleDataType.blocked, GapLessL10n.t('qr_blocked')),
+            onTap: _submitting
+                ? null
+                : () =>
+                    _submit(BleDataType.blocked, GapLessL10n.t('qr_blocked')),
           ),
           _ReportButton(
             icon: Icons.warning_amber,
             color: const Color(0xFFFF6F00),
             label: GapLessL10n.t('qr_danger'),
             sublabel: GapLessL10n.t('qr_danger_sub'),
-            onTap: _submitting ? null : () => _submit(BleDataType.danger, GapLessL10n.t('qr_danger')),
+            onTap: _submitting
+                ? null
+                : () => _submit(BleDataType.danger, GapLessL10n.t('qr_danger')),
           ),
 
           SizedBox(height: MediaQuery.of(context).padding.bottom + 12),
@@ -310,7 +321,8 @@ class _ReportButton extends StatelessWidget {
                     ],
                   ),
                 ),
-                Icon(Icons.arrow_forward_ios, color: color.withValues(alpha: 0.6), size: 16),
+                Icon(Icons.arrow_forward_ios,
+                    color: color.withValues(alpha: 0.6), size: 16),
               ],
             ),
           ),

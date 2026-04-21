@@ -104,7 +104,10 @@ class DeviceIdService {
   String ephemeralBleIdForBucket(int hourBucket) {
     final master = _bleMasterKey ?? utf8.encode(_deviceId ?? '');
     final hmac = Hmac(sha256, master);
-    return hmac.convert(utf8.encode('ble:$hourBucket')).toString().substring(0, 8);
+    return hmac
+        .convert(utf8.encode('ble:$hourBucket'))
+        .toString()
+        .substring(0, 8);
   }
 
   String _generateUUIDv4() {

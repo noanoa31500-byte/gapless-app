@@ -147,7 +147,8 @@ class FirstAidData {
           icon: Icons.compress,
           instruction: {
             'ja': '胸骨圧迫：両手を胸の中央に置き、5cm沈むまで強く押す',
-            'en': 'Chest compressions: Both hands on chest center, push 5cm deep',
+            'en':
+                'Chest compressions: Both hands on chest center, push 5cm deep',
             'th': 'กดหน้าอก: วางมือทั้งสองตรงกลางอก กด 5 ซม.',
           },
         ),

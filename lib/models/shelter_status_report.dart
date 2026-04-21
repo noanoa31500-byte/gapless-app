@@ -35,9 +35,9 @@ class ShelterStatusReport {
   final bool isOccupied;
   final int timestamp;
   final String deviceId;
-  final int? keyId;           // v2 のみ
+  final int? keyId; // v2 のみ
   final Uint8List? signature; // v2 のみ
-  final int hops;             // メッシュ中継ホップ数
+  final int hops; // メッシュ中継ホップ数
 
   // 4時間で失効（道路レポートの2時間より長め）
   static const int _expirySeconds = 4 * 60 * 60;

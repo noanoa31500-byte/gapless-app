@@ -10,12 +10,12 @@ import '../utils/localization.dart';
 /// ============================================================================
 /// SmartCompassJapan - 日本版スマートコンパス（地震・倒壊リスク回避モード）
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 地震発生直後、被災者はパニック状態にあり、地図を読む認知的余裕がありません。
 /// 本システムは「時計の針」という日常的な概念を使い、
 /// 「2時の方向に歩いて」という直感的な音声/視覚/触覚ガイダンスを提供します。
-/// 
+///
 /// 【技術的特徴】
 /// 1. 磁気偏角補正: 地域別の偏角（東京: 約7.5度西など）を考慮した真方位計算
 /// 2. クロックナビゲーション: 12方位を時計の文字盤に対応付け
@@ -25,43 +25,43 @@ import '../utils/localization.dart';
 
 /// クロック方向（時計の文字盤）
 enum ClockDirection {
-  twelve,   // 12時 - 真っすぐ
-  one,      // 1時 - 右斜め前
-  two,      // 2時 - 右前
-  three,    // 3時 - 真右
-  four,     // 4時 - 右後ろ
-  five,     // 5時 - 右斜め後ろ
-  six,      // 6時 - 真後ろ
-  seven,    // 7時 - 左斜め後ろ
-  eight,    // 8時 - 左後ろ
-  nine,     // 9時 - 真左
-  ten,      // 10時 - 左前
-  eleven,   // 11時 - 左斜め前
+  twelve, // 12時 - 真っすぐ
+  one, // 1時 - 右斜め前
+  two, // 2時 - 右前
+  three, // 3時 - 真右
+  four, // 4時 - 右後ろ
+  five, // 5時 - 右斜め後ろ
+  six, // 6時 - 真後ろ
+  seven, // 7時 - 左斜め後ろ
+  eight, // 8時 - 左後ろ
+  nine, // 9時 - 真左
+  ten, // 10時 - 左前
+  eleven, // 11時 - 左斜め前
 }
 
 /// クロックナビゲーション結果
 class ClockNavigationResult {
   /// 時計方向
   final ClockDirection clockDirection;
-  
+
   /// 角度差（-180〜180度）
   final double angleDifference;
-  
+
   /// 正しい方向を向いているか（±15度以内）
   final bool isOnTarget;
-  
+
   /// ほぼ正しい方向か（±30度以内）
   final bool isNearTarget;
-  
+
   /// ターゲットへの距離（メートル）
   final double distanceToTarget;
-  
+
   /// 補正済み方位角（真北基準）
   final double trueBearing;
-  
+
   /// 端末の向き（磁北基準）
   final double deviceHeading;
-  
+
   /// 偏角補正値
   final double declinationCorrection;
 
@@ -79,18 +79,30 @@ class ClockNavigationResult {
   /// クロック方向のローカライズキー
   String get _directionL10nKey {
     switch (clockDirection) {
-      case ClockDirection.twelve: return 'compass_dir_12';
-      case ClockDirection.one: return 'compass_dir_1';
-      case ClockDirection.two: return 'compass_dir_2';
-      case ClockDirection.three: return 'compass_dir_3';
-      case ClockDirection.four: return 'compass_dir_4';
-      case ClockDirection.five: return 'compass_dir_5';
-      case ClockDirection.six: return 'compass_dir_6';
-      case ClockDirection.seven: return 'compass_dir_7';
-      case ClockDirection.eight: return 'compass_dir_8';
-      case ClockDirection.nine: return 'compass_dir_9';
-      case ClockDirection.ten: return 'compass_dir_10';
-      case ClockDirection.eleven: return 'compass_dir_11';
+      case ClockDirection.twelve:
+        return 'compass_dir_12';
+      case ClockDirection.one:
+        return 'compass_dir_1';
+      case ClockDirection.two:
+        return 'compass_dir_2';
+      case ClockDirection.three:
+        return 'compass_dir_3';
+      case ClockDirection.four:
+        return 'compass_dir_4';
+      case ClockDirection.five:
+        return 'compass_dir_5';
+      case ClockDirection.six:
+        return 'compass_dir_6';
+      case ClockDirection.seven:
+        return 'compass_dir_7';
+      case ClockDirection.eight:
+        return 'compass_dir_8';
+      case ClockDirection.nine:
+        return 'compass_dir_9';
+      case ClockDirection.ten:
+        return 'compass_dir_10';
+      case ClockDirection.eleven:
+        return 'compass_dir_11';
     }
   }
 
@@ -140,15 +152,15 @@ class SmartCompass with ChangeNotifier {
   /// ============================================================================
   /// 磁気偏角設定（日本各地）
   /// ============================================================================
-  /// 
+  ///
   /// 【磁気偏角とは】
   /// 磁北（コンパスが指す北）と真北（地図の北）のずれ。
   /// 日本では西偏（磁北が真北より西）しています。
-  /// 
+  ///
   /// 【なぜ補正が必要か】
   /// GPSは真北基準、コンパスは磁北基準。
   /// この差を補正しないと、被災者を間違った方向に誘導してしまいます。
-  /// 
+  ///
   /// 【地域別偏角（2024年時点の概算値）】
   /// - 北海道（札幌）: 約9.5度西
   /// - 東北: 約8.5度西
@@ -201,7 +213,7 @@ class SmartCompass with ChangeNotifier {
   void setRegion(String region) {
     _currentDeclination = regionalDeclination[region] ?? tokyoDeclination;
     notifyListeners();
-    
+
     if (kDebugMode) {
       debugPrint('🧭 偏角設定: $region = ${_currentDeclination}度');
     }
@@ -216,14 +228,14 @@ class SmartCompass with ChangeNotifier {
   /// ============================================================================
   /// calculateTrueBearing - 真方位角を計算
   /// ============================================================================
-  /// 
+  ///
   /// 【計算式】
   /// 真方位 = GPS方位 （GPSはすでに真北基準）
-  /// 
+  ///
   /// 【注意】
   /// Geolocator.bearingBetween() は真北基準の方位を返すため、
   /// この結果自体には偏角補正は不要。
-  /// 
+  ///
   /// 偏角補正が必要なのは「端末のコンパス（磁北基準）」との比較時。
   double calculateTrueBearing({
     required double fromLat,
@@ -239,39 +251,39 @@ class SmartCompass with ChangeNotifier {
   /// ============================================================================
   /// correctMagneticHeading - 磁北→真北への補正
   /// ============================================================================
-  /// 
+  ///
   /// 【計算式】
   /// 真北方位 = 磁北方位 + 偏角
-  /// 
+  ///
   /// 【例：東京の場合】
   /// 偏角 = -7.5度（西偏）
   /// コンパスが0度（磁北）を指している時、真北は -(-7.5) = +7.5度の方向
   /// つまり、磁北方位に偏角を加算すると真北方位になる
-  /// 
+  ///
   /// 【実装上の注意】
   /// 偏角は「西偏なら負、東偏なら正」で定義しているため、
   /// 真北方位 = 磁北方位 - 偏角 となる（符号に注意）
   double correctMagneticHeading(double magneticHeading) {
     // 真北方位 = 磁北方位 - 偏角（西偏は負なので、引くと足す効果）
     double trueHeading = magneticHeading - _currentDeclination;
-    
+
     // 0-360度に正規化
     while (trueHeading < 0) trueHeading += 360;
     while (trueHeading >= 360) trueHeading -= 360;
-    
+
     return trueHeading;
   }
 
   /// ============================================================================
   /// calculateClockDirection - クロックナビゲーション計算
   /// ============================================================================
-  /// 
+  ///
   /// 【アルゴリズム】
   /// 1. ターゲットへの真方位を計算
   /// 2. 端末の向き（磁北基準）を真北に補正
   /// 3. 方位差を計算（-180〜180度）
   /// 4. 時計の文字盤（12方位）に変換
-  /// 
+  ///
   /// 【なぜ「時計」なのか】
   /// - 誰でも直感的に理解できる
   /// - 「右」「左」より精度が高い（30度刻み）
@@ -295,7 +307,7 @@ class SmartCompass with ChangeNotifier {
 
     // 3. 方位差を計算（正: 右回り、負: 左回り）
     double angleDiff = trueBearing - truHeading;
-    
+
     // -180〜180度に正規化
     while (angleDiff > 180) angleDiff -= 360;
     while (angleDiff < -180) angleDiff += 360;
@@ -343,7 +355,7 @@ class SmartCompass with ChangeNotifier {
     // 30度刻みで12方位に変換
     // 各方向の中心: 0(12時), 30(1時), 60(2時), ...
     // 判定範囲: 中心±15度
-    
+
     if (normalized >= 345 || normalized < 15) return ClockDirection.twelve;
     if (normalized >= 15 && normalized < 45) return ClockDirection.one;
     if (normalized >= 45 && normalized < 75) return ClockDirection.two;
@@ -361,13 +373,13 @@ class SmartCompass with ChangeNotifier {
   /// ============================================================================
   /// ハプティックフィードバック
   /// ============================================================================
-  /// 
+  ///
   /// 【なぜバイブレーションが重要か】
   /// 1. 視覚障害者への対応
   /// 2. 夜間・悪天候時の視認性低下
   /// 3. 画面を見続ける余裕がないパニック状態
   /// 4. 両手がふさがっている状況（子供を抱えている等）
-  /// 
+  ///
   /// 【フィードバックパターン】
   /// - 正解方向を向いた瞬間: 短い振動（確認）
   /// - 将来拡張: 距離に応じた振動パターン
@@ -383,14 +395,15 @@ class SmartCompass with ChangeNotifier {
     try {
       // まずHapticFeedbackを試行（より軽量）
       await HapticFeedback.lightImpact();
-      
+
       // Vibrationパッケージでより強いフィードバック（対応端末のみ）
       final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator) {
         // 短いパルス振動（50ms × 2回）
-        await Vibration.vibrate(pattern: [0, 50, 50, 50], intensities: [0, 128, 0, 128]);
+        await Vibration.vibrate(
+            pattern: [0, 50, 50, 50], intensities: [0, 128, 0, 128]);
       }
-      
+
       if (kDebugMode) {
         debugPrint('📳 ハプティックフィードバック発生');
       }
@@ -406,11 +419,13 @@ class SmartCompass with ChangeNotifier {
   Future<void> triggerArrivalHaptic() async {
     try {
       await HapticFeedback.heavyImpact();
-      
+
       final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator) {
         // 到着パターン（長めの振動）
-        await Vibration.vibrate(pattern: [0, 200, 100, 200, 100, 200], intensities: [0, 255, 0, 255, 0, 255]);
+        await Vibration.vibrate(
+            pattern: [0, 200, 100, 200, 100, 200],
+            intensities: [0, 255, 0, 255, 0, 255]);
       }
     } catch (e) {
       // 非対応デバイス
@@ -432,7 +447,8 @@ class SmartCompass with ChangeNotifier {
 
   String _formatDistance(double meters) {
     if (meters < 100) {
-      return GapLessL10n.tParams('compass_distance_m_left', {'n': meters.toStringAsFixed(0)});
+      return GapLessL10n.tParams(
+          'compass_distance_m_left', {'n': meters.toStringAsFixed(0)});
     } else if (meters < 1000) {
       final rounded = (meters / 10).round() * 10;
       return GapLessL10n.tParams('compass_distance_m_left', {'n': '$rounded'});
@@ -445,7 +461,7 @@ class SmartCompass with ChangeNotifier {
   /// デバッグ情報出力
   void printDebugInfo(ClockNavigationResult result) {
     if (!kDebugMode) return;
-    
+
     debugPrint('''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🧭 SmartCompass Debug

@@ -144,7 +144,8 @@ class _JmaFeedScreenState extends State<JmaFeedScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.check_circle_outline, size: 64, color: Color(0xFF388E3C)),
+          const Icon(Icons.check_circle_outline,
+              size: 64, color: Color(0xFF388E3C)),
           const SizedBox(height: 16),
           Text(
             GapLessL10n.t('jma_no_alerts'),
@@ -178,8 +179,7 @@ class _AlertTile extends StatelessWidget {
     final isEq = alert.isEarthquake;
     final color = isEq ? const Color(0xFFB71C1C) : const Color(0xFF0D47A1);
     final icon = isEq ? Icons.crisis_alert : Icons.waves;
-    final timeStr =
-        DateFormat('MM/dd HH:mm').format(alert.updatedAt.toLocal());
+    final timeStr = DateFormat('MM/dd HH:mm').format(alert.updatedAt.toLocal());
     final isActive = alert.isActive;
 
     return Container(
@@ -199,8 +199,7 @@ class _AlertTile extends StatelessWidget {
           style: GapLessL10n.safeStyle(TextStyle(
             color: isActive ? Colors.white : Colors.white54,
             fontSize: 13,
-            fontWeight:
-                isActive ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
           )),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
@@ -210,8 +209,7 @@ class _AlertTile extends StatelessWidget {
             if (isActive)
               Container(
                 margin: const EdgeInsets.only(right: 6),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(4),
@@ -230,8 +228,7 @@ class _AlertTile extends StatelessWidget {
             ),
           ],
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       ),
     );
   }

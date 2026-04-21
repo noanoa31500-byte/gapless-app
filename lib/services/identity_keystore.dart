@@ -54,7 +54,8 @@ class IdentityKeystore {
     final pk = await _keyPair!.extractPublicKey();
     _publicKeyBytes = Uint8List.fromList(pk.bytes);
     final hash = ch.sha256.convert(_publicKeyBytes!).bytes;
-    _deviceId = hash.take(4).map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+    _deviceId =
+        hash.take(4).map((b) => b.toRadixString(16).padLeft(2, '0')).join();
     debugPrint('IdentityKeystore: device=$_deviceId');
   }
 

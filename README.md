@@ -18,6 +18,27 @@
 
 ---
 
+## 🎉 マイルストーン: BLE すれ違い通信 実機双方向動作達成（2026-04-21）
+
+iPhone 16 + iPhone 16 Pro の 2 端末間で、**インターネット完全遮断下** でのすれ違い通信に成功。
+
+| 検証項目 | 結果 |
+|---|---|
+| 通行不可ポイントのマーキング伝播 | ✅ |
+| GPS トラックスナップショット自動共有 | ✅ |
+| 片方端末を **スリープ状態** にしてもカウンター増加 | ✅（iOS バックグラウンド BLE 動作確認） |
+| カスタム Service UUID `4b474150-...-0001` 経由のサービス発見 | ✅ |
+
+### この日に判明した iOS 固有のハマりどころ
+1. **iOS は `withServices` フィルタなしの scan で広告から name/uuid を剥がす**（プライバシー仕様）→ scan は `withServices` を必須にし、それでも見つからなければ「全件 probe → 接続後に GATT 検査」へフォールバック
+2. **flutter_blue_plus v2 系は `withServices` と他フィルタを混用すると `withServices` 側を黙って空にする**（plugin source 確認済）→ 単独指定に統一
+3. **`adapterState.first` は権限ダイアログ表示直後に `.unknown` を返す瞬間がある**。直接パスで `startAdvertising` を呼ぶと永遠に起動しない → **必ず `adapterState.listen` の `.on` ハンドラ内で `startAdvertising()` を呼ぶ（idempotent に）**
+4. iOS の State Restoration（`CBPeripheralManagerOptionRestoreIdentifierKey`）は再インストール直後に挙動不安定 → 一旦無効化
+
+これらの知見と native 側 (`BlePeripheralManager.swift`) の `getStatus` 診断 method channel が今回のブレークスルーの核。
+
+---
+
 ## ⚡ なぜこれが革新的なのか
 
 ### 1. 📡 BLE リレー情報ネットワーク（インターネット不要のP2P通信）
@@ -163,7 +184,8 @@
 ### オフライン通信（BLE）
 | 技術 | 用途 |
 |------|------|
-| flutter_blue_plus | BLE Central による受信（Peripheral 送信は iOS/Android ともに次フェーズ） |
+| flutter_blue_plus | BLE Central による受信。Peripheral は iOS ネイティブ（Android は次フェーズ） |
+| CBPeripheralManager (Swift) | iOS ペリフェラル広告 + RX/TX Characteristic（method channel `gapless/ble_peripheral`） |
 | カスタム GATT UUID | 道路レポート・SOS・避難所状況の多種パケット |
 | sqflite | BLE受信データのローカルDB管理 |
 
@@ -188,7 +210,7 @@
 |---------|------|
 | `gapless/bg_task` | Background Task Extension |
 | `gapless/brightness` | 画面輝度制御 |
-| CBPeripheralManager | （計画中・未実装。iOS BLE 送信側は次フェーズで MethodChannel 経由ネイティブ実装予定） |
+| `gapless/ble_peripheral` | CBPeripheralManager ブリッジ（startAdvertising / updateData / getStatus / onDataReceived）。2026-04-21 実機双方向達成 |
 
 ---
 
@@ -261,10 +283,11 @@ flutter run
 |---|---|---|---|
 | 🚨 緊急対応 | DisasterWatcher 災害検知 | 🔧 | 現状はネット死活のみ。Day 2 で JMA AND 条件追加予定 |
 | 🚨 緊急対応 | コンパス画面ロック（PopScope）/ 超シンプル緊急UI | ✅ | |
-| 📡 BLE | 道路レポート受信（iOS Central） | 🟡 | 実機 3 台のみ、屋内 |
-| 📡 BLE | SOSビーコン受信（長押し3秒で送信意図） | 🟡 | 受信処理は実機検証済。送信は iOS/Android 共に未実装 |
-| 📡 BLE | iOS Peripheral 送信 | 🔧 | 現状未実装（Method Channel + CBPeripheralManager 必要）|
-| 📡 BLE | Android Peripheral 送信 | 🔧 | パーミッション宣言含め未対応 |
+| 📡 BLE | 道路レポート受信（iOS Central） | ✅ | 2026-04-21 iPhone 16 / 16 Pro 双方向確認 |
+| 📡 BLE | SOSビーコン受信（長押し3秒で送信意図） | 🟡 | 受信処理は実機検証済。送信は屋外群衆未検証 |
+| 📡 BLE | iOS Peripheral 送信（CBPeripheralManager） | ✅ | 2026-04-21 達成。adapterState listener 内 startAdvertising パターン |
+| 📡 BLE | iOS バックグラウンド BLE（片方スリープ伝播） | ✅ | `bluetooth-peripheral` / `bluetooth-central` Background Mode で動作 |
+| 📡 BLE | Android Peripheral 送信 | 🔧 | パーミッション宣言含め未対応（Phase 2） |
 | 🧭 ナビ | A* 経路計算（Isolate） | ✅ | |
 | 🧭 ナビ | Dead Reckoning（GPS 80% / DR 20% 加重平均） | ⚠️ | 屋外実走テスト未実施。誤差は理論推定。カルマン未使用 |
 | 🧭 ナビ | TTS 音声ナビ（15秒間隔・ボリュームキー再生） | ✅ | |

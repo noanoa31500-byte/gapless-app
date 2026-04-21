@@ -29,16 +29,16 @@ import 'ble_repository.dart';
 // ============================================================================
 
 class RoadScore {
-  static const double safe       = 1.0;
-  static const double neutral    = 0.5;
-  static const double caution    = 0.3;
+  static const double safe = 1.0;
+  static const double neutral = 0.5;
+  static const double caution = 0.3;
   static const double impassable = 0.0;
 }
 
 class RoadScoreResult {
   final double score;
-  final int    reportCount;
-  final bool   hasAutoDetected;
+  final int reportCount;
+  final bool hasAutoDetected;
 
   const RoadScoreResult({
     required this.score,
@@ -46,8 +46,8 @@ class RoadScoreResult {
     this.hasAutoDetected = false,
   });
 
-  bool get isSafe       => score >= 1.0;
-  bool get isCaution    => score <= 0.3 && score > 0.0;
+  bool get isSafe => score >= 1.0;
+  bool get isCaution => score <= 0.3 && score > 0.0;
   bool get isImpassable => score <= 0.0;
 }
 
@@ -65,19 +65,22 @@ class RoadScoreCalculator {
     // 近傍フィルタ
     final nearby = allReports.where((r) {
       return _distM(
-            r.packet.lat, r.packet.lng,
-            midpoint.latitude, midpoint.longitude,
+            r.packet.lat,
+            r.packet.lng,
+            midpoint.latitude,
+            midpoint.longitude,
           ) <=
           nearbyRadiusM;
     }).toList();
 
-    if (nearby.isEmpty) return const RoadScoreResult(score: RoadScore.neutral, reportCount: 0);
+    if (nearby.isEmpty)
+      return const RoadScoreResult(score: RoadScore.neutral, reportCount: 0);
 
     // 鮮度 × 信頼度で重み付きカウントを集計
-    double passableW   = 0.0; // dataType=2
-    double blockedW    = 0.0; // dataType=3
-    double dangerW     = 0.0; // dataType=4
-    bool   hasAuto     = false;
+    double passableW = 0.0; // dataType=2
+    double blockedW = 0.0; // dataType=3
+    double dangerW = 0.0; // dataType=4
+    bool hasAuto = false;
 
     for (final r in nearby) {
       final age = now - r.packet.timestamp;
@@ -116,8 +119,8 @@ class RoadScoreCalculator {
     }
 
     return RoadScoreResult(
-      score:           score,
-      reportCount:     nearby.length,
+      score: score,
+      reportCount: nearby.length,
       hasAutoDetected: hasAuto,
     );
   }

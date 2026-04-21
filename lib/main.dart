@@ -77,7 +77,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 void main() {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
-    
+
     // 🆔 デバイスUUID初期化（重複評価防止・プライバシー設計）
     // アプリ起動直後にlocalStorageからUUIDを取得 or 生成して保存
     await DeviceIdService.instance.init();
@@ -85,9 +85,10 @@ void main() {
     // 🔐 端末固有 Ed25519 鍵ペア初期化 (BLE SOS の署名に使用)。
     // 失敗しても起動は続行 (鍵なし = v1 wire fallback)。
     unawaited(IdentityKeystore.instance.ensureInitialized().catchError((e) {
-      debugPrint('IdentityKeystore init failed: $e — falling back to unsigned BLE');
+      debugPrint(
+          'IdentityKeystore init failed: $e — falling back to unsigned BLE');
     }));
-    
+
     // System UI Config
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
@@ -135,8 +136,8 @@ class GapLessApp extends StatelessWidget {
             ],
             child: Consumer<EmergencyThemeNotifier>(
               builder: (context, emergencyTheme, _) {
-                final String primaryFont =
-                    _fontFamilyForLocale(Locale(languageProvider.currentLanguage));
+                final String primaryFont = _fontFamilyForLocale(
+                    Locale(languageProvider.currentLanguage));
                 final ThemeData themeData = emergencyTheme.isEmergency
                     ? AppTheme.buildEmergency(
                         fontFamily: primaryFont,
@@ -167,7 +168,8 @@ class GapLessApp extends StatelessWidget {
                     Locale('vi'),
                     Locale('ko'),
                     Locale('th'),
-                    Locale('fil'), // ISO 639-2 (内部コード) — tl-PH は callback で fil に変換
+                    Locale(
+                        'fil'), // ISO 639-2 (内部コード) — tl-PH は callback で fil に変換
                     Locale('ne'),
                     Locale('pt'),
                     Locale('id'),
@@ -185,7 +187,9 @@ class GapLessApp extends StatelessWidget {
                   localeResolutionCallback: (locale, supportedLocales) {
                     if (locale == null) return const Locale('en');
                     // tl-PH (Tagalog) → fil (Filipino) — no 'tl' translation block
-                    final langCode = locale.languageCode == 'tl' ? 'fil' : locale.languageCode;
+                    final langCode = locale.languageCode == 'tl'
+                        ? 'fil'
+                        : locale.languageCode;
                     for (final s in supportedLocales) {
                       if (s.languageCode == langCode &&
                           s.countryCode == locale.countryCode) return s;
@@ -236,20 +240,31 @@ class GapLessApp extends StatelessWidget {
 
   String _fontFamilyForLocale(Locale locale) {
     switch (locale.languageCode) {
-      case 'ja': return 'NotoSansJP';
+      case 'ja':
+        return 'NotoSansJP';
       // zh_TW is stored as a single language code string, handle both forms
-      case 'zh_TW': return 'NotoSansTC';
-      case 'zh': return locale.countryCode == 'TW' ? 'NotoSansTC' : 'NotoSansSC';
-      case 'ko': return 'NotoSansKR';
-      case 'th': return 'NotoSansThai';
-      case 'my': return 'NotoSansMyanmar';
-      case 'si': return 'NotoSansSinhala';
+      case 'zh_TW':
+        return 'NotoSansTC';
+      case 'zh':
+        return locale.countryCode == 'TW' ? 'NotoSansTC' : 'NotoSansSC';
+      case 'ko':
+        return 'NotoSansKR';
+      case 'th':
+        return 'NotoSansThai';
+      case 'my':
+        return 'NotoSansMyanmar';
+      case 'si':
+        return 'NotoSansSinhala';
       case 'hi':
-      case 'ne': return 'NotoSansDevanagari';
-      case 'bn': return 'NotoSansBengali';
-      case 'ar': return 'NotoSansArabic';
+      case 'ne':
+        return 'NotoSansDevanagari';
+      case 'bn':
+        return 'NotoSansBengali';
+      case 'ar':
+        return 'NotoSansArabic';
       // fr, ms, es, pt, id, fil, uz, vi, en use NotoSans (Latin + Cyrillic covered)
-      default:   return 'NotoSans';
+      default:
+        return 'NotoSans';
     }
   }
 
@@ -258,21 +273,41 @@ class GapLessApp extends StatelessWidget {
     bool isModal = false;
 
     switch (settings.name) {
-      case '/onboarding': page = const OnboardingScreen(); break;
-      case '/splash': page = const SplashScreen(); break;
-      case '/home': page = const HomeScreen(); break;
-      case '/compass': page = const DisasterCompassScreen(); break;
-      case '/dashboard': page = const ShelterDashboardScreen(); break;
-      case '/emergency_card': page = const EmergencyCardScreen(); isModal = true; break;
-      case '/survival_guide': page = const SurvivalGuideScreen(); break;
-      case '/triage': page = const TriageScreen(); break;
-      case '/risk_radar': page = const RiskRadarCompassScreen(); break;
+      case '/onboarding':
+        page = const OnboardingScreen();
+        break;
+      case '/splash':
+        page = const SplashScreen();
+        break;
+      case '/home':
+        page = const HomeScreen();
+        break;
+      case '/compass':
+        page = const DisasterCompassScreen();
+        break;
+      case '/dashboard':
+        page = const ShelterDashboardScreen();
+        break;
+      case '/emergency_card':
+        page = const EmergencyCardScreen();
+        isModal = true;
+        break;
+      case '/survival_guide':
+        page = const SurvivalGuideScreen();
+        break;
+      case '/triage':
+        page = const TriageScreen();
+        break;
+      case '/risk_radar':
+        page = const RiskRadarCompassScreen();
+        break;
       case '/tutorial':
         page = TutorialScreen(onComplete: () {
           navigatorKey.currentState?.pushReplacementNamed('/home');
         });
         break;
-      default: return null;
+      default:
+        return null;
     }
     return isModal ? AppleModalRoute(page: page) : ApplePageRoute(page: page);
   }
@@ -347,7 +382,8 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       }
     });
 
-    _connectivitySubscription = ConnectivityService.onConnectivityChanged.listen((connected) {
+    _connectivitySubscription =
+        ConnectivityService.onConnectivityChanged.listen((connected) {
       if (mounted) setState(() => _isOffline = !connected);
       if (connected) {
         _heartbeatFailCount = 0;
@@ -357,7 +393,8 @@ class _DisasterWatcherState extends State<DisasterWatcher>
 
     WebBridgeInterface.listenForOfflineEvent(
         () => _triggerDisasterMode("JS Event", forceManual: true));
-    WebBridgeInterface.listenForOnlineEvent(() => _onNetworkRestored("JS Event"));
+    WebBridgeInterface.listenForOnlineEvent(
+        () => _onNetworkRestored("JS Event"));
 
     // App Heartbeat（ヒステリシス付き・複数エンドポイント）
     // 単一サーバー障害では disaster mode に入らないよう、
@@ -393,7 +430,10 @@ class _DisasterWatcherState extends State<DisasterWatcher>
   /// （Captive Portal は任意の URL に対し 200 + ログインHTML を返すため）
   Future<bool> _probeNetwork() async {
     final endpoints = kIsWeb
-        ? [Uri.parse('${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')]
+        ? [
+            Uri.parse(
+                '${Uri.base.origin}/?_t=${DateTime.now().millisecondsSinceEpoch}')
+          ]
         : [
             Uri.parse('https://clients3.google.com/generate_204'),
             Uri.parse('https://www.google.com/generate_204'),
@@ -498,11 +538,14 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       return;
     }
 
-    double dist = Geolocator.distanceBetween(_lastLocation.latitude, _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
+    double dist = Geolocator.distanceBetween(_lastLocation.latitude,
+        _lastLocation.longitude, newLoc.latitude, newLoc.longitude);
 
     // GPS 精度が悪いときは閾値を自動引き上げ（精度2σ超えたときだけ再ルート）
     double accuracy = 10.0;
-    try { accuracy = (newLoc.accuracy as num).toDouble(); } catch (_) {}
+    try {
+      accuracy = (newLoc.accuracy as num).toDouble();
+    } catch (_) {}
     final threshold = (accuracy * 2.0).clamp(20.0, 80.0);
     if (dist > threshold) {
       _lastLocation = newLoc;
@@ -520,7 +563,8 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       double destLat = 35.6895;
       double destLng = 139.6917;
       if (shelterProvider.shelters.isNotEmpty) {
-        final nearest = shelterProvider.getAbsoluteNearest(LatLng(loc.latitude, loc.longitude));
+        final nearest = shelterProvider
+            .getAbsoluteNearest(LatLng(loc.latitude, loc.longitude));
         if (nearest != null) {
           destLat = nearest.lat;
           destLng = nearest.lng;
@@ -559,9 +603,8 @@ class _DisasterWatcherState extends State<DisasterWatcher>
         ),
       );
       if (mounted && result.found) {
-        final route = result.waypoints
-            .map((p) => [p.latitude, p.longitude])
-            .toList();
+        final route =
+            result.waypoints.map((p) => [p.latitude, p.longitude]).toList();
         shelterProvider.updateSafeRoute(route);
         debugPrint('✅ Route updated: ${route.length} waypoints');
       }
@@ -660,7 +703,8 @@ class _DisasterWatcherState extends State<DisasterWatcher>
       final now = DateTime.now();
       if (_lastNavTransitionAt != null &&
           now.difference(_lastNavTransitionAt!) < _navCooldown) {
-        debugPrint('⏱️ Nav cooldown: skip ${toDisaster ? "compass" : "home"} transition');
+        debugPrint(
+            '⏱️ Nav cooldown: skip ${toDisaster ? "compass" : "home"} transition');
         return;
       }
       _lastNavTransitionAt = now;
@@ -676,8 +720,10 @@ class _DisasterWatcherState extends State<DisasterWatcher>
 
   @override
   Widget build(BuildContext context) {
-    final isDisasterMode = context.select<ShelterProvider, bool>((p) => p.isDisasterMode);
-    final isSafeInShelter = context.select<ShelterProvider, bool>((p) => p.isSafeInShelter);
+    final isDisasterMode =
+        context.select<ShelterProvider, bool>((p) => p.isDisasterMode);
+    final isSafeInShelter =
+        context.select<ShelterProvider, bool>((p) => p.isSafeInShelter);
 
     if (_wasDisasterMode != isDisasterMode) {
       // 災害モード = 緊急テーマ。Consumer 側を再ビルドさせるため
@@ -807,7 +853,9 @@ class _AppStartupState extends State<AppStartup> {
     final disasterStartedAt = prefs.getInt('disaster_mode_started_at') ?? 0;
     final disasterAgeMs =
         DateTime.now().millisecondsSinceEpoch - disasterStartedAt;
-    if (disasterActive && disasterAgeMs >= 0 && disasterAgeMs <= 30 * 60 * 1000) {
+    if (disasterActive &&
+        disasterAgeMs >= 0 &&
+        disasterAgeMs <= 30 * 60 * 1000) {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -898,7 +946,8 @@ class _LoadingAppState extends State<LoadingApp> {
         ..addFont(rootBundle.load('assets/fonts/NotoSansSinhala-Regular.ttf'))
         ..addFont(rootBundle.load('assets/fonts/NotoSansSinhala-Bold.ttf')),
       FontLoader('NotoSansDevanagari')
-        ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf'))
+        ..addFont(
+            rootBundle.load('assets/fonts/NotoSansDevanagari-Regular.ttf'))
         ..addFont(rootBundle.load('assets/fonts/NotoSansDevanagari-Bold.ttf')),
       FontLoader('NotoSansBengali')
         ..addFont(rootBundle.load('assets/fonts/NotoSansBengali-Regular.ttf'))
@@ -927,16 +976,16 @@ class _LoadingAppState extends State<LoadingApp> {
                   color: const Color(0xFF2E7D32).withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.shield_rounded, size: 48, color: Color(0xFF2E7D32)),
+                child: const Icon(Icons.shield_rounded,
+                    size: 48, color: Color(0xFF2E7D32)),
               ),
               const SizedBox(height: 24),
               const Text(
                 'GapLess',
                 style: TextStyle(
-                  fontSize: 32, 
-                  fontWeight: FontWeight.bold, 
-                  color: Color(0xFF2E7D32)
-                ),
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF2E7D32)),
               ),
               const SizedBox(height: 32),
               const CircularProgressIndicator(color: Color(0xFFFF6F00)),

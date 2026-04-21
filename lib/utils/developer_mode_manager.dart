@@ -30,7 +30,8 @@ class DeveloperModeManager {
     await prefs.setString('last_region', region);
 
     debugPrint('Developer Mode Activated!');
-    debugPrint('   Target: ${targetLocation.latitude}, ${targetLocation.longitude}');
+    debugPrint(
+        '   Target: ${targetLocation.latitude}, ${targetLocation.longitude}');
     debugPrint('   Region: $region');
   }
 

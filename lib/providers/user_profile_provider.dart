@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,18 +30,18 @@ class UserProfile {
   });
 
   Map<String, dynamic> toJson() => {
-    'name': name,
-    'nationality': nationality,
-    'bloodType': bloodType,
-    'birthDate': birthDate,
-    'medications': medications,
-    'emergencyContact': emergencyContact,
-    'emergencyPhone': emergencyPhone,
-    'allergies': allergies,
-    'needs': needs,
-    'conditions': conditions,
-    'languages': languages,
-  };
+        'name': name,
+        'nationality': nationality,
+        'bloodType': bloodType,
+        'birthDate': birthDate,
+        'medications': medications,
+        'emergencyContact': emergencyContact,
+        'emergencyPhone': emergencyPhone,
+        'allergies': allergies,
+        'needs': needs,
+        'conditions': conditions,
+        'languages': languages,
+      };
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(

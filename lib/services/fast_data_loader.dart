@@ -9,7 +9,7 @@ class FastDataLoader {
 
   /// GeoJSONファイルを非同期で読み込み、パースして返します。
   /// [assetPath] アセットのパス (例: 'assets/data/roads_jp.geojson')
-  /// 
+  ///
   /// 特徴:
   /// 1. キャッシュヒット時は即座にデータを返します。
   /// 2. `compute` を使用してJSONパースを別Isolate(スレッド)で実行するため、UIスレッドをブロックしません。
@@ -26,7 +26,7 @@ class FastDataLoader {
 
       // 2. 文字列として読み込み (非同期I/O)
       final String jsonString = await rootBundle.loadString(assetPath);
-      
+
       // 3. Isolateでパース実行 (ここが重い処理)
       // UIスレッドをフリーズさせないための重要なステップ
       debugPrint('🔄 FastDataLoader: Parsing JSON in background isolate...');
@@ -34,10 +34,11 @@ class FastDataLoader {
 
       // 4. 結果をキャッシュして返す
       _cache[assetPath] = data;
-      
+
       stopwatch.stop();
-      debugPrint('✅ FastDataLoader: Loaded $assetPath in ${stopwatch.elapsedMilliseconds}ms');
-      
+      debugPrint(
+          '✅ FastDataLoader: Loaded $assetPath in ${stopwatch.elapsedMilliseconds}ms');
+
       return data as Map<String, dynamic>;
     } catch (e) {
       debugPrint('❌ FastDataLoader Error loading $assetPath: $e');
@@ -65,6 +66,6 @@ class FastDataLoader {
   /// 【応用】ストリーミング的な処理の提案
   /// 巨大すぎる(50MB超)ファイルの場合、JSONを分割して保存し、
   /// 必要なチャンクだけを読み込む設計が推奨されます。
-  /// 
+  ///
   /// 例: loadChunkedData('roads', chunkId: 1)
 }

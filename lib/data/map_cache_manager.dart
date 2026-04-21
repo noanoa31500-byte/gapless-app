@@ -97,8 +97,7 @@ class MapCacheManager {
     for (final tile in index.tiles) {
       final centerLat = (tile.latMin + tile.latMax) / 2;
       final centerLng = (tile.lngMin + tile.lngMax) / 2;
-      final dist =
-          haversineKm(currentLat, currentLng, centerLat, centerLng);
+      final dist = haversineKm(currentLat, currentLng, centerLat, centerLng);
 
       if (dist > evictThresholdKm) {
         final base = await _mapsDir();

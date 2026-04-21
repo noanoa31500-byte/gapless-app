@@ -15,7 +15,7 @@ import 'emergency_card_screen.dart';
 /// ============================================================================
 /// ShelterDashboardScreen - Apple HIG準拠の避難所ダッシュボード
 /// ============================================================================
-/// 
+///
 /// デザインコンセプト: "Safe & Calm"
 /// 避難完了後の安心感を視覚的に伝える緑基調のApple風デザイン
 class ShelterDashboardScreen extends StatefulWidget {
@@ -38,7 +38,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -65,7 +65,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
         slivers: [
           // Apple風カスタムAppBar
           _buildSliverAppBar(context),
-          
+
           // コンテンツ
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
@@ -74,19 +74,21 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                 // 1. Safety Status Card (メイン)
                 _buildSafetyStatusCard(),
                 const SizedBox(height: 24),
-                
+
                 // 2. Quick Actions
                 _buildQuickActions(context),
                 const SizedBox(height: 32),
-                
+
                 // 3. Emergency ID Card
-                _buildSectionHeader(Icons.badge_rounded, GapLessL10n.t('header_emergency_gear')),
+                _buildSectionHeader(Icons.badge_rounded,
+                    GapLessL10n.t('header_emergency_gear')),
                 const SizedBox(height: 12),
                 _buildEmergencyIdCard(context),
                 const SizedBox(height: 32),
-                
+
                 // 4. Survival Guide Grid
-                _buildSectionHeader(Icons.menu_book_rounded, GapLessL10n.t('header_survival_guide')),
+                _buildSectionHeader(Icons.menu_book_rounded,
+                    GapLessL10n.t('header_survival_guide')),
                 const SizedBox(height: 12),
                 _buildSurvivalGrid(context),
               ]),
@@ -94,7 +96,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
           ),
         ],
       ),
-      
+
       // AI Chat FAB (グラスモーフィズム)
       floatingActionButton: _buildGlassFab(context),
     );
@@ -196,7 +198,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                   ),
                 ),
                 const SizedBox(width: 20),
-                
+
                 // Text
                 Expanded(
                   child: Column(
@@ -249,7 +251,8 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                   height: MediaQuery.of(context).size.height * 0.9,
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: const EmergencyCardScreen(),
                 ),
@@ -257,7 +260,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
             },
           ),
           const SizedBox(width: 12),
-          
+
           // Talk to AI
           _buildQuickActionButton(
             icon: Icons.smart_toy_rounded,
@@ -272,7 +275,8 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                   height: MediaQuery.of(context).size.height * 0.9,
                   decoration: const BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
                   ),
                   child: const ChatScreen(),
                 ),
@@ -344,7 +348,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
   // ============================================
   Widget _buildEmergencyIdCard(BuildContext context) {
     final profile = context.watch<UserProfileProvider>().profile;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -379,14 +383,16 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
             ),
           ),
           const SizedBox(width: 16),
-          
+
           // Info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  profile.name.isNotEmpty ? profile.name : GapLessL10n.t('label_unknown'),
+                  profile.name.isNotEmpty
+                      ? profile.name
+                      : GapLessL10n.t('label_unknown'),
                   style: AppleTypography.title3.copyWith(
                     color: AppleColors.label,
                   ),
@@ -400,13 +406,15 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                 const SizedBox(height: 4),
                 _buildInfoRow(
                   '${GapLessL10n.t('label_allergies')}:',
-                  profile.allergies.isNotEmpty ? profile.allergies.join(', ') : GapLessL10n.t('label_unknown'),
+                  profile.allergies.isNotEmpty
+                      ? profile.allergies.join(', ')
+                      : GapLessL10n.t('label_unknown'),
                   AppleColors.warningOrange,
                 ),
               ],
             ),
           ),
-          
+
           // Arrow
           Icon(
             Icons.chevron_right_rounded,
@@ -445,7 +453,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
     final region = context.watch<ShelterProvider>().currentRegion;
     final guides = SurvivalData.getOfficialGuides(region);
     final lang = context.read<LanguageProvider>().currentLanguage;
-    
+
     return GridView.builder(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -459,7 +467,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
       itemBuilder: (context, index) {
         final item = guides[index];
         final title = item.title[lang] ?? item.title['en']!;
-        
+
         return GestureDetector(
           onTap: () => SurvivalGuideModal.show(context, item, lang),
           child: Container(
@@ -496,7 +504,7 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
                   ),
                 ),
                 const SizedBox(height: 12),
-                
+
                 // Title
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -559,7 +567,8 @@ class _ShelterDashboardScreenState extends State<ShelterDashboardScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.smart_toy_rounded, color: Colors.white, size: 22),
+                const Icon(Icons.smart_toy_rounded,
+                    color: Colors.white, size: 22),
                 const SizedBox(width: 10),
                 Text(
                   GapLessL10n.t('btn_talk_ai'),

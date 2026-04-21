@@ -2,11 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 /// 超直感的方向変換ヘルパー
-/// 
+///
 /// 防災エンジニアとしての哲学:
 /// パニック状態では「北北東」という言葉は理解できません。
 /// しかし「2時の方角（右斜め前）」なら、誰でも瞬時に理解できます。
-/// 
+///
 /// 災害時のUI設計原則:
 /// 1. 認知負荷を最小化
 /// 2. 日常的な言葉を使用
@@ -21,9 +21,9 @@ class IntuitiveDirectionHelper {
     double diff = bearing - deviceHeading;
     while (diff > 180) diff -= 360;
     while (diff < -180) diff += 360;
-    
+
     final absDiff = diff.abs();
-    
+
     // === 正面付近（±11.25度以内）===
     if (absDiff <= 11.25) {
       return DirectionInfo(
@@ -36,7 +36,7 @@ class IntuitiveDirectionHelper {
         glowIntensity: 1.0, // 最大発光
       );
     }
-    
+
     // === 右側のズレ ===
     if (diff > 0) {
       if (diff <= 33.75) {
@@ -112,7 +112,7 @@ class IntuitiveDirectionHelper {
         );
       }
     }
-    
+
     // === 左側のズレ ===
     else {
       if (diff >= -33.75) {
@@ -189,16 +189,28 @@ class IntuitiveDirectionHelper {
       }
     }
   }
-  
+
   /// 16方位の名称を取得
   static String getCompassDirection(double bearing) {
     const directions = [
-      'N', 'NNE', 'NE', 'ENE',
-      'E', 'ESE', 'SE', 'SSE',
-      'S', 'SSW', 'SW', 'WSW',
-      'W', 'WNW', 'NW', 'NNW',
+      'N',
+      'NNE',
+      'NE',
+      'ENE',
+      'E',
+      'ESE',
+      'SE',
+      'SSE',
+      'S',
+      'SSW',
+      'SW',
+      'WSW',
+      'W',
+      'WNW',
+      'NW',
+      'NNW',
     ];
-    
+
     final index = ((bearing + 11.25) / 22.5).floor() % 16;
     return directions[index];
   }
@@ -208,25 +220,25 @@ class IntuitiveDirectionHelper {
 class DirectionInfo {
   /// メインメッセージ（大きく表示）
   final String mainMessage;
-  
+
   /// 時計の位置（例: "11時"）
   final String clockPosition;
-  
+
   /// 相対的な方向（例: "左斜め前"）
   final String relativeDirection;
-  
+
   /// 誘導色
   final Color color;
-  
+
   /// 緊急度
   final DirectionUrgency urgency;
-  
+
   /// コンパス方位（補足情報）
   final String compassLabel;
-  
+
   /// 発光強度（0.0-1.0）
   final double glowIntensity;
-  
+
   DirectionInfo({
     required this.mainMessage,
     required this.clockPosition,
@@ -240,10 +252,10 @@ class DirectionInfo {
 
 /// 方向のずれの緊急度
 enum DirectionUrgency {
-  onTrack,      // 正解（緑）
-  slight,       // わずかなズレ（黄色）
-  moderate,     // 中程度のズレ（濃い黄色）
-  significant,  // 大きなズレ（オレンジ）
-  major,        // 後方（赤オレンジ）
-  critical,     // 逆方向（赤）
+  onTrack, // 正解（緑）
+  slight, // わずかなズレ（黄色）
+  moderate, // 中程度のズレ（濃い黄色）
+  significant, // 大きなズレ（オレンジ）
+  major, // 後方（赤オレンジ）
+  critical, // 逆方向（赤）
 }

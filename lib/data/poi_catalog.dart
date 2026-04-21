@@ -11,11 +11,11 @@ import 'dart:convert';
 // ============================================================================
 
 enum PoiCategory {
-  shelter,      // 避難所
-  hospital,     // 病院・医療機関
-  convenience,  // コンビニ・スーパー（食料・日用品調達）
-  supply,       // 給水所・自販機（水・物資補給）
-  landmark,     // ランドマーク（その他施設）
+  shelter, // 避難所
+  hospital, // 病院・医療機関
+  convenience, // コンビニ・スーパー（食料・日用品調達）
+  supply, // 給水所・自販機（水・物資補給）
+  landmark, // ランドマーク（その他施設）
 }
 
 // ============================================================================
@@ -35,39 +35,57 @@ class PoiType {
 
   // --- 避難所 (20–29) ---
   static const shelterFlood = PoiType(
-    id: 20, labelJa: '避難所（洪水対応）', category: PoiCategory.shelter,
+    id: 20,
+    labelJa: '避難所（洪水対応）',
+    category: PoiCategory.shelter,
   );
   static const shelterEarthquake = PoiType(
-    id: 21, labelJa: '避難所（地震対応）', category: PoiCategory.shelter,
+    id: 21,
+    labelJa: '避難所（地震対応）',
+    category: PoiCategory.shelter,
   );
   static const shelterGeneral = PoiType(
-    id: 22, labelJa: '避難所', category: PoiCategory.shelter,
+    id: 22,
+    labelJa: '避難所',
+    category: PoiCategory.shelter,
   );
 
   // --- コンビニ・スーパー (30–31) ---
   static const convenience = PoiType(
-    id: 30, labelJa: 'コンビニ', category: PoiCategory.convenience,
+    id: 30,
+    labelJa: 'コンビニ',
+    category: PoiCategory.convenience,
   );
   static const supermarket = PoiType(
-    id: 31, labelJa: 'スーパー', category: PoiCategory.convenience,
+    id: 31,
+    labelJa: 'スーパー',
+    category: PoiCategory.convenience,
   );
 
   // --- 給水・補給 (32–33) ---
   static const drinkingWater = PoiType(
-    id: 32, labelJa: '給水所', category: PoiCategory.supply,
+    id: 32,
+    labelJa: '給水所',
+    category: PoiCategory.supply,
   );
   static const vendingMachine = PoiType(
-    id: 33, labelJa: '自販機', category: PoiCategory.supply,
+    id: 33,
+    labelJa: '自販機',
+    category: PoiCategory.supply,
   );
 
   // --- 病院 (40–49) ---
   static const hospital = PoiType(
-    id: 40, labelJa: '病院', category: PoiCategory.hospital,
+    id: 40,
+    labelJa: '病院',
+    category: PoiCategory.hospital,
   );
 
   // --- ランドマーク (90+) ---
   static const landmark = PoiType(
-    id: 90, labelJa: 'ランドマーク', category: PoiCategory.landmark,
+    id: 90,
+    labelJa: 'ランドマーク',
+    category: PoiCategory.landmark,
   );
 
   /// type_id から PoiType を取得。未知のIDは landmark を返す。
@@ -114,18 +132,18 @@ class PoiFeature {
   });
 
   // --- カテゴリ判定 ---
-  bool get isShelter     => type.category == PoiCategory.shelter;
-  bool get isHospital    => type.category == PoiCategory.hospital;
+  bool get isShelter => type.category == PoiCategory.shelter;
+  bool get isHospital => type.category == PoiCategory.hospital;
   bool get isConvenience => type.category == PoiCategory.convenience;
-  bool get isSupply      => type.category == PoiCategory.supply;
-  bool get isLandmark    => type.category == PoiCategory.landmark;
+  bool get isSupply => type.category == PoiCategory.supply;
+  bool get isLandmark => type.category == PoiCategory.landmark;
 
   // --- 災害種別フラグ（避難所のみ有効） ---
-  bool get handlesFlood      => flags & 1  != 0;
-  bool get handlesLandslide  => flags & 2  != 0;
-  bool get handlesEarthquake => flags & 4  != 0;
-  bool get handlesTsunami    => flags & 8  != 0;
-  bool get handlesFire       => flags & 16 != 0;
+  bool get handlesFlood => flags & 1 != 0;
+  bool get handlesLandslide => flags & 2 != 0;
+  bool get handlesEarthquake => flags & 4 != 0;
+  bool get handlesTsunami => flags & 8 != 0;
+  bool get handlesFire => flags & 16 != 0;
   bool get handlesInundation => flags & 32 != 0;
 }
 
@@ -162,27 +180,28 @@ class GplbPoiParser {
     for (int i = 0; i < count; i++) {
       if (offset + 13 > bytes.length) break;
 
-      final typeId   = bytes[offset];
-      final lat      = bd.getInt32(offset + 1,  Endian.little) / 1e6;
-      final lng      = bd.getInt32(offset + 5,  Endian.little) / 1e6;
+      final typeId = bytes[offset];
+      final lat = bd.getInt32(offset + 1, Endian.little) / 1e6;
+      final lng = bd.getInt32(offset + 5, Endian.little) / 1e6;
       final capacity = bd.getUint16(offset + 9, Endian.little);
-      final flags    = bytes[offset + 11];
-      final nameLen  = bytes[offset + 12];
-      final nameEnd  = offset + 13 + nameLen;
+      final flags = bytes[offset + 11];
+      final nameLen = bytes[offset + 12];
+      final nameEnd = offset + 13 + nameLen;
       if (nameEnd > bytes.length) break;
 
       final name = nameLen > 0
-          ? utf8.decode(bytes.sublist(offset + 13, nameEnd), allowMalformed: true)
+          ? utf8.decode(bytes.sublist(offset + 13, nameEnd),
+              allowMalformed: true)
           : '（名称不明）';
       offset = nameEnd;
 
       result.add(PoiFeature(
-        type:     PoiType.fromId(typeId),
-        lat:      lat,
-        lng:      lng,
+        type: PoiType.fromId(typeId),
+        lat: lat,
+        lng: lng,
         capacity: capacity,
-        flags:    flags,
-        name:     name,
+        flags: flags,
+        name: name,
       ));
     }
 

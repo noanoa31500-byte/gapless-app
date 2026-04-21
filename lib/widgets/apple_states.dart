@@ -5,7 +5,7 @@ import '../utils/apple_animations.dart';
 /// ============================================================================
 /// Apple HIG準拠の状態表示ウィジェット
 /// ============================================================================
-/// 
+///
 /// エラー、空状態、ローディングなどの状態を統一されたApple風デザインで表示
 
 /// 空状態（データがない場合）
@@ -48,7 +48,7 @@ class AppleEmptyState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Title
             Text(
               title,
@@ -57,7 +57,7 @@ class AppleEmptyState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             // Description
             if (description != null) ...[
               const SizedBox(height: 8),
@@ -69,7 +69,7 @@ class AppleEmptyState extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
-            
+
             // Action Button
             if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: 24),
@@ -79,7 +79,8 @@ class AppleEmptyState extends StatelessWidget {
                   backgroundColor: AppleColors.actionBlue,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -117,7 +118,7 @@ class AppleErrorState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isWarning ? AppleColors.warningOrange : AppleColors.dangerRed;
-    
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -133,13 +134,15 @@ class AppleErrorState extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                isWarning ? Icons.warning_amber_rounded : Icons.error_outline_rounded,
+                isWarning
+                    ? Icons.warning_amber_rounded
+                    : Icons.error_outline_rounded,
                 size: 44,
                 color: color,
               ),
             ),
             const SizedBox(height: 24),
-            
+
             // Title
             Text(
               title,
@@ -148,7 +151,7 @@ class AppleErrorState extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            
+
             // Description
             if (description != null) ...[
               const SizedBox(height: 8),
@@ -160,7 +163,7 @@ class AppleErrorState extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ],
-            
+
             // Retry Button
             if (retryLabel != null && onRetry != null) ...[
               const SizedBox(height: 24),
@@ -171,7 +174,8 @@ class AppleErrorState extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: color,
                   side: BorderSide(color: color),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -200,7 +204,8 @@ class AppleNetworkError extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppleErrorState(
       title: 'No Connection',
-      description: customMessage ?? 'Please check your internet connection and try again.',
+      description: customMessage ??
+          'Please check your internet connection and try again.',
       retryLabel: 'Try Again',
       onRetry: onRetry,
       isWarning: true,
@@ -240,7 +245,7 @@ class AppleLocationError extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            
+
             Text(
               'Location Required',
               style: AppleTypography.title2.copyWith(
@@ -257,7 +262,7 @@ class AppleLocationError extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            
+
             if (onEnableLocation != null)
               ElevatedButton.icon(
                 onPressed: onEnableLocation,
@@ -267,7 +272,8 @@ class AppleLocationError extends StatelessWidget {
                   backgroundColor: AppleColors.actionBlue,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -318,7 +324,7 @@ class AppleSuccessState extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              
+
               Text(
                 title,
                 style: AppleTypography.title2.copyWith(
@@ -326,7 +332,7 @@ class AppleSuccessState extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               if (description != null) ...[
                 const SizedBox(height: 8),
                 Text(

@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GapLessL10n {
   // 現在の言語コード（20言語対応: ja/en/th/zh/zh_TW/ko/fil/id/my/si/hi/ne/bn/es/pt/mn/uz/vi/fr/ms）
   static String lang = 'ja';
-  
+
   static const String _langKey = 'app_language';
 
   // 短文・体言止めを中心とした翻訳辞書
@@ -63,7 +63,7 @@ class GapLessL10n {
       'set_region': '地域設定',
       'set_lang': '言語',
       'set_demo': 'デモ設定',
-      
+
       // Compass Messages
       'loc_permission_denied': '位置情報が許可されていません',
       'loc_open_settings': '設定を開く',
@@ -77,21 +77,22 @@ class GapLessL10n {
       'perm_skip': 'スキップ',
       'perm_compass_warning': 'コンパス機能が制限されます',
       'perm_location_required': '位置情報が必要です',
-      'perm_location_required_desc': '位置情報がないとナビが使えません。\n設定から位置情報を「Appの使用中は許可」以上にしてください。',
+      'perm_location_required_desc':
+          '位置情報がないとナビが使えません。\n設定から位置情報を「Appの使用中は許可」以上にしてください。',
       'loc_acquiring': '位置情報を取得中...',
       'loc_no_destination': '目的地を設定してください',
       'loc_select_in_chat': '下のチャットで「避難所」を選んでください',
-      
+
       'header_ai_guide': 'AI避難ガイド',
       'hint_name': '山田 太郎',
-      
+
       // Chips - Allergies
       'allergy_eggs': '卵',
       'allergy_peanuts': 'ピーナッツ',
       'allergy_milk': '牛乳',
       'allergy_seafood': '魚介類',
       'allergy_wheat': '小麦',
-      
+
       // Chips - Needs
       'need_wheelchair': '車椅子',
       'need_visual': '視覚障害',
@@ -122,7 +123,7 @@ class GapLessL10n {
       'guide_female': '女性のケア',
       'guide_info': '情報の集め方',
       'guide_money': 'お金・貴重品',
-      
+
       // Flood/Tropical Guide (legacy)
       'guide_electric': '感電注意',
       'guide_disease': '水害感染症',
@@ -146,13 +147,13 @@ class GapLessL10n {
       // Chat Headers
       'header_category_guide': '公式サバイバルガイド (重要6項目)',
       'header_category_ai': 'AI生活サポート (その他の相談)',
-      
+
       // Headers & Buttons
       'online_ai_btn': 'オンラインAI',
       'header_shelter_support': '避難生活サポート',
       'btn_talk_ai': 'サポートAIと話す',
       'btn_emergency_gear': 'Emergency Gear (必須アイテム)',
-      
+
       // Dialogs & Misc
       'btn_clear': 'クリア',
       'msg_reset_desc': 'すべての設定をリセット',
@@ -163,7 +164,7 @@ class GapLessL10n {
       'msg_network_restored': '通信が復旧しました。マップに戻ります。',
       'msg_unknown_location': '詳細な場所が不明なため案内できません',
       'msg_no_facility_nearby': '近くに施設が見つかりませんでした',
-      
+
       // Settings - GPS
       'lbl_gps_tracking': 'GPS追跡',
       'status_tracking_on': '現在位置を追跡中',
@@ -173,17 +174,17 @@ class GapLessL10n {
       'lbl_current_location': '現在位置',
       'lbl_no_location': '位置情報なし',
       'msg_location_cleared': '位置情報をクリアしました',
-      
+
       // Hazards
       'hazard_flood': '洪水警報 (FLOOD)',
       'hazard_earthquake': '地震警報 (EARTHQUAKE)',
-      
+
       // Marker Categories (New)
       'marker_shelter': '避難所',
       'marker_food_supply': '食料・物資',
       'marker_flood_shelter': '洪水対応避難所',
       'marker_official_shelter': '指定避難所',
-      
+
       // Popup Details
       'type': 'タイプ',
       'status': 'ステータス',
@@ -201,14 +202,14 @@ class GapLessL10n {
       'sensor_loading': 'センサー取得中...',
       'standby': '待機中...',
       'label_target': '目標',
-      
+
       // New Features v2
       'survival_guide_tooltip': '応急処置・サバイバルガイド',
       'triage_tooltip': '怪我のチェック',
       'voice_guidance': '音声ガイダンス',
       'voice_on': '音声ON',
       'voice_off': '音声OFF',
-      
+
       // Shelter Details
       'address': '住所',
       'capacity': '収容人数',
@@ -218,13 +219,13 @@ class GapLessL10n {
       'not_supported': '非対応',
       'shop_type': '店舗タイプ',
       'map_launch_failed': '地図アプリを起動できませんでした',
-      
+
       // Safety Navigation
       'msg_safer_location': '⚠️ より安全な場所に変更: @name',
       'msg_route_calculated': '✅ 安全ルート計算完了',
       'msg_hazard_detected': '⚠️ ハザードゾーン検出',
       'msg_avoiding_hazard': 'ハザードを避けたルートで案内',
-      
+
       // Splash Screen
       'splash_loading': '起動中...',
       'splash_loading_lang': '言語データを読み込み中...',
@@ -263,11 +264,13 @@ class GapLessL10n {
 
       'splash_subtitle': '災害時ナビゲーション',
       'splash_disclaimer_title': 'ご利用の前に',
-      'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
+      'splash_disclaimer_jp':
+          'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
       'splash_warning': '緊急時は公式の避難指示に従ってください',
       'splash_agree': '同意して開始',
-      
+
       // Map Screen
       'map_title': 'マップ',
       'compass_mode_on': 'コンパスモード: ON',
@@ -277,12 +280,12 @@ class GapLessL10n {
       'label_coordinates': '座標',
       'label_status': 'ステータス',
       'navigation_developing': 'ナビゲーション機能は開発中です',
-      
+
       // Profile Edit Screen
       'profile_saved': '保存しました',
       'profile_settings': 'プロフィール設定',
       'profile_save': '保存する',
-      
+
       // Triage Screen
       'triage_title': '怪我のチェック',
       'triage_back': '戻る',
@@ -332,7 +335,7 @@ class GapLessL10n {
       'triage_minor_title': '軽症：避難所で対応可能',
       'triage_minor_desc': '軽い怪我です。避難所のスタッフに相談してください。',
       'triage_minor_rec': '✅ 最寄りの避難所へ向かう',
-      
+
       // Directions
       'dir_north': '北',
       'dir_northeast': '北東',
@@ -342,7 +345,7 @@ class GapLessL10n {
       'dir_southwest': '南西',
       'dir_west': '西',
       'dir_northwest': '北西',
-      
+
       // Risk Radar
       'risk_radar_title': 'リスクレーダー',
       'risk_ready': '準備完了',
@@ -595,9 +598,11 @@ class GapLessL10n {
       'tutorial_voice_title': '音声ガイダンス',
       'tutorial_voice_desc': '方向と距離を音声でお知らせします。パニック時でも、聞くだけで避難できます。',
       'tutorial_first_aid_title': '応急処置ガイド',
-      'tutorial_first_aid_desc': '止血・心肺蘇生などの応急処置を、ステップバイステップで確認できます。オフラインでも使えます。',
+      'tutorial_first_aid_desc':
+          '止血・心肺蘇生などの応急処置を、ステップバイステップで確認できます。オフラインでも使えます。',
       'tutorial_emergency_gear_title': 'Emergency Gear',
-      'tutorial_emergency_gear_desc': '名前・血液型・アレルギーを登録しておくと、緊急時にスタッフに見せることができます。',
+      'tutorial_emergency_gear_desc':
+          '名前・血液型・アレルギーを登録しておくと、緊急時にスタッフに見せることができます。',
       'tutorial_ready_title': '準備完了！',
       'tutorial_ready_desc': 'いざという時、GapLessがあなたを守ります。まずは設定画面でプロフィールを登録しましょう。',
       'onb_select_language_title': '言語を選択',
@@ -727,28 +732,32 @@ class GapLessL10n {
       'tab_map': 'Map',
       'tab_guide': 'AI Guide',
       'tab_settings': 'Config',
-      
+
       // Map Status
       'status_safe': '✅ SAFE',
       'status_danger': '⚠️ HAZARD',
       'status_offline': 'OFFLINE',
-      
+
       // Safety Check Dialog
       'dialog_safety_title': 'Safety Check',
-      'dialog_safety_desc': 'Have you arrived safely?\nEnd navigation and switch to support mode.',
+      'dialog_safety_desc':
+          'Have you arrived safely?\nEnd navigation and switch to support mode.',
       'btn_yes_arrived': 'Yes, Arrived',
       'btn_cancel': 'Cancel',
-      
+
       // Bot Messages
-      'chat_error_not_found': 'Sorry, information not found. Please select another topic.',
+      'chat_error_not_found':
+          'Sorry, information not found. Please select another topic.',
       'bot_analyzing': 'Analyzing...',
       'bot_loc_error': '⚠️ Location not available.',
       'bot_found': '🔍 **Facility Found**',
-      'bot_found_desc': '"**@name**" is **@dist** away. Please head towards the icon on the map.',
+      'bot_found_desc':
+          '"**@name**" is **@dist** away. Please head towards the icon on the map.',
       'bot_prefix_normal': 'Please stay calm. We are with you.',
       'bot_prefix_name': 'Stay calm, @name. We are with you.',
       'bot_not_found': '⚠️ **Not Found Nearby**',
-      'bot_not_found_desc': 'No data within 3km. Recommended to head to a "Shelter".',
+      'bot_not_found_desc':
+          'No data within 3km. Recommended to head to a "Shelter".',
       'bot_go_to': 'Go to @name',
       'bot_dest_set': 'Destination set: @name',
       'bot_dest_changed': 'Changed: @old -> @new',
@@ -777,7 +786,7 @@ class GapLessL10n {
       'nav_dist': 'Dist', // e.g., Dist 300m
       'nav_calib': 'Calibrating...',
       'nav_heading': 'Heading',
-      
+
       // Bot Responses
       'bot_hospital': '🏥 To Hospital',
       'bot_water': '💧 To Water Supply',
@@ -788,15 +797,18 @@ class GapLessL10n {
       'sos_hold_hint': 'Hold to send SOS',
       'sos_sent': 'SOS broadcast sent to nearby devices',
       'sos_received': 'SOS signal received nearby',
-      'emergency_call_instruction': 'Call 119 (fire/ambulance) or 110 (police) for emergency',
+      'emergency_call_instruction':
+          'Call 119 (fire/ambulance) or 110 (police) for emergency',
       'emergency_screen_title': 'Emergency',
       'emergency_nearest': 'Nearest shelter:',
       'emergency_sos_resend': 'Resend',
       'emergency_call': 'Call Help',
       'emergency_water': 'Find Water',
-      'emergency_water_tip': 'Check taps first. If unavailable, look for rivers or springs.',
+      'emergency_water_tip':
+          'Check taps first. If unavailable, look for rivers or springs.',
       'emergency_first_aid': 'First Aid',
-      'emergency_first_aid_tip': 'Clean wounds and apply pressure. Do not move fractures.',
+      'emergency_first_aid_tip':
+          'Clean wounds and apply pressure. Do not move fractures.',
       'emergency_repeat': 'Repeat',
       // Accessibility & SOS hints
       'sos_button_a11y': 'SOS broadcast button',
@@ -810,7 +822,8 @@ class GapLessL10n {
       'first_aid_a11y': 'Play first-aid guide',
       'tts_replay_a11y': 'Replay guidance',
       'disaster_mode_exit': 'False alarm? Home',
-      'disaster_mode_exit_confirm': 'Exit disaster mode and return home. Hold 3 seconds.',
+      'disaster_mode_exit_confirm':
+          'Exit disaster mode and return home. Hold 3 seconds.',
       'disaster_mode_exit_done': 'Disaster mode disabled',
       'jma_feed_title': 'Official Alerts',
       'jma_loading': 'Fetching from JMA...',
@@ -836,25 +849,28 @@ class GapLessL10n {
       'clear_cache': 'Clear Cache',
       'app_version': 'Version',
       'app_credit': 'Mitou Junior Project',
-      
+
       // Compass Messages
       'loc_permission_denied': 'Location Access Denied',
       'loc_open_settings': 'Open Settings',
       'perm_location_title': 'Location',
-      'perm_location_desc': 'Gets your current location in the background while navigating',
+      'perm_location_desc':
+          'Gets your current location in the background while navigating',
       'perm_motion_title': 'Motion / Sensors',
-      'perm_motion_desc': 'Uses compass and accelerometer for accurate direction',
+      'perm_motion_desc':
+          'Uses compass and accelerometer for accurate direction',
       'perm_ble_title': 'Bluetooth',
       'perm_ble_desc': 'Shares road conditions with nearby users (optional)',
       'perm_allow': 'Allow',
       'perm_skip': 'Skip',
       'perm_compass_warning': 'Compass function will be limited',
       'perm_location_required': 'Location Required',
-      'perm_location_required_desc': 'Navigation requires location. Please enable "Always Allow" in Settings.',
+      'perm_location_required_desc':
+          'Navigation requires location. Please enable "Always Allow" in Settings.',
       'loc_acquiring': 'Acquiring location...',
       'loc_no_destination': 'Please set a destination',
       'loc_select_in_chat': 'Select "Shelter" in chat below',
-      
+
       // Shelter Types
       'shelter_evacuation': 'Shelter',
       'shelter_school': 'School',
@@ -862,7 +878,7 @@ class GapLessL10n {
       'shelter_government': 'Govt',
       'shelter_temple': 'Temple',
       'shelter_other': 'Other',
-      
+
       // Common
       'title': 'GapLess',
       'shelters': 'Shelters',
@@ -876,17 +892,17 @@ class GapLessL10n {
       'set_lang': 'Language',
       'set_demo': 'Demo Mode',
       'btn_arrived_label': 'Arrived at Shelter',
-      
+
       'header_ai_guide': 'AI Evacuation Guide',
       'hint_name': 'Taro Yamada',
-      
+
       // Chips - Allergies
       'allergy_eggs': 'Eggs',
       'allergy_peanuts': 'Peanuts',
       'allergy_milk': 'Milk',
       'allergy_seafood': 'Seafood',
       'allergy_wheat': 'Wheat',
-      
+
       // Chips - Allergies (extended)
       'allergy_soy': 'Soy',
       'allergy_tree_nuts': 'Tree Nuts',
@@ -1011,13 +1027,13 @@ class GapLessL10n {
       // Chat Headers
       'header_category_guide': 'Official Survival Guide',
       'header_category_ai': 'AI Life Support',
-      
+
       // Headers & Buttons
       'online_ai_btn': 'Online AI',
       'header_shelter_support': 'Shelter Support',
       'btn_talk_ai': 'Talk to AI Support',
       'btn_emergency_gear': 'Emergency Gear',
-      
+
       // Dialogs & Misc
       'btn_clear': 'Clear',
       'msg_reset_desc': 'Reset all settings',
@@ -1028,7 +1044,7 @@ class GapLessL10n {
       'msg_network_restored': 'Network Restored. Returning to Map...',
       'msg_unknown_location': 'Cannot guide to unknown location',
       'msg_no_facility_nearby': 'No facility found nearby',
-      
+
       // Settings - GPS
       'lbl_gps_tracking': 'GPS Tracking',
       'status_tracking_on': 'Tracking in real-time',
@@ -1038,17 +1054,17 @@ class GapLessL10n {
       'lbl_current_location': 'Current Location',
       'lbl_no_location': 'No location',
       'msg_location_cleared': 'Location cleared',
-      
+
       // Hazards
       'hazard_flood': 'FLOOD ALERT',
       'hazard_earthquake': 'EARTHQUAKE ALERT',
-      
+
       // Marker Categories (New)
       'marker_shelter': 'Shelter',
       'marker_food_supply': 'Food/Supply',
       'marker_flood_shelter': 'Flood Shelter',
       'marker_official_shelter': 'Official Shelter',
-      
+
       // Popup Details
       'official_data': 'Official Data',
       'navigate_here': 'Navigate Here',
@@ -1060,14 +1076,14 @@ class GapLessL10n {
       'sensor_loading': 'Acquiring sensor...',
       'standby': 'Standby...',
       'label_target': 'TARGET',
-      
+
       // New Features v2
       'survival_guide_tooltip': 'First Aid & Survival Guide',
       'triage_tooltip': 'Injury Check',
       'voice_guidance': 'Voice Guidance',
       'voice_on': 'Voice ON',
       'voice_off': 'Voice OFF',
-      
+
       // Shelter Details
       'address': 'Address',
       'capacity': 'Capacity',
@@ -1077,13 +1093,13 @@ class GapLessL10n {
       'not_supported': 'Not Available',
       'shop_type': 'Shop Type',
       'map_launch_failed': 'Could not open map app',
-      
+
       // Safety Navigation
       'msg_safer_location': '⚠️ Changed to safer location: @name',
       'msg_route_calculated': '✅ Safe route calculated',
       'msg_hazard_detected': '⚠️ Hazard zone detected',
       'msg_avoiding_hazard': 'Navigating around hazard',
-      
+
       // Splash Screen
       'splash_loading': 'Starting...',
       'splash_loading_lang': 'Loading language data...',
@@ -1097,7 +1113,8 @@ class GapLessL10n {
 
       // Disaster Mode Confirmation
       'disaster_mode_confirm_title': 'Enable Disaster Mode?',
-      'disaster_mode_confirm_body': 'Switch to compass navigation and start guidance to the nearest shelter.',
+      'disaster_mode_confirm_body':
+          'Switch to compass navigation and start guidance to the nearest shelter.',
       'disaster_mode_confirm_ok': 'Enable',
 
       // Map Data Download Screen
@@ -1106,7 +1123,8 @@ class GapLessL10n {
       'map_download_error': 'Download failed',
       'map_load_error': 'Failed to load map data',
       'unknown_error': 'Unknown error',
-      'map_no_connection': 'No internet connection.\nPlease enable Wi-Fi or mobile data.',
+      'map_no_connection':
+          'No internet connection.\nPlease enable Wi-Fi or mobile data.',
       'map_download_failed': 'Failed to download @filename.\nPlease retry.',
       'map_download_retry': 'Retry',
       'map_download_skip': 'Skip and launch',
@@ -1114,7 +1132,8 @@ class GapLessL10n {
       'map_info_added': 'Information added',
       'map_tap_hint': 'Tap map to add hazard info',
       'map_hazard_title': 'Add Hazard Info',
-      'map_hazard_hint': 'This hazard info will be recorded and shared with nearby iPhones via BLE. No personal data is collected.',
+      'map_hazard_hint':
+          'This hazard info will be recorded and shared with nearby iPhones via BLE. No personal data is collected.',
       'map_submit': 'Add info here',
       'map_submitting': 'Submitting...',
       'map_ble_syncing': 'Syncing with @count devices',
@@ -1122,11 +1141,14 @@ class GapLessL10n {
 
       'splash_subtitle': 'Disaster Navigation',
       'splash_disclaimer_title': 'Disclaimer',
-      'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
-      'splash_warning': 'In emergencies, follow official evacuation instructions',
+      'splash_disclaimer_jp':
+          'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
+      'splash_warning':
+          'In emergencies, follow official evacuation instructions',
       'splash_agree': 'I Agree',
-      
+
       // Map Screen
       'map_title': 'Map',
       'compass_mode_on': 'Compass Mode: ON',
@@ -1136,12 +1158,12 @@ class GapLessL10n {
       'label_coordinates': 'Coordinates',
       'label_status': 'Status',
       'navigation_developing': 'Navigation feature is under development',
-      
+
       // Profile Edit Screen
       'profile_saved': 'Saved',
       'profile_settings': 'Profile Settings',
       'profile_save': 'Save',
-      
+
       // Triage Screen
       'triage_title': 'Injury Check',
       'triage_back': 'Back',
@@ -1180,18 +1202,21 @@ class GapLessL10n {
       'triage_pain_severe': 'Severe pain',
       // Severity labels
       'triage_critical_title': 'CRITICAL: Need immediate medical care',
-      'triage_critical_desc': 'May be life-threatening. Go to hospital immediately.',
+      'triage_critical_desc':
+          'May be life-threatening. Go to hospital immediately.',
       'triage_critical_rec': '🚨 Go to nearest hospital immediately',
       'triage_urgent_title': 'URGENT: Medical attention recommended',
-      'triage_urgent_desc': 'Professional treatment needed. See a doctor as soon as possible.',
+      'triage_urgent_desc':
+          'Professional treatment needed. See a doctor as soon as possible.',
       'triage_urgent_rec': '🏥 Prioritize shelter with medical facility',
       'triage_moderate_title': 'MODERATE: Evacuate and monitor',
-      'triage_moderate_desc': 'Get first aid at shelter and monitor your condition.',
+      'triage_moderate_desc':
+          'Get first aid at shelter and monitor your condition.',
       'triage_moderate_rec': '⚠️ Go to shelter and get first aid',
       'triage_minor_title': 'MINOR: Can be handled at shelter',
       'triage_minor_desc': 'Minor injury. Consult shelter staff if needed.',
       'triage_minor_rec': '✅ Go to nearest shelter',
-      
+
       // Directions
       'dir_north': 'N',
       'dir_northeast': 'NE',
@@ -1201,7 +1226,7 @@ class GapLessL10n {
       'dir_southwest': 'SW',
       'dir_west': 'W',
       'dir_northwest': 'NW',
-      
+
       // Risk Radar
       'risk_radar_title': 'Risk Radar',
       'risk_ready': 'READY',
@@ -1271,18 +1296,21 @@ class GapLessL10n {
 
       // Dead reckoning badge
       'dr_badge': 'GPS lost — Est. position (@steps steps)',
-      'dr_accuracy_low': '⚠ Accuracy low — verify position using visible landmarks',
+      'dr_accuracy_low':
+          '⚠ Accuracy low — verify position using visible landmarks',
       'dr_fix_location': 'I am here',
       'dr_tap_to_fix': 'Tap the map to correct your location',
       'dr_location_fixed': 'Location corrected',
       'dr_uncertain_title': 'Location unknown',
-      'dr_uncertain_body': 'GPS signal lost. Please go outside to an open area where you can see the sky.',
+      'dr_uncertain_body':
+          'GPS signal lost. Please go outside to an open area where you can see the sky.',
       'dr_shelter_list': 'Nearest shelters',
 
       // Navigation screen
       'nav_screen_title': 'Safe Route',
       'nav_arrive_title': 'Arrived at destination',
-      'nav_arrive_body': 'Did you arrive safely at the shelter?\nConfirm to open the shelter dashboard.',
+      'nav_arrive_body':
+          'Did you arrive safely at the shelter?\nConfirm to open the shelter dashboard.',
       'nav_still_moving': 'Still moving',
       'nav_safe_confirm': 'Confirm safe',
       'nav_profile_title': 'Movement Profile',
@@ -1312,7 +1340,8 @@ class GapLessL10n {
       'nav_report_menu_title': 'Report current conditions',
       'nav_nearest_shelter': 'Nearest shelter',
       'road_report_title': 'Report road status at your location',
-      'road_report_hint': 'This report will be shared with nearby users via Bluetooth.',
+      'road_report_hint':
+          'This report will be shared with nearby users via Bluetooth.',
       'report_passable': 'Passable',
       'report_blocked': 'Blocked',
       'gps_none': 'No GPS',
@@ -1332,7 +1361,8 @@ class GapLessL10n {
       'settings_update_failed': 'Update failed: @error',
 
       // TTS voice announcements
-      'tts_narrow_road': 'Narrow road ahead: @width meters. Proceed with caution.',
+      'tts_narrow_road':
+          'Narrow road ahead: @width meters. Proceed with caution.',
       'tts_turn': 'Turn @direction in @dist',
       'tts_dir_right': 'right',
       'tts_dir_left': 'left',
@@ -1340,9 +1370,11 @@ class GapLessL10n {
       'tts_waypoint': 'Checkpoint passed. @dist remaining.',
       'tts_out_of_bounds': 'Outside map range. Switching to return home mode.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -1364,20 +1396,27 @@ class GapLessL10n {
       'tutorial_next': 'Next',
       'tutorial_start': 'Start',
       'tutorial_welcome_title': 'Welcome to GapLess',
-      'tutorial_welcome_desc': 'An offline disaster navigation app that guides you to safety.',
+      'tutorial_welcome_desc':
+          'An offline disaster navigation app that guides you to safety.',
       'tutorial_compass_title': 'Navigate with Compass',
-      'tutorial_compass_desc': 'In disaster mode, a large arrow points to shelter. Follow the arrow direction.',
+      'tutorial_compass_desc':
+          'In disaster mode, a large arrow points to shelter. Follow the arrow direction.',
       'tutorial_voice_title': 'Voice Guidance',
-      'tutorial_voice_desc': 'Direction and distance are announced by voice. Even in panic, just listen to evacuate.',
+      'tutorial_voice_desc':
+          'Direction and distance are announced by voice. Even in panic, just listen to evacuate.',
       'tutorial_first_aid_title': 'First Aid Guide',
-      'tutorial_first_aid_desc': 'Check first aid like bleeding control and CPR step by step. Works offline.',
+      'tutorial_first_aid_desc':
+          'Check first aid like bleeding control and CPR step by step. Works offline.',
       'tutorial_emergency_gear_title': 'Emergency Gear',
-      'tutorial_emergency_gear_desc': 'Register name, blood type, and allergies to show staff in emergency.',
+      'tutorial_emergency_gear_desc':
+          'Register name, blood type, and allergies to show staff in emergency.',
       'tutorial_ready_title': "You're Ready!",
-      'tutorial_ready_desc': 'GapLess will protect you. Start by registering your profile in settings.',
+      'tutorial_ready_desc':
+          'GapLess will protect you. Start by registering your profile in settings.',
       'onb_select_language_title': 'Select Language',
       'onb_location_title': 'Allow Location',
-      'onb_location_desc': 'Location permission is needed for\naccurate navigation to shelters.',
+      'onb_location_desc':
+          'Location permission is needed for\naccurate navigation to shelters.',
       'onb_allow_location': 'Allow Location',
       'onb_perm_granted': 'Location permitted',
       'onb_set_later': 'Set up later',
@@ -1429,24 +1468,26 @@ class GapLessL10n {
       'tab_map': 'แผนที่',
       'tab_guide': 'AI',
       'tab_settings': 'ตั้งค่า',
-      
+
       // Map Status
       'status_safe': '✅ ปลอดภัย',
       'status_danger': '⚠️ น้ำท่วม',
       'status_offline': 'ออฟไลน์',
-      
+
       // Safety Check Dialog
       'dialog_safety_title': 'ตรวจสอบความปลอดภัย',
-      'dialog_safety_desc': 'คุณถึงที่พักพิงหรือยัง?\nสิ้นสุดการนำทางและเปลี่ยนเป็นโหมดสนับสนุน',
+      'dialog_safety_desc':
+          'คุณถึงที่พักพิงหรือยัง?\nสิ้นสุดการนำทางและเปลี่ยนเป็นโหมดสนับสนุน',
       'btn_yes_arrived': 'ถึงแล้ว',
       'btn_cancel': 'ยกเลิก',
-      
+
       // Bot Messages
       'chat_error_not_found': 'ขอโทษ ไม่พบข้อมูล กรุณาเลือกหัวข้ออื่น',
       'bot_analyzing': 'กำลังวิเคราะห์...',
       'bot_loc_error': '⚠️ ไม่สามารถระบุตำแหน่งได้',
       'bot_found': '🔍 **พบสถานที่**',
-      'bot_found_desc': '「**@name**」อยู่ห่างออกไป **@dist** โปรดมุ่งหน้าไปยังไอคอน',
+      'bot_found_desc':
+          '「**@name**」อยู่ห่างออกไป **@dist** โปรดมุ่งหน้าไปยังไอคอน',
       'bot_prefix_normal': 'โปรดใจเย็นๆ เราอยู่เคียงข้างคุณ',
       'bot_prefix_name': 'ใจเย็นๆ คุณ @name เราอยู่เคียงข้างคุณ',
       'bot_not_found': '⚠️ **ไม่พบสถานที่ใกล้เคียง**',
@@ -1479,7 +1520,7 @@ class GapLessL10n {
       'nav_dist': 'ระยะ',
       'nav_calib': 'ปรับเทียบ...',
       'nav_heading': 'ทิศ',
-      
+
       // Bot Responses
       'bot_hospital': '🏥 ไปโรงพยาบาล',
       'bot_water': '💧 ไปน้ำดื่ม',
@@ -1487,7 +1528,7 @@ class GapLessL10n {
       'bot_safe_shelter': '🟢 ไปที่พักพิง',
       'bot_reroute': '⚠️ หลีกเลี่ยงอันตราย',
       'bot_sos': '⛑️ โหมด SOS',
-      
+
       // Settings
       'settings_title': 'การตั้งค่า',
       'settings_language': 'ภาษา',
@@ -1503,7 +1544,7 @@ class GapLessL10n {
       'clear_cache': 'ล้างแคช',
       'app_version': 'เวอร์ชัน',
       'app_credit': 'โครงการ Mitou Junior',
-      
+
       // Compass Messages
       'loc_permission_denied': 'ไม่ได้รับอนุญาตให้ใช้ตำแหน่ง',
       'loc_open_settings': 'เปิดการตั้งค่า',
@@ -1517,11 +1558,12 @@ class GapLessL10n {
       'perm_skip': 'ข้าม',
       'perm_compass_warning': 'ฟังก์ชันเข็มทิศจะถูกจำกัด',
       'perm_location_required': 'ต้องการตำแหน่ง',
-      'perm_location_required_desc': 'การนำทางต้องการตำแหน่ง กรุณาเปิด "อนุญาตเสมอ" ในการตั้งค่า',
+      'perm_location_required_desc':
+          'การนำทางต้องการตำแหน่ง กรุณาเปิด "อนุญาตเสมอ" ในการตั้งค่า',
       'loc_acquiring': 'กำลังระบุตำแหน่ง...',
       'loc_no_destination': 'กรุณาตั้งจุดหมายปลายทาง',
       'loc_select_in_chat': 'เลือก "ที่พักพิง" ในแชทด้านล่าง',
-      
+
       // Shelter Types
       'shelter_evacuation': 'ที่พักพิง',
       'shelter_school': 'โรงเรียน',
@@ -1529,7 +1571,7 @@ class GapLessL10n {
       'shelter_government': 'รัฐบาล',
       'shelter_temple': 'วัด',
       'shelter_other': 'อื่นๆ',
-      
+
       // Common
       'title': 'GapLess',
       'shelters': 'ที่พักพิง',
@@ -1543,17 +1585,17 @@ class GapLessL10n {
       'set_lang': 'ภาษา',
       'set_demo': 'โหมดสาธิต',
       'btn_arrived_label': 'ถึงที่พักพิงแล้ว',
-      
+
       'header_ai_guide': 'AI แนะนำการอพยพ',
       'hint_name': 'สมชาย ใจดี',
-      
+
       // Chips - Allergies
       'allergy_eggs': 'ไข่',
       'allergy_peanuts': 'ถั่วลิสง',
       'allergy_milk': 'นม',
       'allergy_seafood': 'อาหารทะเล',
       'allergy_wheat': 'แป้งสาลี',
-      
+
       // Chips - Needs
       'need_wheelchair': 'วีลแชร์',
       'need_visual': 'ผู้พิการทางสายตา',
@@ -1613,7 +1655,7 @@ class GapLessL10n {
       'header_shelter_support': 'สนับสนุนที่พักพิง',
       'btn_talk_ai': 'คุยกับ AI',
       'btn_emergency_gear': 'อุปกรณ์ฉุกเฉิน',
-      
+
       // Dialogs & Misc
       'btn_clear': 'ล้าง',
       'msg_reset_desc': 'รีเซ็ตการตั้งค่าทั้งหมด',
@@ -1624,7 +1666,7 @@ class GapLessL10n {
       'msg_network_restored': 'เชื่อมต่อเครือข่ายแล้ว กำลังกลับไปที่แผนที่...',
       'msg_unknown_location': 'ไม่สามารถนำทางไปยังตำแหน่งที่ไม่รู้จัก',
       'msg_no_facility_nearby': 'ไม่พบสถานที่ใกล้เคียง',
-      
+
       // Settings - GPS
       'lbl_gps_tracking': 'การติดตาม GPS',
       'status_tracking_on': 'กำลังติดตามตำแหน่งแบบเรียลไทม์',
@@ -1634,17 +1676,17 @@ class GapLessL10n {
       'lbl_current_location': 'ตำแหน่งปัจจุบัน',
       'lbl_no_location': 'ไม่มีตำแหน่ง',
       'msg_location_cleared': 'ล้างตำแหน่งแล้ว',
-      
+
       // Hazards
       'hazard_flood': 'แจ้งเตือนน้ำท่วม (FLOOD)',
       'hazard_earthquake': 'แจ้งเตือนแผ่นดินไหว (EARTHQUAKE)',
-      
+
       // Marker Categories (New)
       'marker_shelter': 'จุดอพยพ',
       'marker_food_supply': 'จุดเสบียง',
       'marker_flood_shelter': 'ที่หลบน้ำท่วม',
       'marker_official_shelter': 'ที่พักพิงราชการ',
-      
+
       // Popup Details
       'official_data': 'ข้อมูลราชการ',
       'navigate_here': 'นำทางไปที่นี่',
@@ -1656,14 +1698,14 @@ class GapLessL10n {
       'sensor_loading': 'กำลังรับสัญญาณเซ็นเซอร์...',
       'standby': 'รอสักครู่...',
       'label_target': 'เป้าหมาย',
-      
+
       // New Features v2
       'survival_guide_tooltip': 'ปฐมพยาบาลและคู่มือเอาตัวรอด',
       'triage_tooltip': 'ตรวจสอบการบาดเจ็บ',
       'voice_guidance': 'คำแนะนำด้วยเสียง',
       'voice_on': 'เสียงเปิด',
       'voice_off': 'เสียงปิด',
-      
+
       // Shelter Details
       'address': 'ที่อยู่',
       'capacity': 'ความจุ',
@@ -1673,13 +1715,13 @@ class GapLessL10n {
       'not_supported': 'ไม่รองรับ',
       'shop_type': 'ประเภทร้าน',
       'map_launch_failed': 'ไม่สามารถเปิดแอปแผนที่',
-      
+
       // Safety Navigation
       'msg_safer_location': '⚠️ เปลี่ยนไปที่ปลอดภัยกว่า: @name',
       'msg_route_calculated': '✅ คำนวณเส้นทางปลอดภัยแล้ว',
       'msg_hazard_detected': '⚠️ พบเขตอันตราย',
       'msg_avoiding_hazard': 'นำทางหลีกเลี่ยงอันตราย',
-      
+
       // Splash Screen
       'splash_loading': 'กำลังเริ่มต้น...',
       'splash_loading_lang': 'กำลังโหลดข้อมูลภาษา...',
@@ -1693,7 +1735,8 @@ class GapLessL10n {
 
       // Disaster Mode Confirmation
       'disaster_mode_confirm_title': 'เปิดโหมดภัยพิบัติ?',
-      'disaster_mode_confirm_body': 'เปลี่ยนไปใช้การนำทางเข็มทิศและเริ่มนำทางไปยังที่พักพิงที่ใกล้ที่สุด',
+      'disaster_mode_confirm_body':
+          'เปลี่ยนไปใช้การนำทางเข็มทิศและเริ่มนำทางไปยังที่พักพิงที่ใกล้ที่สุด',
       'disaster_mode_confirm_ok': 'เปิดใช้งาน',
 
       // Map Data Download Screen
@@ -1702,7 +1745,8 @@ class GapLessL10n {
       'map_download_error': 'ดาวน์โหลดล้มเหลว',
       'map_load_error': 'โหลดข้อมูลแผนที่ล้มเหลว',
       'unknown_error': 'ข้อผิดพลาดที่ไม่ทราบสาเหตุ',
-      'map_no_connection': 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต\nกรุณาเปิด Wi-Fi หรือโมบายดาต้า',
+      'map_no_connection':
+          'ไม่มีการเชื่อมต่ออินเทอร์เน็ต\nกรุณาเปิด Wi-Fi หรือโมบายดาต้า',
       'map_download_failed': 'ดาวน์โหลด @filename ล้มเหลว\nกรุณาลองใหม่',
       'map_download_retry': 'ลองอีกครั้ง',
       'map_download_skip': 'ข้ามและเปิดแอป',
@@ -1710,7 +1754,8 @@ class GapLessL10n {
       'map_info_added': 'เพิ่มข้อมูลแล้ว',
       'map_tap_hint': 'แตะแผนที่เพื่อเพิ่มข้อมูลอันตราย',
       'map_hazard_title': 'เพิ่มข้อมูลอันตราย',
-      'map_hazard_hint': 'ข้อมูลนี้จะบันทึกและแชร์กับ iPhone ใกล้เคียงผ่าน BLE โดยไม่เก็บข้อมูลส่วนตัว',
+      'map_hazard_hint':
+          'ข้อมูลนี้จะบันทึกและแชร์กับ iPhone ใกล้เคียงผ่าน BLE โดยไม่เก็บข้อมูลส่วนตัว',
       'map_submit': 'เพิ่มข้อมูลที่นี่',
       'map_submitting': 'กำลังส่ง...',
       'map_ble_syncing': 'กำลังซิงค์กับ @count เครื่อง',
@@ -1718,11 +1763,13 @@ class GapLessL10n {
 
       'splash_subtitle': 'ระบบนำทางภัยพิบัติ',
       'splash_disclaimer_title': 'ข้อตกลง',
-      'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
+      'splash_disclaimer_jp':
+          'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
       'splash_warning': 'ในกรณีฉุกเฉิน ให้ปฏิบัติตามคำสั่งอพยพอย่างเป็นทางการ',
       'splash_agree': 'ยอมรับ',
-      
+
       // Map Screen
       'map_title': 'แผนที่',
       'compass_mode_on': 'โหมดเข็มทิศ: เปิด',
@@ -1732,12 +1779,12 @@ class GapLessL10n {
       'label_coordinates': 'พิกัด',
       'label_status': 'สถานะ',
       'navigation_developing': 'ฟีเจอร์นำทางกำลังพัฒนา',
-      
+
       // Profile Edit Screen
       'profile_saved': 'บันทึกแล้ว',
       'profile_settings': 'ตั้งค่าโปรไฟล์',
       'profile_save': 'บันทึก',
-      
+
       // Triage Screen
       'triage_title': 'ตรวจสอบการบาดเจ็บ',
       'triage_back': 'กลับ',
@@ -1781,7 +1828,7 @@ class GapLessL10n {
       'triage_minor_title': 'เล็กน้อย: สามารถรักษาที่พักพิงได้',
       'triage_minor_desc': 'บาดเจ็บเล็กน้อย ปรึกษาเจ้าหน้าที่ที่พักพิง',
       'triage_minor_rec': '✅ ไปที่พักพิงใกล้สุด',
-      
+
       // Directions
       'dir_north': 'เหนือ',
       'dir_northeast': 'ตะวันออกเฉียงเหนือ',
@@ -1791,7 +1838,7 @@ class GapLessL10n {
       'dir_southwest': 'ตะวันตกเฉียงใต้',
       'dir_west': 'ตะวันตก',
       'dir_northwest': 'ตะวันตกเฉียงเหนือ',
-      
+
       // Risk Radar
       'risk_radar_title': 'เรดาร์ความเสี่ยง',
       'risk_ready': 'พร้อม',
@@ -1870,7 +1917,8 @@ class GapLessL10n {
       // Navigation screen
       'nav_screen_title': 'นำทางปลอดภัย',
       'nav_arrive_title': 'ถึงจุดหมายแล้ว',
-      'nav_arrive_body': 'คุณมาถึงที่พักพิงอย่างปลอดภัยหรือไม่?\nยืนยันเพื่อเปิดแดชบอร์ดที่พักพิง',
+      'nav_arrive_body':
+          'คุณมาถึงที่พักพิงอย่างปลอดภัยหรือไม่?\nยืนยันเพื่อเปิดแดชบอร์ดที่พักพิง',
       'nav_still_moving': 'ยังเดินทางอยู่',
       'nav_safe_confirm': 'ยืนยันความปลอดภัย',
       'nav_profile_title': 'โปรไฟล์การเคลื่อนที่',
@@ -1952,9 +2000,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'ส่งใหม่',
       'emergency_call': 'โทรขอความช่วยเหลือ',
       'emergency_water': 'หาน้ำ',
-      'emergency_water_tip': 'ตรวจสอบก๊อกน้ำก่อน หากไม่มีน้ำ ให้หาแม่น้ำหรือน้ำพุ',
+      'emergency_water_tip':
+          'ตรวจสอบก๊อกน้ำก่อน หากไม่มีน้ำ ให้หาแม่น้ำหรือน้ำพุ',
       'emergency_first_aid': 'ปฐมพยาบาล',
-      'emergency_first_aid_tip': 'ทำความสะอาดแผลและกดเพื่อหยุดเลือด อย่าขยับกระดูกหัก',
+      'emergency_first_aid_tip':
+          'ทำความสะอาดแผลและกดเพื่อหยุดเลือด อย่าขยับกระดูกหัก',
       'emergency_repeat': 'ทำซ้ำ',
       'emergency_call_instruction': 'โทร 191 (ตำรวจ) หรือ 1669 (แพทย์ฉุกเฉิน)',
       'jma_feed_title': 'แจ้งเตือนทางการ',
@@ -1972,20 +2022,27 @@ class GapLessL10n {
       'tutorial_next': 'ถัดไป',
       'tutorial_start': 'เริ่มต้น',
       'tutorial_welcome_title': 'ยินดีต้อนรับสู่ GapLess',
-      'tutorial_welcome_desc': 'แอปนำทางป้องกันภัยพิบัติแบบออฟไลน์ที่จะนำทางคุณไปยังที่ปลอดภัย',
+      'tutorial_welcome_desc':
+          'แอปนำทางป้องกันภัยพิบัติแบบออฟไลน์ที่จะนำทางคุณไปยังที่ปลอดภัย',
       'tutorial_compass_title': 'นำทางด้วยเข็มทิศ',
-      'tutorial_compass_desc': 'ในโหมดภัยพิบัติ ลูกศรใหญ่จะชี้ไปยังที่พักพิง เดินตามทิศทางของลูกศร',
+      'tutorial_compass_desc':
+          'ในโหมดภัยพิบัติ ลูกศรใหญ่จะชี้ไปยังที่พักพิง เดินตามทิศทางของลูกศร',
       'tutorial_voice_title': 'คำแนะนำด้วยเสียง',
-      'tutorial_voice_desc': 'บอกทิศทางและระยะทางด้วยเสียง แม้ตกใจก็สามารถอพยพได้',
+      'tutorial_voice_desc':
+          'บอกทิศทางและระยะทางด้วยเสียง แม้ตกใจก็สามารถอพยพได้',
       'tutorial_first_aid_title': 'คู่มือปฐมพยาบาล',
-      'tutorial_first_aid_desc': 'ดูการปฐมพยาบาลเช่น หยุดเลือด CPR แบบขั้นตอน ใช้ได้แม้ออฟไลน์',
+      'tutorial_first_aid_desc':
+          'ดูการปฐมพยาบาลเช่น หยุดเลือด CPR แบบขั้นตอน ใช้ได้แม้ออฟไลน์',
       'tutorial_emergency_gear_title': 'อุปกรณ์ฉุกเฉิน',
-      'tutorial_emergency_gear_desc': 'ลงทะเบียนชื่อ กรุ๊ปเลือด ภูมิแพ้ เพื่อแสดงให้เจ้าหน้าที่ในกรณีฉุกเฉิน',
+      'tutorial_emergency_gear_desc':
+          'ลงทะเบียนชื่อ กรุ๊ปเลือด ภูมิแพ้ เพื่อแสดงให้เจ้าหน้าที่ในกรณีฉุกเฉิน',
       'tutorial_ready_title': 'พร้อมแล้ว!',
-      'tutorial_ready_desc': 'GapLess จะปกป้องคุณเมื่อเกิดเหตุ เริ่มต้นด้วยการลงทะเบียนโปรไฟล์',
+      'tutorial_ready_desc':
+          'GapLess จะปกป้องคุณเมื่อเกิดเหตุ เริ่มต้นด้วยการลงทะเบียนโปรไฟล์',
       'onb_select_language_title': 'เลือกภาษา',
       'onb_location_title': 'อนุญาตตำแหน่ง',
-      'onb_location_desc': 'จำเป็นต้องใช้ตำแหน่งสำหรับการนำทาง\nไปยังที่พักพิงอย่างแม่นยำ',
+      'onb_location_desc':
+          'จำเป็นต้องใช้ตำแหน่งสำหรับการนำทาง\nไปยังที่พักพิงอย่างแม่นยำ',
       'onb_allow_location': 'อนุญาตตำแหน่ง',
       'onb_perm_granted': 'อนุญาตตำแหน่งแล้ว',
       'onb_set_later': 'ข้ามไปก่อน',
@@ -2261,7 +2318,8 @@ class GapLessL10n {
       'splash_subtitle': '灾难导航',
       'splash_disclaimer_title': '免责声明',
       'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety.',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety.',
       'splash_warning': '紧急情况下请遵从官方疏散指示',
       'splash_agree': '同意',
       'map_title': '地图',
@@ -2703,7 +2761,8 @@ class GapLessL10n {
       'splash_subtitle': '灾难导航',
       'splash_disclaimer_title': '免责声明',
       'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety.',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety.',
       'splash_warning': '紧急情况下请遵从官方疏散指示',
       'splash_agree': '同意',
       'map_title': '地图',
@@ -3138,7 +3197,8 @@ class GapLessL10n {
       'splash_subtitle': '재난 탐색',
       'splash_disclaimer_title': '면책 조항',
       'splash_disclaimer_jp': 'このアプリは避難を補助するものです。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety.',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety.',
       'splash_warning': '긴급 시 공식 대피 지시를 따르세요',
       'splash_agree': '동의',
       'map_title': '지도',
@@ -3371,7 +3431,8 @@ class GapLessL10n {
       'perm_skip': 'Laktawan',
       'perm_compass_warning': 'Limitado ang compass',
       'perm_location_required': 'Kailangan ang Lokasyon',
-      'perm_location_required_desc': 'Kailangan ang lokasyon para sa nabigasyon. I-enable ang "Laging Payagan" sa Mga Setting.',
+      'perm_location_required_desc':
+          'Kailangan ang lokasyon para sa nabigasyon. I-enable ang "Laging Payagan" sa Mga Setting.',
       'bot_analyzing': 'Sinusuri...',
       'header_ai_guide': 'Gabay sa Paglikas',
       'btn_arrived_label': 'Nakarating sa Kanlungan',
@@ -3418,9 +3479,11 @@ class GapLessL10n {
       'tts_waypoint': 'Checkpoint. Natitirang @dist.',
       'tts_out_of_bounds': 'Labas ng mapa. Pabalik sa tahanan.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -3443,12 +3506,15 @@ class GapLessL10n {
       'splash_ready': 'Handa na',
       'offline_banner': 'Offline mode',
       'offline_nav_ok': 'Available ang offline navigation',
-      'header_category_guide': 'Opisyal na Gabay sa Kaligtasan（6 Pangunahing Paksa）',
+      'header_category_guide':
+          'Opisyal na Gabay sa Kaligtasan（6 Pangunahing Paksa）',
       'header_category_ai': 'AI Suporta sa Pamumuhay（Iba pang Paksa）',
-      'chat_prompt_main': 'Paano kita matutulungan？\nMangyaring pumili sa ibaba。',
+      'chat_prompt_main':
+          'Paano kita matutulungan？\nMangyaring pumili sa ibaba。',
       'chat_btn_more': 'Iba pang Paksa',
       'chat_btn_back': 'Bumalik sa Menu',
-      'chat_error_not_found': 'Paumanhin, hindi nahanap ang impormasyon. Pumili ng ibang paksa.',
+      'chat_error_not_found':
+          'Paumanhin, hindi nahanap ang impormasyon. Pumili ng ibang paksa.',
       'msg_network_restored': 'Naibalik na ang koneksyon. Bumabalik sa mapa.',
       'guide_economy': 'Economy Class Syndrome',
       'guide_infection': 'Kontrol sa Impeksyon',
@@ -3492,15 +3558,18 @@ class GapLessL10n {
       'emergency_sos_resend': 'Ipadala ulit',
       'emergency_call': 'Tumawag ng Tulong',
       'emergency_water': 'Humanap ng Tubig',
-      'emergency_water_tip': 'Suriin muna ang gripo. Kung walang tubig, humanap ng ilog o bukal',
+      'emergency_water_tip':
+          'Suriin muna ang gripo. Kung walang tubig, humanap ng ilog o bukal',
       'emergency_first_aid': 'Unang Lunas',
-      'emergency_first_aid_tip': 'Linisin ang sugat at pindutin. Huwag igalaw ang bali',
+      'emergency_first_aid_tip':
+          'Linisin ang sugat at pindutin. Huwag igalaw ang bali',
       'emergency_repeat': 'Ulitin',
       'emergency_call_instruction': 'Tumawag sa 911 para sa emerhensya',
       'jma_feed_title': 'Opisyal na Alerto',
       'jma_loading': 'Kinukuha mula sa JMA...',
       'jma_refresh': 'I-refresh',
-      'jma_error': 'Hindi available ang network\nMangyaring suriin ang koneksyon',
+      'jma_error':
+          'Hindi available ang network\nMangyaring suriin ang koneksyon',
       'jma_no_alerts': 'Walang aktibong babala sa lindol o tsunami',
       'jma_last_updated': 'Na-update:',
       'jma_active': 'AKTIBO',
@@ -3521,7 +3590,8 @@ class GapLessL10n {
       'perm_skip': 'Lewati',
       'perm_compass_warning': 'Fungsi kompas terbatas',
       'perm_location_required': 'Lokasi Diperlukan',
-      'perm_location_required_desc': 'Navigasi membutuhkan lokasi. Aktifkan "Selalu Izinkan" di Pengaturan.',
+      'perm_location_required_desc':
+          'Navigasi membutuhkan lokasi. Aktifkan "Selalu Izinkan" di Pengaturan.',
       'bot_analyzing': 'Menganalisis...',
       'header_ai_guide': 'Panduan Evakuasi AI',
       'btn_arrived_label': 'Tiba di Tempat Pengungsian',
@@ -3568,9 +3638,11 @@ class GapLessL10n {
       'tts_waypoint': 'Pos pemeriksaan. Sisa @dist.',
       'tts_out_of_bounds': 'Di luar area peta. Beralih ke mode kembali.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -3595,10 +3667,12 @@ class GapLessL10n {
       'offline_nav_ok': 'Navigasi offline tersedia',
       'header_category_guide': 'Panduan Survival Resmi（6 Topik Penting）',
       'header_category_ai': 'Dukungan Hidup AI（Topik Lainnya）',
-      'chat_prompt_main': 'Apa yang bisa saya bantu？\nSilakan pilih di bawah ini。',
+      'chat_prompt_main':
+          'Apa yang bisa saya bantu？\nSilakan pilih di bawah ini。',
       'chat_btn_more': 'Topik Lainnya',
       'chat_btn_back': 'Kembali ke Menu',
-      'chat_error_not_found': 'Maaf, informasi tidak ditemukan. Silakan pilih topik lain.',
+      'chat_error_not_found':
+          'Maaf, informasi tidak ditemukan. Silakan pilih topik lain.',
       'msg_network_restored': 'Jaringan pulih. Kembali ke peta.',
       'guide_economy': 'Sindrom Kelas Ekonomi',
       'guide_infection': 'Pengendalian Infeksi',
@@ -3642,9 +3716,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'Kirim Ulang',
       'emergency_call': 'Telepon Bantuan',
       'emergency_water': 'Cari Air',
-      'emergency_water_tip': 'Periksa keran terlebih dahulu. Jika tidak ada, cari sungai atau mata air',
+      'emergency_water_tip':
+          'Periksa keran terlebih dahulu. Jika tidak ada, cari sungai atau mata air',
       'emergency_first_aid': 'Pertolongan Pertama',
-      'emergency_first_aid_tip': 'Bersihkan luka dan tekan untuk menghentikan pendarahan. Jangan gerakkan tulang patah',
+      'emergency_first_aid_tip':
+          'Bersihkan luka dan tekan untuk menghentikan pendarahan. Jangan gerakkan tulang patah',
       'emergency_repeat': 'Ulangi',
       'emergency_call_instruction': 'Hubungi 112 untuk layanan darurat',
       'jma_feed_title': 'Peringatan Resmi',
@@ -3718,13 +3794,16 @@ class GapLessL10n {
       'tts_waypoint': 'ဂိတ်တစ်ခု ဖြတ်သန်းပြီး။ @dist ကျန်သည်။',
       'tts_out_of_bounds': 'မြေပုံနယ်နိမိတ်ပြင်ပ။ အိမ်ပြန်မုဒ်သို့ ပြောင်းသည်။',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
-      'tts_backtrack': 'မှတ်တမ်းတင်ထားသော လမ်းကြောင်းအတိုင်း ပြန်လည်လမ်းညွှန်သည်။',
+      'tts_backtrack':
+          'မှတ်တမ်းတင်ထားသော လမ်းကြောင်းအတိုင်း ပြန်လည်လမ်းညွှန်သည်။',
       'tts_danger_ahead': 'အနတ္တရာယ် ရှေ့တွင်ရှိသည်။ သတိထားပါ။',
       'tts_dir_left': 'ဘယ်',
       'tts_arrived': 'ဦးတည်ရာသို့ ရောက်ပြီ။',
@@ -3743,12 +3822,14 @@ class GapLessL10n {
       'splash_ready': 'အဆင်သင့်',
       'offline_banner': 'Offline မုဒ်',
       'offline_nav_ok': 'Offline နှင့် လမ်းညွှန်နိုင်သည်',
-      'header_category_guide': 'တရားဝင် အသက်ရှင်ရပ်တည်ရေး လမ်းညွှန်（အရေးကြီးသော ၆ ခု）',
+      'header_category_guide':
+          'တရားဝင် အသက်ရှင်ရပ်တည်ရေး လမ်းညွှန်（အရေးကြီးသော ၆ ခု）',
       'header_category_ai': 'AI ဘဝပံ့ပိုးမှု（အခြားအကြောင်းအရာများ）',
       'chat_prompt_main': 'ဘာကူညီပေးရမလဲ？\nအောက်မှ ရွေးချယ်ပါ။',
       'chat_btn_more': 'အခြားအကြောင်းအရာ',
       'chat_btn_back': 'မီနူးသို့ ပြန်သွား',
-      'chat_error_not_found': 'တောင်းပန်ပါသည်၊ သတင်းအချက်အလက် မတွေ့ပါ။ အခြားအကြောင်းအရာ ရွေးပါ။',
+      'chat_error_not_found':
+          'တောင်းပန်ပါသည်၊ သတင်းအချက်အလက် မတွေ့ပါ။ အခြားအကြောင်းအရာ ရွေးပါ။',
       'msg_network_restored': 'ကွန်ယက် ပြန်လည်ရရှိသည်။ မြေပုံသို့ ပြန်သွားသည်။',
       'guide_economy': 'စီးပွားရေးတန်း ဆင်ဒ်ရောမ်',
       'guide_infection': 'ကူးစက်ရောဂါ ထိန်းချုပ်ရေး',
@@ -3785,18 +3866,22 @@ class GapLessL10n {
       'nav_tooltip_photo': 'ဓာတ်ပုံဖြင့် အမြန်သတင်းပို့ပါ',
       'nav_tooltip_report': 'လမ်းအခြေအနေကို သတင်းပို့ပါ',
       'sos_hold_hint': 'SOS ပို့ရန် ဖိဆွဲထားပါ',
-      'sos_sent': 'SOS အချက်ပြမှုကို အနီးအနားရှိ စက်ပစ္စည်းများသို့ ပေးပို့ပြီးပါပြီ',
+      'sos_sent':
+          'SOS အချက်ပြမှုကို အနီးအနားရှိ စက်ပစ္စည်းများသို့ ပေးပို့ပြီးပါပြီ',
       'sos_received': 'နီးစပ်ရာတွင် SOS အချက်ပြမှု လက်ခံရရှိသည်',
       'emergency_screen_title': 'အရေးပေါ်',
       'emergency_nearest': 'အနီးဆုံး ခိုလှုံရာနေရာ:',
       'emergency_sos_resend': 'ပြန်ပို့',
       'emergency_call': 'အကူအညီ ဖုန်းဆက်',
       'emergency_water': 'ရေရှာ',
-      'emergency_water_tip': 'ရေပိုက်ကို ဦးစွာစစ်ဆေးပါ။ မရနိုင်ပါက မြစ် သို့မဟုတ် စမ်းရေကို ရှာပါ',
+      'emergency_water_tip':
+          'ရေပိုက်ကို ဦးစွာစစ်ဆေးပါ။ မရနိုင်ပါက မြစ် သို့မဟုတ် စမ်းရေကို ရှာပါ',
       'emergency_first_aid': 'ပထမဆုံး အကူအညီ',
-      'emergency_first_aid_tip': '傷口ကို သန့်ရှင်းပြီး ဖိနှိပ်ပါ။ အရိုးကျိုးသော နေရာကို မရွှေ့ပါနှင့်',
+      'emergency_first_aid_tip':
+          '傷口ကို သန့်ရှင်းပြီး ဖိနှိပ်ပါ။ အရိုးကျိုးသော နေရာကို မရွှေ့ပါနှင့်',
       'emergency_repeat': 'ထပ်ဖတ်',
-      'emergency_call_instruction': 'အရေးပေါ်အတွက် 199 (ရဲ) သို့မဟုတ် 192 (အရေးပေါ်ဆေးဝါး) ကို ဖုန်းဆက်ပါ',
+      'emergency_call_instruction':
+          'အရေးပေါ်အတွက် 199 (ရဲ) သို့မဟုတ် 192 (အရေးပေါ်ဆေးဝါး) ကို ဖုန်းဆက်ပါ',
       'jma_feed_title': 'တရားဝင် သတိပေးချက်',
       'jma_loading': 'ဒေတာ ရယူနေသည်...',
       'jma_refresh': 'ပြန်လည်ဆွဲ',
@@ -3868,9 +3953,11 @@ class GapLessL10n {
       'tts_waypoint': 'චෙක්පොයින්ට් ගෙවී ගියා. @dist ඉතිරිය.',
       'tts_out_of_bounds': 'සිතියම් සීමාවෙන් පිටත. නිවසට ආපසු.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -3898,7 +3985,8 @@ class GapLessL10n {
       'chat_prompt_main': 'මට ඔබට කෙසේ උදව් කළ හැකිද？\nකරුණාකර පහතින් තෝරන්න。',
       'chat_btn_more': 'වෙනත් මාතෘකා',
       'chat_btn_back': 'මෙනුවට ආපසු',
-      'chat_error_not_found': 'සමාවන්න, තොරතුරු හමු නොවිණි. වෙනත් මාතෘකාවක් තෝරන්න.',
+      'chat_error_not_found':
+          'සමාවන්න, තොරතුරු හමු නොවිණි. වෙනත් මාතෘකාවක් තෝරන්න.',
       'msg_network_restored': 'ජාලය යථා තත්ත්වයට පත් විය. සිතියමට ආපසු.',
       'guide_economy': 'ආර්ථිකය පන්තිය සින්ඩ්‍රෝමය',
       'guide_infection': 'ආසාදන පාලනය',
@@ -3942,9 +4030,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'නැවත යවන්න',
       'emergency_call': 'සහාය ඇමතීම',
       'emergency_water': 'ජලය සොයන්න',
-      'emergency_water_tip': 'පළමුව කපාටය පරීක්ෂා කරන්න. නොමැති නම් ගඟ හෝ ශ්‍රෝතස් සොයන්න',
+      'emergency_water_tip':
+          'පළමුව කපාටය පරීක්ෂා කරන්න. නොමැති නම් ගඟ හෝ ශ්‍රෝතස් සොයන්න',
       'emergency_first_aid': 'ප්‍රථමාධාර',
-      'emergency_first_aid_tip': 'තුවාලය පිරිසිදු කර ඔබන්න. අස්ථිය කැඩුවොත් නොගෙන යන්න',
+      'emergency_first_aid_tip':
+          'තුවාලය පිරිසිදු කර ඔබන්න. අස්ථිය කැඩුවොත් නොගෙන යන්න',
       'emergency_repeat': 'නැවත',
       'emergency_call_instruction': 'හදිසි ප්‍රතිචාර සඳහා 119 ඇමතුම් කරන්න',
       'jma_feed_title': 'නිල ඇඟවීම්',
@@ -3971,7 +4061,8 @@ class GapLessL10n {
       'perm_skip': 'छोड़ें',
       'perm_compass_warning': 'कंपास कार्य सीमित होगा',
       'perm_location_required': 'स्थान आवश्यक',
-      'perm_location_required_desc': 'नेविगेशन के लिए स्थान आवश्यक है। सेटिंग में "हमेशा अनुमति दें" सक्षम करें।',
+      'perm_location_required_desc':
+          'नेविगेशन के लिए स्थान आवश्यक है। सेटिंग में "हमेशा अनुमति दें" सक्षम करें।',
       'bot_analyzing': 'विश्लेषण...',
       'header_ai_guide': 'AI निकासी मार्गदर्शन',
       'btn_arrived_label': 'आश्रय स्थल पहुँचा',
@@ -4018,9 +4109,11 @@ class GapLessL10n {
       'tts_waypoint': 'चेकपॉइंट पार हुआ। @dist शेष।',
       'tts_out_of_bounds': 'मानचित्र के बाहर। घर वापस मोड।',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4048,7 +4141,8 @@ class GapLessL10n {
       'chat_prompt_main': 'आपको क्या सहायता चाहिए？\nनीचे से चुनें।',
       'chat_btn_more': 'अन्य विषय',
       'chat_btn_back': 'मेनू पर वापस जाएं',
-      'chat_error_not_found': 'क्षमा करें, जानकारी नहीं मिली। कोई अन्य विषय चुनें।',
+      'chat_error_not_found':
+          'क्षमा करें, जानकारी नहीं मिली। कोई अन्य विषय चुनें।',
       'msg_network_restored': 'नेटवर्क बहाल हुआ। मानचित्र पर वापस जा रहे हैं।',
       'guide_economy': 'इकोनॉमी क्लास सिंड्रोम',
       'guide_infection': 'संक्रमण नियंत्रण',
@@ -4094,7 +4188,8 @@ class GapLessL10n {
       'emergency_water': 'पानी खोजें',
       'emergency_water_tip': 'पहले नल जाँचें। नहीं मिले तो नदी या झरना खोजें',
       'emergency_first_aid': 'प्राथमिक चिकित्सा',
-      'emergency_first_aid_tip': 'घाव साफ करें और दबाएँ। टूटी हड्डी को न हिलाएँ',
+      'emergency_first_aid_tip':
+          'घाव साफ करें और दबाएँ। टूटी हड्डी को न हिलाएँ',
       'emergency_repeat': 'दोहराएँ',
       'emergency_call_instruction': 'आपातकाल के लिए 112 पर कॉल करें',
       'jma_feed_title': 'आधिकारिक अलर्ट',
@@ -4168,9 +4263,11 @@ class GapLessL10n {
       'tts_waypoint': 'चेकपोइन्ट पार। @dist बाँकी।',
       'tts_out_of_bounds': 'नक्सा सीमाभन्दा बाहिर। घर फर्कने मोड।',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4198,7 +4295,8 @@ class GapLessL10n {
       'chat_prompt_main': 'तपाईंलाई के सहायता चाहिन्छ？\nतलबाट छनोट गर्नुहोस्।',
       'chat_btn_more': 'अन्य विषयहरू',
       'chat_btn_back': 'मेनुमा फर्कनुहोस्',
-      'chat_error_not_found': 'माफ गर्नुस्, जानकारी फेला परेन। अन्य विषय छनोट गर्नुहोस्।',
+      'chat_error_not_found':
+          'माफ गर्नुस्, जानकारी फेला परेन। अन्य विषय छनोट गर्नुहोस्।',
       'msg_network_restored': 'नेटवर्क पुनःस्थापित भयो। नक्सामा फर्कदैछ।',
       'guide_economy': 'इकोनमी क्लास सिन्ड्रोम',
       'guide_infection': 'संक्रमण नियन्त्रण',
@@ -4242,11 +4340,14 @@ class GapLessL10n {
       'emergency_sos_resend': 'पुनः पठाउनुहोस्',
       'emergency_call': 'सहायताका लागि फोन गर्नुहोस्',
       'emergency_water': 'पानी खोज्नुहोस्',
-      'emergency_water_tip': 'पहिले धारा जाँच्नुहोस्। नभए नदी वा झरना खोज्नुहोस्',
+      'emergency_water_tip':
+          'पहिले धारा जाँच्नुहोस्। नभए नदी वा झरना खोज्नुहोस्',
       'emergency_first_aid': 'प्राथमिक उपचार',
-      'emergency_first_aid_tip': 'घाउ सफा गरी थिच्नुहोस्। भाँचिएको हड्डी नचलाउनुहोस्',
+      'emergency_first_aid_tip':
+          'घाउ सफा गरी थिच्नुहोस्। भाँचिएको हड्डी नचलाउनुहोस्',
       'emergency_repeat': 'दोहोर्याउनुहोस्',
-      'emergency_call_instruction': 'आपतकालीन सेवाका लागि 100 (प्रहरी) वा 102 (एम्बुलेन्स) मा फोन गर्नुहोस्',
+      'emergency_call_instruction':
+          'आपतकालीन सेवाका लागि 100 (प्रहरी) वा 102 (एम्बुलेन्स) मा फोन गर्नुहोस्',
       'jma_feed_title': 'आधिकारिक सूचना',
       'jma_loading': 'JMA बाट डेटा प्राप्त हुँदैछ...',
       'jma_refresh': 'ताजा गर्नुहोस्',
@@ -4318,9 +4419,11 @@ class GapLessL10n {
       'tts_waypoint': 'চেকপয়েন্ট পেরিয়েছে। @dist বাকি।',
       'tts_out_of_bounds': 'মানচিত্রের বাইরে। বাড়ি ফেরার মোড।',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4343,12 +4446,14 @@ class GapLessL10n {
       'splash_ready': 'প্রস্তুত',
       'offline_banner': 'অফলাইন মোড',
       'offline_nav_ok': 'অফলাইন নেভিগেশন উপলব্ধ',
-      'header_category_guide': 'সরকারি বেঁচে থাকার গাইড（গুরুত্বপূর্ণ ৬টি বিষয়）',
+      'header_category_guide':
+          'সরকারি বেঁচে থাকার গাইড（গুরুত্বপূর্ণ ৬টি বিষয়）',
       'header_category_ai': 'AI জীবন সহায়তা（অন্যান্য পরামর্শ）',
       'chat_prompt_main': 'আপনার কী সাহায্য দরকার？\nনীচে থেকে বেছে নিন।',
       'chat_btn_more': 'অন্যান্য বিষয়',
       'chat_btn_back': 'মেনুতে ফিরুন',
-      'chat_error_not_found': 'দুঃখিত, তথ্য পাওয়া যায়নি। অন্য একটি বিষয় বেছে নিন।',
+      'chat_error_not_found':
+          'দুঃখিত, তথ্য পাওয়া যায়নি। অন্য একটি বিষয় বেছে নিন।',
       'msg_network_restored': 'নেটওয়ার্ক পুনরুদ্ধার হয়েছে। মানচিত্রে ফিরছি।',
       'guide_economy': 'ইকোনমি ক্লাস সিন্ড্রোম',
       'guide_infection': 'সংক্রমণ নিয়ন্ত্রণ',
@@ -4394,7 +4499,8 @@ class GapLessL10n {
       'emergency_water': 'জল খুঁজুন',
       'emergency_water_tip': 'প্রথমে কল চেক করুন। না পেলে নদী বা ঝরনা খুঁজুন',
       'emergency_first_aid': 'প্রাথমিক চিকিৎসা',
-      'emergency_first_aid_tip': 'ক্ষত পরিষ্কার করুন ও চাপ দিন। ভাঙা হাড় নাড়াবেন না',
+      'emergency_first_aid_tip':
+          'ক্ষত পরিষ্কার করুন ও চাপ দিন। ভাঙা হাড় নাড়াবেন না',
       'emergency_repeat': 'পুনরাবৃত্তি',
       'emergency_call_instruction': 'জরুরি সেবার জন্য 999 নম্বরে ফোন করুন',
       'jma_feed_title': 'সরকারি সতর্কতা',
@@ -4421,7 +4527,8 @@ class GapLessL10n {
       'perm_skip': 'Omitir',
       'perm_compass_warning': 'La función de brújula estará limitada',
       'perm_location_required': 'Ubicación Requerida',
-      'perm_location_required_desc': 'La navegación requiere ubicación. Habilite "Permitir siempre" en Configuración.',
+      'perm_location_required_desc':
+          'La navegación requiere ubicación. Habilite "Permitir siempre" en Configuración.',
       'bot_analyzing': 'Analizando...',
       'header_ai_guide': 'Guía de Evacuación AI',
       'btn_arrived_label': 'Llegué al Refugio',
@@ -4468,9 +4575,11 @@ class GapLessL10n {
       'tts_waypoint': 'Punto de control pasado. @dist restante.',
       'tts_out_of_bounds': 'Fuera del área del mapa. Modo regreso.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4493,12 +4602,15 @@ class GapLessL10n {
       'splash_ready': 'Listo',
       'offline_banner': 'Modo sin conexión',
       'offline_nav_ok': 'Navegación offline disponible',
-      'header_category_guide': 'Guía Oficial de Supervivencia（6 Temas Importantes）',
+      'header_category_guide':
+          'Guía Oficial de Supervivencia（6 Temas Importantes）',
       'header_category_ai': 'Soporte de Vida AI（Otros Temas）',
-      'chat_prompt_main': '¿En qué puedo ayudarte？\nPor favor selecciona a continuación。',
+      'chat_prompt_main':
+          '¿En qué puedo ayudarte？\nPor favor selecciona a continuación。',
       'chat_btn_more': 'Otros Temas',
       'chat_btn_back': 'Volver al Menú',
-      'chat_error_not_found': 'Lo siento, información no encontrada. Selecciona otro tema.',
+      'chat_error_not_found':
+          'Lo siento, información no encontrada. Selecciona otro tema.',
       'msg_network_restored': 'Red restaurada. Volviendo al mapa.',
       'guide_economy': 'Síndrome de Clase Turista',
       'guide_infection': 'Control de Infecciones',
@@ -4542,9 +4654,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'Reenviar',
       'emergency_call': 'Llamar Ayuda',
       'emergency_water': 'Buscar Agua',
-      'emergency_water_tip': 'Comprueba el grifo primero. Si no hay agua, busca ríos o manantiales',
+      'emergency_water_tip':
+          'Comprueba el grifo primero. Si no hay agua, busca ríos o manantiales',
       'emergency_first_aid': 'Primeros Auxilios',
-      'emergency_first_aid_tip': 'Limpia la herida y aplica presión. No muevas fracturas',
+      'emergency_first_aid_tip':
+          'Limpia la herida y aplica presión. No muevas fracturas',
       'emergency_repeat': 'Repetir',
       'emergency_call_instruction': 'Llama al 112 para emergencias',
       'jma_feed_title': 'Alertas Oficiales',
@@ -4571,7 +4685,8 @@ class GapLessL10n {
       'perm_skip': 'Pular',
       'perm_compass_warning': 'A função da bússola será limitada',
       'perm_location_required': 'Localização Necessária',
-      'perm_location_required_desc': 'A navegação requer localização. Ative "Permitir sempre" nas Configurações.',
+      'perm_location_required_desc':
+          'A navegação requer localização. Ative "Permitir sempre" nas Configurações.',
       'bot_analyzing': 'Analisando...',
       'header_ai_guide': 'Guia de Evacuação AI',
       'btn_arrived_label': 'Cheguei ao Abrigo',
@@ -4618,9 +4733,11 @@ class GapLessL10n {
       'tts_waypoint': 'Ponto de verificação. @dist restante.',
       'tts_out_of_bounds': 'Fora da área do mapa. Modo de retorno.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4643,12 +4760,14 @@ class GapLessL10n {
       'splash_ready': 'Pronto',
       'offline_banner': 'Modo offline',
       'offline_nav_ok': 'Navegação offline disponível',
-      'header_category_guide': 'Guia Oficial de Sobrevivência（6 Tópicos Importantes）',
+      'header_category_guide':
+          'Guia Oficial de Sobrevivência（6 Tópicos Importantes）',
       'header_category_ai': 'Suporte de Vida AI（Outros Tópicos）',
       'chat_prompt_main': 'Como posso ajudar？\nPor favor, selecione abaixo。',
       'chat_btn_more': 'Outros Tópicos',
       'chat_btn_back': 'Voltar ao Menu',
-      'chat_error_not_found': 'Desculpe, informação não encontrada. Selecione outro tópico.',
+      'chat_error_not_found':
+          'Desculpe, informação não encontrada. Selecione outro tópico.',
       'msg_network_restored': 'Rede restaurada. Retornando ao mapa.',
       'guide_economy': 'Síndrome da Classe Econômica',
       'guide_infection': 'Controle de Infecção',
@@ -4692,9 +4811,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'Reenviar',
       'emergency_call': 'Ligar para Ajuda',
       'emergency_water': 'Encontrar Água',
-      'emergency_water_tip': 'Verifique as torneiras primeiro. Se não houver, procure rios ou fontes',
+      'emergency_water_tip':
+          'Verifique as torneiras primeiro. Se não houver, procure rios ou fontes',
       'emergency_first_aid': 'Primeiros Socorros',
-      'emergency_first_aid_tip': 'Limpe a ferida e aplique pressão. Não mexa em fraturas',
+      'emergency_first_aid_tip':
+          'Limpe a ferida e aplique pressão. Não mexa em fraturas',
       'emergency_repeat': 'Repetir',
       'emergency_call_instruction': 'Ligue para o 112 em caso de emergência',
       'jma_feed_title': 'Alertas Oficiais',
@@ -4768,9 +4889,11 @@ class GapLessL10n {
       'tts_waypoint': 'Тэмдэглэгдсэн цэг. @dist үлдсэн.',
       'tts_out_of_bounds': 'Газрын зурагнаас гарлаа. Гэр рүү буцах горим.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
@@ -4793,12 +4916,14 @@ class GapLessL10n {
       'splash_ready': 'Бэлэн',
       'offline_banner': 'Офлайн горим',
       'offline_nav_ok': 'Офлайн навигаци боломжтой',
-      'header_category_guide': 'Албан ёсны амьд үлдэх гарын авлага（6 чухал сэдэв）',
+      'header_category_guide':
+          'Албан ёсны амьд үлдэх гарын авлага（6 чухал сэдэв）',
       'header_category_ai': 'AI амьдралын дэмжлэг（бусад зөвлөгөө）',
       'chat_prompt_main': 'Танд юу хэрэгтэй？\nДоороос сонгоно уу。',
       'chat_btn_more': 'Бусад сэдэв',
       'chat_btn_back': 'Цэс рүү буцах',
-      'chat_error_not_found': 'Уучлаарай, мэдээлэл олдсонгүй. Өөр сэдэв сонгоно уу.',
+      'chat_error_not_found':
+          'Уучлаарай, мэдээлэл олдсонгүй. Өөр сэдэв сонгоно уу.',
       'msg_network_restored': 'Сүлжээ сэргэлээ. Газрын зураг руу буцаж байна.',
       'guide_economy': 'Эдийн засгийн ангиллын хам шинж',
       'guide_infection': 'Халдвар хяналт',
@@ -4842,16 +4967,20 @@ class GapLessL10n {
       'emergency_sos_resend': 'Дахин илгээх',
       'emergency_call': 'Тусламж дуудах',
       'emergency_water': 'Ус хайх',
-      'emergency_water_tip': 'Эхлээд краанаас шалгана уу. Байхгүй бол гол эсвэл булаг хай',
+      'emergency_water_tip':
+          'Эхлээд краанаас шалгана уу. Байхгүй бол гол эсвэл булаг хай',
       'emergency_first_aid': 'Яаралтай тусламж',
-      'emergency_first_aid_tip': 'Шарх цэвэрлэж дарна уу. Хугарсан ясыг хөдөлгөж болохгүй',
+      'emergency_first_aid_tip':
+          'Шарх цэвэрлэж дарна уу. Хугарсан ясыг хөдөлгөж болохгүй',
       'emergency_repeat': 'Давтах',
-      'emergency_call_instruction': 'Яаралтай тусламжийн дугаар 102 (тусламж) эсвэл 101 (гал унтраах)',
+      'emergency_call_instruction':
+          'Яаралтай тусламжийн дугаар 102 (тусламж) эсвэл 101 (гал унтраах)',
       'jma_feed_title': 'Албан ёсны анхааруулга',
       'jma_loading': 'JMA-аас өгөгдөл авч байна...',
       'jma_refresh': 'Шинэчлэх',
       'jma_error': 'Сүлжээ байхгүй\nХолболтоо шалгана уу',
-      'jma_no_alerts': 'Идэвхтэй газар хөдлөлт эсвэл цунами анхааруулга байхгүй',
+      'jma_no_alerts':
+          'Идэвхтэй газар хөдлөлт эсвэл цунами анхааруулга байхгүй',
       'jma_last_updated': 'Шинэчлэгдсэн:',
       'jma_active': 'ИДЭВХТЭЙ',
       'nav_tab_feed': 'Анхааруулга',
@@ -4916,15 +5045,19 @@ class GapLessL10n {
       'tts_narrow_road': 'Tor yo\'l: @width metr. Ehtiyot bo\'ling.',
       'tts_turn': '@dist da @direction burilish',
       'tts_waypoint': 'Nazorat nuqtasi o\'tildi. @dist qoldi.',
-      'tts_out_of_bounds': 'Xarita chegarasidan tashqarida. Uyga qaytish rejimi.',
+      'tts_out_of_bounds':
+          'Xarita chegarasidan tashqarida. Uyga qaytish rejimi.',
       'tts_monitoring_start': 'Monitoring started. Pocket mode is on.',
-      'tts_hazard_warning': 'Warning. Hazard area. Please evacuate immediately.',
+      'tts_hazard_warning':
+          'Warning. Hazard area. Please evacuate immediately.',
       'tts_safe_area': 'You are now in a safe area.',
-      'tts_electrical_hazard': 'Warning! Risk of electrocution. Avoid this direction.',
+      'tts_electrical_hazard':
+          'Warning! Risk of electrocution. Avoid this direction.',
       'tts_deep_water': 'Warning! Water depth is @depth meters. Be careful.',
       'tts_fast_current': 'Warning! Fast current ahead. Be careful.',
       'tts_off_course': 'You are off course. Please check your direction.',
-      'tts_backtrack': 'Qayd etilgan marshrut bo\'yicha qaytib yo\'naltirmoqda.',
+      'tts_backtrack':
+          'Qayd etilgan marshrut bo\'yicha qaytib yo\'naltirmoqda.',
       'tts_danger_ahead': 'Oldinda xavf bor. Ehtiyotkorlik bilan davom eting.',
       'tts_dir_left': 'chapga',
       'tts_arrived': 'Manzilga yetib keldingiz.',
@@ -4948,7 +5081,8 @@ class GapLessL10n {
       'chat_prompt_main': "Qanday yordam kerak？\nQuyidan tanlang。",
       'chat_btn_more': "Boshqa mavzular",
       'chat_btn_back': "Menyuga qaytish",
-      'chat_error_not_found': "Kechirasiz, ma'lumot topilmadi. Boshqa mavzu tanlang.",
+      'chat_error_not_found':
+          "Kechirasiz, ma'lumot topilmadi. Boshqa mavzu tanlang.",
       'msg_network_restored': "Tarmoq tiklandi. Xaritaga qaytilmoqda.",
       'guide_economy': "Iqtisodiy sinf sindromi",
       'guide_infection': "Infeksiyani nazorat qilish",
@@ -4992,11 +5126,14 @@ class GapLessL10n {
       'emergency_sos_resend': "Qayta yuborish",
       'emergency_call': "Yordam chaqiring",
       'emergency_water': "Suv topish",
-      'emergency_water_tip': "Avval kranlarni tekshiring. Yo'q bo'lsa, daryo yoki buloq qidiring",
+      'emergency_water_tip':
+          "Avval kranlarni tekshiring. Yo'q bo'lsa, daryo yoki buloq qidiring",
       'emergency_first_aid': "Birinchi yordam",
-      'emergency_first_aid_tip': "Yaralarni tozalab bosing. Singan suyakni qimirlatmang",
+      'emergency_first_aid_tip':
+          "Yaralarni tozalab bosing. Singan suyakni qimirlatmang",
       'emergency_repeat': "Takrorlash",
-      'emergency_call_instruction': "Favqulodda xizmatlar uchun 103 (tez yordam) yoki 101 (yong'in) ga qo'ng'iroq qiling",
+      'emergency_call_instruction':
+          "Favqulodda xizmatlar uchun 103 (tez yordam) yoki 101 (yong'in) ga qo'ng'iroq qiling",
       'jma_feed_title': "Rasmiy ogohlantirishlar",
       'jma_loading': "JMA dan ma'lumot olinmoqda...",
       'jma_refresh': "Yangilash",
@@ -5014,18 +5151,22 @@ class GapLessL10n {
       'status_danger': '⚠️ NGUY HIỂM',
       'status_offline': 'NGOẠI TUYẾN',
       'dialog_safety_title': 'Kiểm tra an toàn',
-      'dialog_safety_desc': 'Bạn đã đến nơi an toàn chưa?\nKết thúc điều hướng và chuyển sang chế độ hỗ trợ.',
+      'dialog_safety_desc':
+          'Bạn đã đến nơi an toàn chưa?\nKết thúc điều hướng và chuyển sang chế độ hỗ trợ.',
       'btn_yes_arrived': 'Đã đến',
       'btn_cancel': 'Hủy',
-      'chat_error_not_found': 'Xin lỗi, không tìm thấy thông tin. Vui lòng chọn chủ đề khác.',
+      'chat_error_not_found':
+          'Xin lỗi, không tìm thấy thông tin. Vui lòng chọn chủ đề khác.',
       'bot_analyzing': 'Đang phân tích...',
       'bot_loc_error': '⚠️ Không thể lấy vị trí.',
       'bot_found': '🔍 **Tìm thấy cơ sở**',
-      'bot_found_desc': '"**@name**" cách **@dist**. Hãy đi theo biểu tượng trên bản đồ.',
+      'bot_found_desc':
+          '"**@name**" cách **@dist**. Hãy đi theo biểu tượng trên bản đồ.',
       'bot_prefix_normal': 'Hãy bình tĩnh. Chúng tôi đang ở bên bạn.',
       'bot_prefix_name': 'Hãy bình tĩnh, @name. Chúng tôi đang ở bên bạn.',
       'bot_not_found': '⚠️ **Không tìm thấy gần đây**',
-      'bot_not_found_desc': 'Không có dữ liệu trong 3km. Khuyến nghị đến "Nơi trú ẩn".',
+      'bot_not_found_desc':
+          'Không có dữ liệu trong 3km. Khuyến nghị đến "Nơi trú ẩn".',
       'bot_go_to': 'Đến @name',
       'bot_dest_set': 'Đã đặt điểm đến: @name',
       'bot_dest_changed': 'Đã thay đổi: @old -> @new',
@@ -5071,14 +5212,17 @@ class GapLessL10n {
       'perm_location_title': 'Vị trí',
       'perm_location_desc': 'Lấy vị trí của bạn ở chế độ nền khi điều hướng',
       'perm_motion_title': 'Chuyển động / Cảm biến',
-      'perm_motion_desc': 'Sử dụng la bàn và gia tốc kế để xác định hướng chính xác',
+      'perm_motion_desc':
+          'Sử dụng la bàn và gia tốc kế để xác định hướng chính xác',
       'perm_ble_title': 'Bluetooth',
-      'perm_ble_desc': 'Chia sẻ tình trạng đường với người dùng gần đó (tùy chọn)',
+      'perm_ble_desc':
+          'Chia sẻ tình trạng đường với người dùng gần đó (tùy chọn)',
       'perm_allow': 'Cho phép',
       'perm_skip': 'Bỏ qua',
       'perm_compass_warning': 'Chức năng la bàn sẽ bị hạn chế',
       'perm_location_required': 'Cần vị trí',
-      'perm_location_required_desc': 'Điều hướng yêu cầu vị trí. Vui lòng bật "Luôn cho phép" trong Cài đặt.',
+      'perm_location_required_desc':
+          'Điều hướng yêu cầu vị trí. Vui lòng bật "Luôn cho phép" trong Cài đặt.',
       'loc_acquiring': 'Đang lấy vị trí...',
       'loc_no_destination': 'Vui lòng đặt điểm đến',
       'loc_select_in_chat': 'Chọn "Nơi trú ẩn" trong chat bên dưới',
@@ -5212,31 +5356,39 @@ class GapLessL10n {
       'offline_banner': 'Chế độ ngoại tuyến: Sử dụng dữ liệu đã lưu',
       'offline_nav_ok': 'Điều hướng ngoại tuyến có sẵn',
       'disaster_mode_confirm_title': 'Bật chế độ thảm họa?',
-      'disaster_mode_confirm_body': 'Chuyển sang điều hướng la bàn và bắt đầu hướng dẫn đến nơi trú ẩn gần nhất.',
+      'disaster_mode_confirm_body':
+          'Chuyển sang điều hướng la bàn và bắt đầu hướng dẫn đến nơi trú ẩn gần nhất.',
       'disaster_mode_confirm_ok': 'Bật',
       'map_download_title': 'Đang tải dữ liệu bản đồ',
-      'map_download_note': 'Chỉ cần thiết khi khởi động lần đầu. Khuyến nghị dùng Wi-Fi.',
+      'map_download_note':
+          'Chỉ cần thiết khi khởi động lần đầu. Khuyến nghị dùng Wi-Fi.',
       'map_download_error': 'Tải xuống thất bại',
       'map_load_error': 'Không thể tải dữ liệu bản đồ',
       'unknown_error': 'Lỗi không xác định',
-      'map_no_connection': 'Không có kết nối internet.\nVui lòng bật Wi-Fi hoặc dữ liệu di động.',
-      'map_download_failed': 'Không thể tải xuống @filename.\nVui lòng thử lại.',
+      'map_no_connection':
+          'Không có kết nối internet.\nVui lòng bật Wi-Fi hoặc dữ liệu di động.',
+      'map_download_failed':
+          'Không thể tải xuống @filename.\nVui lòng thử lại.',
       'map_download_retry': 'Thử lại',
       'map_download_skip': 'Bỏ qua và khởi động',
       'map_download_done': 'Tải xuống hoàn tất',
       'map_info_added': 'Đã thêm thông tin',
       'map_tap_hint': 'Nhấn bản đồ để thêm thông tin nguy hiểm',
       'map_hazard_title': 'Thêm thông tin nguy hiểm',
-      'map_hazard_hint': 'Thông tin này sẽ được ghi lại và chia sẻ với iPhone gần đó qua BLE. Không có dữ liệu cá nhân được thu thập.',
+      'map_hazard_hint':
+          'Thông tin này sẽ được ghi lại và chia sẻ với iPhone gần đó qua BLE. Không có dữ liệu cá nhân được thu thập.',
       'map_submit': 'Thêm thông tin tại đây',
       'map_submitting': 'Đang gửi...',
       'map_ble_syncing': 'Đang đồng bộ với @count thiết bị',
       'map_ble_waiting': 'Chờ BLE',
       'splash_subtitle': 'Điều hướng thảm họa',
       'splash_disclaimer_title': 'Tuyên bố miễn trách nhiệm',
-      'splash_disclaimer_jp': 'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
-      'splash_warning': 'Trong trường hợp khẩn cấp, hãy tuân theo hướng dẫn sơ tán chính thức',
+      'splash_disclaimer_jp':
+          'このアプリは避難を補助するものであり、安全を完全に保証するものではありません。最終的な避難判断は、ご自身の責任で行ってください。',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk and responsibility.',
+      'splash_warning':
+          'Trong trường hợp khẩn cấp, hãy tuân theo hướng dẫn sơ tán chính thức',
       'splash_agree': 'Tôi đồng ý',
       'map_title': 'Bản đồ',
       'compass_mode_on': 'Chế độ la bàn: BẬT',
@@ -5278,10 +5430,12 @@ class GapLessL10n {
       'triage_pain_moderate': 'Vừa phải',
       'triage_pain_severe': 'Đau dữ dội',
       'triage_critical_title': 'NGUY KỊCH: Cần cấp cứu ngay',
-      'triage_critical_desc': 'Có thể nguy hiểm đến tính mạng. Đến bệnh viện ngay lập tức.',
+      'triage_critical_desc':
+          'Có thể nguy hiểm đến tính mạng. Đến bệnh viện ngay lập tức.',
       'triage_critical_rec': '🚨 Đến bệnh viện gần nhất ngay',
       'triage_urgent_title': 'KHẨN CẤP: Nên đến gặp bác sĩ',
-      'triage_urgent_desc': 'Cần điều trị chuyên nghiệp. Đến gặp bác sĩ sớm nhất có thể.',
+      'triage_urgent_desc':
+          'Cần điều trị chuyên nghiệp. Đến gặp bác sĩ sớm nhất có thể.',
       'triage_urgent_rec': '🏥 Ưu tiên nơi trú ẩn có cơ sở y tế',
       'triage_moderate_title': 'TRUNG BÌNH: Sơ tán và theo dõi',
       'triage_moderate_desc': 'Sơ cứu tại nơi trú ẩn và theo dõi tình trạng.',
@@ -5350,16 +5504,19 @@ class GapLessL10n {
       'qr_danger_sub': 'Sụp đổ / cháy / lũ lụt',
       'qr_reported': '"@label" đã được báo cáo',
       'dr_badge': 'Mất GPS — Vị trí ước tính (@steps bước)',
-      'dr_accuracy_low': '⚠ Độ chính xác thấp — xác nhận vị trí qua địa điểm nhìn thấy',
+      'dr_accuracy_low':
+          '⚠ Độ chính xác thấp — xác nhận vị trí qua địa điểm nhìn thấy',
       'dr_fix_location': 'Tôi ở đây',
       'dr_tap_to_fix': 'Chạm vào bản đồ để sửa vị trí',
       'dr_location_fixed': 'Đã sửa vị trí',
       'dr_uncertain_title': 'Không xác định vị trí',
-      'dr_uncertain_body': 'Mất tín hiệu GPS. Hãy ra ngoài trời nơi nhìn thấy bầu trời.',
+      'dr_uncertain_body':
+          'Mất tín hiệu GPS. Hãy ra ngoài trời nơi nhìn thấy bầu trời.',
       'dr_shelter_list': 'Nơi trú ẩn gần nhất',
       'nav_screen_title': 'Tuyến đường an toàn',
       'nav_arrive_title': 'Đã đến điểm đến',
-      'nav_arrive_body': 'Bạn đã đến nơi trú ẩn an toàn chưa?\nXác nhận để mở bảng điều khiển nơi trú ẩn.',
+      'nav_arrive_body':
+          'Bạn đã đến nơi trú ẩn an toàn chưa?\nXác nhận để mở bảng điều khiển nơi trú ẩn.',
       'nav_still_moving': 'Vẫn đang di chuyển',
       'nav_safe_confirm': 'Xác nhận an toàn',
       'nav_profile_title': 'Hồ sơ di chuyển',
@@ -5386,7 +5543,8 @@ class GapLessL10n {
       'nav_tooltip_report': 'Báo cáo tình trạng đường',
       'nav_nearest_shelter': 'Nơi trú ẩn gần nhất',
       'road_report_title': 'Báo cáo tình trạng đường tại vị trí của bạn',
-      'road_report_hint': 'Báo cáo này sẽ được chia sẻ với người dùng gần đó qua Bluetooth.',
+      'road_report_hint':
+          'Báo cáo này sẽ được chia sẻ với người dùng gần đó qua Bluetooth.',
       'report_passable': 'Có thể đi qua',
       'report_blocked': 'Bị chặn',
       'gps_none': 'Không có GPS',
@@ -5400,15 +5558,18 @@ class GapLessL10n {
       'home_report_sent': 'Đã gửi báo cáo',
       'settings_map_updated': 'Đã cập nhật dữ liệu bản đồ',
       'settings_update_failed': 'Cập nhật thất bại: @error',
-      'tts_narrow_road': 'Đường hẹp phía trước: @width mét. Tiến hành cẩn thận.',
+      'tts_narrow_road':
+          'Đường hẹp phía trước: @width mét. Tiến hành cẩn thận.',
       'tts_turn': 'Rẽ @direction trong @dist',
       'tts_dir_right': 'phải',
       'tts_dir_left': 'trái',
       'tts_arrived': 'Bạn đã đến điểm đến.',
       'tts_waypoint': 'Đã qua điểm kiểm tra. Còn @dist.',
-      'tts_out_of_bounds': 'Ngoài phạm vi bản đồ. Chuyển sang chế độ trở về nhà.',
+      'tts_out_of_bounds':
+          'Ngoài phạm vi bản đồ. Chuyển sang chế độ trở về nhà.',
       'tts_monitoring_start': 'Đã bắt đầu theo dõi. Chế độ túi đang bật.',
-      'tts_hazard_warning': 'Cảnh báo. Khu vực nguy hiểm. Vui lòng sơ tán ngay.',
+      'tts_hazard_warning':
+          'Cảnh báo. Khu vực nguy hiểm. Vui lòng sơ tán ngay.',
       'tts_safe_area': 'Bạn đang ở khu vực an toàn.',
       'tts_electrical_hazard': 'Cảnh báo! Nguy cơ điện giật. Tránh hướng này.',
       'tts_deep_water': 'Cảnh báo! Độ sâu nước @depth mét. Hãy cẩn thận.',
@@ -5433,16 +5594,20 @@ class GapLessL10n {
       'emergency_sos_resend': 'Gửi lại',
       'emergency_call': 'Gọi Cứu Trợ',
       'emergency_water': 'Tìm Nước',
-      'emergency_water_tip': 'Kiểm tra vòi nước trước. Nếu không có, tìm sông hoặc suối',
+      'emergency_water_tip':
+          'Kiểm tra vòi nước trước. Nếu không có, tìm sông hoặc suối',
       'emergency_first_aid': 'Sơ Cứu',
-      'emergency_first_aid_tip': 'Làm sạch vết thương và ấn chặt. Không di chuyển xương gãy',
+      'emergency_first_aid_tip':
+          'Làm sạch vết thương và ấn chặt. Không di chuyển xương gãy',
       'emergency_repeat': 'Lặp lại',
-      'emergency_call_instruction': 'Gọi 113 (cảnh sát) hoặc 115 (cấp cứu) trong trường hợp khẩn cấp',
+      'emergency_call_instruction':
+          'Gọi 113 (cảnh sát) hoặc 115 (cấp cứu) trong trường hợp khẩn cấp',
       'jma_feed_title': 'Cảnh báo chính thức',
       'jma_loading': 'Đang tải từ JMA...',
       'jma_refresh': 'Làm mới',
       'jma_error': 'Không có mạng\nVui lòng kiểm tra kết nối',
-      'jma_no_alerts': 'Không có cảnh báo động đất hoặc sóng thần đang hoạt động',
+      'jma_no_alerts':
+          'Không có cảnh báo động đất hoặc sóng thần đang hoạt động',
       'jma_last_updated': 'Cập nhật:',
       'jma_active': 'ĐANG HOẠT ĐỘNG',
       'nav_tab_feed': 'Cảnh báo',
@@ -5455,12 +5620,14 @@ class GapLessL10n {
 
       // Safety Check Dialog
       'dialog_safety_title': 'Vérification de sécurité',
-      'dialog_safety_desc': 'Êtes-vous arrivé en sécurité ?\nTerminer la navigation et passer en mode assistance.',
+      'dialog_safety_desc':
+          'Êtes-vous arrivé en sécurité ?\nTerminer la navigation et passer en mode assistance.',
       'btn_yes_arrived': 'Oui, arrivé',
       'btn_cancel': 'Annuler',
 
       // Bot Messages
-      'chat_error_not_found': 'Désolé, information introuvable. Veuillez choisir un autre sujet.',
+      'chat_error_not_found':
+          'Désolé, information introuvable. Veuillez choisir un autre sujet.',
       'bot_analyzing': 'Analyse...',
       'bot_hospital': '🏥 Vers l\'hôpital',
       'bot_water': '💧 Point d\'eau',
@@ -5468,11 +5635,13 @@ class GapLessL10n {
       'bot_safe_shelter': '🟢 Abri',
       'bot_loc_error': '⚠️ Position indisponible.',
       'bot_found': '🔍 **Lieu trouvé**',
-      'bot_found_desc': '"**@name**" est à **@dist**. Suivez l\'icône sur la carte.',
+      'bot_found_desc':
+          '"**@name**" est à **@dist**. Suivez l\'icône sur la carte.',
       'bot_prefix_normal': 'Restez calme. Nous sommes avec vous.',
       'bot_prefix_name': 'Restez calme, @name. Nous sommes avec vous.',
       'bot_not_found': '⚠️ **Introuvable à proximité**',
-      'bot_not_found_desc': 'Aucune donnée dans un rayon de 3 km. Dirigez-vous vers un "Abri".',
+      'bot_not_found_desc':
+          'Aucune donnée dans un rayon de 3 km. Dirigez-vous vers un "Abri".',
       'bot_go_to': 'Aller à @name',
       'bot_dest_set': 'Destination : @name',
       'bot_dest_changed': 'Changé : @old → @new',
@@ -5532,7 +5701,8 @@ class GapLessL10n {
       'map_data_cached': 'En cache',
       'map_data_not_cached': 'Non mis en cache',
       'map_data_size': 'Taille : @size Ko',
-      'map_data_download_needed': 'Téléchargement requis pour l\'utilisation hors ligne',
+      'map_data_download_needed':
+          'Téléchargement requis pour l\'utilisation hors ligne',
       'label_are_you_sure': 'Êtes-vous sûr ?',
 
       // Permissions
@@ -5548,7 +5718,8 @@ class GapLessL10n {
       'perm_skip': 'Ignorer',
       'perm_compass_warning': 'La boussole sera limitée',
       'perm_location_required': 'Localisation requise',
-      'perm_location_required_desc': 'La navigation nécessite la localisation. Activez "Toujours autoriser" dans les paramètres.',
+      'perm_location_required_desc':
+          'La navigation nécessite la localisation. Activez "Toujours autoriser" dans les paramètres.',
       'loc_acquiring': 'Acquisition de la position...',
       'loc_no_destination': 'Définissez une destination',
       'loc_select_in_chat': 'Choisissez "Abri" dans le chat',
@@ -5570,7 +5741,8 @@ class GapLessL10n {
       'nav_off_route_recalc': 'Hors route. Recalcul...',
       'nav_screen_title': 'Navigation sécurisée',
       'nav_arrive_title': 'Arrivée à destination',
-      'nav_arrive_body': 'Êtes-vous arrivé en sécurité ?\nConfirmer affichera le tableau de bord de l\'abri.',
+      'nav_arrive_body':
+          'Êtes-vous arrivé en sécurité ?\nConfirmer affichera le tableau de bord de l\'abri.',
       'nav_still_moving': 'Encore en route',
       'nav_safe_confirm': 'Confirmer la sécurité',
       'nav_no_location': 'Position indisponible',
@@ -5608,9 +5780,11 @@ class GapLessL10n {
       'emergency_sos_resend': 'Renvoyer',
       'emergency_call': 'Appeler',
       'emergency_water': 'Trouver de l\'eau',
-      'emergency_water_tip': 'Vérifiez le robinet. Sinon, cherchez une rivière ou une source.',
+      'emergency_water_tip':
+          'Vérifiez le robinet. Sinon, cherchez une rivière ou une source.',
       'emergency_first_aid': 'Premiers secours',
-      'emergency_first_aid_tip': 'Nettoyez et comprimez la plaie. Ne déplacez pas les fractures.',
+      'emergency_first_aid_tip':
+          'Nettoyez et comprimez la plaie. Ne déplacez pas les fractures.',
       'emergency_repeat': 'Répéter',
       'sos_hold_hint': 'Maintenir pour envoyer SOS',
       'sos_sent': 'SOS envoyé aux appareils proches',
@@ -5620,7 +5794,8 @@ class GapLessL10n {
       'sos_armed': 'SOS prêt. Maintenir 3 secondes',
       'sos_arming': 'SOS armé. Continuer à maintenir',
       'disaster_mode_exit': 'Fausse alerte ? Accueil',
-      'disaster_mode_exit_confirm': 'Quitter le mode catastrophe et rentrer. Maintenir 3 s.',
+      'disaster_mode_exit_confirm':
+          'Quitter le mode catastrophe et rentrer. Maintenir 3 s.',
       'disaster_mode_exit_done': 'Mode catastrophe désactivé',
 
       // Triage
@@ -5631,16 +5806,20 @@ class GapLessL10n {
       'triage_go_shelter': 'Aller à l\'abri',
       'triage_restart': 'Recommencer',
       'triage_critical_title': 'Critique : soins médicaux immédiats',
-      'triage_critical_desc': 'Pronostic vital engagé. Rendez-vous immédiatement aux urgences.',
+      'triage_critical_desc':
+          'Pronostic vital engagé. Rendez-vous immédiatement aux urgences.',
       'triage_critical_rec': '🚨 Hôpital le plus proche en urgence',
       'triage_urgent_title': 'Urgent : consultation médicale recommandée',
-      'triage_urgent_desc': 'Un professionnel de santé doit vous examiner rapidement.',
+      'triage_urgent_desc':
+          'Un professionnel de santé doit vous examiner rapidement.',
       'triage_urgent_rec': '🏥 Priorité aux abris médicalisés',
       'triage_moderate_title': 'Modéré : évacuation avec surveillance',
-      'triage_moderate_desc': 'Soins de premiers secours à l\'abri et surveillance.',
+      'triage_moderate_desc':
+          'Soins de premiers secours à l\'abri et surveillance.',
       'triage_moderate_rec': '⚠️ Aller à l\'abri pour les premiers secours',
       'triage_minor_title': 'Léger : prise en charge à l\'abri',
-      'triage_minor_desc': 'Blessure légère. Consultez le personnel de l\'abri.',
+      'triage_minor_desc':
+          'Blessure légère. Consultez le personnel de l\'abri.',
       'triage_minor_rec': '✅ Aller à l\'abri le plus proche',
 
       // Risk Radar
@@ -5670,13 +5849,17 @@ class GapLessL10n {
       'splash_loading': 'Chargement...',
       'splash_subtitle': 'Navigation en cas de catastrophe',
       'splash_disclaimer_title': 'Avertissement',
-      'splash_disclaimer_jp': 'Cette application aide à l\'évacuation mais ne garantit pas la sécurité. La décision finale vous appartient.',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk.',
-      'splash_warning': 'En cas d\'urgence, suivez les instructions officielles',
+      'splash_disclaimer_jp':
+          'Cette application aide à l\'évacuation mais ne garantit pas la sécurité. La décision finale vous appartient.',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety. Final evacuation decisions must be made at your own risk.',
+      'splash_warning':
+          'En cas d\'urgence, suivez les instructions officielles',
       'splash_agree': 'Accepter et commencer',
       'onb_select_language_title': 'Choisir la langue',
       'onb_location_title': 'Autoriser la localisation',
-      'onb_location_desc': 'La localisation est requise pour une navigation précise.',
+      'onb_location_desc':
+          'La localisation est requise pour une navigation précise.',
       'onb_allow_location': 'Autoriser la localisation',
       'onb_perm_granted': 'Localisation autorisée',
       'onb_set_later': 'Configurer plus tard',
@@ -5688,7 +5871,8 @@ class GapLessL10n {
       'map_download_retry': 'Réessayer',
       'map_download_skip': 'Ignorer et démarrer',
       'map_download_done': 'Téléchargement terminé',
-      'map_no_connection': 'Pas de connexion Internet.\nActivez le Wi-Fi ou les données mobiles.',
+      'map_no_connection':
+          'Pas de connexion Internet.\nActivez le Wi-Fi ou les données mobiles.',
       'navigate_here': 'Naviguer ici',
       'navigation_started': 'Navigation vers @name démarrée',
 
@@ -5784,11 +5968,14 @@ class GapLessL10n {
       'tutorial_next': 'Suivant',
       'tutorial_start': 'Commencer',
       'tutorial_welcome_title': 'Bienvenue sur GapLess',
-      'tutorial_welcome_desc': 'Navigation hors ligne pour les catastrophes. Fonctionne sans Internet ni GPS.',
+      'tutorial_welcome_desc':
+          'Navigation hors ligne pour les catastrophes. Fonctionne sans Internet ni GPS.',
       'tutorial_emergency_gear_title': 'Carte d\'urgence',
-      'tutorial_emergency_gear_desc': 'Enregistrez votre nom, groupe sanguin et allergies pour les montrer aux secouristes.',
+      'tutorial_emergency_gear_desc':
+          'Enregistrez votre nom, groupe sanguin et allergies pour les montrer aux secouristes.',
       'tutorial_ready_title': 'Prêt !',
-      'tutorial_ready_desc': 'GapLess vous guidera en sécurité. Configurez d\'abord votre profil.',
+      'tutorial_ready_desc':
+          'GapLess vous guidera en sécurité. Configurez d\'abord votre profil.',
 
       // JMA
       'jma_feed_title': 'Alertes officielles',
@@ -5834,12 +6021,14 @@ class GapLessL10n {
 
       // Safety Check Dialog
       'dialog_safety_title': 'Semakan Keselamatan',
-      'dialog_safety_desc': 'Adakah anda selamat tiba?\nTamatkan navigasi dan tukar ke mod sokongan.',
+      'dialog_safety_desc':
+          'Adakah anda selamat tiba?\nTamatkan navigasi dan tukar ke mod sokongan.',
       'btn_yes_arrived': 'Ya, sudah tiba',
       'btn_cancel': 'Batal',
 
       // Bot Messages
-      'chat_error_not_found': 'Maaf, maklumat tidak dijumpai. Sila pilih topik lain.',
+      'chat_error_not_found':
+          'Maaf, maklumat tidak dijumpai. Sila pilih topik lain.',
       'bot_analyzing': 'Menganalisis...',
       'bot_hospital': '🏥 Ke Hospital',
       'bot_water': '💧 Ke Bekalan Air',
@@ -5847,11 +6036,13 @@ class GapLessL10n {
       'bot_safe_shelter': '🟢 Ke Tempat Perlindungan',
       'bot_loc_error': '⚠️ Lokasi tidak tersedia.',
       'bot_found': '🔍 **Kemudahan Dijumpai**',
-      'bot_found_desc': '"**@name**" berada **@dist** jauhnya. Ikuti ikon pada peta.',
+      'bot_found_desc':
+          '"**@name**" berada **@dist** jauhnya. Ikuti ikon pada peta.',
       'bot_prefix_normal': 'Sila tenang. Kami bersama anda.',
       'bot_prefix_name': 'Tenang, @name. Kami bersama anda.',
       'bot_not_found': '⚠️ **Tidak Dijumpai Berdekatan**',
-      'bot_not_found_desc': 'Tiada data dalam radius 3km. Disarankan pergi ke "Tempat Perlindungan".',
+      'bot_not_found_desc':
+          'Tiada data dalam radius 3km. Disarankan pergi ke "Tempat Perlindungan".',
       'bot_go_to': 'Pergi ke @name',
       'bot_dest_set': 'Destinasi ditetapkan: @name',
       'bot_dest_changed': 'Ditukar: @old → @new',
@@ -5911,23 +6102,27 @@ class GapLessL10n {
       'map_data_cached': 'Tersimpan dalam cache',
       'map_data_not_cached': 'Belum dimuat turun',
       'map_data_size': 'Saiz: @size KB',
-      'map_data_download_needed': 'Muat turun diperlukan untuk penggunaan luar talian',
+      'map_data_download_needed':
+          'Muat turun diperlukan untuk penggunaan luar talian',
       'label_are_you_sure': 'Adakah anda pasti?',
 
       // Permissions
       'loc_permission_denied': 'Akses Lokasi Ditolak',
       'loc_open_settings': 'Buka Tetapan',
       'perm_location_title': 'Lokasi',
-      'perm_location_desc': 'Mendapatkan lokasi semasa di latar belakang semasa navigasi',
+      'perm_location_desc':
+          'Mendapatkan lokasi semasa di latar belakang semasa navigasi',
       'perm_motion_title': 'Gerakan / Penderia',
       'perm_motion_desc': 'Menggunakan kompas dan pemecut untuk arah tepat',
       'perm_ble_title': 'Bluetooth',
-      'perm_ble_desc': 'Berkongsi keadaan jalan dengan pengguna berdekatan (pilihan)',
+      'perm_ble_desc':
+          'Berkongsi keadaan jalan dengan pengguna berdekatan (pilihan)',
       'perm_allow': 'Benarkan',
       'perm_skip': 'Langkau',
       'perm_compass_warning': 'Fungsi kompas akan terhad',
       'perm_location_required': 'Lokasi Diperlukan',
-      'perm_location_required_desc': 'Navigasi memerlukan lokasi. Aktifkan "Benarkan Sentiasa" dalam Tetapan.',
+      'perm_location_required_desc':
+          'Navigasi memerlukan lokasi. Aktifkan "Benarkan Sentiasa" dalam Tetapan.',
       'loc_acquiring': 'Mendapatkan lokasi...',
       'loc_no_destination': 'Sila tetapkan destinasi',
       'loc_select_in_chat': 'Pilih "Tempat Perlindungan" dalam chat',
@@ -5949,7 +6144,8 @@ class GapLessL10n {
       'nav_off_route_recalc': 'Terkeluar dari laluan. Mengira semula...',
       'nav_screen_title': 'Navigasi Selamat',
       'nav_arrive_title': 'Tiba di Destinasi',
-      'nav_arrive_body': 'Adakah anda selamat tiba?\nSahkan untuk memaparkan papan pemuka tempat perlindungan.',
+      'nav_arrive_body':
+          'Adakah anda selamat tiba?\nSahkan untuk memaparkan papan pemuka tempat perlindungan.',
       'nav_still_moving': 'Masih dalam perjalanan',
       'nav_safe_confirm': 'Sahkan Keselamatan',
       'nav_no_location': 'Lokasi tidak tersedia',
@@ -5981,15 +6177,18 @@ class GapLessL10n {
       'dr_shelter_list': 'Tempat Perlindungan Terdekat',
 
       // Emergency
-      'emergency_call_instruction': 'Hubungi 999 (polis/bomba/ambulans) untuk kecemasan',
+      'emergency_call_instruction':
+          'Hubungi 999 (polis/bomba/ambulans) untuk kecemasan',
       'emergency_screen_title': 'Kecemasan',
       'emergency_nearest': 'Tempat perlindungan terdekat:',
       'emergency_sos_resend': 'Hantar semula',
       'emergency_call': 'Panggil Bantuan',
       'emergency_water': 'Cari Air',
-      'emergency_water_tip': 'Periksa paip dahulu. Jika tidak ada, cari sungai atau mata air.',
+      'emergency_water_tip':
+          'Periksa paip dahulu. Jika tidak ada, cari sungai atau mata air.',
       'emergency_first_aid': 'Pertolongan Cemas',
-      'emergency_first_aid_tip': 'Bersihkan luka dan tekan kuat. Jangan gerakkan patah tulang.',
+      'emergency_first_aid_tip':
+          'Bersihkan luka dan tekan kuat. Jangan gerakkan patah tulang.',
       'emergency_repeat': 'Ulang',
       'sos_hold_hint': 'Tahan untuk hantar SOS',
       'sos_sent': 'SOS disiarkan ke peranti berdekatan',
@@ -5999,7 +6198,8 @@ class GapLessL10n {
       'sos_armed': 'SOS sedia. Tahan 3 saat untuk hantar',
       'sos_arming': 'SOS dipasang. Terus tahan',
       'disaster_mode_exit': 'Penggera palsu? Utama',
-      'disaster_mode_exit_confirm': 'Keluar mod bencana dan kembali ke utama. Tahan 3 s.',
+      'disaster_mode_exit_confirm':
+          'Keluar mod bencana dan kembali ke utama. Tahan 3 s.',
       'disaster_mode_exit_done': 'Mod bencana dinyahaktifkan',
 
       // Triage
@@ -6010,16 +6210,21 @@ class GapLessL10n {
       'triage_go_shelter': 'Pergi ke Tempat Perlindungan',
       'triage_restart': 'Cuba Semula',
       'triage_critical_title': 'Kritikal: Rawatan Perubatan Segera',
-      'triage_critical_desc': 'Nyawa mungkin terancam. Segera pergi ke kemudahan perubatan.',
+      'triage_critical_desc':
+          'Nyawa mungkin terancam. Segera pergi ke kemudahan perubatan.',
       'triage_critical_rec': '🚨 Terus ke hospital terdekat',
       'triage_urgent_title': 'Mendesak: Rawatan Perubatan Disarankan',
-      'triage_urgent_desc': 'Pakar perubatan perlu merawat anda secepat mungkin.',
+      'triage_urgent_desc':
+          'Pakar perubatan perlu merawat anda secepat mungkin.',
       'triage_urgent_rec': '🏥 Utamakan tempat perlindungan perubatan',
       'triage_moderate_title': 'Sederhana: Evakuasi dengan Pemantauan',
-      'triage_moderate_desc': 'Dapatkan pertolongan cemas di tempat perlindungan.',
-      'triage_moderate_rec': '⚠️ Pergi ke tempat perlindungan untuk pertolongan cemas',
+      'triage_moderate_desc':
+          'Dapatkan pertolongan cemas di tempat perlindungan.',
+      'triage_moderate_rec':
+          '⚠️ Pergi ke tempat perlindungan untuk pertolongan cemas',
       'triage_minor_title': 'Ringan: Boleh Dirawat di Tempat Perlindungan',
-      'triage_minor_desc': 'Kecederaan ringan. Berjumpa kakitangan tempat perlindungan.',
+      'triage_minor_desc':
+          'Kecederaan ringan. Berjumpa kakitangan tempat perlindungan.',
       'triage_minor_rec': '✅ Pergi ke tempat perlindungan terdekat',
 
       // Risk Radar
@@ -6049,13 +6254,16 @@ class GapLessL10n {
       'splash_loading': 'Memuatkan...',
       'splash_subtitle': 'Navigasi Masa Bencana',
       'splash_disclaimer_title': 'Sebelum Anda Mulakan',
-      'splash_disclaimer_jp': 'Aplikasi ini membantu evakuasi tetapi tidak menjamin keselamatan. Keputusan muktamad adalah tanggungjawab anda.',
-      'splash_disclaimer_en': 'This app assists evacuation but does not guarantee safety.',
+      'splash_disclaimer_jp':
+          'Aplikasi ini membantu evakuasi tetapi tidak menjamin keselamatan. Keputusan muktamad adalah tanggungjawab anda.',
+      'splash_disclaimer_en':
+          'This app assists evacuation but does not guarantee safety.',
       'splash_warning': 'Dalam kecemasan, ikuti arahan rasmi',
       'splash_agree': 'Setuju dan Mulakan',
       'onb_select_language_title': 'Pilih Bahasa',
       'onb_location_title': 'Benarkan Lokasi',
-      'onb_location_desc': 'Lokasi diperlukan untuk navigasi tepat ke tempat perlindungan.',
+      'onb_location_desc':
+          'Lokasi diperlukan untuk navigasi tepat ke tempat perlindungan.',
       'onb_allow_location': 'Benarkan Lokasi',
       'onb_perm_granted': 'Lokasi dibenarkan',
       'onb_set_later': 'Tetapkan kemudian',
@@ -6067,7 +6275,8 @@ class GapLessL10n {
       'map_download_retry': 'Cuba Semula',
       'map_download_skip': 'Langkau dan Mulakan',
       'map_download_done': 'Muat turun selesai',
-      'map_no_connection': 'Tiada sambungan Internet.\nAktifkan Wi-Fi atau data mudah alih.',
+      'map_no_connection':
+          'Tiada sambungan Internet.\nAktifkan Wi-Fi atau data mudah alih.',
       'navigate_here': 'Navigasi ke sini',
       'navigation_started': 'Navigasi ke @name dimulakan',
 
@@ -6163,11 +6372,14 @@ class GapLessL10n {
       'tutorial_next': 'Seterusnya',
       'tutorial_start': 'Mulakan',
       'tutorial_welcome_title': 'Selamat Datang ke GapLess',
-      'tutorial_welcome_desc': 'Navigasi luar talian untuk bencana. Berfungsi tanpa Internet atau GPS.',
+      'tutorial_welcome_desc':
+          'Navigasi luar talian untuk bencana. Berfungsi tanpa Internet atau GPS.',
       'tutorial_emergency_gear_title': 'Kad Kecemasan',
-      'tutorial_emergency_gear_desc': 'Daftarkan nama, kumpulan darah dan alergi untuk ditunjukkan kepada penyelamat.',
+      'tutorial_emergency_gear_desc':
+          'Daftarkan nama, kumpulan darah dan alergi untuk ditunjukkan kepada penyelamat.',
       'tutorial_ready_title': 'Sedia!',
-      'tutorial_ready_desc': 'GapLess akan membimbing anda ke tempat selamat. Sila tetapkan profil anda terlebih dahulu.',
+      'tutorial_ready_desc':
+          'GapLess akan membimbing anda ke tempat selamat. Sila tetapkan profil anda terlebih dahulu.',
 
       // JMA
       'jma_feed_title': 'Amaran Rasmi',
@@ -6227,17 +6439,29 @@ class GapLessL10n {
   /// 現在の言語に合ったプライマリフォントファミリ
   static String get currentFont {
     switch (lang) {
-      case 'th': return 'NotoSansThai';
-      case 'my': return 'NotoSansMyanmar';
-      case 'si': return 'NotoSansSinhala';
-      case 'hi': case 'ne': return 'NotoSansDevanagari';
-      case 'bn': return 'NotoSansBengali';
-      case 'zh': return 'NotoSansSC';
-      case 'zh_TW': return 'NotoSansTC';
-      case 'ko': return 'NotoSansKR';
-      case 'ja': return 'NotoSansJP';
-      case 'ar': return 'NotoSansArabic';
-      default: return 'NotoSans';
+      case 'th':
+        return 'NotoSansThai';
+      case 'my':
+        return 'NotoSansMyanmar';
+      case 'si':
+        return 'NotoSansSinhala';
+      case 'hi':
+      case 'ne':
+        return 'NotoSansDevanagari';
+      case 'bn':
+        return 'NotoSansBengali';
+      case 'zh':
+        return 'NotoSansSC';
+      case 'zh_TW':
+        return 'NotoSansTC';
+      case 'ko':
+        return 'NotoSansKR';
+      case 'ja':
+        return 'NotoSansJP';
+      case 'ar':
+        return 'NotoSansArabic';
+      default:
+        return 'NotoSans';
     }
   }
 
@@ -6245,11 +6469,19 @@ class GapLessL10n {
   // NotoSansArabic を含めることで、アラビア語チップラベル (العربية) が
   // すべての言語コンテキストで豆腐にならない
   static List<String> get fallbackFonts => const [
-    'NotoSansJP', 'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-    'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic',
-    'NotoSans', 'sans-serif',
-  ];
+        'NotoSansJP',
+        'NotoSansSC',
+        'NotoSansTC',
+        'NotoSansKR',
+        'NotoSansThai',
+        'NotoSansMyanmar',
+        'NotoSansSinhala',
+        'NotoSansDevanagari',
+        'NotoSansBengali',
+        'NotoSansArabic',
+        'NotoSans',
+        'sans-serif',
+      ];
 
   /// 任意の [TextStyle] にフォント設定を付与して返す
   /// すべてのカスタム TextStyle はこのメソッドを通すことで
@@ -6261,13 +6493,11 @@ class GapLessL10n {
     );
   }
 
-
-
   /// 言語を切り替えて保存
   static Future<void> setLanguage(String newLang) async {
     if (_values.containsKey(newLang)) {
       lang = newLang;
-      
+
       // SharedPreferencesに保存
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_langKey, newLang);
@@ -6279,7 +6509,7 @@ class GapLessL10n {
     try {
       final prefs = await SharedPreferences.getInstance();
       final savedLang = prefs.getString(_langKey);
-      
+
       if (savedLang != null && _values.containsKey(savedLang)) {
         lang = savedLang;
       }
@@ -6295,133 +6525,228 @@ class GapLessL10n {
   /// 言語コードから表示名を返す
   static String nameForLanguage(String code) {
     switch (code) {
-      case 'ja': return '日本語';
-      case 'en': return 'English';
-      case 'th': return 'ไทย';
-      case 'zh': return '中文（简体）';
-      case 'zh_TW': return '中文（繁體）';
-      case 'ko': return '한국어';
-      case 'fil': return 'Filipino';
-      case 'id': return 'Bahasa Indonesia';
-      case 'my': return 'မြန်မာဘာသာ';
-      case 'si': return 'සිංහල';
-      case 'hi': return 'हिन्दी';
-      case 'ne': return 'नेपाली';
-      case 'bn': return 'বাংলা';
-      case 'es': return 'Español';
-      case 'pt': return 'Português';
-      case 'mn': return 'Монгол';
-      case 'uz': return 'Oʻzbekcha';
-      case 'vi': return 'Tiếng Việt';
-      case 'fr': return 'Français';
-      case 'ms': return 'Bahasa Melayu';
-      default: return code;
+      case 'ja':
+        return '日本語';
+      case 'en':
+        return 'English';
+      case 'th':
+        return 'ไทย';
+      case 'zh':
+        return '中文（简体）';
+      case 'zh_TW':
+        return '中文（繁體）';
+      case 'ko':
+        return '한국어';
+      case 'fil':
+        return 'Filipino';
+      case 'id':
+        return 'Bahasa Indonesia';
+      case 'my':
+        return 'မြန်မာဘာသာ';
+      case 'si':
+        return 'සිංහල';
+      case 'hi':
+        return 'हिन्दी';
+      case 'ne':
+        return 'नेपाली';
+      case 'bn':
+        return 'বাংলা';
+      case 'es':
+        return 'Español';
+      case 'pt':
+        return 'Português';
+      case 'mn':
+        return 'Монгол';
+      case 'uz':
+        return 'Oʻzbekcha';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'fr':
+        return 'Français';
+      case 'ms':
+        return 'Bahasa Melayu';
+      default:
+        return code;
     }
   }
 
   /// 言語コードから国旗絵文字を返す
   static String flagForLanguage(String code) {
     switch (code) {
-      case 'ja': return '🇯🇵';
-      case 'en': return '🇬🇧';
-      case 'th': return '🇹🇭';
-      case 'zh': return '🇨🇳';
-      case 'zh_TW': return '🇹🇼';
-      case 'ko': return '🇰🇷';
-      case 'fil': return '🇵🇭';
-      case 'id': return '🇮🇩';
-      case 'my': return '🇲🇲';
-      case 'si': return '🇱🇰';
-      case 'hi': return '🇮🇳';
-      case 'ne': return '🇳🇵';
-      case 'bn': return '🇧🇩';
-      case 'es': return '🇪🇸';
-      case 'pt': return '🇧🇷';
-      case 'mn': return '🇲🇳';
-      case 'uz': return '🇺🇿';
-      case 'vi': return '🇻🇳';
-      case 'fr': return '🇫🇷';
-      case 'ms': return '🇲🇾';
-      default: return '🌐';
+      case 'ja':
+        return '🇯🇵';
+      case 'en':
+        return '🇬🇧';
+      case 'th':
+        return '🇹🇭';
+      case 'zh':
+        return '🇨🇳';
+      case 'zh_TW':
+        return '🇹🇼';
+      case 'ko':
+        return '🇰🇷';
+      case 'fil':
+        return '🇵🇭';
+      case 'id':
+        return '🇮🇩';
+      case 'my':
+        return '🇲🇲';
+      case 'si':
+        return '🇱🇰';
+      case 'hi':
+        return '🇮🇳';
+      case 'ne':
+        return '🇳🇵';
+      case 'bn':
+        return '🇧🇩';
+      case 'es':
+        return '🇪🇸';
+      case 'pt':
+        return '🇧🇷';
+      case 'mn':
+        return '🇲🇳';
+      case 'uz':
+        return '🇺🇿';
+      case 'vi':
+        return '🇻🇳';
+      case 'fr':
+        return '🇫🇷';
+      case 'ms':
+        return '🇲🇾';
+      default:
+        return '🌐';
     }
   }
 
   /// 現在の言語の表示名
   static String get currentLanguageName {
     switch (lang) {
-      case 'ja': return '日本語';
-      case 'en': return 'English';
-      case 'th': return 'ไทย';
-      case 'zh': return '中文（简体）';
-      case 'zh_TW': return '中文（繁體）';
-      case 'ko': return '한국어';
-      case 'fil': return 'Filipino';
-      case 'id': return 'Bahasa Indonesia';
-      case 'my': return 'မြန်မာဘာသာ';
-      case 'si': return 'සිංහල';
-      case 'hi': return 'हिन्दी';
-      case 'ne': return 'नेपाली';
-      case 'bn': return 'বাংলা';
-      case 'es': return 'Español';
-      case 'pt': return 'Português';
-      case 'mn': return 'Монгол';
-      case 'uz': return 'Oʻzbekcha';
-      case 'vi': return 'Tiếng Việt';
-      case 'fr': return 'Français';
-      case 'ms': return 'Bahasa Melayu';
-      default: return lang;
+      case 'ja':
+        return '日本語';
+      case 'en':
+        return 'English';
+      case 'th':
+        return 'ไทย';
+      case 'zh':
+        return '中文（简体）';
+      case 'zh_TW':
+        return '中文（繁體）';
+      case 'ko':
+        return '한국어';
+      case 'fil':
+        return 'Filipino';
+      case 'id':
+        return 'Bahasa Indonesia';
+      case 'my':
+        return 'မြန်မာဘာသာ';
+      case 'si':
+        return 'සිංහල';
+      case 'hi':
+        return 'हिन्दी';
+      case 'ne':
+        return 'नेपाली';
+      case 'bn':
+        return 'বাংলা';
+      case 'es':
+        return 'Español';
+      case 'pt':
+        return 'Português';
+      case 'mn':
+        return 'Монгол';
+      case 'uz':
+        return 'Oʻzbekcha';
+      case 'vi':
+        return 'Tiếng Việt';
+      case 'fr':
+        return 'Français';
+      case 'ms':
+        return 'Bahasa Melayu';
+      default:
+        return lang;
     }
   }
 
   /// 言語の絵文字フラグ
   static String get currentLanguageFlag {
     switch (lang) {
-      case 'ja': return '🇯🇵';
-      case 'en': return '🇬🇧';
-      case 'th': return '🇹🇭';
-      case 'zh': return '🇨🇳';
-      case 'zh_TW': return '🇹🇼';
-      case 'ko': return '🇰🇷';
-      case 'fil': return '🇵🇭';
-      case 'id': return '🇮🇩';
-      case 'my': return '🇲🇲';
-      case 'si': return '🇱🇰';
-      case 'hi': return '🇮🇳';
-      case 'ne': return '🇳🇵';
-      case 'bn': return '🇧🇩';
-      case 'es': return '🇪🇸';
-      case 'pt': return '🇧🇷';
-      case 'mn': return '🇲🇳';
-      case 'uz': return '🇺🇿';
-      case 'vi': return '🇻🇳';
-      case 'fr': return '🇫🇷';
-      case 'ms': return '🇲🇾';
-      default: return '🌐';
+      case 'ja':
+        return '🇯🇵';
+      case 'en':
+        return '🇬🇧';
+      case 'th':
+        return '🇹🇭';
+      case 'zh':
+        return '🇨🇳';
+      case 'zh_TW':
+        return '🇹🇼';
+      case 'ko':
+        return '🇰🇷';
+      case 'fil':
+        return '🇵🇭';
+      case 'id':
+        return '🇮🇩';
+      case 'my':
+        return '🇲🇲';
+      case 'si':
+        return '🇱🇰';
+      case 'hi':
+        return '🇮🇳';
+      case 'ne':
+        return '🇳🇵';
+      case 'bn':
+        return '🇧🇩';
+      case 'es':
+        return '🇪🇸';
+      case 'pt':
+        return '🇧🇷';
+      case 'mn':
+        return '🇲🇳';
+      case 'uz':
+        return '🇺🇿';
+      case 'vi':
+        return '🇻🇳';
+      case 'fr':
+        return '🇫🇷';
+      case 'ms':
+        return '🇲🇾';
+      default:
+        return '🌐';
     }
   }
 
   /// 避難所タイプを翻訳
   static String translateShelterType(String type) {
     switch (type) {
-      case 'school': return t('shelter_school');
-      case 'hospital': return t('shelter_hospital');
+      case 'school':
+        return t('shelter_school');
+      case 'hospital':
+        return t('shelter_hospital');
       case 'gov':
       case 'government':
-      case 'townhall': return t('shelter_government');
-      case 'shelter': return t('shelter_evacuation');
+      case 'townhall':
+        return t('shelter_government');
+      case 'shelter':
+        return t('shelter_evacuation');
       case 'water':
-        return _values[lang]?['shelter_water'] ?? (lang == 'ja' ? '給水所' : 'Water');
+        return _values[lang]?['shelter_water'] ??
+            (lang == 'ja' ? '給水所' : 'Water');
       case 'fuel':
-        return _values[lang]?['shelter_fuel'] ?? (lang == 'ja' ? 'ガソリン' : 'Fuel');
+        return _values[lang]?['shelter_fuel'] ??
+            (lang == 'ja' ? 'ガソリン' : 'Fuel');
       case 'convenience':
-        return _values[lang]?['shelter_convenience'] ?? (lang == 'ja' ? 'コンビニ' : 'Convenience');
+        return _values[lang]?['shelter_convenience'] ??
+            (lang == 'ja' ? 'コンビニ' : 'Convenience');
       case 'supermarket':
-        return _values[lang]?['shelter_supermarket'] ?? (lang == 'ja' ? 'スーパー' : 'Supermarket');
+        return _values[lang]?['shelter_supermarket'] ??
+            (lang == 'ja' ? 'スーパー' : 'Supermarket');
       case 'place_of_worship':
-      case 'temple': return t('shelter_temple');
+      case 'temple':
+        return t('shelter_temple');
       case 'community_centre':
-        return _values[lang]?['shelter_community'] ?? (lang == 'ja' ? '公民館' : 'Community Center');
-      default: return t('shelter_other');
+        return _values[lang]?['shelter_community'] ??
+            (lang == 'ja' ? '公民館' : 'Community Center');
+      default:
+        return t('shelter_other');
     }
   }
 }

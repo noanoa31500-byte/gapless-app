@@ -26,8 +26,8 @@ void main() {
     test('rejects unsupported future versions', () {
       final bytes = Uint8List.fromList([
         0x47, 0x50, 0x4C, 0x42, // "GPLB"
-        0xFF,                    // version 255 (future)
-        0x00,                    // sectionCount = 0
+        0xFF, // version 255 (future)
+        0x00, // sectionCount = 0
       ]);
       expect(
         () => GplbParser.parse(bytes),
@@ -37,7 +37,10 @@ void main() {
 
     test('parses an empty v1 file with zero sections', () {
       final bytes = Uint8List.fromList([
-        0x47, 0x50, 0x4C, 0x42,
+        0x47,
+        0x50,
+        0x4C,
+        0x42,
         0x01,
         0x00,
       ]);
@@ -48,18 +51,22 @@ void main() {
 
     test('rejects non-GPLB magic bytes', () {
       final bytes = Uint8List.fromList([
-        0x00, 0x00, 0x00, 0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
         0x01,
         0x00,
       ]);
       expect(() => GplbParser.parse(bytes), throwsException);
     });
 
-    test('v2 CRC32 roundtrip: valid footer parses, tampered footer rejected', () {
+    test('v2 CRC32 roundtrip: valid footer parses, tampered footer rejected',
+        () {
       final body = Uint8List.fromList([
         0x47, 0x50, 0x4C, 0x42, // "GPLB"
-        0x02,                    // version 2
-        0x00,                    // sectionCount = 0
+        0x02, // version 2
+        0x00, // sectionCount = 0
       ]);
       final crc = GplbParser.debugCrc32(body);
       final valid = Uint8List.fromList([
@@ -73,8 +80,7 @@ void main() {
       expect(parsed.version, 2);
       expect(parsed.isEmpty, isTrue);
 
-      final tampered = Uint8List.fromList(valid)
-        ..[valid.length - 1] ^= 0xFF;
+      final tampered = Uint8List.fromList(valid)..[valid.length - 1] ^= 0xFF;
       expect(
         () => GplbParser.parse(tampered),
         throwsA(isA<GplbCrcMismatchException>()),
@@ -126,7 +132,8 @@ void main() {
     });
 
     test('valid signature roundtrip verifies', () async {
-      final sos = SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
       final ok = await IdentityKeystore.verify(
         message: sos.canonicalBytes(),
@@ -137,10 +144,11 @@ void main() {
     });
 
     test('tampered message fails verification', () async {
-      final sos = SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
-      final tampered = SosReport.create(
-          deviceId: ks.deviceId, lat: 35.69, lng: 139.75);
+      final tampered =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.69, lng: 139.75);
       final ok = await IdentityKeystore.verify(
         message: tampered.canonicalBytes(),
         signatureBytes: sig,
@@ -150,11 +158,14 @@ void main() {
     });
 
     test('SOS JSON roundtrip preserves signature', () async {
-      final sos = SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
-      final signed = sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
+      final signed =
+          sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
       final wire = signed.toCompactJson();
-      final decoded = SosReport.fromJson(jsonDecode(wire) as Map<String, dynamic>);
+      final decoded =
+          SosReport.fromJson(jsonDecode(wire) as Map<String, dynamic>);
       expect(decoded.isSigned, isTrue);
       expect(decoded.publicKey, ks.publicKeyBytes);
       expect(decoded.signature, sig);
@@ -173,17 +184,19 @@ void main() {
     });
 
     test('signed SOS with valid sig is accepted', () async {
-      final sos = SosReport.create(
-          deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
-      final signed = sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
-      await svc.debugIngestSos(jsonDecode(signed.toCompactJson()) as Map<String, dynamic>);
+      final signed =
+          sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
+      await svc.debugIngestSos(
+          jsonDecode(signed.toCompactJson()) as Map<String, dynamic>);
       expect(svc.receivedSosReports.length, 1);
     });
 
     test('signed SOS with tampered lat is rejected', () async {
-      final sos = SosReport.create(
-          deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: ks.deviceId, lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
       // 緯度を改ざんしてから署名と組み合わせる
       final tampered = SosReport(
@@ -194,23 +207,30 @@ void main() {
         publicKey: ks.publicKeyBytes,
         signature: sig,
       );
-      await svc.debugIngestSos(jsonDecode(tampered.toCompactJson()) as Map<String, dynamic>);
+      await svc.debugIngestSos(
+          jsonDecode(tampered.toCompactJson()) as Map<String, dynamic>);
       expect(svc.receivedSosReports, isEmpty);
     });
 
     test('deviceId not matching pubkey hash is rejected', () async {
-      final sos = SosReport.create(
-          deviceId: 'deadbeef', lat: 35.68, lng: 139.75);
+      final sos =
+          SosReport.create(deviceId: 'deadbeef', lat: 35.68, lng: 139.75);
       final sig = await ks.sign(sos.canonicalBytes());
-      final signed = sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
-      await svc.debugIngestSos(jsonDecode(signed.toCompactJson()) as Map<String, dynamic>);
+      final signed =
+          sos.withSignature(publicKey: ks.publicKeyBytes, signature: sig);
+      await svc.debugIngestSos(
+          jsonDecode(signed.toCompactJson()) as Map<String, dynamic>);
       expect(svc.receivedSosReports, isEmpty);
     });
 
     test('unsigned v1 SOS still accepted (advisory mode)', () async {
       // v1 互換: pk/sig なしでも通る
       await svc.debugIngestSos({
-        'type': 'sos', 'v': 'legacy01', 'a': 35.68, 'o': 139.75, 't': nowSec,
+        'type': 'sos',
+        'v': 'legacy01',
+        'a': 35.68,
+        'o': 139.75,
+        't': nowSec,
       });
       expect(svc.receivedSosReports.length, 1);
     });

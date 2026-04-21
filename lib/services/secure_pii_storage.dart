@@ -37,8 +37,10 @@ class SecurePiiStorage {
     if (needs != null) {
       await _storage.write(key: _kNeeds, value: jsonEncode(needs));
     }
-    if (lat != null) await _storage.write(key: _kLastLat, value: lat.toString());
-    if (lng != null) await _storage.write(key: _kLastLng, value: lng.toString());
+    if (lat != null)
+      await _storage.write(key: _kLastLat, value: lat.toString());
+    if (lng != null)
+      await _storage.write(key: _kLastLng, value: lng.toString());
 
     await prefs.remove('user_name');
     await prefs.remove('user_blood');
@@ -50,10 +52,12 @@ class SecurePiiStorage {
   }
 
   static Future<String?> getName() => _storage.read(key: _kName);
-  static Future<void> setName(String v) => _storage.write(key: _kName, value: v);
+  static Future<void> setName(String v) =>
+      _storage.write(key: _kName, value: v);
 
   static Future<String?> getBlood() => _storage.read(key: _kBlood);
-  static Future<void> setBlood(String v) => _storage.write(key: _kBlood, value: v);
+  static Future<void> setBlood(String v) =>
+      _storage.write(key: _kBlood, value: v);
 
   static Future<List<String>> getAllergies() async {
     final raw = await _storage.read(key: _kAllergies);

@@ -137,12 +137,9 @@ class RouteBearingPainter extends CustomPainter {
   // ── 現在地マーカー ────────────────────────────────────────────────────────
 
   void _drawCurrentPositionMarker(Canvas canvas, Offset center) {
-    canvas.drawCircle(center, 28,
-        Paint()..color = const Color(0x332E7D32));
-    canvas.drawCircle(center, 14,
-        Paint()..color = Colors.white);
-    canvas.drawCircle(center, 10,
-        Paint()..color = const Color(0xFF2E7D32));
+    canvas.drawCircle(center, 28, Paint()..color = const Color(0x332E7D32));
+    canvas.drawCircle(center, 14, Paint()..color = Colors.white);
+    canvas.drawCircle(center, 10, Paint()..color = const Color(0xFF2E7D32));
   }
 
   // ── 座標変換 ──────────────────────────────────────────────────────────────
@@ -152,14 +149,16 @@ class RouteBearingPainter extends CustomPainter {
     final dist = ll.Distance();
 
     final northM = dist(
-      currentPosition,
-      ll.LatLng(point.latitude, currentPosition.longitude),
-    ) * (point.latitude > currentPosition.latitude ? 1 : -1);
+          currentPosition,
+          ll.LatLng(point.latitude, currentPosition.longitude),
+        ) *
+        (point.latitude > currentPosition.latitude ? 1 : -1);
 
     final eastM = dist(
-      currentPosition,
-      ll.LatLng(currentPosition.latitude, point.longitude),
-    ) * (point.longitude > currentPosition.longitude ? 1 : -1);
+          currentPosition,
+          ll.LatLng(currentPosition.latitude, point.longitude),
+        ) *
+        (point.longitude > currentPosition.longitude ? 1 : -1);
 
     return Offset(
       eastM / _metersPerPixel,

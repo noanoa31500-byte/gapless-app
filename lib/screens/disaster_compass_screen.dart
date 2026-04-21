@@ -53,7 +53,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   static const Color _darkBg = Color(0xFF0A0A1A);
   static const Color _cardDarker = Color(0xFF1A1A38);
 
-  static const MethodChannel _brightnessCh = MethodChannel('gapless/brightness');
+  static const MethodChannel _brightnessCh =
+      MethodChannel('gapless/brightness');
   double? _savedBrightness;
 
   static const double _btnHeight = 56.0;
@@ -123,7 +124,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   void _initConnectivityMonitor() {
-    _connectivitySub = ConnectivityService.onConnectivityChanged.listen((connected) {
+    _connectivitySub =
+        ConnectivityService.onConnectivityChanged.listen((connected) {
       if (!mounted) return;
       final hasNetwork = connected;
       if (hasNetwork) {
@@ -131,11 +133,13 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           SnackBar(
             content: Text(
               GapLessL10n.t('connectivity_restored'),
-              style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              style: GapLessL10n.safeStyle(const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
             ),
             backgroundColor: _emerald,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             margin: const EdgeInsets.all(24),
             duration: const Duration(seconds: 3),
             action: SnackBarAction(
@@ -169,8 +173,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   void _onExitHoldStart() {
     _exitHoldStart = DateTime.now();
     _exitHoldTimer?.cancel();
-    _exitHoldTimer =
-        Timer.periodic(const Duration(milliseconds: 30), (t) {
+    _exitHoldTimer = Timer.periodic(const Duration(milliseconds: 30), (t) {
       if (!mounted || _exitHoldStart == null) {
         t.cancel();
         return;
@@ -214,15 +217,18 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
       distance = compassProvider.remainingDistance;
     } else {
       distance = Geolocator.distanceBetween(
-        currentLocation.latitude, currentLocation.longitude,
-        target.lat, target.lng,
+        currentLocation.latitude,
+        currentLocation.longitude,
+        target.lat,
+        target.lng,
       );
     }
 
     if (distance < 0) return;
 
     // Debounce speech if distance hasn't changed much (e.g. standing still)
-    if (_lastSpokenDistance != null && (distance - _lastSpokenDistance!).abs() < 20) {
+    if (_lastSpokenDistance != null &&
+        (distance - _lastSpokenDistance!).abs() < 20) {
       return;
     }
     _lastSpokenDistance = distance;
@@ -241,13 +247,20 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   String _getDirectionText(double bearing) {
     final normalized = (bearing + 360) % 360;
     // Simple 8-direction mapping
-    if (normalized >= 337.5 || normalized < 22.5) return GapLessL10n.t('dir_north');
-    if (normalized >= 22.5 && normalized < 67.5) return GapLessL10n.t('dir_northeast');
-    if (normalized >= 67.5 && normalized < 112.5) return GapLessL10n.t('dir_east');
-    if (normalized >= 112.5 && normalized < 157.5) return GapLessL10n.t('dir_southeast');
-    if (normalized >= 157.5 && normalized < 202.5) return GapLessL10n.t('dir_south');
-    if (normalized >= 202.5 && normalized < 247.5) return GapLessL10n.t('dir_southwest');
-    if (normalized >= 247.5 && normalized < 292.5) return GapLessL10n.t('dir_west');
+    if (normalized >= 337.5 || normalized < 22.5)
+      return GapLessL10n.t('dir_north');
+    if (normalized >= 22.5 && normalized < 67.5)
+      return GapLessL10n.t('dir_northeast');
+    if (normalized >= 67.5 && normalized < 112.5)
+      return GapLessL10n.t('dir_east');
+    if (normalized >= 112.5 && normalized < 157.5)
+      return GapLessL10n.t('dir_southeast');
+    if (normalized >= 157.5 && normalized < 202.5)
+      return GapLessL10n.t('dir_south');
+    if (normalized >= 202.5 && normalized < 247.5)
+      return GapLessL10n.t('dir_southwest');
+    if (normalized >= 247.5 && normalized < 292.5)
+      return GapLessL10n.t('dir_west');
     return GapLessL10n.t('dir_northwest');
   }
 
@@ -260,58 +273,61 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-      backgroundColor: _darkBg,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment(0, -0.3),
-            radius: 1.2,
-            colors: [
-              Color(0xFF0D0D2B),
-              Color(0xFF0A0A1A),
-            ],
+        backgroundColor: _darkBg,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: RadialGradient(
+              center: Alignment(0, -0.3),
+              radius: 1.2,
+              colors: [
+                Color(0xFF0D0D2B),
+                Color(0xFF0A0A1A),
+              ],
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // 1. Header Area
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                      _screenPadding, 12, _screenPadding, 12),
+                  child: _buildHeader(region),
+                ),
+
+                // 2. Destination Info Card
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: _screenPadding),
+                  child: _buildDestinationCard(),
+                ),
+
+                // 3. Main Compass Visualization
+                Expanded(
+                  child: _buildCompassCenter(),
+                ),
+
+                // 4. Logic Indicator
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: _screenPadding),
+                  child: _buildLogicIndicator(region),
+                ),
+
+                const SizedBox(height: 16),
+
+                // 5. Quick Select Chips
+                _buildQuickSelectChips(),
+
+                // 6. Arrival Button
+                Padding(
+                  padding: const EdgeInsets.all(_screenPadding),
+                  child: _buildArrivalButton(),
+                ),
+              ],
+            ),
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // 1. Header Area
-              Padding(
-                padding: const EdgeInsets.fromLTRB(_screenPadding, 12, _screenPadding, 12),
-                child: _buildHeader(region),
-              ),
-
-              // 2. Destination Info Card
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
-                child: _buildDestinationCard(),
-              ),
-
-              // 3. Main Compass Visualization
-              Expanded(
-                child: _buildCompassCenter(),
-              ),
-
-              // 4. Logic Indicator
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: _screenPadding),
-                child: _buildLogicIndicator(region),
-              ),
-
-              const SizedBox(height: 16),
-
-              // 5. Quick Select Chips
-              _buildQuickSelectChips(),
-
-              // 6. Arrival Button
-              Padding(
-                padding: const EdgeInsets.all(_screenPadding),
-                child: _buildArrivalButton(),
-              ),
-            ],
-          ),
-        ),
-      ),
       ),
     );
   }
@@ -394,7 +410,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
                     color: _emerald.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -419,7 +436,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         ),
         Consumer<AlertProvider>(
           builder: (context, alert, _) => _buildCircleButton(
-            icon: alert.isVoiceGuidanceEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+            icon: alert.isVoiceGuidanceEnabled
+                ? Icons.volume_up_rounded
+                : Icons.volume_off_rounded,
             onPressed: () => alert.toggleVoiceGuidance(),
             active: alert.isVoiceGuidanceEnabled,
           ),
@@ -428,7 +447,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  Widget _buildCircleButton({required IconData icon, required VoidCallback onPressed, bool active = false}) {
+  Widget _buildCircleButton(
+      {required IconData icon,
+      required VoidCallback onPressed,
+      bool active = false}) {
     return ClipOval(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -466,10 +488,12 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         final loc = locProv.currentLocation;
 
         if (loc == null) {
-          return _buildStatusCard(GapLessL10n.t('loc_acquiring'), Icons.gps_fixed);
+          return _buildStatusCard(
+              GapLessL10n.t('loc_acquiring'), Icons.gps_fixed);
         }
         if (target == null) {
-          return _buildStatusCard(GapLessL10n.t('loc_no_destination'), Icons.flag_outlined);
+          return _buildStatusCard(
+              GapLessL10n.t('loc_no_destination'), Icons.flag_outlined);
         }
 
         // DISTANCEのみ計算（MODE/ETAは非表示）
@@ -478,7 +502,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         if (compassProv.isSafeNavigating) {
           distance = compassProv.remainingDistance;
         } else {
-          distance = const Distance().as(LengthUnit.Meter, loc, LatLng(target.lat, target.lng));
+          distance = const Distance()
+              .as(LengthUnit.Meter, loc, LatLng(target.lat, target.lng));
         }
 
         final distStr = distance < 0
@@ -522,7 +547,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                             width: 1,
                           ),
                         ),
-                        child: const Icon(Icons.flag_rounded, color: _amber, size: 28),
+                        child: const Icon(Icons.flag_rounded,
+                            color: _amber, size: 28),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -615,7 +641,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  Widget _buildDetailItem(String label, String value, {bool isHighlight = false}) {
+  Widget _buildDetailItem(String label, String value,
+      {bool isHighlight = false}) {
     return Semantics(
       label: '$label $value',
       child: Column(
@@ -666,8 +693,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
         } else if (target != null && loc != null) {
           // Direct fallback
           safeBearing = Geolocator.bearingBetween(
-            loc.latitude, loc.longitude, target.lat, target.lng
-          );
+              loc.latitude, loc.longitude, target.lat, target.lng);
         }
 
         // Color overlay indicating on-track status
@@ -751,8 +777,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
 
             // iOS: flutter_compassがCoreMotionを通じて自動的に権限要求する
             // センサーデータが取得できるまでは控えめなインジケーターを表示
-            if (!compassProv.hasSensorData)
-              _buildSensorWaitingIndicator(),
+            if (!compassProv.hasSensorData) _buildSensorWaitingIndicator(),
           ],
         );
       },
@@ -787,11 +812,11 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             ),
             const SizedBox(width: 10),
             Text(GapLessL10n.t('sensor_loading'),
-              style: GapLessL10n.safeStyle(TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ))),
+                style: GapLessL10n.safeStyle(TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ))),
           ]),
         ),
       ),
@@ -993,7 +1018,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     List<String> types = [type];
 
     // Find nearest
-    final nearest = shelterProvider.getNearestShelter(userLoc, includeTypes: types);
+    final nearest =
+        shelterProvider.getNearestShelter(userLoc, includeTypes: types);
 
     if (nearest != null) {
       // Start fresh calculation
@@ -1016,7 +1042,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+        content: Text(message,
+            style: GapLessL10n.safeStyle(const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold))),
         backgroundColor: bg,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -1045,9 +1073,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(GapLessL10n.t('btn_cancel'),
-              style: GapLessL10n.safeStyle(TextStyle(
-                color: Colors.white.withValues(alpha: 0.5),
-              ))),
+                style: GapLessL10n.safeStyle(TextStyle(
+                  color: Colors.white.withValues(alpha: 0.5),
+                ))),
           ),
           DecoratedBox(
             decoration: BoxDecoration(
@@ -1065,16 +1093,21 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                 HapticService.arrivedAtDestination();
                 Navigator.pop(ctx);
                 context.read<ShelterProvider>().setSafeInShelter(true);
-                Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const ShelterDashboardScreen()));
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => const ShelterDashboardScreen()));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _emerald,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
               ),
               child: Text(GapLessL10n.t('btn_yes_arrived'),
-                style: GapLessL10n.safeStyle(const TextStyle(fontWeight: FontWeight.w700))),
+                  style: GapLessL10n.safeStyle(
+                      const TextStyle(fontWeight: FontWeight.w700))),
             ),
           ),
         ],

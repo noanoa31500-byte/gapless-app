@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../utils/apple_design_system.dart';
 
 /// Apple風のすりガラス効果を持つカードウィジェット
-/// 
+///
 /// グラスモーフィズム (Glassmorphism) を採用し、
 /// 地図やコンテンツの上に浮く情報パネルに使用します。
 class GlassCard extends StatelessWidget {
@@ -20,7 +20,7 @@ class GlassCard extends StatelessWidget {
   final List<BoxShadow>? shadow;
   final bool isDark;
   final VoidCallback? onTap;
-  
+
   const GlassCard({
     super.key,
     required this.child,
@@ -37,7 +37,7 @@ class GlassCard extends StatelessWidget {
     this.isDark = false,
     this.onTap,
   });
-  
+
   /// 小さめのカード（チップやバッジ向け）
   const GlassCard.small({
     super.key,
@@ -55,7 +55,7 @@ class GlassCard extends StatelessWidget {
     this.isDark = false,
     this.onTap,
   });
-  
+
   /// 大きめのカード（パネルやモーダル向け）
   const GlassCard.large({
     super.key,
@@ -76,12 +76,14 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveBackgroundColor = backgroundColor ?? 
+    final effectiveBackgroundColor = backgroundColor ??
         (isDark ? AppleColors.glassDark : AppleColors.glassWhite);
-    final effectiveBorderColor = borderColor ?? 
-        (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.3));
+    final effectiveBorderColor = borderColor ??
+        (isDark
+            ? Colors.white.withValues(alpha: 0.1)
+            : Colors.white.withValues(alpha: 0.3));
     final effectiveShadow = shadow ?? (isDark ? null : AppleShadows.medium);
-    
+
     Widget card = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
       child: BackdropFilter(
@@ -103,18 +105,18 @@ class GlassCard extends StatelessWidget {
         ),
       ),
     );
-    
+
     if (margin != null) {
       card = Padding(padding: margin!, child: card);
     }
-    
+
     if (onTap != null) {
       return GestureDetector(
         onTap: onTap,
         child: card,
       );
     }
-    
+
     return card;
   }
 }
@@ -127,7 +129,7 @@ class StatusGlassCard extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
   final double borderRadius;
   final VoidCallback? onTap;
-  
+
   const StatusGlassCard({
     super.key,
     required this.child,
@@ -142,7 +144,7 @@ class StatusGlassCard extends StatelessWidget {
   Widget build(BuildContext context) {
     Color statusColor;
     Color backgroundColor;
-    
+
     switch (status) {
       case StatusType.safe:
         statusColor = AppleColors.safetyGreen;
@@ -161,7 +163,7 @@ class StatusGlassCard extends StatelessWidget {
         backgroundColor = AppleColors.actionBlue.withValues(alpha: 0.1);
         break;
     }
-    
+
     return GlassCard(
       padding: padding ?? const EdgeInsets.all(16),
       margin: margin,
@@ -190,7 +192,7 @@ class CompassInfoPanel extends StatelessWidget {
   final IconData? icon;
   final Color? iconColor;
   final bool isDark;
-  
+
   const CompassInfoPanel({
     super.key,
     required this.title,
@@ -207,11 +209,11 @@ class CompassInfoPanel extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       borderRadius: 16,
       isDark: isDark,
-      backgroundColor: isDark 
-          ? Colors.black.withValues(alpha: 0.6) 
+      backgroundColor: isDark
+          ? Colors.black.withValues(alpha: 0.6)
           : Colors.white.withValues(alpha: 0.85),
-      borderColor: isDark 
-          ? Colors.white.withValues(alpha: 0.15) 
+      borderColor: isDark
+          ? Colors.white.withValues(alpha: 0.15)
           : Colors.black.withValues(alpha: 0.1),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -220,7 +222,8 @@ class CompassInfoPanel extends StatelessWidget {
             Icon(
               icon,
               size: 24,
-              color: iconColor ?? (isDark ? Colors.white : AppleColors.actionBlue),
+              color:
+                  iconColor ?? (isDark ? Colors.white : AppleColors.actionBlue),
             ),
             const SizedBox(width: 12),
           ],
@@ -231,8 +234,8 @@ class CompassInfoPanel extends StatelessWidget {
               Text(
                 title,
                 style: AppleTypography.caption1.copyWith(
-                  color: isDark 
-                      ? Colors.white.withValues(alpha: 0.7) 
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.7)
                       : AppleColors.secondaryLabel,
                 ),
               ),
@@ -248,8 +251,8 @@ class CompassInfoPanel extends StatelessWidget {
                 Text(
                   subtitle!,
                   style: AppleTypography.caption2.copyWith(
-                    color: isDark 
-                        ? Colors.white.withValues(alpha: 0.5) 
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.5)
                         : AppleColors.tertiaryLabel,
                   ),
                 ),
@@ -269,7 +272,7 @@ class AppleNavButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isActive;
   final Color? activeColor;
-  
+
   const AppleNavButton({
     super.key,
     required this.icon,
@@ -282,15 +285,15 @@ class AppleNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveActiveColor = activeColor ?? AppleColors.actionBlue;
-    
+
     return GestureDetector(
       onTap: onPressed,
       child: GlassCard.small(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        backgroundColor: isActive 
+        backgroundColor: isActive
             ? effectiveActiveColor.withValues(alpha: 0.15)
             : Colors.white.withValues(alpha: 0.9),
-        borderColor: isActive 
+        borderColor: isActive
             ? effectiveActiveColor.withValues(alpha: 0.4)
             : Colors.black.withValues(alpha: 0.1),
         child: Row(
@@ -299,7 +302,8 @@ class AppleNavButton extends StatelessWidget {
             Icon(
               icon,
               size: 18,
-              color: isActive ? effectiveActiveColor : AppleColors.secondaryLabel,
+              color:
+                  isActive ? effectiveActiveColor : AppleColors.secondaryLabel,
             ),
             const SizedBox(width: 8),
             Text(

@@ -10,21 +10,52 @@ import 'dart:math';
 // ────────────────────────────────────────
 const Map<String, String> prefToRegion = {
   'hokkaido': 'hokkaido',
-  'aomori': 'tohoku', 'iwate': 'tohoku', 'miyagi': 'tohoku',
-  'akita': 'tohoku', 'yamagata': 'tohoku', 'fukushima': 'tohoku',
-  'ibaraki': 'kanto', 'tochigi': 'kanto', 'gunma': 'kanto',
-  'saitama': 'kanto', 'chiba': 'kanto', 'tokyo': 'kanto', 'kanagawa': 'kanto',
-  'niigata': 'chubu', 'toyama': 'chubu', 'ishikawa': 'chubu',
-  'fukui': 'chubu', 'yamanashi': 'chubu', 'nagano': 'chubu',
-  'gifu': 'chubu', 'shizuoka': 'chubu', 'aichi': 'chubu', 'mie': 'chubu',
-  'shiga': 'kinki', 'kyoto': 'kinki', 'osaka': 'kinki',
-  'hyogo': 'kinki', 'nara': 'kinki', 'wakayama': 'kinki',
-  'tottori': 'chugoku', 'shimane': 'chugoku', 'okayama': 'chugoku',
-  'hiroshima': 'chugoku', 'yamaguchi': 'chugoku',
-  'tokushima': 'shikoku', 'kagawa': 'shikoku', 'ehime': 'shikoku', 'kochi': 'shikoku',
-  'fukuoka': 'kyushu', 'saga': 'kyushu', 'nagasaki': 'kyushu',
-  'kumamoto': 'kyushu', 'oita': 'kyushu', 'miyazaki': 'kyushu',
-  'kagoshima': 'kyushu', 'okinawa': 'kyushu',
+  'aomori': 'tohoku',
+  'iwate': 'tohoku',
+  'miyagi': 'tohoku',
+  'akita': 'tohoku',
+  'yamagata': 'tohoku',
+  'fukushima': 'tohoku',
+  'ibaraki': 'kanto',
+  'tochigi': 'kanto',
+  'gunma': 'kanto',
+  'saitama': 'kanto',
+  'chiba': 'kanto',
+  'tokyo': 'kanto',
+  'kanagawa': 'kanto',
+  'niigata': 'chubu',
+  'toyama': 'chubu',
+  'ishikawa': 'chubu',
+  'fukui': 'chubu',
+  'yamanashi': 'chubu',
+  'nagano': 'chubu',
+  'gifu': 'chubu',
+  'shizuoka': 'chubu',
+  'aichi': 'chubu',
+  'mie': 'chubu',
+  'shiga': 'kinki',
+  'kyoto': 'kinki',
+  'osaka': 'kinki',
+  'hyogo': 'kinki',
+  'nara': 'kinki',
+  'wakayama': 'kinki',
+  'tottori': 'chugoku',
+  'shimane': 'chugoku',
+  'okayama': 'chugoku',
+  'hiroshima': 'chugoku',
+  'yamaguchi': 'chugoku',
+  'tokushima': 'shikoku',
+  'kagawa': 'shikoku',
+  'ehime': 'shikoku',
+  'kochi': 'shikoku',
+  'fukuoka': 'kyushu',
+  'saga': 'kyushu',
+  'nagasaki': 'kyushu',
+  'kumamoto': 'kyushu',
+  'oita': 'kyushu',
+  'miyazaki': 'kyushu',
+  'kagoshima': 'kyushu',
+  'okinawa': 'kyushu',
 };
 
 const String _baseUrl =
@@ -105,8 +136,8 @@ class TileEntry {
     final filename = files[fileKey];
     if (filename == null) return [];
     return [
-      '$_baseUrl/$prefKey/$filename',              // 旧構造
-      '$_baseUrl/$region/$prefKey/$id/$filename',  // 新構造
+      '$_baseUrl/$prefKey/$filename', // 旧構造
+      '$_baseUrl/$region/$prefKey/$id/$filename', // 新構造
     ];
   }
 
@@ -150,8 +181,7 @@ class TileIndex {
       };
 
   // 現在地から radiusKm 以内に重なるタイルを返す
-  List<TileEntry> tilesNear(double lat, double lng,
-      {double radiusKm = 3.0}) {
+  List<TileEntry> tilesNear(double lat, double lng, {double radiusKm = 3.0}) {
     return tiles
         .where((t) => t.distanceFromPoint(lat, lng) <= radiusKm)
         .toList();

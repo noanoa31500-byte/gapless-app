@@ -18,9 +18,22 @@ import '../data/hazard_parser.dart';
 class ShelterRepository {
   // 民間施設などを除外するためのブラックリスト
   static const List<String> blackListKeywords = [
-    'そろばん', '珠算', '塾',
-    '英会話', '公文', 'スイミング', 'ピアノ', 'バレエ', 'ダンス',
-    '自動車', 'driving', 'kumon', 'ballet', 'dance', 'piano', 'swimming',
+    'そろばん',
+    '珠算',
+    '塾',
+    '英会話',
+    '公文',
+    'スイミング',
+    'ピアノ',
+    'バレエ',
+    'ダンス',
+    '自動車',
+    'driving',
+    'kumon',
+    'ballet',
+    'dance',
+    'piano',
+    'swimming',
   ];
 
   /// region → アセットファイル名プレフィックス
@@ -143,8 +156,7 @@ class ShelterRepository {
             : polygon as List<dynamic>;
         return coords.map((c) {
           final pt = c as List<dynamic>;
-          return LatLng(
-              (pt[1] as num).toDouble(), (pt[0] as num).toDouble());
+          return LatLng((pt[1] as num).toDouble(), (pt[0] as num).toDouble());
         }).toList();
       }).toList();
     } catch (e) {

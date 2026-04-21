@@ -65,15 +65,18 @@ class GpsTrackSnapshot {
 
   factory GpsTrackSnapshot.fromJson(Map<String, dynamic> j) {
     final rawPts = (j['pts'] as List?) ?? [];
-    final points = rawPts.map((arr) {
-      final a = arr as List;
-      if (a.length < 3) return null;
-      return GpsPoint(
-        (a[0] as num).toDouble(),
-        (a[1] as num).toDouble(),
-        (a[2] as num).toInt(),
-      );
-    }).whereType<GpsPoint>().toList();
+    final points = rawPts
+        .map((arr) {
+          final a = arr as List;
+          if (a.length < 3) return null;
+          return GpsPoint(
+            (a[0] as num).toDouble(),
+            (a[1] as num).toDouble(),
+            (a[2] as num).toInt(),
+          );
+        })
+        .whereType<GpsPoint>()
+        .toList();
     return GpsTrackSnapshot(
       deviceId: j['v'] as String? ?? '',
       timestamp: (j['t'] as num?)?.toInt() ?? 0,

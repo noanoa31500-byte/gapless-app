@@ -38,7 +38,8 @@ class EmergencySimpleScreen extends StatefulWidget {
 
 class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  static const MethodChannel _brightnessCh = MethodChannel('gapless/brightness');
+  static const MethodChannel _brightnessCh =
+      MethodChannel('gapless/brightness');
   final _announcer = NavigationAnnouncer();
 
   // SOS 長押し進捗 (RestorationMixinの代替: KeepAlive + フィールド保持)
@@ -178,14 +179,12 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
     _sosHoldStartedAt = DateTime.now();
     _sosHapticStage = 0;
     _sosProgressTimer?.cancel();
-    _sosProgressTimer =
-        Timer.periodic(const Duration(milliseconds: 30), (t) {
+    _sosProgressTimer = Timer.periodic(const Duration(milliseconds: 30), (t) {
       if (!mounted || _sosHoldStartedAt == null) {
         t.cancel();
         return;
       }
-      final ms =
-          DateTime.now().difference(_sosHoldStartedAt!).inMilliseconds;
+      final ms = DateTime.now().difference(_sosHoldStartedAt!).inMilliseconds;
       final p = (ms / 3000.0).clamp(0.0, 1.0);
       // 段階的ハプティック
       if (_sosHapticStage < 1 && ms >= 1000) {
@@ -280,74 +279,74 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
       // 災害コア画面なので誤操作脱出を防ぐ (DisasterCompassScreen と同設計)。
       canPop: false,
       child: KeyboardListener(
-      focusNode: _focusNode,
-      onKeyEvent: (event) {
-        if (event is KeyDownEvent &&
-            event.logicalKey == LogicalKeyboardKey.audioVolumeUp) {
-          _announcer.announceAlert(_currentTtsText);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        appBar: AppBar(
-          backgroundColor: const Color(0xFF1A1A2E),
-          foregroundColor: Colors.white,
-          automaticallyImplyLeading: false,
-          elevation: 0,
-          title: Text(
-            GapLessL10n.t('emergency_screen_title'),
-            style: GapLessL10n.safeStyle(const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 19,
-                letterSpacing: 0.3)),
-          ),
-          actions: [
-            // RiskRadar 360° (深水・激流方位) への導線。
-            // README 機能 6「RiskRadar」の唯一のエントリ。
-            Semantics(
-              button: true,
-              label: GapLessL10n.t('risk_radar_title'),
-              child: IconButton(
-                icon: const Icon(Icons.radar, size: 22),
-                tooltip: GapLessL10n.t('risk_radar_title'),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed('/risk_radar'),
-              ),
+        focusNode: _focusNode,
+        onKeyEvent: (event) {
+          if (event is KeyDownEvent &&
+              event.logicalKey == LogicalKeyboardKey.audioVolumeUp) {
+            _announcer.announceAlert(_currentTtsText);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(
+            backgroundColor: const Color(0xFF1A1A2E),
+            foregroundColor: Colors.white,
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            title: Text(
+              GapLessL10n.t('emergency_screen_title'),
+              style: GapLessL10n.safeStyle(const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 19,
+                  letterSpacing: 0.3)),
             ),
-            // バッテリー残量 (18pt以上 / コントラスト強化)
-            ListenableBuilder(
-              listenable: PowerManager.instance,
-              builder: (_, __) => Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Semantics(
-                  label:
-                      'Battery ${PowerManager.instance.batteryLevel} percent',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.battery_alert, size: 22),
-                      const SizedBox(width: 4),
-                      Text('${PowerManager.instance.batteryLevel}%',
-                          style: GapLessL10n.safeStyle(const TextStyle(
-                              fontSize: 18,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold))),
-                    ],
+            actions: [
+              // RiskRadar 360° (深水・激流方位) への導線。
+              // README 機能 6「RiskRadar」の唯一のエントリ。
+              Semantics(
+                button: true,
+                label: GapLessL10n.t('risk_radar_title'),
+                child: IconButton(
+                  icon: const Icon(Icons.radar, size: 22),
+                  tooltip: GapLessL10n.t('risk_radar_title'),
+                  onPressed: () =>
+                      Navigator.of(context).pushNamed('/risk_radar'),
+                ),
+              ),
+              // バッテリー残量 (18pt以上 / コントラスト強化)
+              ListenableBuilder(
+                listenable: PowerManager.instance,
+                builder: (_, __) => Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: Semantics(
+                    label:
+                        'Battery ${PowerManager.instance.batteryLevel} percent',
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.battery_alert, size: 22),
+                        const SizedBox(width: 4),
+                        Text('${PowerManager.instance.batteryLevel}%',
+                            style: GapLessL10n.safeStyle(const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold))),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
+          body: Column(
+            children: [
+              // SOS を画面の 40% 確保 (README「上半分=SOS」要件準拠)。
+              Expanded(flex: 4, child: _buildSosZone()),
+              Expanded(flex: 3, child: _buildNavZone()),
+              Expanded(flex: 3, child: _buildActionsZone()),
+            ],
+          ),
         ),
-        body: Column(
-          children: [
-            // SOS を画面の 40% 確保 (README「上半分=SOS」要件準拠)。
-            Expanded(flex: 4, child: _buildSosZone()),
-            Expanded(flex: 3, child: _buildNavZone()),
-            Expanded(flex: 3, child: _buildActionsZone()),
-          ],
-        ),
-      ),
       ),
     );
   }
@@ -411,8 +410,7 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                       height: 208,
                       child: CircularProgressIndicator(
                         value: _sosHoldProgress > 0 ? _sosHoldProgress : null,
-                        valueColor:
-                            const AlwaysStoppedAnimation(Colors.white),
+                        valueColor: const AlwaysStoppedAnimation(Colors.white),
                         strokeWidth: 9,
                         backgroundColor: Colors.white24,
                       ),
@@ -424,10 +422,19 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                         shape: BoxShape.circle,
                         gradient: RadialGradient(
                           colors: _sosSent
-                              ? [AppColors.emergencyRedMuted, const Color(0xFF3A0000)]
+                              ? [
+                                  AppColors.emergencyRedMuted,
+                                  const Color(0xFF3A0000)
+                                ]
                               : (_sosArmed
-                                  ? [AppColors.emergencyRed, const Color(0xFFB00020)]
-                                  : [AppColors.emergencyRedDark, const Color(0xFF6B0000)]),
+                                  ? [
+                                      AppColors.emergencyRed,
+                                      const Color(0xFFB00020)
+                                    ]
+                                  : [
+                                      AppColors.emergencyRedDark,
+                                      const Color(0xFF6B0000)
+                                    ]),
                           center: const Alignment(-0.3, -0.3),
                           radius: 1.0,
                         ),
@@ -437,7 +444,8 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.emergencyRed.withValues(alpha: 0.5),
+                            color:
+                                AppColors.emergencyRed.withValues(alpha: 0.5),
                             blurRadius: 32,
                             spreadRadius: 4,
                           ),
@@ -660,8 +668,8 @@ class _EmergencySimpleScreenState extends State<EmergencySimpleScreen>
                   label: GapLessL10n.t('emergency_first_aid'),
                   semanticLabel: GapLessL10n.t('first_aid_a11y'),
                   color: AppColors.primaryGreenMuted,
-                  onTap: () => _announcer.announceAlert(
-                      GapLessL10n.t('emergency_first_aid_tip')),
+                  onTap: () => _announcer
+                      .announceAlert(GapLessL10n.t('emergency_first_aid_tip')),
                 ),
               ),
               const SizedBox(width: 12),

@@ -4,14 +4,14 @@ import '../utils/clock_navigation_helper.dart';
 /// ============================================================================
 /// ClockNavigationDisplay - 0.1秒判断のためのナビゲーションUI
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// パニック状態の被災者が、一瞬で行動を決定できるUI。
-/// 
+///
 /// - 画面全体を「色」で染める（緑=GO、黄=調整、赤=戻れ）
 /// - 中央に大きな「言葉」を表示
 /// - 矢印アイコンで直感的に方向を示す
-/// 
+///
 /// 【アクセシビリティ】
 /// - 高コントラストカラー
 /// - 大きなフォント
@@ -21,13 +21,13 @@ import '../utils/clock_navigation_helper.dart';
 class ClockNavigationDisplay extends StatelessWidget {
   /// ナビゲーション状態
   final ClockNavState state;
-  
+
   /// 言語設定
   final String lang;
-  
+
   /// 残り距離（メートル）
   final double? distanceMeters;
-  
+
   /// コンパクトモード（小さく表示）
   final bool compact;
 
@@ -69,9 +69,9 @@ class ClockNavigationDisplay extends StatelessWidget {
         children: [
           // アイコン（大きく、回転付き）
           _buildIcon(size: 120),
-          
+
           const SizedBox(height: 24),
-          
+
           // 短縮メッセージ（超大文字）
           Text(
             state.shortMessage,
@@ -82,9 +82,17 @@ class ClockNavigationDisplay extends StatelessWidget {
               letterSpacing: 4,
               fontFamily: 'NotoSansJP',
               fontFamilyFallback: const [
-                'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif',
               ],
               shadows: [
                 Shadow(
@@ -107,14 +115,22 @@ class ClockNavigationDisplay extends StatelessWidget {
               color: state.textColor.withValues(alpha: 0.9),
               fontFamily: 'NotoSansJP',
               fontFamilyFallback: const [
-                'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif',
               ],
             ),
             textAlign: TextAlign.center,
           ),
-          
+
           // 残り距離
           if (distanceMeters != null) ...[
             const SizedBox(height: 16),
@@ -147,9 +163,9 @@ class ClockNavigationDisplay extends StatelessWidget {
         children: [
           // アイコン
           _buildIcon(size: 32),
-          
+
           const SizedBox(width: 12),
-          
+
           // メッセージ
           Column(
             mainAxisSize: MainAxisSize.min,
@@ -163,9 +179,17 @@ class ClockNavigationDisplay extends StatelessWidget {
                   color: state.textColor,
                   fontFamily: 'NotoSansJP',
                   fontFamilyFallback: const [
-                    'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                    'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                    'NotoSansSC',
+                    'NotoSansTC',
+                    'NotoSansKR',
+                    'NotoSansThai',
+                    'NotoSansMyanmar',
+                    'NotoSansSinhala',
+                    'NotoSansDevanagari',
+                    'NotoSansBengali',
+                    'NotoSansArabic',
+                    'NotoSans',
+                    'sans-serif',
                   ],
                 ),
               ),
@@ -177,9 +201,17 @@ class ClockNavigationDisplay extends StatelessWidget {
                     color: state.textColor.withValues(alpha: 0.8),
                     fontFamily: 'NotoSansJP',
                     fontFamilyFallback: const [
-                      'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                      'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                      'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                      'NotoSansSC',
+                      'NotoSansTC',
+                      'NotoSansKR',
+                      'NotoSansThai',
+                      'NotoSansMyanmar',
+                      'NotoSansSinhala',
+                      'NotoSansDevanagari',
+                      'NotoSansBengali',
+                      'NotoSansArabic',
+                      'NotoSans',
+                      'sans-serif',
                     ],
                   ),
                 ),
@@ -227,9 +259,17 @@ class ClockNavigationDisplay extends StatelessWidget {
           color: state.textColor,
           fontFamily: 'NotoSansJP',
           fontFamilyFallback: const [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+            'NotoSansSC',
+            'NotoSansTC',
+            'NotoSansKR',
+            'NotoSansThai',
+            'NotoSansMyanmar',
+            'NotoSansSinhala',
+            'NotoSansDevanagari',
+            'NotoSansBengali',
+            'NotoSansArabic',
+            'NotoSans',
+            'sans-serif',
           ],
         ),
       ),
@@ -251,7 +291,7 @@ class ClockNavigationDisplay extends StatelessWidget {
 /// ============================================================================
 /// ClockNavigationOverlay - 画面全体を覆うオーバーレイ表示
 /// ============================================================================
-/// 
+///
 /// 緊急時に画面全体を色で染め、最優先で方向を伝える。
 class ClockNavigationOverlay extends StatelessWidget {
   final ClockNavState state;
@@ -297,9 +337,9 @@ class ClockNavigationOverlay extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 40),
-                
+
                 // 超巨大テキスト
                 Text(
                   state.shortMessage,
@@ -310,9 +350,17 @@ class ClockNavigationOverlay extends StatelessWidget {
                     letterSpacing: 8,
                     fontFamily: 'NotoSansJP',
                     fontFamilyFallback: const [
-                      'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                      'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                      'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                      'NotoSansSC',
+                      'NotoSansTC',
+                      'NotoSansKR',
+                      'NotoSansThai',
+                      'NotoSansMyanmar',
+                      'NotoSansSinhala',
+                      'NotoSansDevanagari',
+                      'NotoSansBengali',
+                      'NotoSansArabic',
+                      'NotoSans',
+                      'sans-serif',
                     ],
                     shadows: const [
                       Shadow(
@@ -337,9 +385,17 @@ class ClockNavigationOverlay extends StatelessWidget {
                       color: state.textColor.withValues(alpha: 0.9),
                       fontFamily: 'NotoSansJP',
                       fontFamilyFallback: const [
-                        'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                        'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                        'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                        'NotoSansSC',
+                        'NotoSansTC',
+                        'NotoSansKR',
+                        'NotoSansThai',
+                        'NotoSansMyanmar',
+                        'NotoSansSinhala',
+                        'NotoSansDevanagari',
+                        'NotoSansBengali',
+                        'NotoSansArabic',
+                        'NotoSans',
+                        'sans-serif',
                       ],
                     ),
                     textAlign: TextAlign.center,
@@ -350,7 +406,8 @@ class ClockNavigationOverlay extends StatelessWidget {
                 if (distanceMeters != null) ...[
                   const SizedBox(height: 32),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.black26,
                       borderRadius: BorderRadius.circular(40),
@@ -363,9 +420,17 @@ class ClockNavigationOverlay extends StatelessWidget {
                         color: state.textColor,
                         fontFamily: 'NotoSansJP',
                         fontFamilyFallback: const [
-                          'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                          'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                          'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                          'NotoSansSC',
+                          'NotoSansTC',
+                          'NotoSansKR',
+                          'NotoSansThai',
+                          'NotoSansMyanmar',
+                          'NotoSansSinhala',
+                          'NotoSansDevanagari',
+                          'NotoSansBengali',
+                          'NotoSansArabic',
+                          'NotoSans',
+                          'sans-serif',
                         ],
                       ),
                     ),
@@ -434,9 +499,17 @@ class ClockNavigationBadge extends StatelessWidget {
               color: state.textColor,
               fontFamily: 'NotoSansJP',
               fontFamilyFallback: const [
-                'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif',
               ],
             ),
           ),
@@ -449,33 +522,33 @@ class ClockNavigationBadge extends StatelessWidget {
 /// ============================================================================
 /// クロックナビゲーション使用例
 /// ============================================================================
-/// 
+///
 /// ```dart
 /// // 状態を計算
 /// final state = ClockNavigationHelper.calculateState(
 ///   targetBearing: 45.0,  // 目的地への方位
 ///   deviceHeading: 30.0,  // 端末の向き
 /// );
-/// 
+///
 /// // フル表示（コンパス画面）
 /// ClockNavigationDisplay(
 ///   state: state,
 ///   lang: 'ja',
 ///   distanceMeters: 150.0,
 /// )
-/// 
+///
 /// // コンパクト表示（マップオーバーレイ）
 /// ClockNavigationDisplay(
 ///   state: state,
 ///   compact: true,
 /// )
-/// 
+///
 /// // 画面全体オーバーレイ（緊急時）
 /// ClockNavigationOverlay(
 ///   state: state,
 ///   lang: 'ja',
 /// )
-/// 
+///
 /// // バッジ表示（ミニマル）
 /// ClockNavigationBadge(state: state)
 /// ```

@@ -86,8 +86,7 @@ class FallbackModeController extends ChangeNotifier {
 
   FallbackState get state => _state;
   FallbackMode get mode => _state.mode;
-  bool get isInFallback =>
-      _state.mode != FallbackMode.normal;
+  bool get isInFallback => _state.mode != FallbackMode.normal;
 
   // ---------------------------------------------------------------------------
   // 設定
@@ -106,8 +105,7 @@ class FallbackModeController extends ChangeNotifier {
     _boundsMaxLat = maxLat;
     _boundsMinLng = minLng;
     _boundsMaxLng = maxLng;
-    debugPrint(
-        'FallbackModeController: bounds set '
+    debugPrint('FallbackModeController: bounds set '
         '[$minLat,$minLng] - [$maxLat,$maxLng]');
   }
 
@@ -223,8 +221,7 @@ class FallbackModeController extends ChangeNotifier {
       returnDistanceM: _distanceM(current, last),
     );
     notifyListeners();
-    debugPrint(
-        'FallbackModeController: 範囲外検知 → 帰還支援モード '
+    debugPrint('FallbackModeController: 範囲外検知 → 帰還支援モード '
         '(方位: ${_state.returnBearingDeg.toStringAsFixed(0)}°, '
         '距離: ${_state.returnDistanceM.toStringAsFixed(0)}m)');
   }

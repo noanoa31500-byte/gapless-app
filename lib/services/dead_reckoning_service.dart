@@ -40,43 +40,52 @@ enum MovementMode { walk, bicycle, vehicle }
 class DeadReckoningService extends ChangeNotifier {
   // ── 設定定数 ────────────────────────────────────────────────────────────
   static const double defaultStrideLengthM = 0.75;
-  static const double _stepThreshold = 11.5;    // m/s² (raw accel magnitude)
+  static const double _stepThreshold = 11.5; // m/s² (raw accel magnitude)
   /// ステップ判定の上限ガード — 自由落下/衝撃/落下事故等の異常値を除外
   /// 通常歩行は 12〜18 m/s² 程度。50 を超える加速度は端末の物理衝撃とみなす。
   static const double _stepUpperBound = 50.0;
-  static const double _stepCooldownMs = 350.0;  // 最小ステップ間隔
+  static const double _stepCooldownMs = 350.0; // 最小ステップ間隔
   /// センサー停止検出のしきい値（5秒間コールバック無し→停止判定）
   static const Duration _sensorStallThreshold = Duration(seconds: 5);
-  static const int _headingBufferSize = 7;       // ヘディング移動平均サンプル数
+  static const int _headingBufferSize = 7; // ヘディング移動平均サンプル数
   /// 5分（300秒）を超えると精度低下警告
   static const int _accuracyWarningSecs = 300;
 
   // ── 移動モード分類しきい値 ────────────────────────────────────────────────
   /// この速度（m/s）以上 = 自転車判定（≈ 10.8 km/h）
   static const double _bicycleThresholdMs = 3.0;
+
   /// この速度（m/s）以上 = 車両判定（≈ 28.8 km/h）
   static const double _vehicleThresholdMs = 8.0;
+
   /// 速度積分タイマー間隔（ms）
   static const int _velocityTickMs = 200;
+
   /// タイマー1回ごとの速度減衰係数（5 Hz × 0.2% = ≈ 1%/s 減衰）
   static const double _speedDecayPerTick = 0.998;
+
   /// この速度以下は停止とみなして積分しない
   static const double _minIntegrationSpeedMs = 0.5;
 
   // ── 歩幅学習（GPS稼働中のキャリブレーション）────────────────────────────
   /// SharedPreferences に保存するキー
   static const String _stridePrefKey = 'dr_stride_length';
+
   /// EMA の学習率（新サンプルの重み）
   static const double _calibEmaAlpha = 0.3;
+
   /// キャリブレーションに必要な最低GPS精度（m）— GPS誤差による歩幅上振れを抑制
   static const double _calibMaxGpsAccuracyM = 15.0;
+
   /// キャリブレーションに必要な最低移動距離（m）
   static const double _calibMinDistanceM = 8.0;
+
   /// キャリブレーションに必要な最低歩数
   static const int _calibMinSteps = 6;
+
   /// 歩幅として有効な速度範囲（m/s）— 0.3未満=ほぼ停止、2.5超=走り
   static const double _calibMinSpeedMs = 0.3;
-  static const double _calibMaxSpeedMs = 1.8;  // 時速6.5km — 自転車・車を除外
+  static const double _calibMaxSpeedMs = 1.8; // 時速6.5km — 自転車・車を除外
 
   // ── 状態 ──────────────────────────────────────────────────────────────
   bool _isActive = false;
@@ -84,44 +93,58 @@ class DeadReckoningService extends ChangeNotifier {
   double _headingDeg = 0.0;
   int _stepCount = 0;
   double _strideLengthM = defaultStrideLengthM;
+
   /// 磁気偏角（度）。activate() 時に起点座標から設定する
   double _declinationDeg = 0.0;
+
   /// DR 開始時刻
   DateTime? _activatedAt;
+
   /// ヘディング循環バッファ（角度平均用）
   final List<double> _headingBuffer = [];
+
   /// 最初のコンパスサンプルが届いたら true。それまでステップ登録を保留する
   bool _compassReady = false;
+
   /// GPS キャリブレーションで歩幅が一度でも更新されたら true（float比較回避）
   bool _strideHasBeenLearned = false;
 
   // ── 移動モード状態 ─────────────────────────────────────────────────────
   /// GPS稼働中に推定した移動モード
   MovementMode _movementMode = MovementMode.walk;
+
   /// GPS消失直前の速度（m/s）
   double _lastGpsSpeedMs = 0.0;
+
   /// 速度積分中の現在推定速度（m/s）— タイマーごとに減衰
   double _currentSpeedMs = 0.0;
+
   /// 速度積分による総移動距離（m）— 誤差モデルに使用
   double _integratedDistanceM = 0.0;
+
   /// 自転車・車両モード用の速度積分タイマー
   Timer? _velocityTimer;
 
   // ── キャリブレーション状態 ─────────────────────────────────────────────
   /// GPS 稼働中のキャリブレーション歩数カウンター
   int _calibStepCount = 0;
+
   /// キャリブレーション用加速度計サブスクリプション（DR とは独立）
   StreamSubscription<AccelerometerEvent>? _calibAccelSub;
+
   /// キャリブレーション用ステップ検出の直前ノルム
   double _lastCalibMagnitude = 0.0;
+
   /// キャリブレーション用直前ステップ時刻
   DateTime _lastCalibStepTime = DateTime.fromMillisecondsSinceEpoch(0);
 
   // ── センサー停止検出 ─────────────────────────────────────────────────────
   /// 加速度センサーから最後にコールバックが届いた時刻
   DateTime? _lastAccelEventAt;
+
   /// センサー停止状態フラグ（UI へ通知）
   bool _sensorStalled = false;
+
   /// 停止検出用 watchdog タイマー
   Timer? _sensorWatchdog;
 
@@ -190,7 +213,7 @@ class DeadReckoningService extends ChangeNotifier {
     _estimatedPosition = lastKnownPosition;
     _stepCount = 0;
     _headingBuffer.clear();
-    _compassReady = false;  // コンパスサンプルが届くまでステップ登録を保留
+    _compassReady = false; // コンパスサンプルが届くまでステップ登録を保留
     _activatedAt = DateTime.now();
     // GPS モード中のキャリブレーションを停止（DR とセンサー競合を防ぐ）
     stopCalibration();
@@ -247,7 +270,6 @@ class DeadReckoningService extends ChangeNotifier {
     _strideLengthM = meters.clamp(0.3, 2.0);
   }
 
-
   // ---------------------------------------------------------------------------
   // 歩幅学習（GPS稼働中キャリブレーション）
   // ---------------------------------------------------------------------------
@@ -274,8 +296,7 @@ class DeadReckoningService extends ChangeNotifier {
     _lastCalibStepTime = DateTime.fromMillisecondsSinceEpoch(0);
     _calibAccelSub = accelerometerEventStream().listen(
       _onCalibAccelerometer,
-      onError: (Object e) =>
-          debugPrint('DeadReckoning キャリブ加速度計エラー: $e'),
+      onError: (Object e) => debugPrint('DeadReckoning キャリブ加速度計エラー: $e'),
       cancelOnError: false,
     );
     debugPrint('DeadReckoning: 歩幅学習モード開始');

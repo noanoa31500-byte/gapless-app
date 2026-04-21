@@ -117,7 +117,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
   List<LatLng> _gpsTrack = [];
   Timer? _trackRefreshTimer;
 
-
   // ── ライフサイクル ────────────────────────────────────────────────────────
 
   @override
@@ -134,8 +133,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
       // OS キャッシュから前回位置を即取得（失敗してもブロックしない）
       final lastPos = await Geolocator.getLastKnownPosition();
       if (lastPos != null) {
-        _roadFeatures = await RoadFeaturesCache.instance.getMergedWithTiles(
-            roadFile, lastPos.latitude, lastPos.longitude);
+        _roadFeatures = await RoadFeaturesCache.instance
+            .getMergedWithTiles(roadFile, lastPos.latitude, lastPos.longitude);
       } else {
         _roadFeatures = await RoadFeaturesCache.instance.get(roadFile);
       }
@@ -150,7 +149,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _loadError = e is Exception ? e.toString() : GapLessL10n.t('map_load_error');
+          _loadError =
+              e is Exception ? e.toString() : GapLessL10n.t('map_load_error');
           _isLoadingMap = false;
         });
       }
@@ -183,7 +183,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     _fallback.addListener(_onFallbackChanged);
 
     // 通信断絶検知: WiFi+モバイル両方なしが30秒続いたら緊急バッジ表示
-    _connectivitySub = ConnectivityService.onConnectivityChanged.listen(_onConnectivityChanged);
+    _connectivitySub = ConnectivityService.onConnectivityChanged
+        .listen(_onConnectivityChanged);
 
     if (mounted) context.read<LocationProvider>().startLocationTracking();
 
@@ -215,7 +216,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     // 機能4: GPS軌跡を5秒ごとに更新して地図に反映
     _trackRefreshTimer = Timer.periodic(const Duration(seconds: 5), (_) {
       if (!mounted) return;
-      final track = GpsLogger.instance.backtrackRouteFromBuffer().reversed.toList();
+      final track =
+          GpsLogger.instance.backtrackRouteFromBuffer().reversed.toList();
       setState(() => _gpsTrack = track);
     });
 
@@ -238,8 +240,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
     _AccessProfile auto;
     if (needs.contains('Wheelchair')) {
       auto = _AccessProfile.wheelchair;
-    } else if (needs.contains('Pregnancy') || needs.contains('Infant') ||
-               needs.contains('Visual Impairment')) {
+    } else if (needs.contains('Pregnancy') ||
+        needs.contains('Infant') ||
+        needs.contains('Visual Impairment')) {
       // 視覚障害者・妊婦・乳幼児連れ → 広い道・ゆっくりペースを優先
       auto = _AccessProfile.elderly;
     } else {
@@ -277,7 +280,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
   // 機能3: 省電力モード変化 → BLE スキャン間隔 & GPS取得間隔を連動
   void _onPowerModeChanged() {
     _ble.setPowerMode(PowerManager.instance.mode);
-    GpsLogger.instance.onGpsIntervalChanged(PowerManager.instance.gpsIntervalSec);
+    GpsLogger.instance
+        .onGpsIntervalChanged(PowerManager.instance.gpsIntervalSec);
   }
 
   // 機能5: 最後に警告した狭道セグメントの中点（連続発話防止）
@@ -531,7 +535,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
       final body = jsonDecode(res.body) as Map<String, dynamic>;
       if (body['code'] != 'Ok') return null;
       final coords = (body['routes'][0]['geometry']['coordinates'] as List)
-          .map((c) => LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
+          .map(
+              (c) => LatLng((c[1] as num).toDouble(), (c[0] as num).toDouble()))
           .toList();
       return coords.length >= 2 ? coords : null;
     } catch (_) {
@@ -562,7 +567,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
     await _calculateRoute();
 
     if (mounted) {
-      _showSnack(GapLessL10n.t('nav_route_calculated').replaceAll('@name', nearest.name));
+      _showSnack(GapLessL10n.t('nav_route_calculated')
+          .replaceAll('@name', nearest.name));
     }
   }
 
@@ -614,11 +620,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 style: GapLessL10n.safeStyle(const TextStyle(fontSize: 18))),
           ],
         ),
-        content: Text(GapLessL10n.t('nav_arrive_body'), style: GapLessL10n.safeStyle(const TextStyle())),
+        content: Text(GapLessL10n.t('nav_arrive_body'),
+            style: GapLessL10n.safeStyle(const TextStyle())),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(GapLessL10n.t('nav_still_moving'), style: GapLessL10n.safeStyle(const TextStyle())),
+            child: Text(GapLessL10n.t('nav_still_moving'),
+                style: GapLessL10n.safeStyle(const TextStyle())),
           ),
           ElevatedButton(
             onPressed: () {
@@ -635,7 +643,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
             ),
-            child: Text(GapLessL10n.t('nav_safe_confirm'), style: GapLessL10n.safeStyle(const TextStyle())),
+            child: Text(GapLessL10n.t('nav_safe_confirm'),
+                style: GapLessL10n.safeStyle(const TextStyle())),
           ),
         ],
       ),
@@ -707,57 +716,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
             isDrActive: locationProv.isDeadReckoning,
             drErrorM: locationProv.deadReckoningErrorMeters,
           );
-          _showSnack(passable ? GapLessL10n.t('nav_reported_passable') : GapLessL10n.t('nav_reported_blocked'));
+          _showSnack(passable
+              ? GapLessL10n.t('nav_reported_passable')
+              : GapLessL10n.t('nav_reported_blocked'));
         },
-      ),
-    );
-  }
-
-  // 機能4: アクセシビリティプロファイル選択ダイアログ
-  void _showAccessProfileDialog() {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(GapLessL10n.t('nav_profile_title')),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _ProfileOption(
-              icon: Icons.directions_walk,
-              label: GapLessL10n.t('nav_profile_standard'),
-              subtitle: GapLessL10n.t('nav_profile_standard_sub'),
-              selected: _accessProfile == _AccessProfile.standard,
-              onTap: () {
-                setState(() => _accessProfile = _AccessProfile.standard);
-                Navigator.pop(context);
-                if (_destination != null) _calculateRoute();
-              },
-            ),
-            _ProfileOption(
-              icon: Icons.elderly,
-              label: GapLessL10n.t('nav_profile_elderly'),
-              subtitle: GapLessL10n.t('nav_profile_elderly_sub'),
-              selected: _accessProfile == _AccessProfile.elderly,
-              onTap: () {
-                setState(() => _accessProfile = _AccessProfile.elderly);
-                Navigator.pop(context);
-                if (_destination != null) _calculateRoute();
-              },
-            ),
-            _ProfileOption(
-              icon: Icons.accessible,
-              label: GapLessL10n.t('nav_profile_wheelchair'),
-              subtitle: GapLessL10n.t('nav_profile_wheelchair_sub'),
-              selected: _accessProfile == _AccessProfile.wheelchair,
-              onTap: () {
-                setState(() => _accessProfile = _AccessProfile.wheelchair);
-                Navigator.pop(context);
-                if (_destination != null) _calculateRoute();
-              },
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -787,11 +749,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       duration: const Duration(milliseconds: 400),
                       child: inFallback
                           ? _buildFallbackCompass()
-                          : (locationProv.isDeadReckoning && locationProv.isDeadReckoningAccuracyLow)
-                              ? _buildDrUncertaintyScreen(locationProv.currentLocation)
+                          : (locationProv.isDeadReckoning &&
+                                  locationProv.isDeadReckoningAccuracyLow)
+                              ? _buildDrUncertaintyScreen(
+                                  locationProv.currentLocation)
                               : !PowerManager.instance.showMap
-                                  ? _buildEmergencyScreen(locationProv.currentLocation)
-                                  : _buildMapStack(locationProv.currentLocation),
+                                  ? _buildEmergencyScreen(
+                                      locationProv.currentLocation)
+                                  : _buildMapStack(
+                                      locationProv.currentLocation),
                     ),
                   ),
                 ],
@@ -838,9 +804,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
             Text(
               _destinationName!,
               style: GapLessL10n.safeStyle(const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xFF6B7280),
-                  letterSpacing: 0.1)),
+                  fontSize: 11, color: Color(0xFF6B7280), letterSpacing: 0.1)),
             ),
         ],
       ),
@@ -864,8 +828,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
             final hit = _ble.scanHitCount;
             String? label;
             if (running) {
-              if (count > 0) label = '$count';
-              else if (ex > 0) label = '~$ex';
+              if (count > 0)
+                label = '$count';
+              else if (ex > 0)
+                label = '~$ex';
               else if (hit > 0) label = '?$hit';
             }
             return GestureDetector(
@@ -886,7 +852,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                         'lastDiag: ${_ble.lastDiag}\n\n'
                         '[Peripheral native]\n'
                         '${periph?.entries.map((e) => "${e.key}=${e.value}").join("\n") ?? "null"}',
-                        style: const TextStyle(fontSize: 11, fontFamily: 'monospace'),
+                        style: const TextStyle(
+                            fontSize: 11, fontFamily: 'monospace'),
                       ),
                     ),
                     actions: [
@@ -899,9 +866,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 );
               },
               child: _AppBarChip(
-                icon: running ? Icons.bluetooth_connected : Icons.bluetooth_disabled,
+                icon: running
+                    ? Icons.bluetooth_connected
+                    : Icons.bluetooth_disabled,
                 label: label,
-                color: running ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
+                color:
+                    running ? const Color(0xFF3B82F6) : const Color(0xFF9CA3AF),
               ),
             );
           },
@@ -964,7 +934,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           ),
           children: [
             TileLayer(
-              urlTemplate: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+              urlTemplate:
+                  'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
               subdomains: const ['a', 'b', 'c', 'd'],
               userAgentPackageName: 'com.example.gapless',
             ),
@@ -1004,11 +975,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ],
               ),
             // BLEピアレポートマーカー
-            if (reportMarkers.isNotEmpty)
-              MarkerLayer(markers: reportMarkers),
+            if (reportMarkers.isNotEmpty) MarkerLayer(markers: reportMarkers),
             // 機能2: 避難所マーカー
-            if (shelterMarkers.isNotEmpty)
-              MarkerLayer(markers: shelterMarkers),
+            if (shelterMarkers.isNotEmpty) MarkerLayer(markers: shelterMarkers),
             // SOSビーコンマーカー（赤い点滅円）
             MarkerLayer(markers: _buildSosMarkers()),
             MarkerLayer(
@@ -1051,7 +1020,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF00C896), Color(0xFF00A87A)],
@@ -1104,7 +1074,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(24)),
                 child: TurnByTurnPanel(
                   route: _route,
                   currentPosition: currentLoc,
@@ -1145,7 +1116,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
       final ageMin = score.latestAgeSeconds / 60.0;
 
       // 未確定かつ重みが薄いものは非表示
-      if (!isDangerous && !isSafe && score.passableWeight + score.impassableWeight < 0.5) {
+      if (!isDangerous &&
+          !isSafe &&
+          score.passableWeight + score.impassableWeight < 0.5) {
         continue;
       }
 
@@ -1206,8 +1179,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       final isTarget = _destination != null &&
           (_destination!.latitude - s.lat).abs() < 0.0001 &&
           (_destination!.longitude - s.lng).abs() < 0.0001;
-      final isOccupied =
-          shelterStatuses[s.id]?.isOccupied == true;
+      final isOccupied = shelterStatuses[s.id]?.isOccupied == true;
       return Marker(
         point: LatLng(s.lat, s.lng),
         width: 44,
@@ -1219,7 +1191,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
               _destinationName = s.name;
             });
             _calculateRoute();
-            _showSnack(GapLessL10n.t('nav_route_to').replaceAll('@name', s.name));
+            _showSnack(
+                GapLessL10n.t('nav_route_to').replaceAll('@name', s.name));
           },
           child: Stack(
             children: [
@@ -1230,14 +1203,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   border: Border.all(color: Colors.white, width: 2.5),
                   boxShadow: [
                     BoxShadow(
-                      color: (isTarget ? _orangeAccent : _greenPrimary).withOpacity(0.45),
+                      color: (isTarget ? _orangeAccent : _greenPrimary)
+                          .withOpacity(0.45),
                       blurRadius: 10,
                       offset: const Offset(0, 3),
                     ),
                   ],
                 ),
                 child: Icon(
-                  s.type == 'hospital' ? Icons.local_hospital : Icons.night_shelter,
+                  s.type == 'hospital'
+                      ? Icons.local_hospital
+                      : Icons.night_shelter,
                   color: Colors.white,
                   size: 20,
                 ),
@@ -1255,7 +1231,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 1.5),
                     ),
-                    child: const Icon(Icons.person, color: Colors.white, size: 8),
+                    child:
+                        const Icon(Icons.person, color: Colors.white, size: 8),
                   ),
                 ),
             ],
@@ -1318,7 +1295,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            Icon(Icons.campaign, color: hasAlert ? const Color(0xFFB71C1C) : null),
+            Icon(Icons.campaign,
+                color: hasAlert ? const Color(0xFFB71C1C) : null),
             if (hasAlert)
               Positioned(
                 right: -4,
@@ -1339,11 +1317,18 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     // 平時の5タブ構成
     final normalItems = <BottomNavigationBarItem>[
-      BottomNavigationBarItem(icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
-      BottomNavigationBarItem(icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
-      BottomNavigationBarItem(icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
-      BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: GapLessL10n.t('nav_tab_chat')),
-      BottomNavigationBarItem(icon: const Icon(Icons.settings), label: GapLessL10n.t('nav_tab_settings')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
+      BottomNavigationBarItem(
+          icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.chat_bubble_outline),
+          label: GapLessL10n.t('nav_tab_chat')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: GapLessL10n.t('nav_tab_settings')),
     ];
 
     void normalTap(int i) {
@@ -1354,7 +1339,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
         const ChatScreen(),
         const SettingsScreen(),
       ];
-      Navigator.push(context, MaterialPageRoute(builder: (_) => screens[i - 1]));
+      Navigator.push(
+          context, MaterialPageRoute(builder: (_) => screens[i - 1]));
     }
 
     Widget _glassNav({
@@ -1386,7 +1372,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               selectedLabelStyle: const TextStyle(
-                  fontWeight: FontWeight.w600, fontSize: 11, letterSpacing: 0.3),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
+                  letterSpacing: 0.3),
               unselectedLabelStyle: const TextStyle(fontSize: 11),
               items: items,
             ),
@@ -1401,15 +1389,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
     // 電波断絶時: 緊急操作タブを3番目に挿入した6タブ構成
     final emergencyItems = <BottomNavigationBarItem>[
-      BottomNavigationBarItem(icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
-      BottomNavigationBarItem(icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
-      BottomNavigationBarItem(icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
       BottomNavigationBarItem(
-        icon: _OfflinePulseBadge(child: const Icon(Icons.crisis_alert, color: Color(0xFFB71C1C))),
+          icon: const Icon(Icons.map), label: GapLessL10n.t('nav_tab_map')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.badge), label: GapLessL10n.t('nav_tab_card')),
+      BottomNavigationBarItem(
+          icon: jmaIcon, label: GapLessL10n.t('nav_tab_feed')),
+      BottomNavigationBarItem(
+        icon: _OfflinePulseBadge(
+            child: const Icon(Icons.crisis_alert, color: Color(0xFFB71C1C))),
         label: GapLessL10n.t('emergency_screen_title'),
       ),
-      BottomNavigationBarItem(icon: const Icon(Icons.chat_bubble_outline), label: GapLessL10n.t('nav_tab_chat')),
-      BottomNavigationBarItem(icon: const Icon(Icons.settings), label: GapLessL10n.t('nav_tab_settings')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.chat_bubble_outline),
+          label: GapLessL10n.t('nav_tab_chat')),
+      BottomNavigationBarItem(
+          icon: const Icon(Icons.settings),
+          label: GapLessL10n.t('nav_tab_settings')),
     ];
 
     return _glassNav(
@@ -1423,7 +1419,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           const ChatScreen(),
           const SettingsScreen(),
         ];
-        Navigator.push(context, MaterialPageRoute(builder: (_) => screens[i - 1]));
+        Navigator.push(
+            context, MaterialPageRoute(builder: (_) => screens[i - 1]));
       },
     );
   }
@@ -1439,15 +1436,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
     double? distM;
     if (currentLoc != null && _destination != null) {
       distM = Geolocator.distanceBetween(
-        currentLoc.latitude, currentLoc.longitude,
-        _destination!.latitude, _destination!.longitude,
+        currentLoc.latitude,
+        currentLoc.longitude,
+        _destination!.latitude,
+        _destination!.longitude,
       );
       // 方位角（度）: 北=0、時計回り。
       // Geolocator.bearingBetween は球面三角法で cos(lat) 補正済み。
       // 自前 atan2(dLng, dLat) は緯度35°で最大18°ズレるので使わない。
       bearingDeg = (Geolocator.bearingBetween(
-                currentLoc.latitude, currentLoc.longitude,
-                _destination!.latitude, _destination!.longitude,
+                currentLoc.latitude,
+                currentLoc.longitude,
+                _destination!.latitude,
+                _destination!.longitude,
               ) +
               360) %
           360;
@@ -1541,18 +1542,23 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Widget _buildEmergencyScreen(LatLng? currentLoc) {
     final power = PowerManager.instance;
     final isEmergency = power.mode == PowerMode.emergency;
-    final batteryColor = isEmergency ? const Color(0xFFB71C1C) : const Color(0xFFE65100);
+    final batteryColor =
+        isEmergency ? const Color(0xFFB71C1C) : const Color(0xFFE65100);
 
     double? bearingDeg;
     double? distM;
     if (currentLoc != null && _destination != null) {
       distM = Geolocator.distanceBetween(
-        currentLoc.latitude, currentLoc.longitude,
-        _destination!.latitude, _destination!.longitude,
+        currentLoc.latitude,
+        currentLoc.longitude,
+        _destination!.latitude,
+        _destination!.longitude,
       );
       bearingDeg = (Geolocator.bearingBetween(
-                currentLoc.latitude, currentLoc.longitude,
-                _destination!.latitude, _destination!.longitude,
+                currentLoc.latitude,
+                currentLoc.longitude,
+                _destination!.latitude,
+                _destination!.longitude,
               ) +
               360) %
           360;
@@ -1595,7 +1601,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           if (bearingDeg != null) ...[
             Transform.rotate(
               angle: (bearingDeg - _headingDeg) * math.pi / 180,
-              child: const Icon(Icons.navigation, size: 160, color: Color(0xFF4CAF50)),
+              child: const Icon(Icons.navigation,
+                  size: 160, color: Color(0xFF4CAF50)),
             ),
             const SizedBox(height: 20),
             Text(
@@ -1668,7 +1675,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
               valueColor: AlwaysStoppedAnimation<Color>(_greenPrimary)),
           const SizedBox(height: 24),
           Text(GapLessL10n.t('nav_loading_map'),
-              style: GapLessL10n.safeStyle(const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+              style: GapLessL10n.safeStyle(
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
           const SizedBox(height: 16),
           if (_loadProgress > 0)
             Padding(
@@ -1684,8 +1692,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   const SizedBox(height: 8),
                   Text(
                     '${(_loadProgress * 100).toInt()}%',
-                    style: const TextStyle(
-                        fontSize: 13, color: Color(0xFF607D8B)),
+                    style:
+                        const TextStyle(fontSize: 13, color: Color(0xFF607D8B)),
                   ),
                 ],
               ),
@@ -1728,7 +1736,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     borderRadius: BorderRadius.circular(30)),
               ),
               child: Text(GapLessL10n.t('map_download_retry'),
-                  style: GapLessL10n.safeStyle(const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                  style: GapLessL10n.safeStyle(const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold))),
             ),
           ],
         ),
@@ -1754,24 +1763,43 @@ class _NavigationScreenState extends State<NavigationScreen> {
           children: [
             Container(
               margin: const EdgeInsets.only(top: 10),
-              width: 40, height: 4,
-              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 4),
               child: Text(GapLessL10n.t('nav_report_menu_title'),
-                style: GapLessL10n.safeStyle(const TextStyle(color: Colors.white70, fontSize: 13))),
+                  style: GapLessL10n.safeStyle(
+                      const TextStyle(color: Colors.white70, fontSize: 13))),
             ),
-            _reportTile(Icons.check_circle, const Color(0xFF43A047), GapLessL10n.t('qr_passable'),
-              () { Navigator.pop(context); sendInstantReport(context, BleDataType.passable); }),
-            _reportTile(Icons.block, const Color(0xFFE53935), GapLessL10n.t('qr_blocked'),
-              () { Navigator.pop(context); sendInstantReport(context, BleDataType.blocked); }),
-            _reportTile(Icons.warning_amber, const Color(0xFFFF6F00), GapLessL10n.t('qr_danger'),
-              () { Navigator.pop(context); sendInstantReport(context, BleDataType.danger); }),
-            _reportTile(Icons.camera_alt, const Color(0xFF1565C0), GapLessL10n.t('nav_tooltip_photo'),
-              () { Navigator.pop(context); showQuickReport(context); }),
-            _reportTile(Icons.campaign, const Color(0xFF6A1B9A), GapLessL10n.t('nav_tooltip_report'),
-              () { Navigator.pop(context); _showRoadReportSheet(); }),
+            _reportTile(Icons.check_circle, const Color(0xFF43A047),
+                GapLessL10n.t('qr_passable'), () {
+              Navigator.pop(context);
+              sendInstantReport(context, BleDataType.passable);
+            }),
+            _reportTile(Icons.block, const Color(0xFFE53935),
+                GapLessL10n.t('qr_blocked'), () {
+              Navigator.pop(context);
+              sendInstantReport(context, BleDataType.blocked);
+            }),
+            _reportTile(Icons.warning_amber, const Color(0xFFFF6F00),
+                GapLessL10n.t('qr_danger'), () {
+              Navigator.pop(context);
+              sendInstantReport(context, BleDataType.danger);
+            }),
+            _reportTile(Icons.camera_alt, const Color(0xFF1565C0),
+                GapLessL10n.t('nav_tooltip_photo'), () {
+              Navigator.pop(context);
+              showQuickReport(context);
+            }),
+            _reportTile(Icons.campaign, const Color(0xFF6A1B9A),
+                GapLessL10n.t('nav_tooltip_report'), () {
+              Navigator.pop(context);
+              _showRoadReportSheet();
+            }),
             SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
           ],
         ),
@@ -1779,10 +1807,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
     );
   }
 
-  Widget _reportTile(IconData icon, Color color, String label, VoidCallback onTap) {
+  Widget _reportTile(
+      IconData icon, Color color, String label, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: color),
-      title: Text(label, style: GapLessL10n.safeStyle(TextStyle(color: color, fontWeight: FontWeight.bold))),
+      title: Text(label,
+          style: GapLessL10n.safeStyle(
+              TextStyle(color: color, fontWeight: FontWeight.bold))),
       onTap: onTap,
       dense: true,
     );
@@ -1903,7 +1934,8 @@ class _RoadReportSheet extends StatelessWidget {
         children: [
           Text(
             GapLessL10n.t('road_report_title'),
-            style: GapLessL10n.safeStyle(const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            style: GapLessL10n.safeStyle(
+                const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
           const SizedBox(height: 4),
           Text(
@@ -1913,7 +1945,8 @@ class _RoadReportSheet extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             GapLessL10n.t('road_report_hint'),
-            style: GapLessL10n.safeStyle(const TextStyle(fontSize: 13, color: Colors.black54)),
+            style: GapLessL10n.safeStyle(
+                const TextStyle(fontSize: 13, color: Colors.black54)),
           ),
           const SizedBox(height: 24),
           Row(
@@ -1958,47 +1991,6 @@ class _RoadReportSheet extends StatelessWidget {
           const SizedBox(height: 8),
         ],
       ),
-    );
-  }
-}
-
-// ============================================================================
-// 機能4: プロファイル選択オプション行
-// ============================================================================
-
-class _ProfileOption extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ProfileOption({
-    required this.icon,
-    required this.label,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon,
-          color: selected ? const Color(0xFF00C896) : Colors.grey),
-      title: Text(label,
-          style: GapLessL10n.safeStyle(TextStyle(
-              fontWeight:
-                  selected ? FontWeight.bold : FontWeight.normal,
-              color: selected ? const Color(0xFF00C896) : null))),
-      subtitle: Text(subtitle, style: GapLessL10n.safeStyle(const TextStyle(fontSize: 12))),
-      trailing: selected
-          ? const Icon(Icons.check_circle, color: Color(0xFF00C896))
-          : null,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      tileColor:
-          selected ? const Color(0xFF00C896).withValues(alpha: 0.08) : null,
-      onTap: onTap,
     );
   }
 }

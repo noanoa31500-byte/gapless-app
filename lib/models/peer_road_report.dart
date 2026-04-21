@@ -257,7 +257,6 @@ class PeerRoadReport {
   }
 
   @override
-  String toString() =>
-      'PeerRoadReport(id=$id, seg=$segmentId, status=$status, '
+  String toString() => 'PeerRoadReport(id=$id, seg=$segmentId, status=$status, '
       'count=$reportCount, age=${ageSeconds}s)';
 }

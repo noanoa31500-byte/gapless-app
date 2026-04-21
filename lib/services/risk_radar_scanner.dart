@@ -7,11 +7,11 @@ import 'offline_risk_scanner.dart';
 /// ============================================================================
 /// RiskRadarScanner - 洪水時リスク回避レーダースキャナー
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 「画面の赤い方向・雷の方向さえ避ければ生き残れる」
 /// を実現するための高度なリスク検知・ルート補正エンジン
-/// 
+///
 /// 【なぜこの機能が、泥水で視界が悪い洪水時に有効なのか】
 ///
 /// ## 1. 激流は突然来る
@@ -34,7 +34,7 @@ import 'offline_risk_scanner.dart';
 ///
 /// ※ ⚡感電リスクは廃止（リスク判定が困難・誤検知が多いため）。
 ///   応急処置データには感電対応を残しています（first_aid_data.dart）。
-/// 
+///
 /// ## 4. 360度全方位の危険を一目で把握
 /// 地図アプリでは「前方」しか見えませんが、
 /// レーダー表示なら「背後から迫る激流」も同時に把握できます。
@@ -44,25 +44,25 @@ import 'offline_risk_scanner.dart';
 class DangerZone {
   /// リスクの種類
   final RiskType type;
-  
+
   /// 開始方位角（度）
   final double startBearing;
-  
+
   /// 終了方位角（度）
   final double endBearing;
-  
+
   /// 危険度（0.0-1.0）
   final double severity;
-  
+
   /// 最も近い危険物までの距離（メートル）
   final double distance;
-  
+
   /// 危険物の名称（送電線名など）
   final String name;
-  
+
   /// 詳細情報（電圧、水深など）
   final String details;
-  
+
   /// 元となった座標
   final LatLng? sourceLocation;
 
@@ -88,10 +88,10 @@ class DangerZone {
   bool containsBearing(double bearing) {
     double b = bearing % 360;
     if (b < 0) b += 360;
-    
+
     double start = startBearing % 360;
     double end = endBearing % 360;
-    
+
     // 境界をまたぐ場合（例: 350度〜10度）
     if (start > end) {
       return b >= start || b <= end;
@@ -100,34 +100,34 @@ class DangerZone {
   }
 
   @override
-  String toString() => 
-    'DangerZone($type: ${startBearing.toInt()}°-${endBearing.toInt()}°, '
-    'severity: ${(severity * 100).toInt()}%, dist: ${distance.toInt()}m)';
+  String toString() =>
+      'DangerZone($type: ${startBearing.toInt()}°-${endBearing.toInt()}°, '
+      'severity: ${(severity * 100).toInt()}%, dist: ${distance.toInt()}m)';
 }
 
 /// 安全方向ガイダンス
 class SafetyGuidance {
   /// 推奨方位角
   final double recommendedBearing;
-  
+
   /// 安全範囲の開始
   final double safeBearingStart;
-  
+
   /// 安全範囲の終了
   final double safeBearingEnd;
-  
+
   /// ターゲットへの元の方位角
   final double originalTargetBearing;
-  
+
   /// 補正角度（元の方位からのずれ）
   final double correctionAngle;
-  
+
   /// 補正理由
   final String reason;
-  
+
   /// 補正が必要かどうか
   final bool needsCorrection;
-  
+
   /// 次のウェイポイントまでの距離
   final double? distanceToWaypoint;
 
@@ -153,22 +153,22 @@ class SafetyGuidance {
 class RadarScanResult {
   /// 検出された危険ゾーン
   final List<DangerZone> dangerZones;
-  
+
   /// 安全方向ガイダンス
   final SafetyGuidance? safetyGuidance;
-  
+
   /// スキャン半径（メートル）
   final double scanRadius;
-  
+
   /// 現在地
   final LatLng currentLocation;
-  
+
   /// スキャン時刻
   final DateTime timestamp;
-  
+
   /// 全体リスクレベル（0.0-1.0）
   final double overallRiskLevel;
-  
+
   /// 危険カバー率（360度中何%が危険か）
   final double dangerCoveragePercent;
 
@@ -198,9 +198,9 @@ class RadarScanResult {
   bool isSafe(double bearing) => getRisksAtBearing(bearing).isEmpty;
 
   /// 最も重大なリスクを取得
-  DangerZone? get mostSevereRisk =>
-      dangerZones.isEmpty ? null : 
-      dangerZones.reduce((a, b) => a.severity > b.severity ? a : b);
+  DangerZone? get mostSevereRisk => dangerZones.isEmpty
+      ? null
+      : dangerZones.reduce((a, b) => a.severity > b.severity ? a : b);
 }
 
 /// ============================================================================
@@ -208,10 +208,10 @@ class RadarScanResult {
 /// ============================================================================
 class RiskRadarScanner {
   final OfflineRiskScanner _baseScanner;
-  
+
   /// 補正時の最小角度ステップ（度）
   static const double _correctionStep = 10.0;
-  
+
   /// 最大補正角度（度）
   static const double _maxCorrectionAngle = 90.0;
 
@@ -228,7 +228,7 @@ class RiskRadarScanner {
   /// ============================================================================
   /// scanRadar - 360度リスクスキャン
   /// ============================================================================
-  /// 
+  ///
   /// @param currentLocation 現在地
   /// @param targetLocation 目的地（ウェイポイント）
   /// @param waypoints ルートウェイポイント（オプション）
@@ -241,19 +241,22 @@ class RiskRadarScanner {
     double scanRadius = 100.0,
   }) {
     // 基本スキャンを実行
-    final baseResult = _baseScanner.scanRisks(currentLocation, radius: scanRadius);
-    
+    final baseResult =
+        _baseScanner.scanRisks(currentLocation, radius: scanRadius);
+
     // RiskZone を DangerZone に変換
-    final dangerZones = baseResult.riskZones.map((rz) => DangerZone(
-      type: rz.type,
-      startBearing: rz.startBearing,
-      endBearing: rz.endBearing,
-      severity: rz.severity,
-      distance: rz.nearestDistance,
-      name: _getRiskTypeName(rz.type),
-      details: rz.details,
-    )).toList();
-    
+    final dangerZones = baseResult.riskZones
+        .map((rz) => DangerZone(
+              type: rz.type,
+              startBearing: rz.startBearing,
+              endBearing: rz.endBearing,
+              severity: rz.severity,
+              distance: rz.nearestDistance,
+              name: _getRiskTypeName(rz.type),
+              details: rz.details,
+            ))
+        .toList();
+
     // 安全ガイダンスを計算
     SafetyGuidance? guidance;
     if (targetLocation != null) {
@@ -264,10 +267,10 @@ class RiskRadarScanner {
         waypoints: waypoints,
       );
     }
-    
+
     // 危険カバー率を計算
     final dangerCoverage = _calculateDangerCoverage(dangerZones);
-    
+
     return RadarScanResult(
       dangerZones: dangerZones,
       safetyGuidance: guidance,
@@ -300,13 +303,13 @@ class RiskRadarScanner {
   }) {
     // ターゲットへの方位角を計算
     final targetBearing = _calculateBearing(currentLocation, targetLocation);
-    final distanceToTarget = _haversineDistance(currentLocation, targetLocation);
-    
+    final distanceToTarget =
+        _haversineDistance(currentLocation, targetLocation);
+
     // ターゲット方向にリスクがあるかチェック
-    final risksInTargetDirection = dangerZones
-        .where((z) => z.containsBearing(targetBearing))
-        .toList();
-    
+    final risksInTargetDirection =
+        dangerZones.where((z) => z.containsBearing(targetBearing)).toList();
+
     // リスクがなければ補正不要
     if (risksInTargetDirection.isEmpty) {
       return SafetyGuidance(
@@ -320,42 +323,46 @@ class RiskRadarScanner {
         distanceToWaypoint: distanceToTarget,
       );
     }
-    
+
     // 補正角度を探索
     double bestCorrectionAngle = 0;
     String correctionReason = '';
-    
+
     // 左右両方向で安全な角度を探す
-    for (double offset = _correctionStep; 
-         offset <= _maxCorrectionAngle; 
-         offset += _correctionStep) {
+    for (double offset = _correctionStep;
+        offset <= _maxCorrectionAngle;
+        offset += _correctionStep) {
       // 右方向をチェック
       final rightBearing = (targetBearing + offset) % 360;
-      final rightRisks = dangerZones.where((z) => z.containsBearing(rightBearing)).toList();
-      
+      final rightRisks =
+          dangerZones.where((z) => z.containsBearing(rightBearing)).toList();
+
       if (rightRisks.isEmpty) {
         bestCorrectionAngle = offset;
-        correctionReason = _buildCorrectionReason(risksInTargetDirection, 'right');
+        correctionReason =
+            _buildCorrectionReason(risksInTargetDirection, 'right');
         break;
       }
-      
+
       // 左方向をチェック
       final leftBearing = (targetBearing - offset + 360) % 360;
-      final leftRisks = dangerZones.where((z) => z.containsBearing(leftBearing)).toList();
-      
+      final leftRisks =
+          dangerZones.where((z) => z.containsBearing(leftBearing)).toList();
+
       if (leftRisks.isEmpty) {
         bestCorrectionAngle = -offset;
-        correctionReason = _buildCorrectionReason(risksInTargetDirection, 'left');
+        correctionReason =
+            _buildCorrectionReason(risksInTargetDirection, 'left');
         break;
       }
     }
-    
+
     // 補正後の方位
     final correctedBearing = (targetBearing + bestCorrectionAngle + 360) % 360;
-    
+
     // 安全範囲を計算
     final safeRange = _findSafeRange(correctedBearing, dangerZones);
-    
+
     return SafetyGuidance(
       recommendedBearing: correctedBearing,
       safeBearingStart: safeRange['start']!,
@@ -371,11 +378,11 @@ class RiskRadarScanner {
   /// 補正理由を構築
   String _buildCorrectionReason(List<DangerZone> risks, String direction) {
     if (risks.isEmpty) return '';
-    
+
     final mainRisk = risks.reduce((a, b) => a.severity > b.severity ? a : b);
     final riskName = _getRiskTypeNameShort(mainRisk.type);
     final distance = mainRisk.distance.toInt();
-    
+
     return '$riskName($distance m)を避けて${direction == 'right' ? '右' : '左'}へ迂回';
   }
 
@@ -394,7 +401,7 @@ class RiskRadarScanner {
     // 指定方位から広がる安全範囲を探す
     double safeStart = bearing;
     double safeEnd = bearing;
-    
+
     // 左方向に広げる
     for (double offset = 0; offset <= 180; offset += 5) {
       final testBearing = (bearing - offset + 360) % 360;
@@ -403,7 +410,7 @@ class RiskRadarScanner {
       }
       safeStart = testBearing;
     }
-    
+
     // 右方向に広げる
     for (double offset = 0; offset <= 180; offset += 5) {
       final testBearing = (bearing + offset) % 360;
@@ -412,21 +419,21 @@ class RiskRadarScanner {
       }
       safeEnd = testBearing;
     }
-    
+
     return {'start': safeStart, 'end': safeEnd};
   }
 
   /// 危険カバー率を計算
   double _calculateDangerCoverage(List<DangerZone> zones) {
     if (zones.isEmpty) return 0.0;
-    
+
     // 重複を考慮して危険角度を計算
     final Set<int> dangerDegrees = {};
-    
+
     for (final zone in zones) {
       double start = zone.startBearing;
       double end = zone.endBearing;
-      
+
       if (start > end) {
         // 境界をまたぐ場合
         for (int d = start.toInt(); d < 360; d++) {
@@ -441,7 +448,7 @@ class RiskRadarScanner {
         }
       }
     }
-    
+
     return dangerDegrees.length / 360.0 * 100;
   }
 
@@ -450,11 +457,11 @@ class RiskRadarScanner {
     final lat1 = from.latitude * math.pi / 180;
     final lat2 = to.latitude * math.pi / 180;
     final dLon = (to.longitude - from.longitude) * math.pi / 180;
-    
+
     final y = math.sin(dLon) * math.cos(lat2);
     final x = math.cos(lat1) * math.sin(lat2) -
         math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
-    
+
     final bearing = math.atan2(y, x) * 180 / math.pi;
     return (bearing + 360) % 360;
   }
@@ -466,21 +473,23 @@ class RiskRadarScanner {
     final lat2 = p2.latitude * math.pi / 180;
     final dLat = (p2.latitude - p1.latitude) * math.pi / 180;
     final dLon = (p2.longitude - p1.longitude) * math.pi / 180;
-    
+
     final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-        math.cos(lat1) * math.cos(lat2) *
-            math.sin(dLon / 2) * math.sin(dLon / 2);
+        math.cos(lat1) *
+            math.cos(lat2) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
     final c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));
-    
+
     return R * c;
   }
 
   /// ============================================================================
   /// checkRouteSegmentSafety - ルートセグメントの安全性チェック
   /// ============================================================================
-  /// 
+  ///
   /// 指定した2点間の直線上にリスクがあるかチェックします。
-  /// 
+  ///
   /// @param from 始点
   /// @param to 終点
   /// @param scanRadius スキャン半径
@@ -495,7 +504,7 @@ class RiskRadarScanner {
       targetLocation: to,
       scanRadius: scanRadius,
     );
-    
+
     final targetBearing = _calculateBearing(from, to);
     return result.getRisksAtBearing(targetBearing);
   }
@@ -503,7 +512,7 @@ class RiskRadarScanner {
   /// デバッグ出力
   void printDebugInfo(RadarScanResult result) {
     if (!kDebugMode) return;
-    
+
     debugPrint('''
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 RiskRadarScanner Results

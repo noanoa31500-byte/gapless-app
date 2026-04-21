@@ -140,9 +140,8 @@ class GplbParser {
     return _parseSections(body, sectionCount, version);
   }
 
-  static GplbData _parseSections(_ByteReader body, int sectionCount,
-      int version) {
-
+  static GplbData _parseSections(
+      _ByteReader body, int sectionCount, int version) {
     final roads = <RoadFeature>[];
     final pois = <PoiFeature>[];
 
@@ -201,8 +200,7 @@ class GplbParser {
     for (int i = 0; i < _magic.length; i++) {
       final b = r.readUint8();
       if (b != _magic[i]) {
-        throw FormatException(
-            'GplbParser: Invalid magic byte at $i: '
+        throw FormatException('GplbParser: Invalid magic byte at $i: '
             'expected 0x${_magic[i].toRadixString(16)}, got 0x${b.toRadixString(16)}');
       }
     }
@@ -320,15 +318,15 @@ class _ByteReader {
 
   String readUtf8(int length) {
     _check(length);
-    final bytes = Uint8List.view(_data.buffer, _offset + _data.offsetInBytes, length);
+    final bytes =
+        Uint8List.view(_data.buffer, _offset + _data.offsetInBytes, length);
     _offset += length;
     return utf8.decode(bytes, allowMalformed: true);
   }
 
   void _check(int needed) {
     if (_offset + needed > _data.lengthInBytes) {
-      throw RangeError(
-          'GplbParser: Unexpected EOF at offset $_offset '
+      throw RangeError('GplbParser: Unexpected EOF at offset $_offset '
           '(needed $needed, remaining $remaining)');
     }
   }

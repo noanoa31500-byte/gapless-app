@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import '../survival_data.dart'; // Import the base classes
 
@@ -36,25 +35,50 @@ class SurvivalDataJP {
         'zh': '经常活动脚踝，多喝水，避免长时间保持同一姿势。',
         'zh_TW': '經常活動腳踝，多喝水，避免長時間保持同一姿勢。',
         'ko': '발목을 자주 움직이세요. 물을 충분히 마시고 같은 자세를 오래 유지하지 마세요.',
-        'vi': 'Thường xuyên vận động cổ chân. Uống đủ nước. Tránh giữ nguyên tư thế lâu.',
-        'tl': 'Ilipat ang mga bukung-bukong nang madalas. Uminom ng tubig. Huwag manatili sa iisang posisyon.',
-        'fil': 'Ilipat ang mga bukung-bukong nang madalas. Uminom ng tubig. Huwag manatili sa iisang posisyon.',
-        'ne': 'खुट्टाको गोलिगाँठो घुमाउनुहोस्। पानी पिउनुहोस्। एउटै स्थितिमा नबस्नुहोस्।',
-        'pt': 'Movimente os tornozelos frequentemente. Beba água. Não fique na mesma posição por muito tempo.',
-        'id': 'Gerakkan pergelangan kaki secara teratur. Minum air yang cukup. Jangan diam dalam posisi yang sama terlalu lama.',
-        'my': 'ကြာကြာ ခြေကုတ်ကို လှုပ်ရှားပါ။ ရေသောက်ပါ။ တူညီသောရပ်တည်မှုတွင် ကြာကြာမနေပါနှင့်။',
-        'si': 'නිතරම කකුල් නද්ද චලනය කරන්න. ජලය පානය කරන්න. එකම ස්ථානයේ දීර්ඝ කාලයක් නොසිටින්න.',
-        'hi': 'टखने नियमित रूप से घुमाएं। पानी पिएं। एक ही मुद्रा में लंबे समय तक न रहें।',
-        'es': 'Mueva los tobillos frecuentemente. Beba agua. No permanezca en la misma posición por mucho tiempo.',
-        'mn': 'Гагнуурыг байнга хөдөлгөж, ус уу. Нэг байрлалаар удаан суухаас зайлсхий.',
-        'uz': "Tizzalarni muntazam harakatlantiring. Suv iching. Bir holatda uzoq o'tirmang.",
-        'bn': 'গোড়ালি নিয়মিত ঘোরান। পানি পান করুন। একই অবস্থানে দীর্ঘক্ষণ থাকবেন না।',
+        'vi':
+            'Thường xuyên vận động cổ chân. Uống đủ nước. Tránh giữ nguyên tư thế lâu.',
+        'tl':
+            'Ilipat ang mga bukung-bukong nang madalas. Uminom ng tubig. Huwag manatili sa iisang posisyon.',
+        'fil':
+            'Ilipat ang mga bukung-bukong nang madalas. Uminom ng tubig. Huwag manatili sa iisang posisyon.',
+        'ne':
+            'खुट्टाको गोलिगाँठो घुमाउनुहोस्। पानी पिउनुहोस्। एउटै स्थितिमा नबस्नुहोस्।',
+        'pt':
+            'Movimente os tornozelos frequentemente. Beba água. Não fique na mesma posição por muito tempo.',
+        'id':
+            'Gerakkan pergelangan kaki secara teratur. Minum air yang cukup. Jangan diam dalam posisi yang sama terlalu lama.',
+        'my':
+            'ကြာကြာ ခြေကုတ်ကို လှုပ်ရှားပါ။ ရေသောက်ပါ။ တူညီသောရပ်တည်မှုတွင် ကြာကြာမနေပါနှင့်။',
+        'si':
+            'නිතරම කකුල් නද්ද චලනය කරන්න. ජලය පානය කරන්න. එකම ස්ථානයේ දීර්ඝ කාලයක් නොසිටින්න.',
+        'hi':
+            'टखने नियमित रूप से घुमाएं। पानी पिएं। एक ही मुद्रा में लंबे समय तक न रहें।',
+        'es':
+            'Mueva los tobillos frecuentemente. Beba agua. No permanezca en la misma posición por mucho tiempo.',
+        'mn':
+            'Гагнуурыг байнга хөдөлгөж, ус уу. Нэг байрлалаар удаан суухаас зайлсхий.',
+        'uz':
+            "Tizzalarni muntazam harakatlantiring. Suv iching. Bir holatda uzoq o'tirmang.",
+        'bn':
+            'গোড়ালি নিয়মিত ঘোরান। পানি পান করুন। একই অবস্থানে দীর্ঘক্ষণ থাকবেন না।',
       },
       source: 'MHLW / JSIM',
       steps: [
-        SurvivalStep(instruction: {'en': 'Rotate ankles.', 'ja': '足首を回す', 'th': 'หมุนข้อเท้าซ้ายขวา'}, icon: Icons.refresh),
-        SurvivalStep(instruction: {'en': 'Drink water.', 'ja': '水を飲む', 'th': 'ดื่มน้ำสะอาด'}, icon: Icons.local_drink),
-        SurvivalStep(instruction: {'en': 'Walk around.', 'ja': '歩く', 'th': 'ลุกเดินยืดเส้นสาย'}, icon: Icons.directions_walk),
+        SurvivalStep(instruction: {
+          'en': 'Rotate ankles.',
+          'ja': '足首を回す',
+          'th': 'หมุนข้อเท้าซ้ายขวา'
+        }, icon: Icons.refresh),
+        SurvivalStep(instruction: {
+          'en': 'Drink water.',
+          'ja': '水を飲む',
+          'th': 'ดื่มน้ำสะอาด'
+        }, icon: Icons.local_drink),
+        SurvivalStep(instruction: {
+          'en': 'Walk around.',
+          'ja': '歩く',
+          'th': 'ลุกเดินยืดเส้นสาย'
+        }, icon: Icons.directions_walk),
       ],
     ),
     SurvivalGuideItem(
@@ -89,17 +113,24 @@ class SurvivalDataJP {
         'zh_TW': '徹底洗手，戴口罩，定期通風。',
         'ko': '손을 철저히 씻고 마스크를 착용하고 환기하세요.',
         'vi': 'Rửa tay kỹ lưỡng. Đeo khẩu trang. Thông gió thường xuyên.',
-        'tl': 'Maghugas ng kamay nang maigi. Magsuot ng maskara. Mag-ventilate.',
-        'fil': 'Maghugas ng kamay nang maigi. Magsuot ng maskara. Mag-ventilate.',
-        'ne': 'राम्रोसँग हात धुनुहोस्। मास्क लगाउनुहोस्। नियमित हावा आउन दिनुहोस्।',
+        'tl':
+            'Maghugas ng kamay nang maigi. Magsuot ng maskara. Mag-ventilate.',
+        'fil':
+            'Maghugas ng kamay nang maigi. Magsuot ng maskara. Mag-ventilate.',
+        'ne':
+            'राम्रोसँग हात धुनुहोस्। मास्क लगाउनुहोस्। नियमित हावा आउन दिनुहोस्।',
         'pt': 'Lave as mãos completamente. Use máscaras. Ventile regularmente.',
         'id': 'Cuci tangan secara menyeluruh. Pakai masker. Ventilasi teratur.',
-        'my': 'လက်များကို သေချာဆေးကြောပါ။ မျက်နှာဖုံးတပ်ပါ။ လေဝင်လေထွက်ကောင်းအောင်ပြုပါ။',
-        'si': 'අතේ හොඳින් සෝදන්න. මාස්කුව පළඳින්න. නිතිපතා වාතාශ්‍රය ලබා දෙන්න.',
+        'my':
+            'လက်များကို သေချာဆေးကြောပါ။ မျက်နှာဖုံးတပ်ပါ။ လေဝင်လေထွက်ကောင်းအောင်ပြုပါ။',
+        'si':
+            'අතේ හොඳින් සෝදන්න. මාස්කුව පළඳින්න. නිතිපතා වාතාශ්‍රය ලබා දෙන්න.',
         'hi': 'हाथ अच्छी तरह धोएं। मास्क पहनें। नियमित रूप से हवादार करें।',
-        'es': 'Lávese las manos minuciosamente. Use mascarilla. Ventile regularmente.',
+        'es':
+            'Lávese las manos minuciosamente. Use mascarilla. Ventile regularmente.',
         'mn': 'Гарыг нарийн угааж, маск зүүж, тогтмол агааржуулна уу.',
-        'uz': "Qo'llarni yaxshilab yuvib, niqob kiyib, muntazam shamollatib turing.",
+        'uz':
+            "Qo'llarni yaxshilab yuvib, niqob kiyib, muntazam shamollatib turing.",
         'bn': 'হাত ভালোভাবে ধুন। মাস্ক পরুন। নিয়মিত বায়ু চলাচল নিশ্চিত করুন।',
       },
       source: 'MHLW / CDC',
@@ -136,18 +167,26 @@ class SurvivalDataJP {
         'zh_TW': '配給的食物請立即食用。不要在室溫下放置。',
         'ko': '배급된 음식은 바로 드세요. 실온에 방치하지 마세요.',
         'vi': 'Ăn ngay thức ăn được phân phát. Không để ở nhiệt độ phòng.',
-        'tl': 'Kainin agad ang ipinamamahaging pagkain. Huwag iwan sa temperatura ng silid.',
-        'fil': 'Kainin agad ang ipinamamahaging pagkain. Huwag iwan sa temperatura ng silid.',
+        'tl':
+            'Kainin agad ang ipinamamahaging pagkain. Huwag iwan sa temperatura ng silid.',
+        'fil':
+            'Kainin agad ang ipinamamahaging pagkain. Huwag iwan sa temperatura ng silid.',
         'ne': 'वितरित खाना तुरुन्त खानुहोस्। कोठाको तापमानमा नछोड्नुहोस्।',
-        'pt': 'Coma os alimentos distribuídos imediatamente. Não deixe em temperatura ambiente.',
-        'id': 'Makan makanan yang dibagikan segera. Jangan biarkan di suhu kamar.',
-        'my': 'ဝေငှသောအစားအသောက်ကို ချက်ချင်းစားပါ။ အခန်းအပူချိန်တွင် မထားပါနှင့်။',
+        'pt':
+            'Coma os alimentos distribuídos imediatamente. Não deixe em temperatura ambiente.',
+        'id':
+            'Makan makanan yang dibagikan segera. Jangan biarkan di suhu kamar.',
+        'my':
+            'ဝေငှသောအစားအသောက်ကို ချက်ချင်းစားပါ။ အခန်းအပူချိန်တွင် မထားပါနှင့်။',
         'si': 'බෙදා දෙන ආහාර වහාම අනුභව කරන්න. කාමර උෂ්ණත්වයේ තබා නොගන්න.',
         'hi': 'वितरित भोजन तुरंत खाएं। कमरे के तापमान पर न छोड़ें।',
-        'es': 'Coma los alimentos distribuidos inmediatamente. No los deje a temperatura ambiente.',
-        'mn': 'Хуваарилсан хоолыг шууд идэж, өрөөний температурт орхихгүй байгаарай.',
+        'es':
+            'Coma los alimentos distribuidos inmediatamente. No los deje a temperatura ambiente.',
+        'mn':
+            'Хуваарилсан хоолыг шууд идэж, өрөөний температурт орхихгүй байгаарай.',
         'uz': "Taqsimlangan ovqatni darhol yeng. Xona haroratida qoldirmang.",
-        'bn': 'বিতরণ করা খাবার তাৎক্ষণিকভাবে খান। ঘরের তাপমাত্রায় রেখে দেবেন না।',
+        'bn':
+            'বিতরণ করা খাবার তাৎক্ষণিকভাবে খান। ঘরের তাপমাত্রায় রেখে দেবেন না।',
       },
       source: 'MHLW',
     ),
@@ -182,19 +221,28 @@ class SurvivalDataJP {
         'zh': '多穿衣物，用纸板隔热。保持身体温暖。',
         'zh_TW': '多穿衣物，用紙板隔熱。保持身體溫暖。',
         'ko': '옷을 여러 겹 입고 골판지를 활용하세요. 몸을 따뜻하게 유지하세요.',
-        'vi': 'Mặc nhiều lớp quần áo. Dùng bìa carton cách nhiệt. Giữ ấm cơ thể.',
-        'tl': 'Magsuot ng maraming damit. Gumamit ng karton para sa insulation. Panatilihing mainit ang katawan.',
-        'fil': 'Magsuot ng maraming damit. Gumamit ng karton para sa insulation. Panatilihing mainit ang katawan.',
+        'vi':
+            'Mặc nhiều lớp quần áo. Dùng bìa carton cách nhiệt. Giữ ấm cơ thể.',
+        'tl':
+            'Magsuot ng maraming damit. Gumamit ng karton para sa insulation. Panatilihing mainit ang katawan.',
+        'fil':
+            'Magsuot ng maraming damit. Gumamit ng karton para sa insulation. Panatilihing mainit ang katawan.',
         'ne': 'धेरै कपडा लगाउनुहोस्। ताप्नका लागि कार्डबोर्ड प्रयोग गर्नुहोस्।',
-        'pt': 'Vista roupas em camadas. Use papelão para isolamento. Mantenha o corpo aquecido.',
-        'id': 'Kenakan banyak pakaian. Gunakan kardus untuk insulasi. Jaga tubuh tetap hangat.',
+        'pt':
+            'Vista roupas em camadas. Use papelão para isolamento. Mantenha o corpo aquecido.',
+        'id':
+            'Kenakan banyak pakaian. Gunakan kardus untuk insulasi. Jaga tubuh tetap hangat.',
         'my': 'အဝတ်များစွာဝတ်ဆင်ပါ။ နွေးထွေးမှုအတွက် ကတ်ထူကိုအသုံးပြုပါ။',
         'si': 'ඇඳුම් ගොඩාක් ඇඳගන්න. ඉන්සුලේෂන් සඳහා කාඩ්බෝඩ් භාවිතා කරන්න.',
-        'hi': 'कई परतों में कपड़े पहनें। इन्सुलेशन के लिए कार्डबोर्ड का उपयोग करें।',
-        'es': 'Use ropa en capas. Use cartón para aislar. Mantenga el cuerpo caliente.',
+        'hi':
+            'कई परतों में कपड़े पहनें। इन्सुलेशन के लिए कार्डबोर्ड का उपयोग करें।',
+        'es':
+            'Use ropa en capas. Use cartón para aislar. Mantenga el cuerpo caliente.',
         'mn': 'Давхарлаж хувцас өмс. Тусгаарлалтад зориулж картон ашигла.',
-        'uz': "Ko'p qatlam kiyim kiy. Izolyatsiya uchun karton ishlat. Tanani iliq saqlang.",
-        'bn': 'স্তরে স্তরে পোশাক পরুন। তাপ নিরোধের জন্য কার্ডবোর্ড ব্যবহার করুন।',
+        'uz':
+            "Ko'p qatlam kiyim kiy. Izolyatsiya uchun karton ishlat. Tanani iliq saqlang.",
+        'bn':
+            'স্তরে স্তরে পোশাক পরুন। তাপ নিরোধের জন্য কার্ডবোর্ড ব্যবহার করুন।',
       },
       source: 'FDMA',
     ),
@@ -229,19 +277,32 @@ class SurvivalDataJP {
         'zh': '避免单独行动，携带防身报警器。',
         'zh_TW': '避免單獨行動，攜帶防身報警器。',
         'ko': '혼자 행동하지 마세요. 방범 경보기를 지참하세요.',
-        'vi': 'Tránh đi một mình. Mang theo còi báo động. Bảo vệ tài sản có giá trị.',
-        'tl': 'Iwasang mag-isa. Magdala ng buzzer. Bantayan ang mahahalagang bagay.',
-        'fil': 'Iwasang mag-isa. Magdala ng buzzer. Bantayan ang mahahalagang bagay.',
-        'ne': 'एक्लो नजानुहोस्। अलार्म बजर बोक्नुहोस्। मूल्यवान वस्तु राम्रोसँग राख्नुहोस्।',
-        'pt': 'Evite andar sozinho. Carregue um alarme pessoal. Guarde objetos de valor.',
-        'id': 'Hindari bepergian sendirian. Bawa alarm pribadi. Jaga barang berharga.',
-        'my': 'တစ်ယောက်တည်းသွားရောက်ခြင်းကို ရှောင်ကြဉ်ပါ။ နိုးကောက်ဘဲလ်ကိုင်ပါ။',
-        'si': 'තනිව යාම වළකින්න. ඇලාම් බසර් රැගෙන යන්න. වටිනා දේ ආරක්ෂා කරගන්න.',
-        'hi': 'अकेले जाने से बचें। व्यक्तिगत अलार्म ले जाएं। मूल्यवान चीजें सुरक्षित रखें।',
-        'es': 'Evite ir solo. Lleve una alarma personal. Guarde objetos de valor.',
-        'mn': 'Дангаараа явахаас зайлсхий. Гар дохиолол авч яв. Үнэт эдийг хамгаал.',
-        'uz': "Yolg'iz yurishdan saqlaning. Shaxsiy signalizatsiya olib yuring. Qimmatbaho narsalarni asrang.",
-        'bn': 'একা চলাফেরা করা এড়িয়ে চলুন। ব্যক্তিগত অ্যালার্ম বহন করুন। মূল্যবান জিনিসপত্র রক্ষা করুন।',
+        'vi':
+            'Tránh đi một mình. Mang theo còi báo động. Bảo vệ tài sản có giá trị.',
+        'tl':
+            'Iwasang mag-isa. Magdala ng buzzer. Bantayan ang mahahalagang bagay.',
+        'fil':
+            'Iwasang mag-isa. Magdala ng buzzer. Bantayan ang mahahalagang bagay.',
+        'ne':
+            'एक्लो नजानुहोस्। अलार्म बजर बोक्नुहोस्। मूल्यवान वस्तु राम्रोसँग राख्नुहोस्।',
+        'pt':
+            'Evite andar sozinho. Carregue um alarme pessoal. Guarde objetos de valor.',
+        'id':
+            'Hindari bepergian sendirian. Bawa alarm pribadi. Jaga barang berharga.',
+        'my':
+            'တစ်ယောက်တည်းသွားရောက်ခြင်းကို ရှောင်ကြဉ်ပါ။ နိုးကောက်ဘဲလ်ကိုင်ပါ။',
+        'si':
+            'තනිව යාම වළකින්න. ඇලාම් බසර් රැගෙන යන්න. වටිනා දේ ආරක්ෂා කරගන්න.',
+        'hi':
+            'अकेले जाने से बचें। व्यक्तिगत अलार्म ले जाएं। मूल्यवान चीजें सुरक्षित रखें।',
+        'es':
+            'Evite ir solo. Lleve una alarma personal. Guarde objetos de valor.',
+        'mn':
+            'Дангаараа явахаас зайлсхий. Гар дохиолол авч яв. Үнэт эдийг хамгаал.',
+        'uz':
+            "Yolg'iz yurishdan saqlaning. Shaxsiy signalizatsiya olib yuring. Qimmatbaho narsalarni asrang.",
+        'bn':
+            'একা চলাফেরা করা এড়িয়ে চলুন। ব্যক্তিগত অ্যালার্ম বহন করুন। মূল্যবান জিনিসপত্র রক্ষা করুন।',
       },
       source: 'NPA',
     ),
@@ -276,19 +337,31 @@ class SurvivalDataJP {
         'zh': '将睡眠区与活动区分开，保持规律的生活节奏。',
         'zh_TW': '將睡眠區與活動區分開，保持規律的生活節奏。',
         'ko': '수면 공간과 활동 공간을 분리하고 규칙적인 생활을 유지하세요.',
-        'vi': 'Tách biệt khu vực ngủ và hoạt động. Duy trì nhịp sinh hoạt đều đặn.',
-        'tl': 'Ihiwalay ang lugar ng pagtulog at aktibidad. Panatilihing regular ang pamumuhay.',
-        'fil': 'Ihiwalay ang lugar ng pagtulog at aktibidad. Panatilihing regular ang pamumuhay.',
-        'ne': 'सुत्ने र गतिविधि क्षेत्र अलग गर्नुहोस्। नियमित दिनचर्या कायम राख्नुहोस्।',
-        'pt': 'Separe as áreas de sono e atividade. Mantenha uma rotina regular.',
-        'id': 'Pisahkan area tidur dan aktivitas. Pertahankan rutinitas yang teratur.',
-        'my': 'အိပ်ရာဝင်နေရာနှင့် လုပ်ဆောင်ချိန်နေရာကို ခွဲခြားပါ။ ပုံမှန်နေထိုင်ပါ။',
-        'si': 'නිද්‍රා ප්‍රදේශය සහ ක්‍රියාකාරකම් ප්‍රදේශය වෙන් කරන්න. නිතිපතා ජීවිතය පවත්වා ගන්න.',
+        'vi':
+            'Tách biệt khu vực ngủ và hoạt động. Duy trì nhịp sinh hoạt đều đặn.',
+        'tl':
+            'Ihiwalay ang lugar ng pagtulog at aktibidad. Panatilihing regular ang pamumuhay.',
+        'fil':
+            'Ihiwalay ang lugar ng pagtulog at aktibidad. Panatilihing regular ang pamumuhay.',
+        'ne':
+            'सुत्ने र गतिविधि क्षेत्र अलग गर्नुहोस्। नियमित दिनचर्या कायम राख्नुहोस्।',
+        'pt':
+            'Separe as áreas de sono e atividade. Mantenha uma rotina regular.',
+        'id':
+            'Pisahkan area tidur dan aktivitas. Pertahankan rutinitas yang teratur.',
+        'my':
+            'အိပ်ရာဝင်နေရာနှင့် လုပ်ဆောင်ချိန်နေရာကို ခွဲခြားပါ။ ပုံမှန်နေထိုင်ပါ။',
+        'si':
+            'නිද්‍රා ප්‍රදේශය සහ ක්‍රියාකාරකම් ප්‍රදේශය වෙන් කරන්න. නිතිපතා ජීවිතය පවත්වා ගන්න.',
         'hi': 'सोने और गतिविधि के क्षेत्र अलग करें। नियमित दिनचर्या बनाए रखें।',
-        'es': 'Separe las áreas de sueño y actividad. Mantenga una rutina regular.',
-        'mn': 'Унтах болон үйл ажиллагааны орон зайг тусгаарла. Тогтмол амьдралын хэв маягийг хадгал.',
-        'uz': "Uyqu va faoliyat joylarini ajrating. Muntazam kundalik tartibni saqlab qoling.",
-        'bn': 'ঘুমের এলাকা এবং কার্যকলাপের এলাকা আলাদা করুন। নিয়মিত দিনচর্যা বজায় রাখুন।',
+        'es':
+            'Separe las áreas de sueño y actividad. Mantenga una rutina regular.',
+        'mn':
+            'Унтах болон үйл ажиллагааны орон зайг тусгаарла. Тогтмол амьдралын хэв маягийг хадгал.',
+        'uz':
+            "Uyqu va faoliyat joylarini ajrating. Muntazam kundalik tartibni saqlab qoling.",
+        'bn':
+            'ঘুমের এলাকা এবং কার্যকলাপের এলাকা আলাদা করুন। নিয়মিত দিনচর্যা বজায় রাখুন।',
       },
       source: 'Cabinet Office',
     ),
@@ -321,7 +394,8 @@ class SurvivalDataJP {
         'bn': 'দীর্ঘস্থায়ী রোগ/ওষুধ',
       },
       action: {
-        'en': 'Notify staff of your medicine tag (Okusuri Techo). Consult medical teams.',
+        'en':
+            'Notify staff of your medicine tag (Okusuri Techo). Consult medical teams.',
         'ja': 'お薬手帳をスタッフに提示してください。巡回医師に持病を相談しましょう。',
         'th': 'แจ้งเจ้าหน้าที่เกี่ยวกับยาประจำตัว ปรึกษาทีมแพทย์',
       },
@@ -329,7 +403,7 @@ class SurvivalDataJP {
     ),
     SurvivalGuideItem(
       id: 'religion',
-      icon: Icons.menu_book, 
+      icon: Icons.menu_book,
       title: {
         'en': 'Religious Needs',
         'ja': '宗教的配慮',
@@ -352,9 +426,11 @@ class SurvivalDataJP {
         'bn': 'ধর্মীয় প্রয়োজনীয়তা',
       },
       action: {
-        'en': 'Use "Help Card" for Halal/Prayer needs. Create a private space with partitions.',
+        'en':
+            'Use "Help Card" for Halal/Prayer needs. Create a private space with partitions.',
         'ja': '「Help Card」でハラルや礼拝の必要性を伝えてください。パーティションで空間を確保します。',
-        'th': 'ใช้ "Help Card" เพื่อแจ้งเรื่องอาหารฮาลาลหรือการละหมาด สร้างพื้นที่ส่วนตัวด้วยฉากกั้น',
+        'th':
+            'ใช้ "Help Card" เพื่อแจ้งเรื่องอาหารฮาลาลหรือการละหมาด สร้างพื้นที่ส่วนตัวด้วยฉากกั้น',
       },
       source: 'Multicultural Coexistence Guidelines',
     ),
@@ -383,9 +459,11 @@ class SurvivalDataJP {
         'bn': 'পোষা প্রাণী সরিয়ে নেওয়া',
       },
       action: {
-        'en': 'Keep pets in cages. designate a pet area. Manage waste properly.',
+        'en':
+            'Keep pets in cages. designate a pet area. Manage waste properly.',
         'ja': 'ケージに入れ、専用エリアを利用してください。排泄物の処理を徹底しましょう。',
-        'th': 'ขังสัตว์เลี้ยงในกรง ใช้พื้นที่สำหรับสัตว์เลี้ยง จัดการสิ่งขับถ่ายให้เรียบร้อย',
+        'th':
+            'ขังสัตว์เลี้ยงในกรง ใช้พื้นที่สำหรับสัตว์เลี้ยง จัดการสิ่งขับถ่ายให้เรียบร้อย',
       },
       source: 'Ministry of the Environment',
     ),
@@ -414,14 +492,23 @@ class SurvivalDataJP {
         'bn': 'মানসিক স্বাস্থ্য সেবা',
       },
       action: {
-        'en': 'Practice "Grounding" or Deep Breathing. It is okay to cry or be scared.',
+        'en':
+            'Practice "Grounding" or Deep Breathing. It is okay to cry or be scared.',
         'ja': '深呼吸や「グラウンディング」を試して。泣いたり怖がるのは自然な反応です。',
         'th': 'ฝึกหายใจลึกๆ หรือ Grounding การร้องไห้หรือกลัวเป็นเรื่องปกติ',
       },
       source: 'WHO / MHLW',
       steps: [
-        SurvivalStep(instruction: {'en': 'Breathe deeply.', 'ja': '深呼吸する', 'th': 'หายใจเข้าลึกๆ'}, icon: Icons.air),
-        SurvivalStep(instruction: {'en': 'Talk to someone.', 'ja': '誰かと話す', 'th': 'คุยกับใครสักคน'}, icon: Icons.record_voice_over),
+        SurvivalStep(instruction: {
+          'en': 'Breathe deeply.',
+          'ja': '深呼吸する',
+          'th': 'หายใจเข้าลึกๆ'
+        }, icon: Icons.air),
+        SurvivalStep(instruction: {
+          'en': 'Talk to someone.',
+          'ja': '誰かと話す',
+          'th': 'คุยกับใครสักคน'
+        }, icon: Icons.record_voice_over),
       ],
     ),
     SurvivalGuideItem(
@@ -449,9 +536,11 @@ class SurvivalDataJP {
         'bn': 'নার্সিং/সহায়তা',
       },
       action: {
-        'en': 'Ask for accessible toilets and support. Look for "Welfare Shelter" info.',
+        'en':
+            'Ask for accessible toilets and support. Look for "Welfare Shelter" info.',
         'ja': '多目的トイレや介助を依頼してください。「福祉避難所」への移動も検討されます。',
-        'th': 'ขอความช่วยเหลือเรื่องห้องน้ำและการดูแล มองหาข้อมูล "ศูนย์พักพิงสำหรับผู้ต้องการการดูแลพิเศษ"',
+        'th':
+            'ขอความช่วยเหลือเรื่องห้องน้ำและการดูแล มองหาข้อมูล "ศูนย์พักพิงสำหรับผู้ต้องการการดูแลพิเศษ"',
       },
       source: 'MHLW',
     ),
@@ -480,7 +569,8 @@ class SurvivalDataJP {
         'bn': 'টয়লেট/স্বাস্থ্যবিধি',
       },
       action: {
-        'en': 'Use portable toilets if available. Keep hands clean. Segregate waste.',
+        'en':
+            'Use portable toilets if available. Keep hands clean. Segregate waste.',
         'ja': '簡易トイレを利用し、手指消毒を徹底。ゴミは分別して密封してください。',
         'th': 'ใช้ห้องน้ำแบบพกพาหากมี ล้างมือให้สะอาด แยกขยะ',
       },
@@ -511,9 +601,11 @@ class SurvivalDataJP {
         'bn': 'মোবাইল/বিদ্যুৎ',
       },
       action: {
-        'en': 'Turn on Low Power Mode. Lower brightness. Turn off Wi-Fi/Bluetooth if not used.',
+        'en':
+            'Turn on Low Power Mode. Lower brightness. Turn off Wi-Fi/Bluetooth if not used.',
         'ja': '低電力モードをオン、画面を暗く、Wi-Fi/Bluetoothはオフに。',
-        'th': 'เปิดโหมดประหยัดพลังงาน ลดความสว่างหน้าจอ ปิด Wi-Fi/Bluetooth หากไม่ได้ใช้',
+        'th':
+            'เปิดโหมดประหยัดพลังงาน ลดความสว่างหน้าจอ ปิด Wi-Fi/Bluetooth หากไม่ได้ใช้',
       },
       source: 'Internal Affairs & Communications',
     ),
@@ -542,9 +634,11 @@ class SurvivalDataJP {
         'bn': 'মহিলাদের যত্ন',
       },
       action: {
-        'en': 'Ask female staff for sanitary products. Ensure privacy in changing areas.',
+        'en':
+            'Ask female staff for sanitary products. Ensure privacy in changing areas.',
         'ja': '生理用品は女性スタッフに相談を。着替えや授乳スペースのプライバシー確保を。',
-        'th': 'ขอผ้าอนามัยจากเจ้าหน้าที่หญิง ตรวจสอบความเป็นส่วนตัวในพื้นที่เปลี่ยนเสื้อผ้า',
+        'th':
+            'ขอผ้าอนามัยจากเจ้าหน้าที่หญิง ตรวจสอบความเป็นส่วนตัวในพื้นที่เปลี่ยนเสื้อผ้า',
       },
       source: 'Gender Equality Bureau',
     ),
@@ -575,7 +669,8 @@ class SurvivalDataJP {
       action: {
         'en': 'Trust official sources (Radio/Govt Apps). Avoid rumors.',
         'ja': 'ラジオや自治体アプリなど、公式情報を信頼してください。デマに注意。',
-        'th': 'เชื่อถือแหล่งข้อมูลที่เป็นทางการ (วิทยุ/แอปของรัฐบาล) ระวังข่าวลือ',
+        'th':
+            'เชื่อถือแหล่งข้อมูลที่เป็นทางการ (วิทยุ/แอปของรัฐบาล) ระวังข่าวลือ',
       },
       source: 'Fire and Disaster Management Agency',
     ),

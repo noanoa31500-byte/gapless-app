@@ -31,30 +31,28 @@ class BleService extends ChangeNotifier {
   BleService._();
 
   // ── GATT UUID ────────────────────────────────────────────────────────────
-  static final Guid _serviceUuid =
-      Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E');
-  static final Guid _rxCharUuid =
-      Guid('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
+  static final Guid _serviceUuid = Guid('6E400001-B5A3-F393-E0A9-E50E24DCCA9E');
+  static final Guid _rxCharUuid = Guid('6E400003-B5A3-F393-E0A9-E50E24DCCA9E');
 
   // ── スキャン間隔 ─────────────────────────────────────────────────────────
-  static const Duration _normalScanInterval  = Duration(seconds: 5);
-  static const Duration _savingScanInterval  = Duration(seconds: 30);
+  static const Duration _normalScanInterval = Duration(seconds: 5);
+  static const Duration _savingScanInterval = Duration(seconds: 30);
   static const int _batteryThreshold = 20; // 省電力閾値 (%)
 
   // ── 状態 ─────────────────────────────────────────────────────────────────
-  bool _isRunning    = false;
+  bool _isRunning = false;
   bool _isSavingMode = false;
-  int  _receivedCount = 0;
+  int _receivedCount = 0;
   bool _disposed = false;
 
-  bool get isRunning     => _isRunning;
-  bool get isSavingMode  => _isSavingMode;
-  int  get receivedCount => _receivedCount;
+  bool get isRunning => _isRunning;
+  bool get isSavingMode => _isSavingMode;
+  int get receivedCount => _receivedCount;
 
   // ── 内部 ─────────────────────────────────────────────────────────────────
-  StreamSubscription<List<ScanResult>>?    _scanResultSub;
+  StreamSubscription<List<ScanResult>>? _scanResultSub;
   StreamSubscription<BluetoothAdapterState>? _adapterSub;
-  StreamSubscription<BatteryState>?        _batterySub;
+  StreamSubscription<BatteryState>? _batterySub;
   Timer? _scanTimer;
   Timer? _batteryCheckTimer;
 
@@ -88,8 +86,10 @@ class BleService extends ChangeNotifier {
 
     // バッテリー監視
     await _checkBattery();
-    _batteryCheckTimer = Timer.periodic(const Duration(minutes: 5), (_) => _checkBattery());
-    _batterySub = Battery().onBatteryStateChanged.listen((_) => _checkBattery());
+    _batteryCheckTimer =
+        Timer.periodic(const Duration(minutes: 5), (_) => _checkBattery());
+    _batterySub =
+        Battery().onBatteryStateChanged.listen((_) => _checkBattery());
 
     // BLE アダプタ監視
     _adapterSub = FlutterBluePlus.adapterState.listen((state) {
@@ -202,20 +202,33 @@ class BleService extends ChangeNotifier {
 
   Future<void> _readFromPeer(BluetoothDevice device) async {
     try {
-      await device.connect(license: License.free, timeout: const Duration(seconds: 6));
+      await device.connect(
+          license: License.free, timeout: const Duration(seconds: 6));
 
       final services = await device.discoverServices();
       BluetoothService? target;
       for (final s in services) {
-        if (s.serviceUuid == _serviceUuid) { target = s; break; }
+        if (s.serviceUuid == _serviceUuid) {
+          target = s;
+          break;
+        }
       }
-      if (target == null) { await device.disconnect(); return; }
+      if (target == null) {
+        await device.disconnect();
+        return;
+      }
 
       BluetoothCharacteristic? rxChar;
       for (final c in target.characteristics) {
-        if (c.characteristicUuid == _rxCharUuid) { rxChar = c; break; }
+        if (c.characteristicUuid == _rxCharUuid) {
+          rxChar = c;
+          break;
+        }
       }
-      if (rxChar == null) { await device.disconnect(); return; }
+      if (rxChar == null) {
+        await device.disconnect();
+        return;
+      }
 
       // Notify 購読
       if (rxChar.properties.notify) {
@@ -231,7 +244,9 @@ class BleService extends ChangeNotifier {
       await device.disconnect();
     } catch (e) {
       debugPrint('🔵 BleService: ピア接続エラー (${device.remoteId}) $e');
-      try { await device.disconnect(); } catch (_) {}
+      try {
+        await device.disconnect();
+      } catch (_) {}
     } finally {
       _connecting.remove(device.remoteId);
     }

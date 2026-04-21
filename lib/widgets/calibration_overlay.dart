@@ -99,7 +99,8 @@ class _CalibrationOverlayState extends State<CalibrationOverlay>
                 const SizedBox(height: 32),
                 _MessageCard(pulseCtrl: _pulseCtrl),
                 const SizedBox(height: 40),
-                if (widget.onDismiss != null) _SkipButton(onTap: widget.onDismiss!),
+                if (widget.onDismiss != null)
+                  _SkipButton(onTap: widget.onDismiss!),
               ],
             ),
           ),
@@ -338,7 +339,8 @@ class DivergenceWarningBanner extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  GapLessL10n.t('cal_divergence').replaceAll('@deg', divergenceDeg.toStringAsFixed(0)),
+                  GapLessL10n.t('cal_divergence')
+                      .replaceAll('@deg', divergenceDeg.toStringAsFixed(0)),
                   style: GapLessL10n.safeStyle(const TextStyle(
                     color: Colors.white,
                     fontSize: 13,

@@ -21,12 +21,12 @@ const double _kDoubleLineGap = 3.0; // 二重線の間隔 (logical px)
 const double _kWideLineWidth = 2.0; // 太い道の1本線の幅
 const double _kNarrowLineWidth = 1.5; // 細い道の1本線の幅
 const Color _kBgColor = Color(0xFF111111);
-const Color _kWideRoadColor = Color(0xFF3B6FE0);   // 青（幅≥6m）
+const Color _kWideRoadColor = Color(0xFF3B6FE0); // 青（幅≥6m）
 const Color _kNarrowRoadColor = Color(0xFF888888); // グレー（幅<6m）
 const Color _kCurrentLocColor = Color(0xFFFF4444); // 赤（現在地マーカー）
 const Color _kImpassableColor = Color(0xFFE53935); // 赤（通行不可）
-const Color _kCautionColor    = Color(0xFFFF6F00); // オレンジ（要注意）
-const Color _kSafeColor       = Color(0xFF43A047); // 緑（安全確認済み）
+const Color _kCautionColor = Color(0xFFFF6F00); // オレンジ（要注意）
+const Color _kSafeColor = Color(0xFF43A047); // 緑（安全確認済み）
 
 // ────────────────────────────────────────
 // 座標変換ヘルパー
@@ -43,8 +43,7 @@ Offset _toCanvas(
   Offset canvasCenter,
 ) {
   const latMeters = 111320.0; // 緯度1度あたりのm
-  final lngMeters =
-      latMeters * math.cos(center.latitude * math.pi / 180);
+  final lngMeters = latMeters * math.cos(center.latitude * math.pi / 180);
 
   final dy = (point.latitude - center.latitude) * latMeters;
   final dx = (point.longitude - center.longitude) * lngMeters;
@@ -92,7 +91,8 @@ class RoadMapPainter extends CustomPainter {
 
     // ── 背景：黒い円 ──────────────────────────────────────────────────────
     canvas.save();
-    canvas.clipPath(Path()..addOval(Rect.fromCircle(center: center, radius: radius)));
+    canvas.clipPath(
+        Path()..addOval(Rect.fromCircle(center: center, radius: radius)));
     canvas.drawRect(Offset.zero & size, Paint()..color = _kBgColor);
 
     // ── 道路描画 ──────────────────────────────────────────────────────────
@@ -112,7 +112,8 @@ class RoadMapPainter extends CustomPainter {
 
       // キャンバス座標に変換
       final pts = road.geometry
-          .map((p) => _toCanvas(p, currentLocation, metersPerPixel, headingRad, center))
+          .map((p) =>
+              _toCanvas(p, currentLocation, metersPerPixel, headingRad, center))
           .toList();
 
       // BLE スコアで色を決定
@@ -149,11 +150,14 @@ class RoadMapPainter extends CustomPainter {
       if (isWide) {
         _drawDoubleLine(canvas, pts, color, _kWideLineWidth, _kDoubleLineGap);
       } else {
-        _drawDoubleLine(canvas, pts, color, _kNarrowLineWidth, _kDoubleLineGap * 0.6);
+        _drawDoubleLine(
+            canvas, pts, color, _kNarrowLineWidth, _kDoubleLineGap * 0.6);
       }
 
       // BLE ラベル描画
-      if (scoreResult != null && scoreResult.reportCount > 0 && pts.isNotEmpty) {
+      if (scoreResult != null &&
+          scoreResult.reportCount > 0 &&
+          pts.isNotEmpty) {
         final labelPt = pts[pts.length ~/ 2];
         _drawSegmentLabel(canvas, labelPt, scoreResult);
       }
@@ -242,9 +246,17 @@ class RoadMapPainter extends CustomPainter {
           fontWeight: FontWeight.bold,
           fontFamily: 'NotoSansJP',
           fontFamilyFallback: [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+            'NotoSansSC',
+            'NotoSansTC',
+            'NotoSansKR',
+            'NotoSansThai',
+            'NotoSansMyanmar',
+            'NotoSansSinhala',
+            'NotoSansDevanagari',
+            'NotoSansBengali',
+            'NotoSansArabic',
+            'NotoSans',
+            'sans-serif',
           ],
         ),
       ),

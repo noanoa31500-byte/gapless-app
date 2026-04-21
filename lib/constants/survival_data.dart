@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'survival/survival_data_jp.dart';
 

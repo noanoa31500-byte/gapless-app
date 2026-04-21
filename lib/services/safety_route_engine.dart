@@ -121,7 +121,8 @@ class SafetyRouteEngine {
   ///
   /// [features] gplbパーサーが返したRoadFeatureのリスト
   /// [profile]  ユーザープロファイル（コスト係数に影響）
-  void buildGraph(List<RoadFeature> features, {UserProfile profile = UserProfile.standard}) {
+  void buildGraph(List<RoadFeature> features,
+      {UserProfile profile = UserProfile.standard}) {
     _nodes.clear();
     _snapIndex.clear();
 
@@ -150,13 +151,17 @@ class SafetyRouteEngine {
           continue;
         }
 
-        var cost = dist * _widthFactor(feature) * _profileFactor(feature, profile) * timeDecay;
+        var cost = dist *
+            _widthFactor(feature) *
+            _profileFactor(feature, profile) *
+            timeDecay;
         cost = _applyBleScore(cost, mid);
         if (!cost.isFinite || cost <= 0) continue; // BLE absolute block
 
         fromNode.edges.add(_Edge(toNode, cost, segmentGeom));
         if (!feature.isOneWay) {
-          toNode.edges.add(_Edge(fromNode, cost, List.from(segmentGeom.reversed)));
+          toNode.edges
+              .add(_Edge(fromNode, cost, List.from(segmentGeom.reversed)));
         }
       }
     }
@@ -195,7 +200,8 @@ class SafetyRouteEngine {
     final cameEdge = <String, _Edge?>{};
 
     final openSet = _MinHeap<_PqItem>((a, b) => a.f.compareTo(b.f));
-    openSet.push(_PqItem(startNode.id, _heuristic(startNode.pos, goalNode.pos)));
+    openSet
+        .push(_PqItem(startNode.id, _heuristic(startNode.pos, goalNode.pos)));
 
     final closed = <String>{};
 
@@ -236,7 +242,8 @@ class SafetyRouteEngine {
     }
 
     // 始点・終点を追加
-    if (waypoints.isEmpty || waypoints.first != start) waypoints.insert(0, start);
+    if (waypoints.isEmpty || waypoints.first != start)
+      waypoints.insert(0, start);
     if (waypoints.isEmpty || waypoints.last != goal) waypoints.add(goal);
 
     // 総距離をウェイポイントから再計算

@@ -31,23 +31,23 @@ class PowerManager extends ChangeNotifier {
   PowerManager._();
 
   // ── 閾値 ────────────────────────────────────────────────────
-  static const int _reducedThreshold  = 30;
-  static const int _savingThreshold   = 20;
-  static const int _ultraThreshold    = 10;
+  static const int _reducedThreshold = 30;
+  static const int _savingThreshold = 20;
+  static const int _ultraThreshold = 10;
   static const int _emergencyThreshold = 5;
 
   // GPS 間隔（秒）
-  static const int gpsIntervalNormalSec    = 1;
-  static const int gpsIntervalReducedSec   = 3;
-  static const int gpsIntervalSavingSec    = 5;
-  static const int gpsIntervalUltraSec     = 30;
+  static const int gpsIntervalNormalSec = 1;
+  static const int gpsIntervalReducedSec = 3;
+  static const int gpsIntervalSavingSec = 5;
+  static const int gpsIntervalUltraSec = 30;
   static const int gpsIntervalEmergencySec = 60;
 
   // BLE スキャン間隔
-  static const Duration bleScanNormal    = Duration(seconds: 30);
-  static const Duration bleScanReduced   = Duration(seconds: 60);
-  static const Duration bleScanSaving    = Duration(minutes: 3);
-  static const Duration bleScanUltra     = Duration(minutes: 5);
+  static const Duration bleScanNormal = Duration(seconds: 30);
+  static const Duration bleScanReduced = Duration(seconds: 60);
+  static const Duration bleScanSaving = Duration(minutes: 3);
+  static const Duration bleScanUltra = Duration(minutes: 5);
   static const Duration bleScanEmergency = Duration(minutes: 10);
 
   // ── 状態 ──────────────────────────────────────────────────
@@ -75,29 +75,28 @@ class PowerManager extends ChangeNotifier {
   }
 
   /// 省電力モード時に UI 側へ通知する背景色
-  int? get backgroundColorValue =>
-      isPowerSaving ? 0xFF000000 : null;
+  int? get backgroundColorValue => isPowerSaving ? 0xFF000000 : null;
 
   /// GPS 取得間隔（秒）— ナビ中は常に通常間隔を維持
   int get gpsIntervalSec {
     if (_navigationActive) return gpsIntervalNormalSec;
     return switch (_mode) {
-      PowerMode.normal    => gpsIntervalNormalSec,
-      PowerMode.reduced   => gpsIntervalReducedSec,
-      PowerMode.saving    => gpsIntervalSavingSec,
-      PowerMode.ultra     => gpsIntervalUltraSec,
+      PowerMode.normal => gpsIntervalNormalSec,
+      PowerMode.reduced => gpsIntervalReducedSec,
+      PowerMode.saving => gpsIntervalSavingSec,
+      PowerMode.ultra => gpsIntervalUltraSec,
       PowerMode.emergency => gpsIntervalEmergencySec,
     };
   }
 
   /// BLE スキャン間隔
   Duration get bleScanInterval => switch (_mode) {
-    PowerMode.normal    => bleScanNormal,
-    PowerMode.reduced   => bleScanReduced,
-    PowerMode.saving    => bleScanSaving,
-    PowerMode.ultra     => bleScanUltra,
-    PowerMode.emergency => bleScanEmergency,
-  };
+        PowerMode.normal => bleScanNormal,
+        PowerMode.reduced => bleScanReduced,
+        PowerMode.saving => bleScanSaving,
+        PowerMode.ultra => bleScanUltra,
+        PowerMode.emergency => bleScanEmergency,
+      };
 
   // ── 内部 ──────────────────────────────────────────────────
   final Battery _battery = Battery();
@@ -162,9 +161,9 @@ class PowerManager extends ChangeNotifier {
 
   static PowerMode _classifyMode(int level) {
     if (level <= _emergencyThreshold) return PowerMode.emergency;
-    if (level <= _ultraThreshold)     return PowerMode.ultra;
-    if (level <= _savingThreshold)    return PowerMode.saving;
-    if (level <= _reducedThreshold)   return PowerMode.reduced;
+    if (level <= _ultraThreshold) return PowerMode.ultra;
+    if (level <= _savingThreshold) return PowerMode.saving;
+    if (level <= _reducedThreshold) return PowerMode.reduced;
     return PowerMode.normal;
   }
 
@@ -185,7 +184,8 @@ class PowerManager extends ChangeNotifier {
         await channel.invokeMethod('setBrightness', {'value': 0.05});
       } else {
         if (_savedBrightness == null) return;
-        await channel.invokeMethod('setBrightness', {'value': _savedBrightness});
+        await channel
+            .invokeMethod('setBrightness', {'value': _savedBrightness});
         _savedBrightness = null;
       }
     } catch (_) {}

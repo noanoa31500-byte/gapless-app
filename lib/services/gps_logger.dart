@@ -82,8 +82,7 @@ class GpsLogger extends ChangeNotifier {
   static const int _maxBufferSize = 1000;
 
   /// インメモリバッファの最新エントリ（null = ロギング前）
-  GpsLogEntry? get latestEntry =>
-      _buffer.isNotEmpty ? _buffer.last : null;
+  GpsLogEntry? get latestEntry => _buffer.isNotEmpty ? _buffer.last : null;
 
   /// インメモリバッファ全体の読み取り専用ビュー（行動分析用）
   List<GpsLogEntry> get recentEntries => List.unmodifiable(_buffer);
@@ -105,8 +104,7 @@ class GpsLogger extends ChangeNotifier {
     _logSink = _logFile!.openWrite(mode: FileMode.append);
 
     // セパレータを書いて新セッション開始を明示
-    _logSink!.writeln(
-        '# session_start ${_sessionStart!.toIso8601String()}');
+    _logSink!.writeln('# session_start ${_sessionStart!.toIso8601String()}');
 
     _startStream();
     debugPrint('GpsLogger: ロギング開始 → ${_logFile!.path}');
@@ -210,8 +208,7 @@ class GpsLogger extends ChangeNotifier {
   // ---------------------------------------------------------------------------
 
   void _startStream({int? intervalSec}) {
-    final interval =
-        intervalSec ?? PowerManager.instance.gpsIntervalSec;
+    final interval = intervalSec ?? PowerManager.instance.gpsIntervalSec;
 
     final settings = LocationSettings(
       accuracy: LocationAccuracy.high,
@@ -254,8 +251,8 @@ class GpsLogger extends ChangeNotifier {
   // ユーティリティ
   // ---------------------------------------------------------------------------
 
-  List<GpsLogEntry> _decimateByDistance(
-      List<GpsLogEntry> entries, {required double minDistanceM}) {
+  List<GpsLogEntry> _decimateByDistance(List<GpsLogEntry> entries,
+      {required double minDistanceM}) {
     if (entries.isEmpty) return [];
 
     const dist = Distance();

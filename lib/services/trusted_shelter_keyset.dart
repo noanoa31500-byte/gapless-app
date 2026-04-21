@@ -57,7 +57,8 @@ class TrustedShelterKeyset {
       publicKeyBytes: pk,
     );
     if (!ok) {
-      debugPrint('TrustedShelterKeyset: sig invalid for keyId=$keyId, mode=$mode');
+      debugPrint(
+          'TrustedShelterKeyset: sig invalid for keyId=$keyId, mode=$mode');
       return mode == ShelterPinningMode.advisory;
     }
     return true;

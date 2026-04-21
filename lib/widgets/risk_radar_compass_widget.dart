@@ -10,11 +10,11 @@ import '../utils/localization.dart';
 /// ============================================================================
 /// RiskRadarCompassWidget - リスクレーダー付きコンパスウィジェット
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 「画面の赤い方向・雷の方向さえ避ければ生き残れる」
 /// という直感的なUIを提供します。
-/// 
+///
 /// 【色コード】
 /// - 紫色 🌀 = 激流危険
 /// - 青色 🌊 = 浸水危険（水深0.5m以上）
@@ -25,22 +25,22 @@ import '../utils/localization.dart';
 class RiskRadarCompassWidget extends StatefulWidget {
   /// レーダースキャン結果
   final RadarScanResult? scanResult;
-  
+
   /// 端末の向き（真北基準、度）
   final double deviceHeading;
-  
+
   /// ターゲット方位（ウェイポイントへの方向）
   final double? targetBearing;
-  
+
   /// コンパスのサイズ
   final double size;
-  
+
   /// 言語設定
   final String lang;
-  
+
   /// スキャン中かどうか
   final bool isScanning;
-  
+
   /// タップコールバック
   final VoidCallback? onTap;
 
@@ -64,11 +64,11 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   // パルスアニメーション（危険ゾーンの点滅）
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
-  
+
   // レーダースイープアニメーション
   late AnimationController _sweepController;
   late Animation<double> _sweepAnimation;
-  
+
   // 安全矢印の点滅アニメーション
   late AnimationController _arrowBlinkController;
   late Animation<double> _arrowBlinkAnimation;
@@ -76,33 +76,33 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   @override
   void initState() {
     super.initState();
-    
+
     // パルスアニメーション（危険ゾーンの呼吸エフェクト）
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
-    
+
     // レーダースイープアニメーション
     _sweepController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
     )..repeat();
-    
+
     _sweepAnimation = Tween<double>(begin: 0.0, end: 2 * math.pi).animate(
       CurvedAnimation(parent: _sweepController, curve: Curves.linear),
     );
-    
+
     // 安全矢印の点滅アニメーション
     _arrowBlinkController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..repeat(reverse: true);
-    
+
     _arrowBlinkAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(parent: _arrowBlinkController, curve: Curves.easeInOut),
     );
@@ -121,7 +121,11 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
     // Selectorで language の文字列のみ購読 — Provider 全体ではなく単一フィールドだけ監視
     context.select<LanguageProvider, String>((p) => p.currentLanguage);
     final reduce = AppleAccessibility.reduceMotion(context);
-    for (final c in [_pulseController, _sweepController, _arrowBlinkController]) {
+    for (final c in [
+      _pulseController,
+      _sweepController,
+      _arrowBlinkController
+    ]) {
       if (reduce && c.isAnimating) {
         c.stop();
       } else if (!reduce && !c.isAnimating) {
@@ -132,56 +136,56 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
       onTap: widget.onTap,
       child: RepaintBoundary(
         child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: AnimatedBuilder(
-          animation: Listenable.merge([
-            _pulseAnimation,
-            _sweepAnimation,
-            _arrowBlinkAnimation,
-          ]),
-          builder: (context, child) {
-            return Stack(
-              alignment: Alignment.center,
-              children: [
-                // レイヤー1: 背景とグリッド
-                _buildBackground(),
-                
-                // レイヤー2: レーダースイープ（スキャン中のみ）
-                if (widget.isScanning) _buildRadarSweep(),
-                
-                // レイヤー3: 危険ゾーン
-                if (widget.scanResult != null) _buildDangerZones(),
-                
-                // レイヤー4: 方位目盛り
-                _buildCompassMarkers(),
-                
-                // レイヤー5: 安全方向の矢印
-                if (_shouldShowSafetyArrow) _buildSafetyArrow(),
-                
-                // レイヤー6: 中央インジケーター
-                _buildCenterIndicator(),
-                
-                // レイヤー7: リスクバッジ
-                if (widget.scanResult != null && 
-                    widget.scanResult!.overallRiskLevel > 0.2)
-                  _buildRiskBadge(),
-                  
-                // レイヤー8: 補正ガイダンス
-                if (widget.scanResult?.safetyGuidance?.needsCorrection == true)
-                  _buildCorrectionGuidance(),
-              ],
-            );
-          },
+          width: widget.size,
+          height: widget.size,
+          child: AnimatedBuilder(
+            animation: Listenable.merge([
+              _pulseAnimation,
+              _sweepAnimation,
+              _arrowBlinkAnimation,
+            ]),
+            builder: (context, child) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  // レイヤー1: 背景とグリッド
+                  _buildBackground(),
+
+                  // レイヤー2: レーダースイープ（スキャン中のみ）
+                  if (widget.isScanning) _buildRadarSweep(),
+
+                  // レイヤー3: 危険ゾーン
+                  if (widget.scanResult != null) _buildDangerZones(),
+
+                  // レイヤー4: 方位目盛り
+                  _buildCompassMarkers(),
+
+                  // レイヤー5: 安全方向の矢印
+                  if (_shouldShowSafetyArrow) _buildSafetyArrow(),
+
+                  // レイヤー6: 中央インジケーター
+                  _buildCenterIndicator(),
+
+                  // レイヤー7: リスクバッジ
+                  if (widget.scanResult != null &&
+                      widget.scanResult!.overallRiskLevel > 0.2)
+                    _buildRiskBadge(),
+
+                  // レイヤー8: 補正ガイダンス
+                  if (widget.scanResult?.safetyGuidance?.needsCorrection ==
+                      true)
+                    _buildCorrectionGuidance(),
+                ],
+              );
+            },
+          ),
         ),
-      ),
       ),
     );
   }
 
   bool get _shouldShowSafetyArrow =>
-      widget.targetBearing != null || 
-      widget.scanResult?.safetyGuidance != null;
+      widget.targetBearing != null || widget.scanResult?.safetyGuidance != null;
 
   /// 背景とグリッド
   Widget _buildBackground() {
@@ -238,15 +242,14 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
     final guidance = widget.scanResult?.safetyGuidance;
     final bearing = guidance?.recommendedBearing ?? widget.targetBearing!;
     final needsCorrection = guidance?.needsCorrection ?? false;
-    
+
     // 端末の向きを考慮した相対角度
     final relativeBearing = (bearing - widget.deviceHeading + 360) % 360;
-    
+
     // リスクがある場合はオレンジ、そうでなければ緑
-    final hasRiskInDirection = widget.scanResult
-        ?.getRisksAtBearing(bearing)
-        .isNotEmpty ?? false;
-    
+    final hasRiskInDirection =
+        widget.scanResult?.getRisksAtBearing(bearing).isNotEmpty ?? false;
+
     Color arrowColor;
     if (hasRiskInDirection) {
       arrowColor = Colors.orange;
@@ -255,7 +258,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
     } else {
       arrowColor = Colors.green;
     }
-    
+
     return Transform.rotate(
       angle: relativeBearing * math.pi / 180,
       child: Container(
@@ -280,7 +283,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   /// 中央インジケーター
   Widget _buildCenterIndicator() {
     final riskLevel = widget.scanResult?.overallRiskLevel ?? 0.0;
-    
+
     Color indicatorColor;
     if (riskLevel > 0.6) {
       indicatorColor = Colors.red;
@@ -289,7 +292,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
     } else {
       indicatorColor = Colors.blue;
     }
-    
+
     return Container(
       width: widget.size * 0.08,
       height: widget.size * 0.08,
@@ -322,7 +325,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   Widget _buildRiskBadge() {
     final riskPercent = (widget.scanResult!.overallRiskLevel * 100).toInt();
     final isHighRisk = widget.scanResult!.overallRiskLevel > 0.6;
-    
+
     return Positioned(
       top: 8,
       child: Container(
@@ -332,7 +335,8 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: (isHighRisk ? Colors.red : Colors.orange).withValues(alpha: 0.5),
+              color: (isHighRisk ? Colors.red : Colors.orange)
+                  .withValues(alpha: 0.5),
               blurRadius: 10,
               spreadRadius: 2,
             ),
@@ -368,7 +372,7 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
   /// 補正ガイダンス
   Widget _buildCorrectionGuidance() {
     final guidance = widget.scanResult!.safetyGuidance!;
-    
+
     return Positioned(
       bottom: 8,
       child: Container(
@@ -402,33 +406,34 @@ class _RadarBackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    
+
     // 背景グラデーション
     final bgPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          Color.lerp(Colors.grey.shade900, Colors.red.shade900, riskLevel * 0.5)!,
+          Color.lerp(
+              Colors.grey.shade900, Colors.red.shade900, riskLevel * 0.5)!,
           Colors.black,
         ],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
-    
+
     canvas.drawCircle(center, radius, bgPaint);
-    
+
     // 同心円グリッド
     final gridPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.1)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
-    
+
     for (int i = 1; i <= 3; i++) {
       canvas.drawCircle(center, radius * i / 3, gridPaint);
     }
-    
+
     // 十字線
     final crossPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.15)
       ..strokeWidth = 1;
-    
+
     canvas.drawLine(
       Offset(center.dx, 0),
       Offset(center.dx, size.height),
@@ -439,13 +444,13 @@ class _RadarBackgroundPainter extends CustomPainter {
       Offset(size.width, center.dy),
       crossPaint,
     );
-    
+
     // 外枠
     final borderPaint = Paint()
       ..color = _getBorderColor()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
-    
+
     canvas.drawCircle(center, radius - 2, borderPaint);
   }
 
@@ -472,7 +477,7 @@ class _RadarSweepPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 5;
-    
+
     final sweepPaint = Paint()
       ..shader = SweepGradient(
         startAngle: -math.pi / 2,
@@ -482,7 +487,7 @@ class _RadarSweepPainter extends CustomPainter {
           Colors.green.withValues(alpha: 0.3),
         ],
       ).createShader(Rect.fromCircle(center: center, radius: radius));
-    
+
     final path = Path()
       ..moveTo(center.dx, center.dy)
       ..arcTo(
@@ -492,7 +497,7 @@ class _RadarSweepPainter extends CustomPainter {
         false,
       )
       ..close();
-    
+
     canvas.drawPath(path, sweepPaint);
   }
 
@@ -519,7 +524,7 @@ class _DangerZonesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final outerRadius = size.width / 2 - 5;
-    
+
     for (final zone in dangerZones) {
       _drawDangerZone(canvas, center, outerRadius, zone);
     }
@@ -536,11 +541,11 @@ class _DangerZonesPainter extends CustomPainter {
     final endAngle = (zone.endBearing - deviceHeading - 90) * math.pi / 180;
     double sweepAngle = endAngle - startAngle;
     if (sweepAngle < 0) sweepAngle += 2 * math.pi;
-    
+
     // リスクタイプに応じた色とアイコン
     Color baseColor;
     String icon;
-    
+
     switch (zone.type) {
       case RiskType.deepWater:
         baseColor = Colors.blue;
@@ -551,15 +556,15 @@ class _DangerZonesPainter extends CustomPainter {
         icon = '🌀';
         break;
     }
-    
+
     // 重大度に応じた不透明度（パルスアニメーション付き）
     final opacity = (0.2 + zone.severity * 0.5) * pulseValue;
-    
+
     // 扇形を描画
     final paint = Paint()
       ..color = baseColor.withValues(alpha: opacity)
       ..style = PaintingStyle.fill;
-    
+
     final path = Path()
       ..moveTo(center.dx, center.dy)
       ..arcTo(
@@ -570,15 +575,15 @@ class _DangerZonesPainter extends CustomPainter {
       )
       ..lineTo(center.dx, center.dy)
       ..close();
-    
+
     canvas.drawPath(path, paint);
-    
+
     // 境界線
     final borderPaint = Paint()
       ..color = baseColor.withValues(alpha: 0.8)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
-    
+
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: outerRadius),
       startAngle,
@@ -586,15 +591,17 @@ class _DangerZonesPainter extends CustomPainter {
       false,
       borderPaint,
     );
-    
+
     // アイコンを描画
-    _drawIcon(canvas, center, outerRadius - 25, startAngle + sweepAngle / 2, icon);
+    _drawIcon(
+        canvas, center, outerRadius - 25, startAngle + sweepAngle / 2, icon);
   }
 
-  void _drawIcon(Canvas canvas, Offset center, double radius, double angle, String icon) {
+  void _drawIcon(
+      Canvas canvas, Offset center, double radius, double angle, String icon) {
     final x = center.dx + math.cos(angle) * radius;
     final y = center.dy + math.sin(angle) * radius;
-    
+
     final textPainter = TextPainter(
       text: TextSpan(
         text: icon,
@@ -602,15 +609,23 @@ class _DangerZonesPainter extends CustomPainter {
           fontSize: 22,
           fontFamily: 'NotoSansJP',
           fontFamilyFallback: [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+            'NotoSansSC',
+            'NotoSansTC',
+            'NotoSansKR',
+            'NotoSansThai',
+            'NotoSansMyanmar',
+            'NotoSansSinhala',
+            'NotoSansDevanagari',
+            'NotoSansBengali',
+            'NotoSansArabic',
+            'NotoSans',
+            'sans-serif',
           ],
         ),
       ),
       textDirection: TextDirection.ltr,
     )..layout();
-    
+
     textPainter.paint(
       canvas,
       Offset(x - textPainter.width / 2, y - textPainter.height / 2),
@@ -636,21 +651,26 @@ class _CompassMarkersPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 15;
-    
+
     // 主要方位（N/E/S/W）
     const cardinals = ['N', 'E', 'S', 'W'];
-    const cardinalColors = [Colors.red, Colors.white70, Colors.white70, Colors.white70];
-    
+    const cardinalColors = [
+      Colors.red,
+      Colors.white70,
+      Colors.white70,
+      Colors.white70
+    ];
+
     for (int i = 0; i < 4; i++) {
       final angle = i * 90 * math.pi / 180 - math.pi / 2;
       final x = center.dx + math.cos(angle) * radius;
       final y = center.dy + math.sin(angle) * radius;
-      
+
       // 回転補正
       canvas.save();
       canvas.translate(x, y);
       canvas.rotate(deviceHeading * math.pi / 180);
-      
+
       final textPainter = TextPainter(
         text: TextSpan(
           text: cardinals[i],
@@ -660,34 +680,41 @@ class _CompassMarkersPainter extends CustomPainter {
             fontWeight: FontWeight.bold,
             fontFamily: 'NotoSansJP',
             fontFamilyFallback: const [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSans', 'sans-serif',
-          ],
+              'NotoSansSC',
+              'NotoSansTC',
+              'NotoSansKR',
+              'NotoSansThai',
+              'NotoSansMyanmar',
+              'NotoSansSinhala',
+              'NotoSansDevanagari',
+              'NotoSansBengali',
+              'NotoSans',
+              'sans-serif',
+            ],
           ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
-      
+
       textPainter.paint(
         canvas,
         Offset(-textPainter.width / 2, -textPainter.height / 2),
       );
-      
+
       canvas.restore();
     }
-    
+
     // 30度刻みの目盛り
     final tickPaint = Paint()
       ..color = Colors.white38
       ..strokeWidth = 1;
-    
+
     for (int deg = 0; deg < 360; deg += 30) {
       if (deg % 90 == 0) continue;
-      
+
       final angle = deg * math.pi / 180 - math.pi / 2;
       final innerRadius = radius - 8;
-      
+
       canvas.drawLine(
         Offset(
           center.dx + math.cos(angle) * innerRadius,
@@ -722,33 +749,33 @@ class _SafetyArrowPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final path = Path();
-    
+
     // 矢印の形状
     path.moveTo(size.width / 2, 0); // 先端
     path.lineTo(size.width, size.height * 0.7);
     path.lineTo(size.width / 2, size.height * 0.5);
     path.lineTo(0, size.height * 0.7);
     path.close();
-    
+
     // グロー効果
     final glowPaint = Paint()
       ..color = color.withValues(alpha: 0.3)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
     canvas.drawPath(path, glowPaint);
-    
+
     // 本体
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
     canvas.drawPath(path, paint);
-    
+
     // 境界線
     final borderPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.5)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     canvas.drawPath(path, borderPaint);
-    
+
     // 補正が必要な場合は警告マーク
     if (needsCorrection) {
       final textPainter = TextPainter(
@@ -760,15 +787,23 @@ class _SafetyArrowPainter extends CustomPainter {
             fontWeight: FontWeight.bold,
             fontFamily: 'NotoSansJP',
             fontFamilyFallback: [
-            'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-            'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-            'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
-          ],
+              'NotoSansSC',
+              'NotoSansTC',
+              'NotoSansKR',
+              'NotoSansThai',
+              'NotoSansMyanmar',
+              'NotoSansSinhala',
+              'NotoSansDevanagari',
+              'NotoSansBengali',
+              'NotoSansArabic',
+              'NotoSans',
+              'sans-serif',
+            ],
           ),
         ),
         textDirection: TextDirection.ltr,
       )..layout();
-      
+
       textPainter.paint(
         canvas,
         Offset(
@@ -825,9 +860,9 @@ class RiskRadarCompassCard extends StatelessWidget {
           children: [
             // ヘッダー
             _buildHeader(),
-            
+
             const SizedBox(height: 12),
-            
+
             // レーダーコンパス
             RiskRadarCompassWidget(
               scanResult: scanResult,
@@ -838,16 +873,16 @@ class RiskRadarCompassCard extends StatelessWidget {
               isScanning: isScanning,
               onTap: onTap,
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // 凡例
             _buildLegend(),
-            
+
             // 警告メッセージ
             if (scanResult != null && scanResult!.dangerZones.isNotEmpty)
               _buildWarnings(),
-              
+
             // スキャンボタン
             if (onScanPressed != null)
               Padding(
@@ -878,7 +913,7 @@ class RiskRadarCompassCard extends StatelessWidget {
   Widget _buildHeader() {
     final isLoaded = scanResult != null;
     final riskLevel = scanResult?.overallRiskLevel ?? 0.0;
-    
+
     return Row(
       children: [
         Icon(
@@ -905,7 +940,9 @@ class RiskRadarCompassCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            isLoaded ? GapLessL10n.t('risk_ready') : GapLessL10n.t('risk_loading'),
+            isLoaded
+                ? GapLessL10n.t('risk_ready')
+                : GapLessL10n.t('risk_loading'),
             style: GapLessL10n.safeStyle(TextStyle(
               color: isLoaded ? Colors.green : Colors.orange,
               fontSize: 10,
@@ -954,10 +991,14 @@ class RiskRadarCompassCard extends StatelessWidget {
 
   String _getLegendText(String key) {
     switch (key) {
-      case 'flood': return GapLessL10n.t('risk_flood');
-      case 'rapid': return GapLessL10n.t('risk_rapid');
-      case 'safe':  return GapLessL10n.t('risk_safe');
-      default:      return key;
+      case 'flood':
+        return GapLessL10n.t('risk_flood');
+      case 'rapid':
+        return GapLessL10n.t('risk_rapid');
+      case 'safe':
+        return GapLessL10n.t('risk_safe');
+      default:
+        return key;
     }
   }
 
@@ -1013,7 +1054,8 @@ class RiskRadarCompassCard extends StatelessWidget {
   }
 
   String _getWarningText(DangerZone zone) {
-    final direction = '${zone.startBearing.toInt()}°-${zone.endBearing.toInt()}°';
+    final direction =
+        '${zone.startBearing.toInt()}°-${zone.endBearing.toInt()}°';
     final distance = zone.distance.toInt();
     return GapLessL10n.t('risk_zone_warning')
         .replaceAll('@name', zone.name)
@@ -1021,6 +1063,7 @@ class RiskRadarCompassCard extends StatelessWidget {
         .replaceAll('@dist', '$distance');
   }
 
-  String _getScanButtonText() =>
-      isScanning ? GapLessL10n.t('risk_scanning') : GapLessL10n.t('risk_rescan');
+  String _getScanButtonText() => isScanning
+      ? GapLessL10n.t('risk_scanning')
+      : GapLessL10n.t('risk_rescan');
 }

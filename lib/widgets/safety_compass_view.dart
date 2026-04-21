@@ -11,10 +11,10 @@ import '../utils/localization.dart';
 /// ============================================================================
 /// SafetyCompassView - Turn-by-Turn誘導型コンパスウィジェット
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 「地図が読めないパニック状態でも、矢印の方向へ進むだけで助かる」
-/// 
+///
 /// - 巨大な矢印で視認性確保
 /// - ルート逸脱時は赤色で警告
 /// - 残り距離をシンプルに表示
@@ -25,7 +25,7 @@ class SafetyCompassView extends StatelessWidget {
   final LatLng? userLocation;
   final LatLng? targetLocation;
   final VoidCallback? onArrived;
-  
+
   const SafetyCompassView({
     super.key,
     this.size = 280,
@@ -33,7 +33,7 @@ class SafetyCompassView extends StatelessWidget {
     this.targetLocation,
     this.onArrived,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>();
@@ -41,32 +41,31 @@ class SafetyCompassView extends StatelessWidget {
       builder: (context, compass, _) {
         // ナビゲーション状態に応じた色を決定
         final stateColor = _getStateColor(compass.navigationState);
-        
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-             // ナビゲーションステータス
+            // ナビゲーションステータス
             _buildStatusBadge(compass, stateColor),
             const SizedBox(height: 16),
-            
+
             // コンパス本体
             _buildCompass(compass, stateColor),
-            
+
             const SizedBox(height: 16),
-            
+
             // 距離情報
-            if (compass.isNavigating)
-              _buildDistanceInfo(compass),
+            if (compass.isNavigating) _buildDistanceInfo(compass),
           ],
         );
       },
     );
   }
-  
+
   /// ステータスバッジ
   Widget _buildStatusBadge(CompassProvider compass, Color color) {
     final message = compass.getNavigationMessage(GapLessL10n.lang);
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       decoration: BoxDecoration(
@@ -95,23 +94,22 @@ class SafetyCompassView extends StatelessWidget {
       ),
     );
   }
-  
+
   /// コンパス本体
   Widget _buildCompass(CompassProvider compass, Color stateColor) {
     // 表示角度を計算
     double displayAngle = 0.0;
-    
+
     if (userLocation != null && targetLocation != null) {
       displayAngle = compass.getDisplayAngle(
-        userLat: userLocation!.latitude,
-        userLng: userLocation!.longitude,
-        targetLat: targetLocation!.latitude,
-        targetLng: targetLocation!.longitude
-      );
+          userLat: userLocation!.latitude,
+          userLng: userLocation!.longitude,
+          targetLat: targetLocation!.latitude,
+          targetLng: targetLocation!.longitude);
     } else if (compass.isNavigating) {
       displayAngle = compass.magnetResult?.displayAngle ?? 0.0;
     }
-    
+
     return Container(
       width: size,
       height: size,
@@ -135,7 +133,7 @@ class SafetyCompassView extends StatelessWidget {
         children: [
           // 外周の方角マーカー
           _buildDirectionMarkers(),
-          
+
           // 中心の円
           Container(
             width: size * 0.3,
@@ -149,7 +147,7 @@ class SafetyCompassView extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // ナビゲーション矢印（ターゲット方向を指す）
           AnimatedRotation(
             turns: displayAngle / (2 * math.pi),
@@ -161,7 +159,7 @@ class SafetyCompassView extends StatelessWidget {
       ),
     );
   }
-  
+
   /// 方角マーカー
   Widget _buildDirectionMarkers() {
     return Stack(
@@ -177,7 +175,19 @@ class SafetyCompassView extends StatelessWidget {
               fontWeight: FontWeight.bold,
               fontSize: 18,
               fontFamily: 'NotoSansJP',
-              fontFamilyFallback: const ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+              fontFamilyFallback: const [
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif'
+              ],
             ),
           ),
         ),
@@ -191,7 +201,19 @@ class SafetyCompassView extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 16,
               fontFamily: 'NotoSansJP',
-              fontFamilyFallback: const ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+              fontFamilyFallback: const [
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif'
+              ],
             ),
           ),
         ),
@@ -205,7 +227,19 @@ class SafetyCompassView extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 16,
               fontFamily: 'NotoSansJP',
-              fontFamilyFallback: const ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+              fontFamilyFallback: const [
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif'
+              ],
             ),
           ),
         ),
@@ -219,18 +253,30 @@ class SafetyCompassView extends StatelessWidget {
               fontWeight: FontWeight.w500,
               fontSize: 16,
               fontFamily: 'NotoSansJP',
-              fontFamilyFallback: const ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+              fontFamilyFallback: const [
+                'NotoSansSC',
+                'NotoSansTC',
+                'NotoSansKR',
+                'NotoSansThai',
+                'NotoSansMyanmar',
+                'NotoSansSinhala',
+                'NotoSansDevanagari',
+                'NotoSansBengali',
+                'NotoSansArabic',
+                'NotoSans',
+                'sans-serif'
+              ],
             ),
           ),
         ),
       ],
     );
   }
-  
+
   /// ナビゲーション矢印
   Widget _buildNavigationArrow(Color color) {
     final arrowSize = size * 0.6;
-    
+
     return SizedBox(
       width: arrowSize,
       height: arrowSize,
@@ -239,7 +285,7 @@ class SafetyCompassView extends StatelessWidget {
       ),
     );
   }
-  
+
   /// 距離情報
   Widget _buildDistanceInfo(CompassProvider compass) {
     final distance = compass.magnetResult?.distanceToTarget ?? 0.0;
@@ -264,7 +310,19 @@ class SafetyCompassView extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1F2937),
                   fontFamily: 'NotoSansJP',
-                  fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+                  fontFamilyFallback: [
+                    'NotoSansSC',
+                    'NotoSansTC',
+                    'NotoSansKR',
+                    'NotoSansThai',
+                    'NotoSansMyanmar',
+                    'NotoSansSinhala',
+                    'NotoSansDevanagari',
+                    'NotoSansBengali',
+                    'NotoSansArabic',
+                    'NotoSans',
+                    'sans-serif'
+                  ],
                 ),
               ),
               Text(
@@ -276,7 +334,7 @@ class SafetyCompassView extends StatelessWidget {
               ),
             ],
           ),
-          
+
           if (remaining > distance) ...[
             const SizedBox(width: 32),
             Container(
@@ -285,7 +343,7 @@ class SafetyCompassView extends StatelessWidget {
               color: Colors.grey.shade300,
             ),
             const SizedBox(width: 32),
-            
+
             // 総距離
             Column(
               children: [
@@ -296,7 +354,19 @@ class SafetyCompassView extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                     color: Color(0xFF6B7280),
                     fontFamily: 'NotoSansJP',
-                    fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+                    fontFamilyFallback: [
+                      'NotoSansSC',
+                      'NotoSansTC',
+                      'NotoSansKR',
+                      'NotoSansThai',
+                      'NotoSansMyanmar',
+                      'NotoSansSinhala',
+                      'NotoSansDevanagari',
+                      'NotoSansBengali',
+                      'NotoSansArabic',
+                      'NotoSans',
+                      'sans-serif'
+                    ],
                   ),
                 ),
                 Text(
@@ -313,7 +383,7 @@ class SafetyCompassView extends StatelessWidget {
       ),
     );
   }
-  
+
   Color _getStateColor(NavigationState state) {
     switch (state) {
       case NavigationState.onRoute:
@@ -328,7 +398,7 @@ class SafetyCompassView extends StatelessWidget {
         return const Color(0xFF8E8E93); // Apple Gray
     }
   }
-  
+
   IconData _getStateIcon(NavigationState state) {
     switch (state) {
       case NavigationState.onRoute:
@@ -343,14 +413,14 @@ class SafetyCompassView extends StatelessWidget {
         return Icons.location_searching_rounded;
     }
   }
-  
+
   String _formatDistance(double meters) {
     if (meters >= 1000) {
       return '${(meters / 1000).toStringAsFixed(1)}km';
     }
     return '${meters.round()}m';
   }
-  
+
   String _getDistanceLabel() {
     return GapLessL10n.t('nav_to_next_point');
   }
@@ -363,35 +433,37 @@ class SafetyCompassView extends StatelessWidget {
 /// 矢印を描画するカスタムペインター
 class _ArrowPainter extends CustomPainter {
   final Color color;
-  
+
   _ArrowPainter({required this.color});
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
-    
+
     final path = ui.Path();
     final centerX = size.width / 2;
     final centerY = size.height / 2;
-    
+
     // 矢印の形状（上向き）
     final arrowWidth = size.width * 0.4;
     final arrowHeight = size.height * 0.8;
     final tailWidth = size.width * 0.15;
     final tailHeight = size.height * 0.3;
-    
+
     // 上部の三角形
     path.moveTo(centerX, centerY - arrowHeight / 2);
     path.lineTo(centerX - arrowWidth / 2, centerY);
     path.lineTo(centerX - tailWidth / 2, centerY);
-    path.lineTo(centerX - tailWidth / 2, centerY + arrowHeight / 2 - tailHeight);
-    path.lineTo(centerX + tailWidth / 2, centerY + arrowHeight / 2 - tailHeight);
+    path.lineTo(
+        centerX - tailWidth / 2, centerY + arrowHeight / 2 - tailHeight);
+    path.lineTo(
+        centerX + tailWidth / 2, centerY + arrowHeight / 2 - tailHeight);
     path.lineTo(centerX + tailWidth / 2, centerY);
     path.lineTo(centerX + arrowWidth / 2, centerY);
     path.close();
-    
+
     // 影
     canvas.drawPath(
       path.shift(const Offset(2, 2)),
@@ -399,10 +471,10 @@ class _ArrowPainter extends CustomPainter {
         ..color = Colors.black.withValues(alpha: 0.1)
         ..style = PaintingStyle.fill,
     );
-    
+
     // 本体
     canvas.drawPath(path, paint);
-    
+
     // ハイライト
     final highlightPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.3)
@@ -410,7 +482,7 @@ class _ArrowPainter extends CustomPainter {
       ..strokeWidth = 2;
     canvas.drawPath(path, highlightPaint);
   }
-  
+
   @override
   bool shouldRepaint(covariant _ArrowPainter oldDelegate) {
     return oldDelegate.color != color;

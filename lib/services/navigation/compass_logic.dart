@@ -26,8 +26,8 @@ class CompassLogic {
   // カルマンフィルタ状態変数
   double _kalmanHeading = 0.0;
   double _kalmanP = 1.0;
-  static const double _processNoise = 0.01;      // プロセスノイズ (動き予測誤差)
-  static const double _measurementNoise = 0.5;   // 測定ノイズ (センサー誤差)
+  static const double _processNoise = 0.01; // プロセスノイズ (動き予測誤差)
+  static const double _measurementNoise = 0.5; // 測定ノイズ (センサー誤差)
 
   GeoRegion _currentRegion = GeoRegion.jpTokyo;
   final CompassCalibrator _calibrator = CompassCalibrator();
@@ -36,7 +36,8 @@ class CompassLogic {
 
   // ヘッディングストリーム（GapLessNavigationEngineが購読）
   StreamSubscription<CompassEvent>? _subscription;
-  final StreamController<double> _headingController = StreamController<double>.broadcast();
+  final StreamController<double> _headingController =
+      StreamController<double>.broadcast();
   Stream<double> get headingStream => _headingController.stream;
 
   // 公開ゲッター
@@ -135,7 +136,8 @@ class CompassLogic {
   }
 
   // ─── ウェイポイント吸着 ──────────────────────────────────
-  double applyMagneticAdsorption(double targetBearing, {double threshold = 5.0}) {
+  double applyMagneticAdsorption(double targetBearing,
+      {double threshold = 5.0}) {
     double diff = (targetBearing - _trueHeading).abs();
     if (diff > 180) diff = 360 - diff;
     return diff <= threshold ? targetBearing : _trueHeading;

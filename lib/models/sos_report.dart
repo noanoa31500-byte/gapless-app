@@ -31,7 +31,7 @@ class SosReport {
   final int timestamp;
   final Uint8List? publicKey; // v2 のみ
   final Uint8List? signature; // v2 のみ
-  final int hops;             // メッシュ中継ホップ数
+  final int hops; // メッシュ中継ホップ数
 
   const SosReport({
     required this.deviceId,

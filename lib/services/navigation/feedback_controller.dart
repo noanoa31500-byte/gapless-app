@@ -16,7 +16,7 @@ class FeedbackController {
   // Visual State
   Color? _overlayColor;
   String? _alertMessage;
-  
+
   Color? get overlayColor => _overlayColor;
   String? get alertMessage => _alertMessage;
 
@@ -32,18 +32,30 @@ class FeedbackController {
   /// GapLessL10n言語コードをTTSロケール文字列に変換（18言語対応）
   String _ttsLocale(String lang) {
     switch (lang) {
-      case 'ja':    return 'ja-JP';
-      case 'th':    return 'th-TH';
-      case 'zh':    return 'zh-CN';
-      case 'zh_TW': return 'zh-TW';
-      case 'ko':    return 'ko-KR';
-      case 'hi':    return 'hi-IN';
-      case 'bn':    return 'bn-BD';
-      case 'id':    return 'id-ID';
-      case 'vi':    return 'vi-VN';
-      case 'es':    return 'es-ES';
-      case 'pt':    return 'pt-BR';
-      default:      return 'en-US';
+      case 'ja':
+        return 'ja-JP';
+      case 'th':
+        return 'th-TH';
+      case 'zh':
+        return 'zh-CN';
+      case 'zh_TW':
+        return 'zh-TW';
+      case 'ko':
+        return 'ko-KR';
+      case 'hi':
+        return 'hi-IN';
+      case 'bn':
+        return 'bn-BD';
+      case 'id':
+        return 'id-ID';
+      case 'vi':
+        return 'vi-VN';
+      case 'es':
+        return 'es-ES';
+      case 'pt':
+        return 'pt-BR';
+      default:
+        return 'en-US';
     }
   }
 
@@ -82,8 +94,10 @@ class FeedbackController {
 
   Future<void> speakNavigationUpdate(double distance, String direction) async {
     final distStr = distance >= 1000
-        ? GapLessL10n.t('tts_distance_km').replaceAll('@dist', (distance / 1000).toStringAsFixed(1))
-        : GapLessL10n.t('tts_distance_m').replaceAll('@dist', distance.round().toString());
+        ? GapLessL10n.t('tts_distance_km')
+            .replaceAll('@dist', (distance / 1000).toStringAsFixed(1))
+        : GapLessL10n.t('tts_distance_m')
+            .replaceAll('@dist', distance.round().toString());
     await speak('$distStr $direction');
   }
 
@@ -98,11 +112,11 @@ class FeedbackController {
       _overlayColor = AppleColors.dangerRed.withValues(alpha: 0.3);
       _alertMessage = "DANGER ZONE";
     } else if (isOffRoute) {
-       _overlayColor = AppleColors.warningOrange.withValues(alpha: 0.2);
-       _alertMessage = "REROUTING";
+      _overlayColor = AppleColors.warningOrange.withValues(alpha: 0.2);
+      _alertMessage = "REROUTING";
     } else if (isSafe) {
-       _overlayColor = AppleColors.safetyGreen.withValues(alpha: 0.1);
-       _alertMessage = "ON ROUTE";
+      _overlayColor = AppleColors.safetyGreen.withValues(alpha: 0.1);
+      _alertMessage = "ON ROUTE";
     } else {
       _overlayColor = null;
       _alertMessage = null;

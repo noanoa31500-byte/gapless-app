@@ -217,7 +217,9 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
+        border: Border(
+            top: BorderSide(
+                color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
@@ -242,7 +244,8 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  GapLessL10n.t('nav_dist_ahead').replaceAll('@dist', _fmt(distToNext)),
+                  GapLessL10n.t('nav_dist_ahead')
+                      .replaceAll('@dist', _fmt(distToNext)),
                   style: GapLessL10n.safeStyle(const TextStyle(
                     color: _dark,
                     fontSize: 26,
@@ -281,8 +284,8 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
                   width: 90,
                   child: Text(
                     widget.destinationName!,
-                    style: GapLessL10n.safeStyle(
-                        TextStyle(color: _dark.withValues(alpha: 0.5), fontSize: 11)),
+                    style: GapLessL10n.safeStyle(TextStyle(
+                        color: _dark.withValues(alpha: 0.5), fontSize: 11)),
                     textAlign: TextAlign.end,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -292,7 +295,8 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
               GestureDetector(
                 onTap: widget.onStop,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: const Color(0xFFEF4444).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -319,7 +323,9 @@ class _TurnByTurnPanelState extends State<TurnByTurnPanel> {
       decoration: BoxDecoration(
         color: _surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        border: Border(top: BorderSide(color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
+        border: Border(
+            top: BorderSide(
+                color: Colors.black.withValues(alpha: 0.06), width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(

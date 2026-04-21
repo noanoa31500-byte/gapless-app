@@ -12,8 +12,8 @@ import '../utils/localization.dart';
 class DeadReckoningBadge extends StatelessWidget {
   const DeadReckoningBadge({super.key});
 
-  static const Color _normalColor = Color(0xFFE65100);   // オレンジ
-  static const Color _warningColor = Color(0xFFB71C1C);  // 赤
+  static const Color _normalColor = Color(0xFFE65100); // オレンジ
+  static const Color _warningColor = Color(0xFFB71C1C); // 赤
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +71,7 @@ class DeadReckoningBadge extends StatelessWidget {
               ),
               const SizedBox(width: 6),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                 decoration: BoxDecoration(
                   color: Colors.white24,
                   borderRadius: BorderRadius.circular(8),
@@ -84,7 +83,19 @@ class DeadReckoningBadge extends StatelessWidget {
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     fontFamily: 'NotoSansJP',
-                    fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+                    fontFamilyFallback: [
+                      'NotoSansSC',
+                      'NotoSansTC',
+                      'NotoSansKR',
+                      'NotoSansThai',
+                      'NotoSansMyanmar',
+                      'NotoSansSinhala',
+                      'NotoSansDevanagari',
+                      'NotoSansBengali',
+                      'NotoSansArabic',
+                      'NotoSans',
+                      'sans-serif'
+                    ],
                   ),
                 ),
               ),
@@ -104,7 +115,19 @@ class DeadReckoningBadge extends StatelessWidget {
                       color: Colors.white60,
                       fontSize: 10,
                       fontFamily: 'NotoSansJP',
-                      fontFamilyFallback: ['NotoSansSC', 'NotoSansTC', 'NotoSansKR', 'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala', 'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif'],
+                      fontFamilyFallback: [
+                        'NotoSansSC',
+                        'NotoSansTC',
+                        'NotoSansKR',
+                        'NotoSansThai',
+                        'NotoSansMyanmar',
+                        'NotoSansSinhala',
+                        'NotoSansDevanagari',
+                        'NotoSansBengali',
+                        'NotoSansArabic',
+                        'NotoSans',
+                        'sans-serif'
+                      ],
                     ),
                   ),
                 ),

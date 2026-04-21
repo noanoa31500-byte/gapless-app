@@ -12,11 +12,11 @@ import '../widgets/safe_text.dart';
 import 'tutorial_screen.dart';
 
 // Design system constants
-const _kEmerald      = Color(0xFF00C896);
-const _kAmber        = Color(0xFFFF6B35);
-const _kDark         = Color(0xFF1A1A2E);
-const _kSurface      = Color(0xFFF8F9FE);
-const _kCardBg       = Colors.white;
+const _kEmerald = Color(0xFF00C896);
+const _kAmber = Color(0xFFFF6B35);
+const _kDark = Color(0xFF1A1A2E);
+const _kSurface = Color(0xFFF8F9FE);
+const _kCardBg = Colors.white;
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -85,7 +85,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             content: Text(GapLessL10n.t('settings_map_updated')),
             backgroundColor: _kEmerald,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -94,10 +95,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(GapLessL10n.t('settings_update_failed').replaceAll('@error', '$e')),
+            content: Text(GapLessL10n.t('settings_update_failed')
+                .replaceAll('@error', '$e')),
             backgroundColor: _kAmber,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             margin: const EdgeInsets.all(16),
           ),
         );
@@ -128,7 +131,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           duration: const Duration(seconds: 1),
           backgroundColor: _kDark,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           margin: const EdgeInsets.all(16),
         ),
       );
@@ -172,7 +176,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           duration: const Duration(seconds: 2),
           backgroundColor: _kDark,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           margin: const EdgeInsets.all(16),
         ),
       );
@@ -249,7 +254,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconColor: const Color(0xFF5B9CF6),
               title: _getTutorialLabel(),
               subtitle: _getTutorialDescription(),
-              trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFBDBDBD)),
+              trailing: const Icon(Icons.chevron_right_rounded,
+                  color: Color(0xFFBDBDBD)),
               onTap: () {
                 Navigator.push(
                   context,
@@ -271,7 +277,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
               iconColor: _kAmber,
               title: GapLessL10n.t('clear_cache'),
               subtitle: GapLessL10n.t('msg_reset_desc'),
-              trailing: const Icon(Icons.chevron_right_rounded, color: Color(0xFFBDBDBD)),
+              trailing: const Icon(Icons.chevron_right_rounded,
+                  color: Color(0xFFBDBDBD)),
               onTap: () async {
                 final confirm = await showDialog<bool>(
                   context: context,
@@ -324,9 +331,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             _buildSettingsRow(
               icon: _isCached ? Icons.map_rounded : Icons.map_outlined,
               iconColor: _isCached ? _kEmerald : const Color(0xFFBDBDBD),
-              title: _isCached ? '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_cached")}' : '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_not_cached")}',
+              title: _isCached
+                  ? '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_cached")}'
+                  : '${GapLessL10n.t("section_offline_map")}: ${GapLessL10n.t("map_data_not_cached")}',
               subtitle: _isCached
-                  ? GapLessL10n.tParams('map_data_size', {'size': (_cacheBytes / 1024).toStringAsFixed(0)})
+                  ? GapLessL10n.tParams('map_data_size',
+                      {'size': (_cacheBytes / 1024).toStringAsFixed(0)})
                   : GapLessL10n.t('map_data_download_needed'),
               trailing: _isRefreshing
                   ? const SizedBox(
@@ -345,7 +355,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           color: _kEmerald.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Icon(Icons.refresh_rounded, color: _kEmerald, size: 20),
+                        child: const Icon(Icons.refresh_rounded,
+                            color: _kEmerald, size: 20),
                       ),
                     ),
             ),
@@ -355,7 +366,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                 child: Row(
                   children: [
-                    const Icon(Icons.check_circle_rounded, color: _kEmerald, size: 16),
+                    const Icon(Icons.check_circle_rounded,
+                        color: _kEmerald, size: 16),
                     const SizedBox(width: 8),
                     SafeText(
                       GapLessL10n.t('offline_nav_ok'),
@@ -378,7 +390,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   children: [
                     // GPS追跡スイッチ
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
                       child: Row(
                         children: [
                           Container(
@@ -388,7 +401,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               color: _kEmerald.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.gps_fixed_rounded, color: _kEmerald, size: 22),
+                            child: const Icon(Icons.gps_fixed_rounded,
+                                color: _kEmerald, size: 22),
                           ),
                           const SizedBox(width: 14),
                           Expanded(
@@ -403,7 +417,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   locationProvider.isTracking
                                       ? GapLessL10n.t('status_tracking_on')
                                       : GapLessL10n.t('status_tracking_off'),
-                                  style: emergencyTextStyle(size: 13, color: Colors.grey),
+                                  style: emergencyTextStyle(
+                                      size: 13, color: Colors.grey),
                                 ),
                               ],
                             ),
@@ -417,11 +432,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 if (!context.mounted) return;
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: SafeText(GapLessL10n.t('msg_tracking_start')),
+                                    content: SafeText(
+                                        GapLessL10n.t('msg_tracking_start')),
                                     backgroundColor: _kDark,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14)),
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
                                     margin: const EdgeInsets.all(16),
                                   ),
                                 );
@@ -430,11 +447,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: SafeText(GapLessL10n.t('msg_tracking_stop')),
+                                      content: SafeText(
+                                          GapLessL10n.t('msg_tracking_stop')),
                                       backgroundColor: _kDark,
                                       behavior: SnackBarBehavior.floating,
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(14)),
+                                          borderRadius:
+                                              BorderRadius.circular(14)),
                                       margin: const EdgeInsets.all(16),
                                     ),
                                   );
@@ -456,11 +475,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               '${locationProvider.currentLocationName}\n'
                               '${locationProvider.currentLocation!.latitude.toStringAsFixed(6)}, '
                               '${locationProvider.currentLocation!.longitude.toStringAsFixed(6)}',
-                              style: emergencyTextStyle(size: 12, color: Colors.grey),
+                              style: emergencyTextStyle(
+                                  size: 12, color: Colors.grey),
                             )
                           : SafeText(
                               GapLessL10n.t('lbl_no_location'),
-                              style: emergencyTextStyle(size: 13, color: Colors.grey),
+                              style: emergencyTextStyle(
+                                  size: 13, color: Colors.grey),
                             ),
                       trailing: locationProvider.currentLocation != null
                           ? GestureDetector(
@@ -468,11 +489,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 locationProvider.exitDemoMode();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: SafeText(GapLessL10n.t('msg_location_cleared')),
+                                    content: SafeText(
+                                        GapLessL10n.t('msg_location_cleared')),
                                     backgroundColor: _kDark,
                                     behavior: SnackBarBehavior.floating,
                                     shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(14)),
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
                                     margin: const EdgeInsets.all(16),
                                   ),
                                 );
@@ -483,7 +506,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   color: Colors.red.withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: const Icon(Icons.clear_rounded, color: Colors.red, size: 18),
+                                child: const Icon(Icons.clear_rounded,
+                                    color: Colors.red, size: 18),
                               ),
                             )
                           : null,

@@ -215,8 +215,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 12),
                                     shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(8)),
+                                        borderRadius: BorderRadius.circular(8)),
                                   ),
                                   icon: const Icon(Icons.navigation, size: 18),
                                   label: SafeText(
@@ -281,8 +280,7 @@ class _AIChatWidgetState extends State<AIChatWidget> {
       surfaceTintColor: Colors.white,
       elevation: 2,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape:
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       onPressed: () => _handleUserSelection(type),
     );
   }

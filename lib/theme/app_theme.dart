@@ -118,7 +118,6 @@ class AppTheme {
       fontFamilyFallback: fontFamilyFallback,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
-
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.navBgDark,
         foregroundColor: scheme.onSurface,
@@ -131,7 +130,6 @@ class AppTheme {
           fontFamilyFallback: fontFamilyFallback,
         ),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: scheme.primary,
@@ -145,7 +143,6 @@ class AppTheme {
           ),
         ),
       ),
-
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: scheme.primary,
@@ -158,7 +155,6 @@ class AppTheme {
           ),
         ),
       ),
-
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           backgroundColor: filledButtonBg,
@@ -171,7 +167,6 @@ class AppTheme {
           ),
         ),
       ),
-
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: scheme.primary,
@@ -182,7 +177,6 @@ class AppTheme {
           ),
         ),
       ),
-
       cardTheme: CardThemeData(
         color: scheme.surfaceContainerHigh,
         elevation: 0,
@@ -190,11 +184,11 @@ class AppTheme {
         shadowColor: const Color(0x80000000),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: scheme.surfaceContainerHigh,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         border: inputShape,
         enabledBorder: inputShape,
         focusedBorder: OutlineInputBorder(
@@ -215,13 +209,11 @@ class AppTheme {
           fontFamilyFallback: fontFamilyFallback,
         ),
       ),
-
       dividerTheme: const DividerThemeData(
         color: AppColors.border,
         thickness: 1,
         space: 1,
       ),
-
       chipTheme: ChipThemeData(
         backgroundColor: scheme.surfaceContainerHigh,
         selectedColor: scheme.primary,
@@ -240,14 +232,12 @@ class AppTheme {
           borderRadius: BorderRadius.circular(11),
         ),
       ),
-
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: scheme.primary,
         foregroundColor: scheme.onPrimary,
         elevation: 0,
         shape: const CircleBorder(),
       ),
-
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.darkSurface2,
         contentTextStyle: AppTextStyles.bodyMedium.copyWith(
@@ -260,7 +250,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8),
         ),
       ),
-
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: AppColors.darkSurface1,
         modalBackgroundColor: AppColors.darkSurface1,

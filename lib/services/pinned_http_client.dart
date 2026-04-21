@@ -83,8 +83,7 @@ class _PinnedClient extends http.BaseClient {
     final ioRes = await ioReq.close();
 
     final cert = ioRes.certificate;
-    if (cert != null &&
-        !CertificatePinner.verify(request.url.host, cert)) {
+    if (cert != null && !CertificatePinner.verify(request.url.host, cert)) {
       ioRes.detachSocket().then((s) => s.destroy()).ignore();
       throw const HandshakeException('Certificate pin mismatch');
     }
@@ -94,8 +93,7 @@ class _PinnedClient extends http.BaseClient {
     return http.StreamedResponse(
       ioRes,
       ioRes.statusCode,
-      contentLength:
-          ioRes.contentLength == -1 ? null : ioRes.contentLength,
+      contentLength: ioRes.contentLength == -1 ? null : ioRes.contentLength,
       request: request,
       headers: headers,
       isRedirect: ioRes.isRedirect,

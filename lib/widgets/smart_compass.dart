@@ -5,11 +5,11 @@ import '../utils/accessibility.dart';
 /// ============================================================================
 /// SmartCompass - ロケーション非依存型コンパスウィジェット
 /// ============================================================================
-/// 
+///
 /// 【設計思想】
 /// 災害時に言語や地域に依存せず、色で直感的に方向を伝えるコンパス。
 /// 磁気偏角を引数として受け取り、どの地域でも正確に動作する。
-/// 
+///
 /// 【カラーコード】
 /// - 緑 (Safe): 避難所の方角を向いている
 /// - 赤 (Danger): 危険箇所の方角を向いている
@@ -18,28 +18,28 @@ import '../utils/accessibility.dart';
 class SmartCompass extends StatefulWidget {
   /// センサーの生データ（磁北基準 0-360度）
   final double heading;
-  
+
   /// 避難所への真北基準の方位（null = 避難所未設定）
   final double? safeBearing;
-  
+
   /// 危険箇所への真北基準の方位リスト
   final List<double> dangerBearings;
-  
+
   /// 磁気偏角（磁北と真北のズレ）
   /// - 日本（東京）: 約 -7.5° (西偏)
   /// - 日本（大阪）: 約 -7.0° (西偏)
   /// 計算式: trueHeading = heading + magneticDeclination
   final double magneticDeclination;
-  
+
   /// コンパスのサイズ
   final double size;
-  
+
   /// 安全とみなす角度差のしきい値（度）
   final double safeThreshold;
-  
+
   /// 危険とみなす角度差のしきい値（度）
   final double dangerThreshold;
-  
+
   /// アニメーション時間
   final Duration animationDuration;
 
@@ -71,7 +71,7 @@ class _SmartCompassState extends State<SmartCompass>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    
+
     _pulseAnimation = Tween<double>(begin: 1.0, end: 1.08).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
@@ -107,12 +107,14 @@ class _SmartCompassState extends State<SmartCompass>
   /// 現在の状態を判定
   CompassState _evaluateState() {
     // デバッグ出力
-    debugPrint('🧭 SmartCompass: heading=${widget.heading.toStringAsFixed(1)}, trueHeading=${trueHeading.toStringAsFixed(1)}, safeBearing=${widget.safeBearing?.toStringAsFixed(1)}');
-    
+    debugPrint(
+        '🧭 SmartCompass: heading=${widget.heading.toStringAsFixed(1)}, trueHeading=${trueHeading.toStringAsFixed(1)}, safeBearing=${widget.safeBearing?.toStringAsFixed(1)}');
+
     // 安全方向のチェック（最優先: 緑のターゲットに向かっているなら、それが正解）
     if (widget.safeBearing != null) {
       final diff = _shortestAngleDiff(trueHeading, widget.safeBearing!);
-      debugPrint('🧭 Safe check: diff=${diff.toStringAsFixed(1)}, threshold=${widget.safeThreshold}');
+      debugPrint(
+          '🧭 Safe check: diff=${diff.toStringAsFixed(1)}, threshold=${widget.safeThreshold}');
       if (diff < widget.safeThreshold) {
         debugPrint('🧭 ✅ STATE: SAFE');
         return CompassState.safe;
@@ -128,7 +130,7 @@ class _SmartCompassState extends State<SmartCompass>
         return CompassState.danger;
       }
     }
-    
+
     return CompassState.neutral;
   }
 
@@ -206,10 +208,10 @@ class _SmartCompassState extends State<SmartCompass>
                     alignment: Alignment.center,
                     children: [
                       // 背景の目盛り（オプション: 必要ならここに追加）
-                      
+
                       // 方位マーカー（N, E, S, W）
                       _buildCardinalMarkers(stateColor),
-                      
+
                       // 目的地インジケーター（リング上のターゲット）
                       if (widget.safeBearing != null)
                         Transform.rotate(
@@ -223,10 +225,12 @@ class _SmartCompassState extends State<SmartCompass>
                               decoration: BoxDecoration(
                                 color: const Color(0xFF34C759), // Safety Green
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white, width: 3.0),
+                                border:
+                                    Border.all(color: Colors.white, width: 3.0),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF34C759).withValues(alpha: 0.8),
+                                    color: const Color(0xFF34C759)
+                                        .withValues(alpha: 0.8),
                                     blurRadius: 15,
                                     spreadRadius: 4,
                                   ),
@@ -253,7 +257,7 @@ class _SmartCompassState extends State<SmartCompass>
 
                 // 固定されたコンパス針（常にスマホの先端を指す）
                 _buildCompassNeedle(stateColor),
-                
+
                 // 中央のドット（ハプティック・ターゲット）
                 Container(
                   width: 20,
@@ -261,7 +265,8 @@ class _SmartCompassState extends State<SmartCompass>
                   decoration: BoxDecoration(
                     color: stateColor,
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.8), width: 1.5),
+                    border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.8), width: 1.5),
                     boxShadow: [
                       BoxShadow(
                         color: stateColor.withValues(alpha: 0.5),
@@ -270,7 +275,7 @@ class _SmartCompassState extends State<SmartCompass>
                     ],
                   ),
                 ),
-                
+
                 // 状態インジケーター（画面側のインジケーターと重複するためコメントアウトまたは削除）
                 /*
                 Positioned(
@@ -304,12 +309,22 @@ class _SmartCompassState extends State<SmartCompass>
                 style: TextStyle(
                   fontSize: isNorth ? 24 : 18,
                   fontWeight: FontWeight.bold,
-                  color: isNorth ? accentColor : Colors.white.withValues(alpha: 0.7),
+                  color: isNorth
+                      ? accentColor
+                      : Colors.white.withValues(alpha: 0.7),
                   fontFamily: 'NotoSansJP',
                   fontFamilyFallback: const [
-                    'NotoSansSC', 'NotoSansTC', 'NotoSansKR',
-                    'NotoSansThai', 'NotoSansMyanmar', 'NotoSansSinhala',
-                    'NotoSansDevanagari', 'NotoSansBengali', 'NotoSansArabic', 'NotoSans', 'sans-serif',
+                    'NotoSansSC',
+                    'NotoSansTC',
+                    'NotoSansKR',
+                    'NotoSansThai',
+                    'NotoSansMyanmar',
+                    'NotoSansSinhala',
+                    'NotoSansDevanagari',
+                    'NotoSansBengali',
+                    'NotoSansArabic',
+                    'NotoSans',
+                    'sans-serif',
                   ],
                 ),
               ),
@@ -382,29 +397,29 @@ class _SmartCompassState extends State<SmartCompass>
 
 /// コンパスの状態
 enum CompassState {
-  safe,    // 避難所方向
-  danger,  // 危険方向
+  safe, // 避難所方向
+  danger, // 危険方向
   neutral, // その他
 }
 
 /// コンパス針のペインター
 class _NeedlePainter extends CustomPainter {
   final Color accentColor;
-  
+
   _NeedlePainter({required this.accentColor});
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final needleLength = size.height * 0.45; // 少し長めに
-    
+
     // 1. ガイダンス・ビーム（背後の光るライン）
     final beamPaint = Paint()
       ..color = accentColor.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3.0
       ..strokeCap = StrokeCap.round;
-      
+
     canvas.drawLine(
       Offset(center.dx, center.dy),
       Offset(center.dx, center.dy - needleLength),
@@ -415,7 +430,7 @@ class _NeedlePainter extends CustomPainter {
     final mainNeedlePaint = Paint()
       ..color = accentColor
       ..style = PaintingStyle.fill;
-    
+
     final path = Path()
       ..moveTo(center.dx, center.dy - needleLength) // 先端
       ..lineTo(center.dx - 10, center.dy - needleLength + 25)
@@ -423,11 +438,11 @@ class _NeedlePainter extends CustomPainter {
       ..lineTo(center.dx + 3, center.dy - 10)
       ..lineTo(center.dx + 10, center.dy - needleLength + 25)
       ..close();
-    
+
     // 針のドロップシャドウ
     canvas.drawShadow(path, Colors.black, 4, true);
     canvas.drawPath(path, mainNeedlePaint);
-    
+
     // 3. 針の先端に「進行方向」を示す矢印を追加
     final tipPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.9)
@@ -442,7 +457,7 @@ class _NeedlePainter extends CustomPainter {
 
     canvas.drawPath(tipPath, tipPaint);
   }
-  
+
   @override
   bool shouldRepaint(covariant _NeedlePainter oldDelegate) {
     return oldDelegate.accentColor != accentColor;
@@ -452,7 +467,7 @@ class _NeedlePainter extends CustomPainter {
 /// ============================================================================
 /// 使用例
 /// ============================================================================
-/// 
+///
 /// // 日本モード（東京）
 /// SmartCompass(
 ///   heading: sensorHeading,

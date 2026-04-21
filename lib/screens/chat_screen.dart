@@ -89,9 +89,11 @@ class _ChatScreenState extends State<ChatScreen> {
           context.read<ShelterProvider>().currentRegion),
     ];
     final matchedTitle = allItems
-        .where((g) => g.id == id)
-        .map((g) => g.title[lang] ?? g.title['en'] ?? GapLessL10n.t('guide_$id'))
-        .firstOrNull ?? GapLessL10n.t('guide_$id');
+            .where((g) => g.id == id)
+            .map((g) =>
+                g.title[lang] ?? g.title['en'] ?? GapLessL10n.t('guide_$id'))
+            .firstOrNull ??
+        GapLessL10n.t('guide_$id');
 
     _addUserMessage(matchedTitle);
     setState(() => _isTyping = true);
@@ -99,8 +101,8 @@ class _ChatScreenState extends State<ChatScreen> {
     Future.delayed(const Duration(milliseconds: 900), () {
       if (!mounted) return;
       final profile = context.read<UserProfileProvider>().profile;
-      final isSafe  = context.read<ShelterProvider>().isSafeInShelter;
-      final region  = context.read<ShelterProvider>().currentRegion;
+      final isSafe = context.read<ShelterProvider>().isSafeInShelter;
+      final region = context.read<ShelterProvider>().currentRegion;
 
       final response = ChatService.generateResponse(
         guideId: id,
@@ -122,7 +124,8 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: SafeText(
           GapLessL10n.t('header_ai_guide'),
-          style: emergencyTextStyle(size: 18, isBold: true, color: Colors.white),
+          style:
+              emergencyTextStyle(size: 18, isBold: true, color: Colors.white),
         ),
         backgroundColor: const Color(0xFF2E7D32),
         foregroundColor: Colors.white,
@@ -149,7 +152,7 @@ class _ChatScreenState extends State<ChatScreen> {
         if (index == _messages.length && _isTyping) {
           return _buildTypingIndicator();
         }
-        final msg   = _messages[index];
+        final msg = _messages[index];
         final isBot = msg['type'] == 'bot';
         return _buildBubble(msg, isBot);
       },
@@ -157,7 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget _buildBubble(Map<String, dynamic> msg, bool isBot) {
-    final text    = msg['text'] as String;
+    final text = msg['text'] as String;
     final guideId = msg['guideId'] as String?;
 
     return Align(
@@ -175,9 +178,9 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(
               color: isBot ? const Color(0xFFE3F2FD) : const Color(0xFFE53935),
               borderRadius: BorderRadius.only(
-                topLeft:     const Radius.circular(16),
-                topRight:    const Radius.circular(16),
-                bottomLeft:  isBot ? Radius.zero : const Radius.circular(16),
+                topLeft: const Radius.circular(16),
+                topRight: const Radius.circular(16),
+                bottomLeft: isBot ? Radius.zero : const Radius.circular(16),
                 bottomRight: isBot ? const Radius.circular(16) : Radius.zero,
               ),
             ),
@@ -221,7 +224,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _openGuideModal(String guideId) {
     final region = context.read<ShelterProvider>().currentRegion;
-    final lang   = context.read<LanguageProvider>().currentLanguage;
+    final lang = context.read<LanguageProvider>().currentLanguage;
     final allItems = [
       ...SurvivalData.getOfficialGuides(region),
       ...SurvivalData.getAiSupportGuides(region),
@@ -255,14 +258,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildOptionChips() {
     final region = context.read<ShelterProvider>().currentRegion;
-    final lang   = GapLessL10n.lang;
+    final lang = GapLessL10n.lang;
 
-    final isMain   = _menuState == 'main';
-    final items    = isMain
+    final isMain = _menuState == 'main';
+    final items = isMain
         ? SurvivalData.getOfficialGuides(region)
         : SurvivalData.getAiSupportGuides(region);
-    final header   = GapLessL10n.t(
-        isMain ? 'header_category_guide' : 'header_category_ai');
+    final header =
+        GapLessL10n.t(isMain ? 'header_category_guide' : 'header_category_ai');
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,7 +273,8 @@ class _ChatScreenState extends State<ChatScreen> {
       children: [
         SafeText(
           header,
-          style: emergencyTextStyle(size: 13, isBold: true, color: Colors.grey[700]!),
+          style: emergencyTextStyle(
+              size: 13, isBold: true, color: Colors.grey[700]!),
         ),
         const SizedBox(height: 10),
         Wrap(
@@ -280,9 +284,9 @@ class _ChatScreenState extends State<ChatScreen> {
             // ガイド選択肢チップ
             ...items.map((item) {
               // ガイドタイトルを現在言語で取得（英語フォールバック付き）
-              final label = item.title[lang]
-                  ?? item.title['en']
-                  ?? GapLessL10n.t('guide_${item.id}');
+              final label = item.title[lang] ??
+                  item.title['en'] ??
+                  GapLessL10n.t('guide_${item.id}');
               return ActionChip(
                 label: SafeText(
                   label,
@@ -290,8 +294,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 backgroundColor: const Color(0xFFF0F4F8),
                 side: BorderSide.none,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
                 onPressed: () => _handleOptionSelected(item.id),
               );
             }),
@@ -304,18 +307,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
               ),
               label: SafeText(
-                GapLessL10n.t(
-                    isMain ? 'chat_btn_more' : 'chat_btn_back'),
+                GapLessL10n.t(isMain ? 'chat_btn_more' : 'chat_btn_back'),
                 style: emergencyTextStyle(
                     size: 14, isBold: true, color: Colors.white),
               ),
-              backgroundColor:
-                  isMain ? Colors.blue[600]! : Colors.grey[600]!,
+              backgroundColor: isMain ? Colors.blue[600]! : Colors.grey[600]!,
               side: BorderSide.none,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-              onPressed: () => setState(
-                  () => _menuState = isMain ? 'more' : 'main'),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              onPressed: () =>
+                  setState(() => _menuState = isMain ? 'more' : 'main'),
             ),
           ],
         ),
