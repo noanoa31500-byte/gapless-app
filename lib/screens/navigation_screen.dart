@@ -1839,10 +1839,13 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
             const SizedBox(width: 8),
             // SOSビーコン（長押し3秒で送信）
-            GestureDetector(
-              onTapDown: (_) => _onSosPressStart(),
-              onTapUp: (_) => _onSosPressEnd(),
-              onTapCancel: _onSosPressEnd,
+            // Listener を使用してポインタイベントを直接拾う
+            // (GestureDetector + FAB だと FAB 内部のタップ認識器が
+            //  ジェスチャを奪って長押しタイマーが起動しない)
+            Listener(
+              onPointerDown: (_) => _onSosPressStart(),
+              onPointerUp: (_) => _onSosPressEnd(),
+              onPointerCancel: (_) => _onSosPressEnd(),
               child: FloatingActionButton.small(
                 heroTag: 'sos',
                 onPressed: () => _showSnack(GapLessL10n.t('sos_hold_hint')),

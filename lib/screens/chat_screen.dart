@@ -121,6 +121,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     context.watch<LanguageProvider>(); // 言語変更時に再描画
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: SafeText(
           GapLessL10n.t('header_ai_guide'),

@@ -95,8 +95,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
   }
 
   void _initNavigation() {
-    // Start periodic voice guidance
-    _voiceTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    // Start periodic voice guidance (60 秒間隔。連続案内うるさい問題対策)
+    _voiceTimer = Timer.periodic(const Duration(seconds: 60), (_) {
       _speakNavigationUpdate();
     });
 
@@ -227,8 +227,9 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     if (distance < 0) return;
 
     // Debounce speech if distance hasn't changed much (e.g. standing still)
+    // 50m 未満の差分では再読み上げしない (連続案内うるさい問題対策)
     if (_lastSpokenDistance != null &&
-        (distance - _lastSpokenDistance!).abs() < 20) {
+        (distance - _lastSpokenDistance!).abs() < 50) {
       return;
     }
     _lastSpokenDistance = distance;
@@ -398,7 +399,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
             const Text(
               "SAFE NAV",
               style: TextStyle(
-                color: _emerald,
+                color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2.0,
@@ -423,7 +424,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                   child: const Text(
                     "🇯🇵 TOKYO",
                     style: TextStyle(
-                      color: _emerald,
+                      color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
@@ -555,10 +556,10 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               "DESTINATION",
                               style: TextStyle(
-                                color: _emerald.withValues(alpha: 0.7),
+                                color: Colors.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 letterSpacing: 1.5,
@@ -641,8 +642,7 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
     );
   }
 
-  Widget _buildDetailItem(String label, String value,
-      {bool isHighlight = false}) {
+  Widget _buildDetailItem(String label, String value) {
     return Semantics(
       label: '$label $value',
       child: Column(
@@ -660,8 +660,8 @@ class _DisasterCompassScreenState extends State<DisasterCompassScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GapLessL10n.safeStyle(TextStyle(
-              color: isHighlight ? _amber : _emerald,
+            style: GapLessL10n.safeStyle(const TextStyle(
+              color: Colors.white,
               fontSize: 22,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.3,

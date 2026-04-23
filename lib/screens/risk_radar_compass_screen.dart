@@ -886,7 +886,7 @@ class _RiskRadarCompassScreenState extends State<RiskRadarCompassScreen>
       avatar: Icon(icon, size: 16, color: _emerald),
       label: SafeText(
         text,
-        style: safeStyle(size: 12, isBold: true),
+        style: safeStyle(size: 12, isBold: true, color: Colors.white),
       ),
       backgroundColor: Colors.white.withValues(alpha: 0.07),
       surfaceTintColor: Colors.transparent,

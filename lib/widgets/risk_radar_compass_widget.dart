@@ -148,6 +148,31 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
               return Stack(
                 alignment: Alignment.center,
                 children: [
+                  // レイヤー0: 避難所方向を向いた時の緑の淡い発光リング
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOut,
+                    width: widget.size,
+                    height: widget.size,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: _isAlignedToTarget
+                          ? [
+                              BoxShadow(
+                                color: Colors.green.withValues(alpha: 0.55),
+                                blurRadius: 32,
+                                spreadRadius: 6,
+                              ),
+                              BoxShadow(
+                                color: Colors.green.withValues(alpha: 0.25),
+                                blurRadius: 64,
+                                spreadRadius: 14,
+                              ),
+                            ]
+                          : const [],
+                    ),
+                  ),
+
                   // レイヤー1: 背景とグリッド
                   _buildBackground(),
 
@@ -186,6 +211,14 @@ class _RiskRadarCompassWidgetState extends State<RiskRadarCompassWidget>
 
   bool get _shouldShowSafetyArrow =>
       widget.targetBearing != null || widget.scanResult?.safetyGuidance != null;
+
+  /// 端末が避難所方向 (targetBearing) を向いているかどうか。±25° 以内で true。
+  bool get _isAlignedToTarget {
+    final bearing = widget.targetBearing;
+    if (bearing == null) return false;
+    final diff = ((bearing - widget.deviceHeading + 540) % 360) - 180;
+    return diff.abs() < 25.0;
+  }
 
   /// 背景とグリッド
   Widget _buildBackground() {

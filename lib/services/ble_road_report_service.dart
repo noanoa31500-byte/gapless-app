@@ -55,7 +55,13 @@ class BleRoadReportService extends ChangeNotifier {
 
   static const Duration _normalScanInterval = Duration(seconds: 30);
   static const Duration _savingScanInterval = Duration(minutes: 3);
+  // 起動直後の高速スキャン: 起動から 3 分間は 3 秒間隔でスキャンして
+  // 周辺端末を素早く発見する（その後は通常間隔へ）。
+  // iOS の peripheral advertising 開始が遅れる端末も拾えるよう長めに維持。
+  static const Duration _boostScanInterval = Duration(seconds: 3);
+  static const Duration _boostDuration = Duration(minutes: 3);
   Duration _currentScanInterval = _normalScanInterval;
+  DateTime? _boostStartedAt;
 
   // ── 状態 ──────────────────────────────────────────────────
   bool _isRunning = false;
@@ -197,6 +203,8 @@ class BleRoadReportService extends ChangeNotifier {
 
     // 注: state restoration は再インストール後の挙動が不安定なため無効化
 
+    // 起動直後 1 分間は高速スキャンで周辺端末を素早く発見
+    _boostStartedAt = DateTime.now();
     BlePeripheralChannel.instance.onDataReceived = _onPeripheralDataReceived;
 
     _adapterSub = FlutterBluePlus.adapterState.listen((state) {
@@ -340,6 +348,17 @@ class BleRoadReportService extends ChangeNotifier {
       debugPrint('BleRoadReportService: SOS enqueued @ ${_redactGeo(lat, lng)} '
           '(signed=${report.isSigned})');
     }
+    // SOS は緊急性が高いため、次の定期スキャンを待たず即座にスキャン発火
+    _kickImmediateScan();
+  }
+
+  /// 強制的に即座にスキャンを開始する（SOS送信時など緊急用途）
+  /// 既にスキャン中なら何もしない。タイマーをリセットして次のスケジュールを再構築。
+  void _kickImmediateScan() {
+    if (!_isRunning) return;
+    if (FlutterBluePlus.isScanningNow) return;
+    _scanTimer?.cancel();
+    _runScan().then((_) => _scheduleScan());
   }
 
   /// 受信済みSOSのうち期限切れを除去
@@ -407,10 +426,26 @@ class BleRoadReportService extends ChangeNotifier {
 
   void _scheduleScan() {
     _scanTimer?.cancel();
-    _scanTimer = Timer(_currentScanInterval, () async {
+    // SOS キューに緊急報告がある間は最高優先度で 1 秒間隔。
+    // 起動から _boostDuration 以内は高速スキャン (3 秒間隔)。
+    // それ以外は通常間隔 (30 秒)。
+    final Duration interval;
+    if (_sosQueue.isNotEmpty) {
+      interval = const Duration(seconds: 1);
+    } else if (_isInBoostWindow()) {
+      interval = _boostScanInterval;
+    } else {
+      interval = _currentScanInterval;
+    }
+    _scanTimer = Timer(interval, () async {
       if (_isRunning) await _runScan();
       _scheduleScan();
     });
+  }
+
+  bool _isInBoostWindow() {
+    if (_boostStartedAt == null) return false;
+    return DateTime.now().difference(_boostStartedAt!) < _boostDuration;
   }
 
   Future<void> _runScan() async {
@@ -443,8 +478,10 @@ class BleRoadReportService extends ChangeNotifier {
 
     try {
       debugPrint('BleRoadReportService: scan開始 (probe方式)');
+      // 高速発見: スキャン timeout を 30 秒 (実質連続スキャンに近い動作)
+      // _scheduleScan が 1〜3 秒間隔で再起動するため、ほぼ常時スキャンになる
       await FlutterBluePlus.startScan(
-        timeout: const Duration(seconds: 10),
+        timeout: const Duration(seconds: 30),
         androidScanMode: AndroidScanMode.lowLatency,
       );
     } catch (e) {
@@ -468,8 +505,9 @@ class BleRoadReportService extends ChangeNotifier {
     }
 
     try {
+      // 接続タイムアウトを短くして失敗を早く諦め、次のピアへすぐ移動
       await device.connect(
-          license: License.free, timeout: const Duration(seconds: 8));
+          license: License.free, timeout: const Duration(seconds: 5));
       _connected.add(device.remoteId);
       notifyListeners();
 
@@ -525,7 +563,8 @@ class BleRoadReportService extends ChangeNotifier {
         await _writeQueueToChar(txChar, chunkSize: mtu);
       }
 
-      await Future.delayed(const Duration(seconds: 2));
+      // 高速化: 切断前の待機を短縮
+      await Future.delayed(const Duration(milliseconds: 500));
       await device.disconnect();
     } catch (e) {
       debugPrint('BleRoadReportService: ピア交換エラー $e');
@@ -597,7 +636,9 @@ class BleRoadReportService extends ChangeNotifier {
     ];
     if (lines.isEmpty) return;
 
-    final bytes = utf8.encode(lines.join('\n'));
+    // 受信側のバッファリング reassembly が末尾改行で完全フレームを切り出すため、
+    // 末尾にも改行を必ず付ける (joins だけだと最後の行が改行で終わらない)。
+    final bytes = utf8.encode('${lines.join('\n')}\n');
     for (int i = 0; i < bytes.length; i += chunkSize) {
       final end = (i + chunkSize < bytes.length) ? i + chunkSize : bytes.length;
       await txChar.write(bytes.sublist(i, end), withoutResponse: false);
@@ -608,19 +649,35 @@ class BleRoadReportService extends ChangeNotifier {
   // 受信処理
   // ---------------------------------------------------------------------------
 
+  // BLE 受信バッファ。1メッセージが MTU を超えて複数の write/notify に
+  // 分割されるケース (例: 署名付きSOS ~220B) で改行までバッファリングする。
+  final List<int> _rxBuffer = [];
+
   Future<void> _handleReceivedBytes(List<int> bytes) async {
     if (bytes.isEmpty) return;
 
-    // payload長 ≤ 256バイト（仕様）。1パケット内に複数行が入る前提なので
-    // 全体としては数KBもありうるが、明らかな巨大データはここで切る。
-    if (bytes.length > 8 * 1024) {
-      _logDrop('packet_too_large', 'len=${bytes.length}');
+    // バッファに追記し、巨大すぎたら切り捨て
+    _rxBuffer.addAll(bytes);
+    if (_rxBuffer.length > 8 * 1024) {
+      _logDrop('rxbuffer_overflow', 'len=${_rxBuffer.length}');
+      _rxBuffer.clear();
       return;
     }
 
+    // 改行までを完全なメッセージとして取り出す。改行がなければ次の
+    // 受信を待つ (SOS など 1 メッセージが複数 write に分割される場合)。
+    final newlineIdx = _rxBuffer.lastIndexOf(0x0A); // '\n'
+    if (newlineIdx < 0) return; // まだ完全な行が来ていない
+
+    final completeBytes = _rxBuffer.sublist(0, newlineIdx);
+    final remainder = _rxBuffer.sublist(newlineIdx + 1);
+    _rxBuffer
+      ..clear()
+      ..addAll(remainder);
+
     final String decoded;
     try {
-      decoded = utf8.decode(bytes, allowMalformed: true);
+      decoded = utf8.decode(completeBytes, allowMalformed: true);
     } catch (e) {
       _logDrop('utf8_decode_failed', '$e');
       return;

@@ -189,10 +189,15 @@ class GplbPoiParser {
       final nameEnd = offset + 13 + nameLen;
       if (nameEnd > bytes.length) break;
 
-      final name = nameLen > 0
+      // utf8 デコード時に不正バイトは U+FFFD (置換文字 �) になるため、
+      // 末尾の � を削除して表示時の豆腐文字を防ぐ。
+      final rawName = nameLen > 0
           ? utf8.decode(bytes.sublist(offset + 13, nameEnd),
               allowMalformed: true)
           : '（名称不明）';
+      final name = rawName.replaceAll('�', '').trim().isEmpty
+          ? '（名称不明）'
+          : rawName.replaceAll('�', '').trim();
       offset = nameEnd;
 
       result.add(PoiFeature(

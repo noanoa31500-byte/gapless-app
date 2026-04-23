@@ -18,7 +18,8 @@ class AlertProvider with ChangeNotifier {
   // 自動読み上げ制御
   bool _isVoiceGuidanceEnabled = true;
   DateTime? _lastSpokenTime;
-  static const Duration _speakCooldown = Duration(seconds: 5); // 連続読み上げ防止
+  static const Duration _speakCooldown =
+      Duration(seconds: 15); // 連続読み上げ防止 (うるさい問題対策で 5→15s)
 
   // Getters
   bool get isMonitoringActive => _isMonitoringActive;
